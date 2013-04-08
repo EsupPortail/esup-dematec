@@ -67,7 +67,21 @@ Sécurité :
 
 ### Configurations via l'application
 
-Les admin et super-manager peuvent configurer certains éléments de l'application via le menu 'Configuration'
+Les admin et super-manager peuvent configurer certains éléments de l'application via le menu 'Configuration' :
+* dates de clôture pour les candidats, les candidats actifs, les membres (3 dates dstinctes)
+* Titre de l'applciation visible sur chaque page
+* Logo de l'application visible sur chaque page
+* Pied de page de l'application visible sur chaque page (HTML)
+* Texte d'accueil visible sur la page d'accueil (page d'authentification) (HTML)
+* Texte d'accueil après authentification pour le candidat (HTML)
+* Texte d'aide sur la page des candidatures pour le candidat (HTML)
+* Texte d'aide sur la page de dépôt pour une candidature pour le candidat (HTML)
+* Texte d'accueil après authentification pour le membre (HTML)
+* Texte d'aide sur la page des candidatures pour le membre (HTML)
+* Texte d'aide sur la page de dépôt (consultation) pour une candidature pour le membre (HTML)
+* Texte des mails (from, subject et corps) envoyés aux candidats et membres après génération de leurs comptes.
+* Texte du mail "password oublié"
+
 
 
 ## Installation
@@ -81,4 +95,7 @@ mvn jetty:run
 ```
 mvn clean package
 ```
+
+## Screenshots
+http://www.esup-portail.org/pages/viewpage.action?pageId=282099720#ESUP-DématérialisationEnseignantsChercheurs(etATER)-Screenshots
 
