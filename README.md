@@ -8,15 +8,15 @@ Cette application permet une gestion des authentifications des candidats et autr
 Elle ingère des fichiers Excel Galaxie pour générer ensuite les comptes utilisateurs, postes, candidatures liés.
 Elle permet aux candidats de déposer des fichiers pour chacune de ses candidatures.
 
-L'ensemble des données est stocké dans une base de données, fichiers compris. 
+L'ensemble des données est stocké dans une base de données, fichiers compris, cela nous a ammené à utiliser PostgreSQL (et non MySQL) pour ses possibilités de streaming sur les blobs. 
 
 ## POSTGRESQL
 
 Cette application a été dévelopée en utilisant Spring ROO et donc ses technologies associées.
-Elle peut théoriquement supporter les différentes bases de données supportées par Spring ROO (adhérence avec Hibernate pour gestion des blob ici mais nous recommandons très fortement l'usage de PostgreSql.
+Elle peut théoriquement supporter les différentes bases de données supportées par Spring ROO dans lequel on utilise ici JPA (pour la gestion des blob nous avons également une adhérence avec Hibernate).
 
-Cela notamment pour la gestion des blob de PostgreSQL.
-L'application a enfin été développée et optimisée dans l'optique d'être installée sur un PostgreSQL (lecture des blobs dans une transaction par exemple).
+Comme annoncé ci-dessus, l'application a cependant été développée et optimisée dans l'optique d'être installée sur un PostgreSQL : lecture/écriture des blobs dans une transaction par streaming si supporté ; cela afin de pouvoir stocker et récupérer des fichiers de taille importante sans saturation de la RAM.
+Nous recommandons donc l'usage de PostgreSQL pour cette application.
 
 Pour une bonne gestion des blob de cette application, il faut ajouter dans PostgreSQL un trigger sur la base de données sur la table big_file.
 La fonction lo_manage est nécessaire ici.
@@ -24,12 +24,12 @@ La fonction lo_manage est nécessaire ici.
 Sous debian : 
 apt-get install postgresql-contrib
 
-Puis (la création e l'extension lo ne peut se faire que via un super-user):
+Puis la création de l'extension lo se fait via un super-user:
 psql
-\c postes
+\c esupdematec
 CREATE EXTENSION lo;
 
-Et enfin ajout du trigger : (celui-ci est ajouté à la création de la base par l'application elle-même cependant): 
+Et enfin ajout du trigger : 
 CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
 
 CF http://docs.postgresqlfr.org/8.3/lo.html
