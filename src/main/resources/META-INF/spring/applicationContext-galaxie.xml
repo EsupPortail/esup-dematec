@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Licensed to ESUP-Portail under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. ESUP-Portail licenses 
+	this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+	See the License for the specific language governing permissions and limitations under the License. -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+
+    <!-- 
+        Ce bean spring permet de configurer le mapping Excel Galaxie -> EsupDematEC.
+        Ainsi si les exports Galaxie Excel ne sont pas formattés à chaque campagne de la même façon, nous pouvons théoriquement reconfiguré notre mapping simplement ici.
+        Les exports Galaxie n'ont par exemple pas le même formattage entre les campagnes EC et celles ATER 
+    -->
+    
+    <!--  Mapping OK pour la campagne Galaxie Enseignants-Chercheurs de début 2013  -->
+	<bean id="galaxieMappingService" class="fr.univrouen.poste.services.GalaxieMappingService">
+	    <property name="id_email" value="Email" />
+		<property name="id_numemploi" value="N° emploi" />
+		<property name="id_numCandidat" value="N° candidat" />
+		
+		<property name="id_civilite" value="Civilité" />
+		<property name="id_nom" value="Nom" />
+		<property name="id_prenom" value="Prénom" />
+        <property name="id_localisation" value="Localisation" />
+        <property name="id_profil" value="Profil J.o" />
+	</bean>
+
+    
+    <!--  Mapping OK pour la campagne Galaxie ATER été 2012  -->
+    <!-- 
+    <bean id="galaxieMappingService" class="fr.univrouen.poste.services.GalaxieMappingService">
+        <property name="id_email" value="EMAIL du candidat" />
+        <property name="id_numemploi" value="Numéro de l'appel à candidatures" />
+        <property name="id_numCandidat" value="Numero du candidat" />
+        
+        <property name="id_civilite" value="Civilite du candidat" />
+        <property name="id_nom" value="Nom du candidat" />
+        <property name="id_prenom" value="Prenom du candidat" />
+        <property name="id_localisation" value="Etablissement" />
+    </bean>
+     -->    
+     
+</beans>

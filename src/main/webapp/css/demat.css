@@ -1,0 +1,98 @@
+/**
+ * Licensed to ESUP-Portail under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
+ *
+ * ESUP-Portail licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+table {
+font-size: 14px;
+}
+
+#main .row-fluid .span-demat-right {
+margin-left: 20px;
+}
+
+small#mention-legale {
+display: block;
+padding-top: 5px;
+border-top: 1px solid #eee;
+text-align: center;
+line-height: 15px;
+font-size: 80%;
+}
+
+small#mention-legale p {
+margin-bottom: 0px;
+}
+
+.container-fluid {
+padding-left: 10px;
+padding-right: 10px;   
+}
+
+dd {
+margin-bottom: 10px;
+}
+
+select[multiple] {
+    width: 300px;
+}
+
+.help .accordion-group {
+border-color: #aaa;
+}
+
+.help .accordion-heading {
+background-color: #eee;
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+}
+
+.help .accordion-body {
+background-color: #fafafa;
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+}
+
+textarea[cols] {
+width: auto;
+}
+
+#main .row-fluid .span-demat-left {
+width: auto;
+}
+
+#main .row-fluid .span-demat-right {
+margin-left: 10px;
+}
+
+@media (min-width: 1200px) {
+	
+#main .bs-docs-sidenav {
+width: 228px;
+}
+
+#main .row-fluid .span-demat-left {
+width: 228px;
+float: left;
+}
+
+#main .row-fluid .span-demat-right {
+float: left;
+margin-left: 20px;
+}
+
+}

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:menu="urn:jsptagdir:/WEB-INF/tags/menuside" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" id="menu">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <spring:message code="application_name" htmlEscape="false" var="app_name"/>
+    <menu:menu appName="${app_name}" id="_menu" z="user-managed">
+        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+            <menu:item activeMenu="${activeMenu == 'adminappliconfig'}" id="i_appliconfig_list" label="Configuration" url="/admin/appliconfig?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+            <menu:item activeMenu="${activeMenu == 'adminusers'}" id="i_user_list" messageCode="global_menu_list" url="/admin/users?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+            <menu:item id="i_user_new" messageCode="global_menu_new" render="false" url="/admin/users?form" z="user-managed"/>
+            <menu:item activeMenu="${activeMenu == 'adminposteapourvoirs'}" id="i_posteapourvoir_list" messageCode="global_menu_list" url="/admin/posteapourvoirs?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+            <menu:item id="i_posteapourvoir_new" messageCode="global_menu_new" render="false" url="/admin/posteapourvoirs?form" z="user-managed"/>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+            <menu:category id="galaxie" label="Galaxie">
+                <menu:item id="i_galaxieexcel_new" messageCode="global_menu_new" render="false" url="/admin/galaxieexcels?form" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'admingalaxieexcels'}" id="i_galaxieexcel_list" messageCode="global_menu_list" url="/admin/galaxieexcels?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'admingalaxieentrys'}" id="i_galaxieentry_list" messageCode="global_menu_list" url="/admin/galaxieentrys?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item id="i_galaxieentry_new" messageCode="global_menu_new" render="false" url="/admin/galaxieentrys?form" z="user-managed"/>
+            </menu:category>
+            <menu:category id="commissions" label="Commissions">
+                <menu:item id="i_commissionexcel_new" messageCode="global_menu_new" render="false" url="/admin/commissionexcels?form" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'admincommissionexcels'}" id="i_commissionexcel_list" messageCode="global_menu_list" url="/admin/commissionexcels?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'admincommissionentrys'}" id="i_commissionentry_list" messageCode="global_menu_list" url="/admin/commissionentrys?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+            </menu:category>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+            <menu:category id="c_logfile" label="Statistiques" z="user-managed">
+                <menu:item activeMenu="${activeMenu == 'admin'}" id="admin_stats" label="Résumé" url="/admin"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogimportgalaxies'}" id="i_logimportgalaxie_list" messageCode="global_menu_list" url="/admin/logimportgalaxies?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogimportcommissions'}" id="i_logimportcommission_list" messageCode="global_menu_list" url="/admin/logimportcommissions?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogfiles'}" id="i_logfile_list" messageCode="global_menu_list" url="/admin/logfiles?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item id="fi_logfile_numcandidat" messageCode="global_menu_find" render="false" url="/admin/logfiles?find=ByNumCandidat&amp;form" z="user-managed"/>
+                <menu:item id="fi_logfile_numemploi" messageCode="global_menu_find" render="false" url="/admin/logfiles?find=ByNumEmploi&amp;form" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogauths'}" id="i_logauth_list" messageCode="global_menu_list" url="/admin/logauths?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogmails'}" id="i_logmail_list" messageCode="global_menu_list" url="/admin/logmails?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'admincurrentsessions'}" id="i_admincurrentsessions" label="Utilisateurs connectés" url="/admin/currentsessions"/>
+                <menu:item id="fi_logfile_actionequals" messageCode="global_menu_find" render="false" url="/admin/logfiles?find=ByActionEquals&amp;form" z="user-managed"/>
+            </menu:category>
+        </sec:authorize>
+        <menu:category id="c_postecandidature" label="Candidatures" z="user-managed">
+            <menu:item activeMenu="${activeMenu == 'postecandidatures'}" id="i_postecandidature_list" messageCode="global_menu_list" url="/postecandidatures?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+            <menu:item id="i_postecandidature_new" messageCode="global_menu_new" render="false" url="/postecandidatures?form" z="user-managed"/>
+            <menu:item id="fi_postecandidature_candidat" messageCode="global_menu_find" render="false" url="/postecandidatures?find=ByCandidat&amp;form" z="user-managed"/>
+            <menu:item id="fi_postecandidature_poste" messageCode="global_menu_find" render="false" url="/postecandidatures?find=ByPoste&amp;form" z="user-managed"/>
+            <menu:item id="fi_postecandidature_recevable" messageCode="global_menu_find" render="false" url="/postecandidatures?find=ByRecevable&amp;form" z="user-managed"/>
+        </menu:category>
+        <menu:category id="c_galaxieentry" render="false" z="user-managed"/>
+        <menu:category id="c_user" render="false" z="user-managed"/>
+        <menu:category id="c_galaxieexcel" render="false" z="user-managed"/>
+        <menu:category id="c_posteapourvoir" render="false" z="user-managed"/>
+        <menu:category id="c_logauth" render="false" z="user-managed">
+            <menu:item id="fi_logauth_actionequals" messageCode="global_menu_find" url="/admin/logauths?find=ByActionEquals&amp;form" z="vmg53is4RrA5K4HOP3yjrGjtIac="/>
+        </menu:category>
+        <menu:category id="c_appliconfig" render="false" z="user-managed">
+            <menu:item id="i_appliconfig_new" messageCode="global_menu_new" render="false" url="/admin/appliconfig?form" z="user-managed"/>
+        </menu:category>
+        <menu:category id="c_candidat" render="false" z="user-managed"/>
+        <menu:category id="c_logmail" render="false" z="user-managed">
+            <menu:item id="fi_logmail_statusequals" messageCode="global_menu_find" url="/admin/logmails?find=ByStatusEquals&amp;form" z="HUj7ASVDBBMBHol4qpFkl5YYLtM="/>
+        </menu:category>
+        <menu:category id="c_commissionexcel" render="false" z="user-managed"/>
+        <menu:category id="c_commissionentry" render="false" z="user-managed">
+            <menu:item id="i_commissionentry_new" messageCode="global_menu_new" render="false" url="/admin/commissionentrys?form" z="user-managed"/>
+        </menu:category>
+        <menu:category id="c_logimportgalaxie" render="false" z="user-managed">
+            <menu:item id="i_logimportgalaxie_new" messageCode="global_menu_new" render="false" url="/admin/logimportgalaxies?form" z="user-managed"/>
+            <menu:item id="fi_logimportgalaxie_statusequals" messageCode="global_menu_find" url="/admin/logimportgalaxies?find=ByStatusEquals&amp;form" z="qBlDIj76EXpPlKPFoAPXweP7rTo="/>
+        </menu:category>
+        <menu:category id="c_logimportcommission" render="false" z="user-managed">
+            <menu:item id="i_logimportcommission_new" messageCode="global_menu_new" render="false" url="/admin/logimportcommissions?form" z="user-managed"/>
+            <menu:item id="fi_logimportcommission_statusequals" messageCode="global_menu_find" url="/admin/logimportcommissions?find=ByStatusEquals&amp;form" z="Zn4uFTeJ+J9ZtMZ7+BRbLe87GLM="/>
+        </menu:category>
+    </menu:menu>
+</div>

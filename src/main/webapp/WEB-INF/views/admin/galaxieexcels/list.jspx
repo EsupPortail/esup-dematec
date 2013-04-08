@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:spring="http://www.springframework.org/tags" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields"
+	version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+    <spring:url var="galaxieXlsExemple" value="/resources/doc/EXTETBF.xls" />
+	<util:help>
+		<p>Afin de pouvoir alimenter l'application de nouvelles candidatures et entités associées, vous devez ajouter ici de nouveaux fichiers Excel
+			issus de Galaxie  (exemple <a href="${galaxieXlsExemple}">ici</a>).</p>
+		<p>Une fois un nouveau fichier galaxie ajouté, vous pourrez effectivement importer et génerer les différents éléments depuis le menu <a href="galaxieentrys">Importation Galaxie</a>.</p>
+	</util:help>
+
+	<page:list id="pl_fr_univrouen_poste_domain_GalaxieExcel" items="${galaxieexcels}" z="Nl3YB7z6ODL22if8wyL1+TLD6z8=">
+		<table:table data="${galaxieexcels}" delete="false" id="l_fr_univrouen_poste_domain_GalaxieExcel" path="/admin/galaxieexcels" update="false"
+			z="user-managed">
+			<table:column id="c_fr_univrouen_poste_domain_GalaxieExcel_filename" property="filename" z="mrFVTkUc9G+V/peTl9Q/rb1nKgc=" />
+			<table:column date="true" dateTimePattern="${galaxieExcel_creation_date_format}" id="c_fr_univrouen_poste_domain_GalaxieExcel_creation"
+				property="creation" z="VM40AF4Z9sTO9nw+Jd76DFLE3rA=" />
+			<table:column id="c_fr_univrouen_poste_domain_GalaxieExcel_xlsFile" property="xlsFile" render="false" z="user-managed" />
+			<table:column id="c_fr_univrouen_poste_domain_GalaxieExcel_file" property="file" render="false" z="user-managed" />
+			<table:column id="c_fr_univrouen_poste_domain_GalaxieExcel_cells" property="cells" render="false" z="user-managed" />
+			<table:column id="c_fr_univrouen_poste_domain_GalaxieExcel_bigFile" property="bigFile" render="false" z="user-managed" />
+		</table:table>
+	</page:list>
+</div>

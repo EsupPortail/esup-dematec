@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_Candidat" object="${candidat}" path="/admin/candidats" update="false" z="ZakLvrLzFIp+VPynGlJql53MvM0=">
+        <field:display field="numCandidat" id="s_fr_univrouen_poste_domain_Candidat_numCandidat" object="${candidat}" z="uXvMj3Wr8Dfvb1ctwPzpKuwR6F8="/>
+        <field:display field="email" id="s_fr_univrouen_poste_domain_Candidat_email" object="${candidat}" z="mVPhSushvtjtXkKueIIqXpa95pA="/>
+        <field:display field="civilite" id="s_fr_univrouen_poste_domain_Candidat_civilite" object="${candidat}" z="N0HM15votWB0wkJxAZM2Mjdsxc4="/>
+        <field:display field="nom" id="s_fr_univrouen_poste_domain_Candidat_nom" object="${candidat}" z="dsXCjVrjoBmOFSCaJP4yKJZMtEE="/>
+        <field:display field="prenom" id="s_fr_univrouen_poste_domain_Candidat_prenom" object="${candidat}" z="Ukcil0I7Y4iS9vHlXBt7IRJUE1g="/>
+    </page:show>
+</div>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <util:help>
+        <p>L'ensemble des données importées depuis l'ensemble des fichiers commission déposés dans l'application est listé ici.</p>
+        <p>Si de nouvelles données issues des fichiers Excel Commission sont présentes, l'appication vous propose alors de générer diffférents éléments
+            liés à cette application.</p>
+        <p>Ces éléments sont :
+        <ul>
+                <li>Des comptes utilisateurs permettant aux membres de s'authentifier dans l'application. Dans le même temps que la création du compte, un
+                email est également envoyé au membre afin de lui présenter ses paramètres de connexion.</li>
+                <li>Des références aux postes encore non connus de l'application.</li>
+                <li>Et enfin l'affectation des membres aux postes (commission).</li>
+            </ul>
+        </p>
+    </util:help>
+    <c:if test="${not empty unknowMembres or not empty unknowPostes or not empty unknowCommission}">
+        <div class="well">
+            <div class="row-fluid">
+                <c:if test="${not empty unknowCommission}">
+                    <div class="span8">
+                        <strong>Les éléments correspondants à ces affectations de membres (commission) sont manquants :</strong>
+                        <c:forEach items="${unknowCommission}" var="commission">
+                           ${commission}, 
+                        </c:forEach>
+                    </div>
+                </c:if>
+                <div class="span4">
+                    <spring:url value="/admin/commissionentrys/generatecommissions" var="createCommissionUrl"/>
+                    <a class="btn btn-large btn-danger" href="${createCommissionUrl}">
+                        <i class="icon-play-circle">
+                            <!--  -->
+                        </i>Générer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </c:if>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+        <c:set value="true" var="canCreate"/>
+    </sec:authorize>
+    <page:list id="pl_fr_univrouen_poste_domain_CommissionEntry" items="${commissionentrys}" z="MLiY86bMNnQuxNPQUQGnOwdqJOs=">
+        <table:table create="${canCreate}" data="${commissionentrys}" delete="false" id="l_fr_univrouen_poste_domain_CommissionEntry" path="/admin/commissionentrys" update="false" z="user-managed">
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_numPoste" property="numPoste" z="Owu9YANM2GCP3//bUZaM1X4N0tg="/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_email" property="email" z="CJJUUhZTmJ4Drcbmz4LLFDVMMnQ="/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_nom" property="nom" z="j4rpXEOJiWcLUogKOhE1l2z6CB4="/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_prenom" property="prenom" z="op2gk/O9vAZ1DNkY1rTSbGjBNzM="/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_poste" property="poste" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_membre" property="membre" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>

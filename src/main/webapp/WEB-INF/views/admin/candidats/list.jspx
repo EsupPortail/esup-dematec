@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields"
+	version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<div class="well help">
+		<p>Les différents candidats donnés ici ont été générés depuis le menu Importation. Vous pouvez ici vérifier que l'ensemble des candidats a bien
+			été créé.</p>
+	</div>
+
+
+	<page:list id="pl_fr_univrouen_poste_domain_Candidat" items="${candidats}" z="Wk8rtDG4l23nzT8sm/OF3Z1wkTU=">
+		<table:table data="${candidats}" delete="false" id="l_fr_univrouen_poste_domain_Candidat" path="/admin/candidats" update="false"
+			view="false" create="false" z="/ygHbquV6MgUA+3uh6Q6KLBhpbo=">
+			<table:column id="c_fr_univrouen_poste_domain_Candidat_numCandidat" property="numCandidat" z="r4PNQQiuZZ0UK93l1F9/699Plfg=" />
+			<table:column id="c_fr_univrouen_poste_domain_Candidat_email" property="email" z="WCj2HgI/5Dd0DXVdeajvEyhIVtY=" />
+			<table:column id="c_fr_univrouen_poste_domain_Candidat_civilite" property="civilite" z="PzkKNpVg70cieLEIITcXiPhmi00=" />
+			<table:column id="c_fr_univrouen_poste_domain_Candidat_nom" property="nom" z="cEmapxnrgcNm5afjx51sbg/6Xjs=" />
+			<table:column id="c_fr_univrouen_poste_domain_Candidat_prenom" property="prenom" z="ZI3jGiEWeIdX159etwG/38jaMdw=" />
+		</table:table>
+	</page:list>
+</div>

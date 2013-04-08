@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_LogFile" object="${logfile}" path="/admin/logfiles" update="false" z="n7tyG0aZaO1+KfowoiHQHEb/Gjg=">
+        <field:display field="numEmploi" id="s_fr_univrouen_poste_domain_LogFile_numEmploi" object="${logfile}" z="TT9qNmG12nSmuPa80TpcsoWv9+I="/>
+        <field:display field="numCandidat" id="s_fr_univrouen_poste_domain_LogFile_numCandidat" object="${logfile}" z="CAGUuSTPAorIX7Nq7TMiPGr49Dg="/>
+        <field:display field="email" id="s_fr_univrouen_poste_domain_LogFile_email" object="${logfile}" z="t2BLJlZb7FQYwSjIfaHMt53Pg50="/>
+        <field:display field="civilite" id="s_fr_univrouen_poste_domain_LogFile_civilite" object="${logfile}" z="qkJA+uktwDNxpewcSTmmktNtRmg="/>
+        <field:display field="nom" id="s_fr_univrouen_poste_domain_LogFile_nom" object="${logfile}" z="R88JkNkvkksdNAHx2MxLzKfHg8g="/>
+        <field:display field="prenom" id="s_fr_univrouen_poste_domain_LogFile_prenom" object="${logfile}" z="Xng7cCqDiD3MXsdfNQw37X/7Iso="/>
+        <field:display date="true" dateTimePattern="${logFile_actiondate_date_format}" field="actionDate" id="s_fr_univrouen_poste_domain_LogFile_actionDate" object="${logfile}" z="kWGYVXFCrQJT8bqeuJQ6bcKfBgA="/>
+        <field:display field="ip" id="s_fr_univrouen_poste_domain_LogFile_ip" object="${logfile}" z="irTAfauFaVFjjk7k1RJLk5ctIeM="/>
+        <field:display field="action" id="s_fr_univrouen_poste_domain_LogFile_action" object="${logfile}" z="1wk7tYOGoOppnRzZN/UYw6g2waM="/>
+        <field:display field="filename" id="s_fr_univrouen_poste_domain_LogFile_filename" object="${logfile}" z="i7dIhlD9kfuEpyeDILnCzDaSTr0="/>
+        <field:display field="fileSize" id="s_fr_univrouen_poste_domain_LogFile_fileSize" object="${logfile}" z="OFHZh62io3InpzUPZplWPuya1xw="/>
+        <field:display field="userId" id="s_fr_univrouen_poste_domain_LogFile_userId" object="${logfile}" z="HPoRLb6laB6Il3agUm5cSQhNKcw="/>
+        <field:display field="userAgent" id="s_fr_univrouen_poste_domain_LogFile_userAgent" object="${logfile}" z="2tB49KLnzgFTgYt8CwYTr3fuzG4="/>
+    </page:show>
+</div>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+        <div class="row-fluid">
+            <div class="span4">
+                <util:help>
+                    <p>En tant que gestionnaire (ou administrateur) de l'application, vous avez la liste complète des candidatures donnée ici.</p>
+                    <p>Pour chacune d'entre elles, vous pouvez visualiser, ajouter ou supprimer des fichiers</p>
+                    <p>Vous avez également la possibilité de filtrer (trouver) les candidatures par poste ou recevable/non-recevable.</p>
+                </util:help>
+            </div>
+            <div class="span8">
+                <div class="accordion help" id="accordionfilter">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
+                        </div>
+                        <div class="accordion-body collapse" id="collapseFilter">
+							<div class="accordion-inner">
+								<div class="row-fluid">
+									<div class="span8">
+										<form:find finderName="ByPostes" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+											<field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id"
+												items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true" />
+										</form:find>
+									</div>
+									<div class="span4">
+										<form:find finderName="ByRecevable" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+											<field:checkbox disableFormBinding="true" field="recevable" id="f_fr_univrouen_poste_domain_PosteCandidature_recevable" />
+										</form:find>
+									</div>
+								</div>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_MEMBRE')">
+        ${texteMembreAideCandidatures}
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_CANDIDAT')">
+        ${texteCandidatAideCandidatures}
+    </sec:authorize>
+    <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
+        <table:table create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed">
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" z="WZy/ey09UhNwiVxNxGVCfc0CNgo="/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
+            <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+                <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" z="user-managed"/>
+            </sec:authorize>
+            <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+                <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" z="SFmhS6agTPb4mG7OwAJCmgDQ6fg="/>
+                <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" z="E3G5Yr7/QCaeGKB7NJy5AsXUfUQ="/>
+            </sec:authorize>
+        </table:table>
+    </page:list>
+</div>

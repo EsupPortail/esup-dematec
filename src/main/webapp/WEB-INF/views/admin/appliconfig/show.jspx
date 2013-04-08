@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_AppliConfig" object="${appliconfig}" path="/admin/appliconfig" z="eUkHo/5guyBr9nNn9VYhU46+MVg=">
+        <field:display field="titre" id="s_fr_univrouen_poste_domain_AppliConfig_titre" object="${appliconfig}" z="RWI+QSf/+G2hTYf864KxeNuIGjA="/>
+        <field:display field="texteMailActivation" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailActivation" object="${appliconfig}" z="YP12Yig3xnrtcCp7Z33cwcdnZ9I="/>
+        <field:display field="texteMailPasswordOublie" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie" object="${appliconfig}" z="kQ7o8JqKOplUx4CpMDp1YIYoDAY="/>
+        <field:display field="textePremierePageAnonyme" id="s_fr_univrouen_poste_domain_AppliConfig_textePremierePageAnonyme" object="${appliconfig}" z="u+HqPo+k7qXNkRr7qxxfocYGOP8="/>
+        <field:display field="texteMembreAideCandidatures" id="s_fr_univrouen_poste_domain_AppliConfig_texteMembreAideCandidatures" object="${appliconfig}" z="dUG+saT1i//ppmJc0B2pK0MBlUQ="/>
+        <field:display field="textePremierePageCandidat" id="s_fr_univrouen_poste_domain_AppliConfig_textePremierePageCandidat" object="${appliconfig}" z="TLD21L3bmBkF5Z3Qn2DLKxBGy/8="/>
+        <field:display field="textePremierePageMembre" id="s_fr_univrouen_poste_domain_AppliConfig_textePremierePageMembre" object="${appliconfig}" z="SfBcWxVTCfPEdjJ5w6FNsDAiHrs="/>
+        <field:display field="texteCandidatAideCandidatures" id="s_fr_univrouen_poste_domain_AppliConfig_texteCandidatAideCandidatures" object="${appliconfig}" z="FWpB5J3qM7A6S6FrY7Qp/Z7bzug="/>
+        <field:display field="texteCandidatAideCandidatureDepot" id="s_fr_univrouen_poste_domain_AppliConfig_texteCandidatAideCandidatureDepot" object="${appliconfig}" z="uGWXTo0vwD3K4IGY9uAbh2rq0z4="/>
+        <field:display field="mailFrom" id="s_fr_univrouen_poste_domain_AppliConfig_mailFrom" object="${appliconfig}" z="MZb0UAQjM9d/CzQ4t1sQcFdNO+Q="/>
+        <field:display field="mailSubject" id="s_fr_univrouen_poste_domain_AppliConfig_mailSubject" object="${appliconfig}" z="GVwp8HoS6TQeSv5FQyd8SpESuW4="/>
+        <field:display field="piedPage" id="s_fr_univrouen_poste_domain_AppliConfig_piedPage" object="${appliconfig}" z="u+4Ue82s7I/oP8jDs2nqazEGD+s="/>
+        <field:display field="imageUrl" id="s_fr_univrouen_poste_domain_AppliConfig_imageUrl" object="${appliconfig}" z="rtAx9gz1uQi34EDNuLCb1QPp5hg="/>
+        <field:display date="true" dateTimePattern="${appliConfig_dateendcandidat_date_format}" field="dateEndCandidat" id="s_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat" object="${appliconfig}" z="F+kaF0zlmhr5PvdzZ1oU3X3tsWU="/>
+        <field:display date="true" dateTimePattern="${appliConfig_dateendmembre_date_format}" field="dateEndMembre" id="s_fr_univrouen_poste_domain_AppliConfig_dateEndMembre" object="${appliconfig}" z="aTAnSldV0R7M/+dW7fWBm/Fojgg="/>
+        <field:display date="true" dateTimePattern="${appliConfig_dateendcandidatactif_date_format}" field="dateEndCandidatActif" id="s_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif" object="${appliconfig}" z="W+VNcP1aQ1Km4uQmH6oElm3GBi0="/>
+        <field:display field="mailSubjectMembre" id="s_fr_univrouen_poste_domain_AppliConfig_mailSubjectMembre" object="${appliconfig}" z="PH+4MmcUBazrtY3ICd9uhzJCR2E="/>
+        <field:display field="texteMailActivationMembre" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailActivationMembre" object="${appliconfig}" z="6GRbkrhfeSEIghtAui2xBB72Sjw="/>
+    </page:show>
+</div>

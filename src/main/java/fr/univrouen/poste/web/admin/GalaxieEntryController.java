@@ -1,0 +1,189 @@
+/**
+ * Licensed to ESUP-Portail under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
+ *
+ * ESUP-Portail licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package fr.univrouen.poste.web.admin;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.persistence.TypedQuery;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import fr.univrouen.poste.domain.GalaxieEntry;
+import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.CreateUserService;
+import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.web.UserRegistrationForm;
+
+@RequestMapping("/admin/galaxieentrys")
+@Controller
+@RooWebScaffold(path = "admin/galaxieentrys", formBackingObject = GalaxieEntry.class)
+public class GalaxieEntryController {
+	
+	@Autowired 
+	private CreateUserService createUserService;
+	
+	@Autowired 
+    private LogService logService;
+	
+    @RequestMapping(produces = "text/html")
+    public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("galaxieentrys", GalaxieEntry.findGalaxieEntryEntries(firstResult, sizeNo));
+            float nrOfPages = (float) GalaxieEntry.countGalaxieEntrys() / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("galaxieentrys", GalaxieEntry.findAllGalaxieEntrys());
+        }
+        
+        Map<String, String> unknowCandidats = new HashMap<String, String>();
+        Map<String, String> unknowPostes = new HashMap<String, String>();
+        Map<List<String>, String> unknowCanidatures = new HashMap<List<String>, String>();
+        
+        List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findAllGalaxieEntrys();
+        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {
+        	if(galaxieEntry.getCandidat() == null)
+        		unknowCandidats.put(galaxieEntry.getNumCandidat(), "dummy");
+           	if(galaxieEntry.getPoste() == null)
+        		unknowPostes.put(galaxieEntry.getNumEmploi(), "dummy");
+           	if(galaxieEntry.getCandidat() == null || galaxieEntry.getPoste() == null) {
+           		List<String> candidatureKey = new Vector<String>();
+           		candidatureKey.add(galaxieEntry.getNumEmploi());
+           		candidatureKey.add(galaxieEntry.getNumCandidat());
+           		unknowCanidatures.put(candidatureKey, "dummy");
+           	}
+        }
+        
+        uiModel.addAttribute("unknowCandidats", unknowCandidats.keySet());
+        uiModel.addAttribute("unknowPostes", unknowPostes.keySet());
+        uiModel.addAttribute("unknowCanidatures", unknowCanidatures.keySet());
+        
+        return "admin/galaxieentrys/list";
+    }
+    
+    @RequestMapping("/generatecandidatspostes")
+    public String createCandidatPosteUrl(Model uiModel) {
+    	
+    	List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findAllGalaxieEntrys();
+        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {
+        	if(galaxieEntry.getCandidat() == null) {
+        		User candidat = null;
+        		TypedQuery<User> query = User.findUsersByNumCandidat(galaxieEntry.getNumCandidat());
+        		if(query.getResultList().isEmpty()) {
+        			if(galaxieEntry.getEmail() == null || galaxieEntry.getEmail().isEmpty()) {
+        				String message = "Le candidat " + galaxieEntry.getNumCandidat() + " n'a pas de mail de renseigné";
+        				logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
+        			} else {
+	        			List<User> usersSameEmail = User.findUsersByEmailAddress(galaxieEntry.getEmail()).getResultList();
+	        			if(!usersSameEmail.isEmpty()) {
+	        				String message = "Le candidat " + galaxieEntry.getNumCandidat() + " a le même mail que le(s) utilisateur(s)";
+	        				for(User u : usersSameEmail) 
+	        					message = message + " " + u.getEmailAddress() + "(n° candidat : " + u.getNumCandidat() + ")";
+	        				logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
+	        			} else {
+	        			
+		        			// new User 
+		        			UserRegistrationForm userRegistration = new UserRegistrationForm();
+		        			userRegistration.setEmailAddress(galaxieEntry.getEmail());
+		        			candidat = createUserService.createCandidatUser(userRegistration);
+		        			
+		        			// Candidat
+		        			candidat.setNumCandidat(galaxieEntry.getNumCandidat());
+		        			candidat.setCivilite(galaxieEntry.getCivilite());
+		        			candidat.setEmailAddress(galaxieEntry.getEmail());
+		        			candidat.setNom(galaxieEntry.getNom());
+		        			candidat.setPrenom(galaxieEntry.getPrenom());
+		        			candidat.persist();    
+		        			
+		        			logService.logImportGalaxie("Candidat " + candidat.getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
+	        			}
+        			}
+        			
+        		} else {
+        			candidat = query.getSingleResult();
+        		}
+        		
+        		if(candidat != null) {
+	        		galaxieEntry.setCandidat(candidat);
+	        		galaxieEntry.persist();
+        		}
+        	}
+        	
+           	if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() == null) {
+           		PosteAPourvoir poste = null;
+           		TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(galaxieEntry.getNumEmploi());
+           		if(query.getResultList().isEmpty()) {
+           			
+           			// new Poste
+           			poste = new PosteAPourvoir();
+           			poste.setLocalisation(galaxieEntry.getLocalisation());
+           			poste.setNumEmploi(galaxieEntry.getNumEmploi());
+           			poste.setProfil(galaxieEntry.getProfil());
+           			poste.persist();
+           			
+           			logService.logImportGalaxie("Poste " + poste.getNumEmploi() + " créé.", LogService.IMPORT_SUCCESS);
+           			
+           		} else {
+           			poste = query.getSingleResult();
+        		}
+        		galaxieEntry.setPoste(poste);
+        		galaxieEntry.persist(); 
+           	}
+           	
+           	if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
+           		
+           		// new Candidature
+           		PosteCandidature candidature = new PosteCandidature();
+           		candidature.setCandidat(galaxieEntry.getCandidat());
+           		candidature.setPoste(galaxieEntry.getPoste());
+           		
+                Calendar cal = Calendar.getInstance();
+                Date currentTime = cal.getTime();
+                candidature.setCreation(currentTime);
+                
+           		candidature.persist();
+           		galaxieEntry.setCandidature(candidature);
+           		galaxieEntry.persist();    
+           		
+       			logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
+           		
+           	}
+           	
+        }
+        
+
+        return "redirect:/admin/logimportgalaxies";
+    }
+    
+    
+
+	
+}

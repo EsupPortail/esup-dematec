@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_fr_univrouen_poste_domain_User" modelAttribute="user" path="/admin/users" versionField="Version" z="cleWfBQBOQfX+tyyoJUsG0lDnag=">
+        <field:input field="emailAddress" id="c_fr_univrouen_poste_domain_User_emailAddress" min="1" required="true" validationMessageCode="field_invalid_email" z="LaNaYa23k7CSmZ5AmynMhg+Ains="/>
+        <field:input field="password" id="c_fr_univrouen_poste_domain_User_password" z="pXJ70kWvirdIlnzYuWcxhm6whIk="/>
+        <field:datetime dateTimePattern="${user_activationdate_date_format}" field="activationDate" id="c_fr_univrouen_poste_domain_User_activationDate" z="8RzqNTBPsCQFuAfCPe6fZMtUSNs="/>
+        <field:input field="activationKey" id="c_fr_univrouen_poste_domain_User_activationKey" z="TADEvKgQMz7h7mS3bs18AWA1JKs="/>
+        <field:checkbox field="enabled" id="c_fr_univrouen_poste_domain_User_enabled" z="N6xrTdgd765jIxge7ueR4yWweRw="/>
+        <field:checkbox field="isManager" id="c_fr_univrouen_poste_domain_User_isManager" z="Crj/ExkF/iG9DflH8FnEpmv8yNc="/>
+        <field:checkbox field="isAdmin" id="c_fr_univrouen_poste_domain_User_isAdmin" z="lIu4Z7iIf/xGrw8QRk0mWNer37U="/>
+        <field:select field="postes" id="c_fr_univrouen_poste_domain_User_postes" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" render="false" z="user-managed"/>
+        <field:checkbox field="isSuperManager" id="c_fr_univrouen_poste_domain_User_isSuperManager" z="bE0h0oab7+KdfXgAoYOO/GdQ7T0="/>
+        <field:input field="civilite" id="c_fr_univrouen_poste_domain_User_civilite" z="eSBoVwC+XGxQ1qsZZV+7xukHhmE="/>
+        <field:input field="nom" id="c_fr_univrouen_poste_domain_User_nom" z="yxL1Yya7TCh7ZgkZ2j2eY/z1hgQ="/>
+        <field:input field="prenom" id="c_fr_univrouen_poste_domain_User_prenom" z="lVMJuCJZNrSoMz+Gzh/5E4g5DF8="/>
+        <field:input field="numCandidat" id="c_fr_univrouen_poste_domain_User_numCandidat" z="dplPWSY2fAEvO0BmG1kYgMjOPnE="/>
+        <field:input field="loginFailedNb" id="c_fr_univrouen_poste_domain_User_loginFailedNb" validationMessageCode="field_invalid_integer" z="11s8X2awIqxrcMS1798Iqe7LXCM="/>
+        <field:input field="loginFailedTime" id="c_fr_univrouen_poste_domain_User_loginFailedTime" validationMessageCode="field_invalid_integer" z="rJ6yj8jBP/1aRVOCwvFxoEbU3KE="/>
+    </form:update>
+</div>

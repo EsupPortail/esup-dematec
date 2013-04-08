@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+	<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+		<c:set value="true" var="canManage" />
+	</sec:authorize>
+	<page:show create="${canManage}" delete="${canManage}" id="ps_fr_univrouen_poste_domain_User" object="${user}" path="/admin/users"
+		update="${canManage}" z="user-managed">
+		<div class="row-fluid">
+			<div class="span3 well">
+				<field:display field="emailAddress" id="s_fr_univrouen_poste_domain_User_emailAddress" object="${user}" z="xQZNAoh70NnyVnm26UdY5V/vFPE=" />
+			</div>
+			<div class="span3 well">
+				<field:display field="status" id="s_fr_univrouen_poste_domain_User_status" label="Status" object="${user}" />
+			</div>
+			<div class="span3 well">
+				<field:display field="postes" id="s_fr_univrouen_poste_domain_User_postes" object="${user}" z="/vZx9Cs/iphynUiDp465Mg+w7Ho=" />
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3 well">
+				<field:display date="true" dateTimePattern="${user_activationdate_date_format}" field="activationDate"
+					id="s_fr_univrouen_poste_domain_User_activationDate" object="${user}" z="H2ijYJDiGAqv2BYMY4IPTJ5Dn7Y=" />
+			</div>
+			<div class="span3 well">
+				<field:display field="activationKey" id="s_fr_univrouen_poste_domain_User_activationKey" object="${user}" z="r6eBwnTfEIjLPtRkI7g+nZZyIv8=" />
+			</div>
+			<div class="span3 well">
+				<field:display field="enabled" id="s_fr_univrouen_poste_domain_User_enabled" object="${user}" z="wSALHT5iwafU1vC9ns+Youbsb3Y=" />
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3 well">
+				<field:display field="civilite" id="s_fr_univrouen_poste_domain_User_civilite" object="${user}" z="rL3cw5b+K89j85Nu4xEx+kDqFyo=" />
+			</div>
+			<div class="span3 well">
+				<field:display field="nom" id="s_fr_univrouen_poste_domain_User_nom" object="${user}" z="d4tDYDwGrET1lvFRb5SZLvlovto=" />
+			</div>
+			<div class="span3 well">
+				<field:display field="prenom" id="s_fr_univrouen_poste_domain_User_prenom" object="${user}" z="gJJkYY0rIahNnrS3Lr6I28njfw4=" />
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3 well">
+				<field:display field="numCandidat" id="s_fr_univrouen_poste_domain_User_numCandidat" object="${user}" z="xdl5Xaw234qSXPZYOwaCUVg9MaY=" />
+			</div>
+			<div class="span3 well">
+				<field:display field="loginFailedNb" id="s_fr_univrouen_poste_domain_User_loginFailedNb" object="${user}" z="itSRX1axO7MRDjC/f2ORBhV5qdY=" />
+			</div>
+			<div class="span3 well">
+				<field:display field="loginFailedTime" id="s_fr_univrouen_poste_domain_User_loginFailedTime" object="${user}" z="z2ppGzwqLY6wln61kk/8AAwfioI=" />
+			</div>
+		</div>
+
+		<field:display field="password" id="s_fr_univrouen_poste_domain_User_password" object="${user}" render="false" z="user-managed" />
+		<field:display field="isCandidat" id="s_fr_univrouen_poste_domain_User_isCandidat" object="${user}" render="false" z="user-managed" />
+		<field:display field="isManager" id="s_fr_univrouen_poste_domain_User_isManager" object="${user}" render="false" z="user-managed" />
+		<field:display field="isAdmin" id="s_fr_univrouen_poste_domain_User_isAdmin" object="${user}" render="false" z="user-managed" />
+		<field:display field="isSuperManager" id="s_fr_univrouen_poste_domain_User_isSuperManager" object="${user}" render="false" z="user-managed" />
+		
+	</page:show>
+</div>

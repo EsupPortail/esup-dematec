@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_fr_univrouen_poste_domain_GalaxieEntry" modelAttribute="galaxieEntry" path="/admin/galaxieentrys" render="${empty dependencies}" z="4PAW0MW9LYwPIuBy4UPS5LQt6Cc=">
+        <field:input field="numEmploi" id="c_fr_univrouen_poste_domain_GalaxieEntry_numEmploi" z="0bB0r2oCDh93klK79LIKm+0GCcQ="/>
+        <field:input field="numCandidat" id="c_fr_univrouen_poste_domain_GalaxieEntry_numCandidat" z="pw8h9AJ9dYb8hq+0LVJ/1LD7tLo="/>
+        <field:input field="civilite" id="c_fr_univrouen_poste_domain_GalaxieEntry_civilite" z="zcSXYe+WAhD1NObCGICEI2F8A/8="/>
+        <field:input field="nom" id="c_fr_univrouen_poste_domain_GalaxieEntry_nom" z="/0ymNKsgZjhgaCIGtQ3RUKQBSbA="/>
+        <field:input field="prenom" id="c_fr_univrouen_poste_domain_GalaxieEntry_prenom" z="mAYxFY2n+2t0GSySTgzcQprqbyM="/>
+        <field:input field="email" id="c_fr_univrouen_poste_domain_GalaxieEntry_email" validationMessageCode="field_invalid_email" z="VidliZB6KuE5eLNCIbahQDGS6pU="/>
+        <field:select field="candidat" id="c_fr_univrouen_poste_domain_GalaxieEntry_candidat" itemValue="id" items="${users}" path="/admin/users" z="OGD12tUaag5fAnb2boG8fl3Vsck="/>
+        <field:select field="poste" id="c_fr_univrouen_poste_domain_GalaxieEntry_poste" itemValue="id" items="${posteapourvoirs}" path="/admin/posteapourvoirs" z="pNlnE+/Q6H3y5OeExfrrPvqBnUY="/>
+        <field:input field="localisation" id="c_fr_univrouen_poste_domain_GalaxieEntry_localisation" z="xtJCMrUhv7v79aOktGxoMNaHVI8="/>
+        <field:input field="profil" id="c_fr_univrouen_poste_domain_GalaxieEntry_profil" z="Yd/TID5t2agN9FDutGcPEy6Za4I="/>
+        <field:select field="candidature" id="c_fr_univrouen_poste_domain_GalaxieEntry_candidature" itemValue="id" items="${postecandidatures}" path="/postecandidatures" z="Y2xRG4DBVfwdK0HyPheTToEghJk="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_fr_univrouen_poste_domain_GalaxieEntry" render="${not empty dependencies}" z="PXdQ6DPa2nf4gsYQC0M0KmOd2eo="/>
+</div>

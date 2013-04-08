@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:spring="http://www.springframework.org/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" 
+     xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    
+    <div class="row-fluid">
+        <div class="span6">
+            <util:help>
+                <spring:url var="logmailsUrl" value="/admin/logmails" />
+                <p>Pour chaque poste, candidat et candidature importé depuis un fichier Excel Galaxie, une ligne de log est ajoutée.</p>
+                <p>Si la création a échoué, une ligne de log est également ajoutée mais avec un status particulier (IMPORT FAILED).</p>
+                <p>Après chaque importation, nous vous suggérons de vérifier via l'outil "Filtrer" si des imports ont échoué.</p>
+                <p>Un import peut par exemple échouer si le mail n'avait pas été renseigné dans le fichier Excel issu de Galaxie ; si c'est le cas il faudra alors réimporter un nouveau fichier Galaxie présentant pour le candidat affecté un mail de renseigné.</p>
+                <p>En plus de cette vérification, on peut également vérifier les <a href="${logmailsUrl}">logs d'envoi de mails.</a></p>
+            </util:help>
+        </div>
+        <div class="span6">
+            <div class="accordion help" id="accordionfilter">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionfilter" href="#collapseFilter"> Filtrer </a>
+                    </div>
+                    <div id="collapseFilter" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                                <form:find finderName="ByStatusEquals" id="ff_fr_univrouen_poste_domain_LogImportGalaxie" path="/admin/logimportgalaxies">
+                                    <c:forTokens var="status" items="IMPORT FAILED;IMPORT SUCCESS" delims=";">
+                                            <c:choose>
+                                                <c:when test="${param.status == status or param.status == null and status == 'IMPORT FAILED'}">
+                                                    <input name="status" type="radio" value="${status}" checked="checked" />${status}
+                                                  </c:when>
+                                                <c:otherwise>
+                                                    <input name="status" type="radio" value="${status}" />${status}
+                                                </c:otherwise>
+                                            </c:choose>
+                                    </c:forTokens>
+                                </form:find>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <page:list id="pl_fr_univrouen_poste_domain_LogImportGalaxie" items="${logimportgalaxies}" z="xsLor0i3NybS3lnFqhIxMNkDEKY=">
+        <table:table create="false" data="${logimportgalaxies}" delete="false" id="l_fr_univrouen_poste_domain_LogImportGalaxie" path="/admin/logimportgalaxies" update="false" z="user-managed" view="false">
+            <table:column date="true" dateTimePattern="${logImportGalaxie_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogImportGalaxie_actionDate" property="actionDate" z="xzgfXoC1P17NUM15QyUzjKc2sUQ="/>
+            <table:column id="c_fr_univrouen_poste_domain_LogImportGalaxie_message" property="message" z="6Gi/up8/8JYkqar661NVJzfrZaE="/>
+            <table:column id="c_fr_univrouen_poste_domain_LogImportGalaxie_status" property="status" z="97pXyO5H73PTVKHMctQLPIHjO9k="/>
+        </table:table>
+    </page:list>
+</div>

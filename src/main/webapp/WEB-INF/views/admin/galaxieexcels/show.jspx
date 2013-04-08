@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <div class="row-fluid">
+        <div class="span3">
+            <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_GalaxieExcel" list="false" object="${galaxieexcel}" path="/admin/galaxieexcels" render="false" update="false" z="user-managed">
+                <field:display field="filename" id="s_fr_univrouen_poste_domain_GalaxieExcel_filename" object="${galaxieexcel}" z="KUBGRtQIcH4twNLNo+K/Kl8TL70="/>
+                <field:display date="true" dateTimePattern="${galaxieExcel_creation_date_format}" field="creation" id="s_fr_univrouen_poste_domain_GalaxieExcel_creation" object="${galaxieexcel}" z="61J5sG78Gaweb92cCu3gn82puQw="/>
+                <field:display field="xlsFile" id="s_fr_univrouen_poste_domain_GalaxieExcel_xlsFile" object="${galaxieexcel}" render="false" z="user-managed"/>
+                <field:display field="file" id="s_fr_univrouen_poste_domain_GalaxieExcel_file" object="${galaxieexcel}" render="false" z="user-managed"/>
+                <field:display field="cells" id="s_fr_univrouen_poste_domain_GalaxieExcel_cells" object="${galaxieexcel}" render="false" z="user-managed"/>
+                <field:display field="bigFile" id="s_fr_univrouen_poste_domain_GalaxieExcel_bigFile" object="${galaxieexcel}" z="fqWuFsggcq9Yi7mUiwLkBtccnkI="/>
+            </page:show>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped">
+        <c:forEach items="${galaxieexcel.cells}" var="cellRow" varStatus="loop">
+            <c:choose>
+                <c:when test="${loop.first}">
+                    <thead>
+                        <tr>
+                            <c:forEach items="${cellRow}" var="cell">
+                                <th>${cell}</th>
+                            </c:forEach>
+                        </tr>
+                    </thead>
+                </c:when>
+                <c:otherwise>
+                    <tr>
+                        <c:forEach items="${cellRow}" var="cell">
+                            <td>${cell}</td>
+                        </c:forEach>
+                    </tr>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+    </table>
+</div>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show create="false" delete="${galaxieentry.deletable}" id="ps_fr_univrouen_poste_domain_GalaxieEntry" object="${galaxieentry}" path="/admin/galaxieentrys" update="false" z="user-managed">
+        <div class="row-fluid">
+            <div class="span4 well">
+                <field:display field="email" id="s_fr_univrouen_poste_domain_GalaxieEntry_email" object="${galaxieentry}" z="kxHej59VWHYWI1Qk6aZfw3+znNc="/>
+            </div>
+            <div class="span4 well">
+                <field:display field="numEmploi" id="s_fr_univrouen_poste_domain_GalaxieEntry_numEmploi" object="${galaxieentry}" z="qaV9Zq+yfjK6ZJ4K54zA72lKSqQ="/>
+            </div>
+            <div class="span4 well">
+                <field:display field="numCandidat" id="s_fr_univrouen_poste_domain_GalaxieEntry_numCandidat" object="${galaxieentry}" z="CN6sIuBT+nJ1Wv2EiFlSbFJmWts="/>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span4 well">
+                <field:display field="civilite" id="s_fr_univrouen_poste_domain_GalaxieEntry_civilite" object="${galaxieentry}" z="hAOcIO2WA02CMR5nHB/7+0ZMFwU="/>
+            </div>
+            <div class="span4 well">
+                <field:display field="nom" id="s_fr_univrouen_poste_domain_GalaxieEntry_nom" object="${galaxieentry}" z="g3Mup2nL994NNApO1ackYbNMSp0="/>
+            </div>
+            <div class="span4 well">
+                <field:display field="prenom" id="s_fr_univrouen_poste_domain_GalaxieEntry_prenom" object="${galaxieentry}" z="Oqj9RSBwWSGxF8EPTX+Rqwcr3ZQ="/>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span6 well">
+                <field:display field="localisation" id="s_fr_univrouen_poste_domain_GalaxieEntry_localisation" object="${galaxieentry}" z="IJ3ZWcoFu8qWnznSXoaPtKKZ+so="/>
+            </div>
+            <div class="span6 well">
+                <field:display field="profil" id="s_fr_univrouen_poste_domain_GalaxieEntry_profil" object="${galaxieentry}" z="0Y1uH2vjlE++7cGBKzXZZPMu9OU="/>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span4 well">
+                <field:display field="candidat" id="s_fr_univrouen_poste_domain_GalaxieEntry_candidat" object="${galaxieentry}" z="TSqEunc3cbUNDQoQqwD9s8C6v30="/>
+            </div>
+            <div class="span4 well">
+                <field:display field="poste" id="s_fr_univrouen_poste_domain_GalaxieEntry_poste" object="${galaxieentry}" z="X5MrBht/JBCgiTTY6fu17Q91WWc="/>
+            </div>
+            <div class="span4 well">
+                <field:display field="candidature" id="s_fr_univrouen_poste_domain_GalaxieEntry_candidature" object="${galaxieentry}" z="9DDi1TVVQThbKEal1iAtSy9k1bI="/>
+            </div>
+        </div>
+    </page:show>
+</div>

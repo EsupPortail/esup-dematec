@@ -1,0 +1,67 @@
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+     xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:spring="http://www.springframework.org/tags" 
+     xmlns:jsp="http://java.sun.com/JSP/Page" 
+     xmlns:sec="http://www.springframework.org/security/tags" version="2.0">
+  <jsp:directive.page contentType="text/html;charset=UTF-8" />
+  <jsp:output omit-xml-declaration="yes" />
+  <spring:message var="title" code="error_uncaughtexception_title" htmlEscape="false" />
+  <util:panel id="title" title="${title}">
+    <h2>${fn:escapeXml(title)}</h2>
+    <p>
+      <spring:message code="error_uncaughtexception_problemdescription" />
+    </p>
+    
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+	    <c:if test="${not empty exception}">
+	      <div class="collapse-group">
+	        <h4>
+	          <a class="btn" href="#"><spring:message code="exception_details" /></a>
+	        </h4>
+	        <div class="collapse">
+	        <spring:message var="message" code="exception_message" htmlEscape="false" />
+	        <util:panel id="_message" title="${message}" openPane="false">
+	          <c:out value="${exception.localizedMessage}" />
+	        </util:panel>
+	        <spring:message var="stacktrace" code="exception_stacktrace" htmlEscape="false" />
+	        <util:panel id="_exception" title="${stacktrace}" openPane="false">
+	          <c:forEach items="${exception.stackTrace}" var="trace">
+	            <c:out value="${trace}" />
+	            <br />
+	          </c:forEach>
+	        </util:panel>
+	        </div>
+	      </div>
+	      <spring:url value="/" var="root_url"/>
+	    <a href="${root_url}" class="btn btn-success btn-large">Retour</a>
+	    
+	      <script type="text/javascript">
+	      $('.collapse-group .btn').on('click', function(e) {
+	    	    e.preventDefault();
+	    	    var $this = $(this);
+	    	    var $collapse = $this.closest('.collapse-group').find('.collapse');
+	    	    $collapse.collapse('toggle');
+	    	});
+	      </script>
+	    </c:if>
+    </sec:authorize>
+  </util:panel>
+</div>

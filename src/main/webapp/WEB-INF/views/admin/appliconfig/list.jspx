@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_fr_univrouen_poste_domain_AppliConfig" items="${appliconfigs}" z="GFJsQZTivqxUygDAJkJcWQZVulw=">
+        <table:table create="false" data="${appliconfigs}" delete="false" id="l_fr_univrouen_poste_domain_AppliConfig" path="/admin/appliconfig" view="false" z="user-managed">
+            <table:column date="true" dateTimePattern="${appliConfig_begindate_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_beginDate" property="beginDate" render="false" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${appliConfig_enddate_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_endDate" property="endDate" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_AppliConfig_titre" property="titre" z="EQL+m1gTK/YwWOtLsjR2M9OjOl0="/>
+            <table:column id="c_fr_univrouen_poste_domain_AppliConfig_piedPage" property="piedPage" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_AppliConfig_imageUrl" property="imageUrl" render="false" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${appliConfig_dateendcandidat_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat" property="dateEndCandidat" render="false" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${appliConfig_dateendmembre_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre" property="dateEndMembre" render="false" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${appliConfig_dateendcandidatactif_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif" property="dateEndCandidatActif" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>
