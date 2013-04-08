@@ -3,10 +3,13 @@
 Application de dématérialisation des recrutements des enseignants chercheurs et ATER liés à l'application nationale Galaxie.
 ============================
 
-Cette application permet une gestion des authentifications des candidats et autres utilisateurs (administrateur, gestionnaire, président, membre de commission).
+Cette application permet une gestion des authentifications des candidats et autres utilisateurs (administrateur, gestionnaire, membre de commission).
 
 Elle ingère des fichiers Excel Galaxie pour générer ensuite les comptes utilisateurs, postes, candidatures liés.
+
 Elle permet aux candidats de déposer des fichiers pour chacune de ses candidatures.
+
+Elle permet aux membres de consulter les fichiers des candidatures correspondant à leur(s) commission(s) et validées par les gestionnaires (RH : recevable/non-recevable).
 
 L'ensemble des données est stocké dans une base de données, fichiers compris, cela nous a ammené à utiliser PostgreSQL (et non MySQL) pour ses possibilités de streaming sur les blobs. 
 
