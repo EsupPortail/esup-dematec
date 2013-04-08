@@ -8,21 +8,21 @@
 
     <!-- 
         Ce bean spring permet de configurer le mapping Excel Galaxie -> EsupDematEC.
-        Ainsi si les exports Galaxie Excel ne sont pas formattés à chaque campagne de la même façon, nous pouvons théoriquement reconfiguré notre mapping simplement ici.
+        Ainsi si les exports Galaxie Excel ne sont pas formattés à chaque campagne de la même façon, nous pouvons théoriquement reconfigurer notre mapping simplement ici.
         Les exports Galaxie n'ont par exemple pas le même formattage entre les campagnes EC et celles ATER 
     -->
     
     <!--  Mapping OK pour la campagne Galaxie Enseignants-Chercheurs de début 2013  -->
 	<bean id="galaxieMappingService" class="fr.univrouen.poste.services.GalaxieMappingService">
-	    <property name="id_email" value="Email" />
+	    	<property name="id_email" value="Email" />
 		<property name="id_numemploi" value="N° emploi" />
 		<property name="id_numCandidat" value="N° candidat" />
 		
 		<property name="id_civilite" value="Civilité" />
 		<property name="id_nom" value="Nom" />
 		<property name="id_prenom" value="Prénom" />
-        <property name="id_localisation" value="Localisation" />
-        <property name="id_profil" value="Profil J.o" />
+        	<property name="id_localisation" value="Localisation" />
+        	<property name="id_profil" value="Profil J.o" />
 	</bean>
 
     
