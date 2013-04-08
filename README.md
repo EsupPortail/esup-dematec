@@ -30,11 +30,21 @@ apt-get install postgresql-contrib
 ```
 
 Puis la création de l'extension lo se fait via un super-user:
+
+* avec postgresql 8 :
+```
+psql
+\c esupdematec
+\i /usr/share/postgresql/8.4/contrib/lo.sql
+```
+
+* avec postgresql 9 :
 ```
 psql
 \c esupdematec
 CREATE EXTENSION lo;
 ```
+--
 
 Et enfin ajout du trigger : 
 ```
