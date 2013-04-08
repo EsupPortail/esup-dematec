@@ -25,15 +25,21 @@ Pour une bonne gestion des blob de cette application, il faut ajouter dans Postg
 La fonction lo_manage est nécessaire ici.
 
 Sous debian : 
+```
 apt-get install postgresql-contrib
+```
 
 Puis la création de l'extension lo se fait via un super-user:
+```
 psql
 \c esupdematec
 CREATE EXTENSION lo;
+```
 
 Et enfin ajout du trigger : 
+```
 CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
+```
 
 CF http://docs.postgresqlfr.org/8.3/lo.html
 
@@ -42,11 +48,12 @@ CF http://docs.postgresqlfr.org/8.3/lo.html
 
 ### Configurations Systèmes
 
-Logs : src/main/resources/log4j.properties
+Logs : 
+* src/main/resources/log4j.properties
 
 Base de données : 
 * src/main/resources/META-INF/spring/database.properties pour paramètres de connexion
-* src/main/resources/META-INF/persistence.xml pour passage de create à update après premier lancement (création + initialisation de la base de données)
+* src/main/resources/META-INF/persistence.xml pour passage de create à update après premier lancement (création + initialisation de la base de données - utilisateur par défaut d'administration : admin/admin)
 
 Mails : 
 * src/main/resources/META-INF/spring/email.properties
@@ -66,9 +73,12 @@ Les admin et super-manager peuvent configurer certains éléments de l'applicati
 ## Installation
 
 ### lancement simple avec jetty :
+```
 mvn jetty:run
+```
 
 ### obtention du war pour déploiement sur tomcat ou autre :
+```
 mvn clean package
-
+```
 
