@@ -57,7 +57,7 @@
         <artifact>
         <groupId>fr.univrouen.poste</groupId>
         <artifactId>EsupDematEC</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1</version>
         <license>Apache License, Version 2.0</license>
     </artifact>
     <artifact>
