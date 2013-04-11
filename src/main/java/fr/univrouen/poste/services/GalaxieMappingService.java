@@ -64,14 +64,14 @@ public class GalaxieMappingService {
     }
 
 	public void setAttrFromCell(GalaxieEntry galaxieEntry, String cellName, String cellValue) {
-        if (id_numemploi.equals(cellName)) galaxieEntry.setNumEmploi(cellValue);
-        if (id_numCandidat.equals(cellName)) galaxieEntry.setNumCandidat(cellValue);
-        if (id_civilite.equals(cellName)) galaxieEntry.setCivilite(cellValue);
-        if (id_nom.equals(cellName)) galaxieEntry.setNom(cellValue);
-        if (id_prenom.equals(cellName)) galaxieEntry.setPrenom(cellValue);
-        if (id_email.equals(cellName)) galaxieEntry.setEmail(cellValue);
-        if (id_localisation.equals(cellName)) galaxieEntry.setLocalisation(cellValue);
-        if (id_profil.equals(cellName)) galaxieEntry.setProfil(cellValue);
+        if (id_numemploi.equals(cellName)) galaxieEntry.setNumEmploi(cellValue.trim());
+        if (id_numCandidat.equals(cellName)) galaxieEntry.setNumCandidat(cellValue.trim());
+        if (id_civilite.equals(cellName)) galaxieEntry.setCivilite(cellValue.trim());
+        if (id_nom.equals(cellName)) galaxieEntry.setNom(cellValue.trim());
+        if (id_prenom.equals(cellName)) galaxieEntry.setPrenom(cellValue.trim());
+        if (id_email.equals(cellName)) galaxieEntry.setEmail(cellValue.trim());
+        if (id_localisation.equals(cellName)) galaxieEntry.setLocalisation(cellValue.trim());
+        if (id_profil.equals(cellName)) galaxieEntry.setProfil(cellValue.trim());
 	}
 	
 }

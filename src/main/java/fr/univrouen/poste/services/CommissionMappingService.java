@@ -33,10 +33,10 @@ public class CommissionMappingService {
     private static final String id_prenom = "Prénom";
 
 	public void setAttrFromCell(CommissionEntry commissionEntry, String cellName, String cellValue) {
-        if (id_numposte.equals(cellName)) commissionEntry.setNumPoste(cellValue);
-        if (id_nom.equals(cellName)) commissionEntry.setNom(cellValue);
-        if (id_prenom.equals(cellName)) commissionEntry.setPrenom(cellValue);
-        if (id_email.equals(cellName)) commissionEntry.setEmail(cellValue);
+        if (id_numposte.equals(cellName)) commissionEntry.setNumPoste(cellValue.trim());
+        if (id_nom.equals(cellName)) commissionEntry.setNom(cellValue.trim());
+        if (id_prenom.equals(cellName)) commissionEntry.setPrenom(cellValue.trim());
+        if (id_email.equals(cellName)) commissionEntry.setEmail(cellValue.trim());
 	}
 	
 }
