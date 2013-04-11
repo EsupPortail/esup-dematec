@@ -25,6 +25,19 @@
         	<property name="id_profil" value="Profil J.o" />
 	</bean>
 
+    <!--  Mapping OK pour la campagne Galaxie ATER printemps 2013  -->
+    <!--
+    <bean id="galaxieMappingService" class="fr.univrouen.poste.services.GalaxieMappingService">
+        <property name="id_email" value="EMAIL du candidat" />
+        <property name="id_numemploi" value="NUMOFR" />
+        <property name="id_numCandidat" value="Numero du candidat" />
+        
+        <property name="id_civilite" value="Civilite du candidat" />
+        <property name="id_nom" value="Nom du candidat" />
+        <property name="id_prenom" value="Prenom du candidat" />
+    </bean> 
+    -->
+
     
     <!--  Mapping OK pour la campagne Galaxie ATER été 2012  -->
     <!-- 
