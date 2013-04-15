@@ -58,7 +58,10 @@ public class GalaxieEntry {
     
     // don't care of upper/lower case for authentication with email ...
 	public void setEmail(String email) {
-    	this.email = email.toLowerCase();
+		if(email != null)
+			this.email = email.toLowerCase();
+		else
+			this.email = null;
     }
 
     public Boolean getDeletable() {
