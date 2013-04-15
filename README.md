@@ -93,15 +93,36 @@ Les admin et super-manager peuvent configurer certains éléments de l'applicati
 * Texte du mail "password oublié"
 
 
+## Installation 
 
-## Installation
+### Pré-requis
+* Java (JDK - JAVA SE 6 OK):  http://www.oracle.com/technetwork/java/javase/downloads/index.html
+* Maven (dernière version 3.0.x ok) : http://maven.apache.org/download.cgi
+* Postgresql (8 ou 9 OK) : le mieux est de l'installer via le système de paquets de votre linux.
 
-### lancement simple avec jetty :
+### PostgreSQL
+* pg_hba.conf : ajout de 
+
+``` 
+host    all             all             127.0.0.1/32            password
+``` 
+
+* redémarrage de postgresql
+* psql
+
+```
+create database esupdematec;
+create USER esupdematec with password 'esup';
+grant ALL ON DATABASE esupdematec to esupdematec;
+```
+
+### Lancement simple avec jetty :
 ```
 mvn jetty:run
 ```
+Puis firefox http://localhost:8080/EsupDematEC (compte admin/admin)
 
-### obtention du war pour déploiement sur tomcat ou autre :
+### Obtention du war pour déploiement sur tomcat ou autre :
 ```
 mvn clean package
 ```
