@@ -39,13 +39,19 @@
                         <div class="accordion-body collapse" id="collapseFilter">
 							<div class="accordion-inner">
 								<div class="row-fluid">
-									<div class="span8">
+									<div class="span4">
 										<form:find finderName="ByPostes" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
 											<field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id"
 												items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true" />
 										</form:find>
 									</div>
-									<div class="span4">
+									<div class="span5">
+										<form:find finderName="ByCandidats" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+											<field:select disableFormBinding="true" field="candidat" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id"
+												items="${candidats}" multiple="true" path="/admin/users" required="true" />
+										</form:find>
+									</div>
+									<div class="span3">
 										<form:find finderName="ByRecevable" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
 											<field:checkbox disableFormBinding="true" field="recevable" id="f_fr_univrouen_poste_domain_PosteCandidature_recevable" />
 										</form:find>

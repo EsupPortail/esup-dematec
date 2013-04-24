@@ -268,6 +268,14 @@ public class MyPosteCandidatureController {
         return "postecandidatures/list";
     }
 
+    @RequestMapping(params = "find=ByCandidats", method = RequestMethod.GET)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+    public String findPosteCandidaturesByRecevable(@RequestParam(required=false, value="candidat") List<User> candidats, Model uiModel) {
+		addDateTimeFormatPatterns(uiModel);
+    	uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByCandidats(candidats).getResultList());
+        return "postecandidatures/list";
+    }
+
     @RequestMapping(params = "find=ByRecevable", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String findPosteCandidaturesByRecevable(@RequestParam(value = "recevable", required = false) Boolean recevable, Model uiModel) {
@@ -275,5 +283,4 @@ public class MyPosteCandidatureController {
     	uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByRecevable(recevable == null ? Boolean.FALSE : recevable).getResultList());
         return "postecandidatures/list";
     }
-
 }

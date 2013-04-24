@@ -104,6 +104,17 @@ public class PosteCandidature {
         }
         return q;
     }
+    
+    public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesByCandidats(List<fr.univrouen.poste.domain.User> candidats) {
+        TypedQuery<PosteCandidature> q;
+        if (candidats == null) {
+            q = entityManager().createQuery("SELECT o FROM PosteCandidature AS o ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class);
+        } else {
+            q = entityManager().createQuery("SELECT o FROM PosteCandidature AS o WHERE o.candidat IN :candidats ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class);
+            q.setParameter("candidats", candidats);
+        }
+        return q;
+    }
 
 	public static TypedQuery<PosteCandidature> findPosteCandidaturesByRecevable(Boolean recevable) {
 		if (recevable == null)
