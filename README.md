@@ -75,11 +75,11 @@ Sécurité :
 * src/main/resources/META-INF/spring/security.properties pour limiter éventuellement l'accès à l'application depuis certaines IP uniquement pour les utilisateurs admin, super-manager et manager
 
 
-### Configurations via l'application
+### Configurations via l'interface graphique de l'application
 
 Les admin et super-manager peuvent configurer certains éléments de l'application via le menu 'Configuration' :
 * dates de clôture pour les candidats, les candidats actifs, les membres (3 dates dstinctes)
-* Titre de l'applciation visible sur chaque page
+* Titre de l'application visible sur chaque page
 * Logo de l'application visible sur chaque page
 * Pied de page de l'application visible sur chaque page (HTML)
 * Texte d'accueil visible sur la page d'accueil (page d'authentification) (HTML)
