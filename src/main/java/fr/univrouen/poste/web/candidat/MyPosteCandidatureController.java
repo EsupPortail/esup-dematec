@@ -137,32 +137,40 @@ public class MyPosteCandidatureController {
 
 		// upload file
 		MultipartFile file = posteCandidatureFile.getFile();
-		String filename = file.getOriginalFilename();
-		Long fileSize = file.getSize();
+		// sometimes file is null here, but I don't know how to reproduce this issue ... maybe that can occur only with some specifics browsers ?
+		if(file != null) {
+			String filename = file.getOriginalFilename();
+			Long fileSize = file.getSize();
+			
+			if(fileSize != 0) {
+				String contentType = file.getContentType();
+				InputStream inputStream = file.getInputStream();
+				//byte[] bytes = IOUtils.toByteArray(inputStream);
 		
-		if(fileSize != 0) {
-			String contentType = file.getContentType();
-			InputStream inputStream = file.getInputStream();
-			//byte[] bytes = IOUtils.toByteArray(inputStream);
-	
-			posteCandidatureFile.setFilename(filename);
-			posteCandidatureFile.setFileSize(fileSize);
-			posteCandidatureFile.setContentType(contentType);
-			logger.warn("Upload and set file in DB with filesize = " + fileSize);
-			posteCandidatureFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
-			posteCandidatureFile.getBigFile().persist();
-	
-			Calendar cal = Calendar.getInstance();
-			Date currentTime = cal.getTime();
-			posteCandidatureFile.setSendTime(currentTime);
-	
-			postecandidature.getCandidatureFiles().add(posteCandidatureFile);
-	
-			postecandidature.setModification(currentTime);
-	
-			postecandidature.persist();
-	
-			logService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, posteCandidatureFile, request, currentTime);
+				posteCandidatureFile.setFilename(filename);
+				posteCandidatureFile.setFileSize(fileSize);
+				posteCandidatureFile.setContentType(contentType);
+				logger.warn("Upload and set file in DB with filesize = " + fileSize);
+				posteCandidatureFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
+				posteCandidatureFile.getBigFile().persist();
+		
+				Calendar cal = Calendar.getInstance();
+				Date currentTime = cal.getTime();
+				posteCandidatureFile.setSendTime(currentTime);
+		
+				postecandidature.getCandidatureFiles().add(posteCandidatureFile);
+		
+				postecandidature.setModification(currentTime);
+		
+				postecandidature.persist();
+		
+				logService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, posteCandidatureFile, request, currentTime);
+			}
+		} else {
+			String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+			String ip = request.getRemoteAddr();
+			String userAgent = request.getHeader("User-Agent");
+			logger.warn(userId + "[" + ip + "] tried to add a 'null file' ... his userAgent is : " + userAgent);
 		}
 
 		return "redirect:/postecandidatures/" + id.toString();
