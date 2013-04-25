@@ -223,6 +223,17 @@ public class MyPosteCandidatureController {
 		uiModel.addAttribute("texteCandidatAideCandidatureDepot", AppliConfig.getCacheTexteCandidatAideCandidatureDepot());
 		return "postecandidatures/show";
 	}
+	
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+    	postecandidature.remove();
+        uiModel.asMap().clear();
+        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
+        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        return "redirect:/postecandidatures";
+    }
 
 	@RequestMapping(produces = "text/html")
 	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
@@ -291,4 +302,5 @@ public class MyPosteCandidatureController {
     	uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByRecevable(recevable == null ? Boolean.FALSE : recevable).getResultList());
         return "postecandidatures/list";
     }
+
 }
