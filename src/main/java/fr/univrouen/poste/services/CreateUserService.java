@@ -23,9 +23,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.exceptions.EsupMailException;
 import fr.univrouen.poste.web.UserRegistrationForm;
 
 @Service
@@ -39,21 +41,21 @@ public class CreateUserService {
 	@Autowired
 	EmailService emailService;
 	
-	
-	public User createCandidatUser(UserRegistrationForm userRegistration) {
+	@Transactional(rollbackFor={EsupMailException.class})
+	public User createCandidatUser(UserRegistrationForm userRegistration) throws EsupMailException {
 	    String mailSubject = AppliConfig.getCacheMailSubject();	    
 	    String mailMessage = AppliConfig.getCacheTexteMailActivation();
 	    return this.createUser(userRegistration, mailSubject, mailMessage);
     }
 	
-	
-	public User createMembreUser(UserRegistrationForm userRegistration) {
+	@Transactional(rollbackFor={EsupMailException.class})
+	public User createMembreUser(UserRegistrationForm userRegistration) throws EsupMailException {
 	    String mailSubject = AppliConfig.getCacheMailSubjectMembre();	    
 	    String mailMessage = AppliConfig.getCacheTexteMailActivationMembre();
 	    return this.createUser(userRegistration, mailSubject, mailMessage);
     }
 	
-	private User createUser(UserRegistrationForm userRegistration, String mailSubject, String mailMessage) {
+	private User createUser(UserRegistrationForm userRegistration, String mailSubject, String mailMessage) throws EsupMailException {
 	    Random random = new Random(System.currentTimeMillis());
 	    String activationKey = "activationKey" + Math.abs(random.nextInt());
 
@@ -72,8 +74,11 @@ public class CreateUserService {
 	    mailMessage = mailMessage.replaceAll("@@mailAddress@@", mailTo);
 	    mailMessage = mailMessage.replaceAll("@@activationKey@@", activationKey);
 	    
-	    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
-	    logger.warn("User with email " + user.getEmailAddress() + " is created and we sent him an email");
+	    if(emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage)) {
+	    	logger.warn("User with email " + user.getEmailAddress() + " is created and we sent him an email");
+	    } else {
+	    	throw new EsupMailException("Error sending email to this user");
+	    }    	
 	    
 	    return user;
     }

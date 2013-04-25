@@ -20,6 +20,8 @@ package fr.univrouen.poste.services;
 import org.apache.log4j.Logger;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public class EmailService {
 	
@@ -44,8 +46,8 @@ public class EmailService {
     	this.isEnabled = isEnabled;
     }
 	
-	
-	public void sendMessage(String mailFrom, String mailTo, String subject, String mailMessage) {
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public boolean sendMessage(String mailFrom, String mailTo, String subject, String mailMessage) {
 		if(this.isEnabled) {
 	    	try {
 	    		mail.setFrom(mailFrom);
@@ -56,13 +58,15 @@ public class EmailService {
 		        logger.debug("Email sent : " + mail.toString());
 		        logService.logMail(mailTo, mailMessage, LogService.MAIL_SENT);
 	    	} catch(Exception e) {   		
-		        logger.error("Email failed : " + mail.toString());
+		        logger.error("Email failed : " + mail.toString(), e);
 		        logService.logMail(mailTo, mailMessage, LogService.MAIL_FAILED);
+		        return false;
 	    	}
 		} else {
 			logger.warn("sendMessage called but email is not enabled ...");
 			logger.info("\tmethod call was :  sendMessage(" + mailFrom + ", " + mailTo + ", " + subject + ", " + mailMessage + ")");
 		}
+		return true;
     }
 	
 }

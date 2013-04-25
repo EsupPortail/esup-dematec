@@ -30,9 +30,7 @@
                 <spring:url var="usersUrl" value="/admin/users" />
                 <p>Pour chaque mail envoyé, une ligne de log est ajoutée.</p>
                 <p>Si l'envoi du mail a échoué (dès l'envoi), une ligne de log est également ajoutée mais avec un status particulier (MAIL FAILED).</p>
-                <p>Cela peut arriver lorsque le mail de l'utilisateur est mal formé par exemple. Dans ce cas on peut modifier le mail de l'utilisateur (et donc son login) manuellement 
-                via le <a href="${usersUrl}">menu utilisateur</a> ; on pourra alors éventuellement selon le cas lui envoyer un mail directement (par un client mail classique, indépendamment de l'application)
-                pour lui signifier ce changement, son adresse d'activation (donnée dans la ligne de log), etc. ...</p>
+                <p>Cela peut arriver lorsque le mail de l'utilisateur est mal formé par exemple.</p>
             </util:help>
         </div>
         <div class="span6">
