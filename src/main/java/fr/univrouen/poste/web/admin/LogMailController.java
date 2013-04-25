@@ -17,15 +17,21 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.finder.RooWebFinder;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.LogMail;
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.services.EmailService;
 
 @RequestMapping("/admin/logmails")
 @Controller
@@ -33,11 +39,36 @@ import fr.univrouen.poste.domain.LogMail;
 @RooWebFinder
 public class LogMailController {
 	
+	
+	@Autowired
+	EmailService emailService;
+	
     @RequestMapping(params = "find=ByStatusEquals", method = RequestMethod.GET)
     public String findLogMailsByStatusEquals(@RequestParam("status") String status, Model uiModel) {
     	addDateTimeFormatPatterns(uiModel);
         uiModel.addAttribute("logmails", LogMail.findLogMailsByStatusEquals(status).getResultList());
         return "admin/logmails/list";
     }
+    
+	
+	@RequestMapping(value = "/{id}/resend")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')")
+	public String modifyRecevableCandidatureFile(@PathVariable("id") Long id) {
+		
+		LogMail logMail = LogMail.findLogMail(id);
+		
+		String mailTo = logMail.getMailTo();
+		String mailMessage = logMail.getMessage();
+		
+		// TODO : get mailSubject from logMail ...
+		//String mailSubject = logMail.getSubject();
+		String mailSubject = AppliConfig.getCacheMailSubject();
+		
+	    String mailFrom = AppliConfig.getCacheMailFrom();
+	    
+		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
+
+		return "redirect:/admin/logmails/" + id.toString();
+	}
     
 }
