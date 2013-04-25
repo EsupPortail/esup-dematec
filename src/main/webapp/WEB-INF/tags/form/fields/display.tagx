@@ -7,6 +7,7 @@
   <jsp:directive.attribute name="label" type="java.lang.String" required="false" rtexprvalue="true" description="The label used for this field, will default to a message bundle if not supplied" />
   <jsp:directive.attribute name="date" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate that this field is of type java.util.Date" />
   <jsp:directive.attribute name="calendar" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate that this field is of type java.util.Calendar" />
+  <jsp:directive.attribute name="pre" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate that this field should be writed in a html tag 'pre'"/>
   <jsp:directive.attribute name="dateTimePattern" type="java.lang.String" required="false" rtexprvalue="true" description="The date / time pattern to use if the field is a date or calendar type" />
   <jsp:directive.attribute name="render" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the contents of this tag and all enclosed tags should be rendered (default 'true')" />
   <jsp:directive.attribute name="z" type="java.lang.String" required="false" description="Used for checking if element has been modified (to recalculate simply provide empty string value)" />
@@ -39,6 +40,11 @@
             <spring:escapeBody>
               <fmt:formatDate value="${object[field].time}" pattern="${fn:escapeXml(dateTimePattern)}" />
             </spring:escapeBody>
+          </c:when>
+          <c:when test="${pre}">
+            <pre>
+              <spring:eval expression="object[field]" />
+            </pre>
           </c:when>
           <c:otherwise>
             <spring:eval expression="object[field]" />

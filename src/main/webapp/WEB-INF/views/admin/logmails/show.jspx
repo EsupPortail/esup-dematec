@@ -24,7 +24,7 @@
     <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_LogMail" object="${logmail}" path="/admin/logmails" update="false" z="Yv55noijl2deUXZfiiUc2JwY0ZY=">
         <field:display date="true" dateTimePattern="${logMail_actiondate_date_format}" field="actionDate" id="s_fr_univrouen_poste_domain_LogMail_actionDate" object="${logmail}" z="I93WyvTIzd5QSpaEJzUxn+578IM="/>
         <field:display field="mailTo" id="s_fr_univrouen_poste_domain_LogMail_mailTo" object="${logmail}" z="RYBwRGxvowuCD9Iuq+EnLBS5guc="/>
-        <field:display field="message" id="s_fr_univrouen_poste_domain_LogMail_message" object="${logmail}" z="43GaxjqxprDgcob0XumoWteJAVc="/>
+        <field:display field="message" id="s_fr_univrouen_poste_domain_LogMail_message" object="${logmail}" z="43GaxjqxprDgcob0XumoWteJAVc=" pre='true'/>
         <field:display field="status" id="s_fr_univrouen_poste_domain_LogMail_status" object="${logmail}" z="qtAaGc1V1rx8gVkJ3e2e+HQtcRE="/>
     </page:show>
     
