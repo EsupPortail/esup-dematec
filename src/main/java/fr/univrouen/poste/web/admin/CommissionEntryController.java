@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.exceptions.EsupMailException;
 import fr.univrouen.poste.services.CreateUserService;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.web.UserRegistrationForm;
@@ -98,19 +97,20 @@ public class CommissionEntryController {
         		User membre = null;
         		TypedQuery<User> query = User.findUsersByEmailAddress(commissionEntry.getEmail());
         		if(query.getResultList().isEmpty()) {
-        			try {
-	        			// new User 
-	        			UserRegistrationForm userRegistration = new UserRegistrationForm();
-	        			userRegistration.setEmailAddress(commissionEntry.getEmail());
-	        			membre = createUserService.createMembreUser(userRegistration);
+
+	        		// new User 
+	        		UserRegistrationForm userRegistration = new UserRegistrationForm();
+	        		userRegistration.setEmailAddress(commissionEntry.getEmail());
+	        		membre = createUserService.createMembreUser(userRegistration);
 	        			
+	        		if(membre != null) {
 	        			// Membre
 	        			membre.setNom(commissionEntry.getNom());
 	        			membre.setPrenom(commissionEntry.getPrenom());
 	        			membre.persist();     
 	        			
 	        			logService.logImportCommission("Membre " + membre.getEmailAddress() + " créé.", LogService.IMPORT_SUCCESS);
-        			} catch (EsupMailException e) {
+        			} else {
         				String message = "Le mail n'a pu être envoyé pour le membre " + commissionEntry.getEmail();
         				logService.logImportCommission(message, LogService.IMPORT_FAILED);
 					}

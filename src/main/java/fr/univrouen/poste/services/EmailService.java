@@ -46,7 +46,6 @@ public class EmailService {
     	this.isEnabled = isEnabled;
     }
 	
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public boolean sendMessage(String mailFrom, String mailTo, String subject, String mailMessage) {
 		if(this.isEnabled) {
 	    	try {

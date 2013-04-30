@@ -37,7 +37,6 @@ import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.exceptions.EsupMailException;
 import fr.univrouen.poste.services.CreateUserService;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.web.UserRegistrationForm;
@@ -94,7 +93,7 @@ public class GalaxieEntryController {
     public String createCandidatPosteUrl(Model uiModel) {
     	
     	List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findAllGalaxieEntrys();
-        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {
+        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {			
         	if(galaxieEntry.getCandidat() == null) {
         		User candidat = null;
         		TypedQuery<User> query = User.findUsersByNumCandidat(galaxieEntry.getNumCandidat());
@@ -110,33 +109,36 @@ public class GalaxieEntryController {
 	        					message = message + " " + u.getEmailAddress() + "(n° candidat : " + u.getNumCandidat() + ")";
 	        				logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
 	        			} else {
-		        			try {
-			        			// new User 
-			        			UserRegistrationForm userRegistration = new UserRegistrationForm();
-			        			userRegistration.setEmailAddress(galaxieEntry.getEmail());
-								candidat = createUserService.createCandidatUser(userRegistration);
+			        		// new User 
+			        		UserRegistrationForm userRegistration = new UserRegistrationForm();
+			        		userRegistration.setEmailAddress(galaxieEntry.getEmail());
+							candidat = createUserService.createCandidatUser(userRegistration);
 								
-			        			// Candidat
-			        			candidat.setNumCandidat(galaxieEntry.getNumCandidat());
-			        			candidat.setCivilite(galaxieEntry.getCivilite());
-			        			candidat.setEmailAddress(galaxieEntry.getEmail());
-			        			candidat.setNom(galaxieEntry.getNom());
-			        			candidat.setPrenom(galaxieEntry.getPrenom());
-			        			candidat.persist();    
-			        			
-			        			logService.logImportGalaxie("Candidat " + candidat.getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
-		        			} catch (EsupMailException e) {
-		        				String message = "Le mail n'a pu être envoyé pour le candidat " + galaxieEntry.getNumCandidat() + " [" + galaxieEntry.getEmail() + "]";
-		        				logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
-							}
-		        			
+							if(candidat != null) {
+				        		// Candidat
+				        		candidat.setNumCandidat(galaxieEntry.getNumCandidat());
+				        		candidat.setCivilite(galaxieEntry.getCivilite());
+				        		candidat.setEmailAddress(galaxieEntry.getEmail());
+				        		candidat.setNom(galaxieEntry.getNom());
+				        		candidat.setPrenom(galaxieEntry.getPrenom());
+				        		candidat.persist();    
+				        		
+				        		logService.logImportGalaxie("Candidat " + candidat.getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
+			        		} else {
+			        			String message = "Le mail n'a pu être envoyé pour le candidat " + galaxieEntry.getNumCandidat() + " [" + galaxieEntry.getEmail() + "]";
+			        			logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
+							}		        			
 		        		}
         			}
         			
         		} else {
         			candidat = query.getSingleResult();
         		}
-        		
+        		 			
+            	// re-attach galaxieEntry : galaxieEntry can be detached here because of a transaction rollback
+            	// @see CreateUserService.createCandidatUser/createMembreUser
+    			galaxieEntry.merge();
+    			
         		if(candidat != null) {
 	        		galaxieEntry.setCandidat(candidat);
 	        		galaxieEntry.persist();
