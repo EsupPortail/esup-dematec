@@ -68,17 +68,20 @@ public class CommissionExcelParser {
 				}
 			}
 
-			TypedQuery<CommissionEntry> query = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail());
-			if (query.getResultList().isEmpty()) {
-				commissionEntry.persist();
-			} else {
-				// This GalaxyEntry exists already, we merge it ...
-				CommissionEntry commissionEntryOld = query.getSingleResult();
-				commissionEntryOld.setNumPoste(commissionEntry.getNumPoste());
-				commissionEntryOld.setNom(commissionEntry.getNom());
-				commissionEntryOld.setPrenom(commissionEntry.getPrenom());
-				commissionEntryOld.setEmail(commissionEntry.getEmail());
-
+			if(commissionEntry.getNumPoste() != null && !commissionEntry.getNumPoste().isEmpty()
+					&& commissionEntry.getEmail() != null && !commissionEntry.getEmail().isEmpty()) {
+				TypedQuery<CommissionEntry> query = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail());
+				if (query.getResultList().isEmpty()) {
+					commissionEntry.persist();
+				} else {
+					// This GalaxyEntry exists already, we merge it ...
+					CommissionEntry commissionEntryOld = query.getSingleResult();
+					commissionEntryOld.setNumPoste(commissionEntry.getNumPoste());
+					commissionEntryOld.setNom(commissionEntry.getNom());
+					commissionEntryOld.setPrenom(commissionEntry.getPrenom());
+					commissionEntryOld.setEmail(commissionEntry.getEmail());
+	
+				}
 			}
 
 		}
