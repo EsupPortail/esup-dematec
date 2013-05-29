@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -292,7 +293,7 @@ public class MyPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String findPosteCandidaturesByPostes(HttpServletRequest request, HttpServletResponse response, @RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, @RequestParam(required=false, defaultValue="off") Boolean zip, Model uiModel) throws IOException, SQLException {
     	if(zip) {  		
-    		File tmpFile = zipService.getZip(PosteCandidature.findPosteCandidaturesByPostes(postes).getResultList());
+    		File tmpFile = zipService.getZip(PosteCandidature.findPosteCandidaturesRecevableByPostes(new HashSet<PosteAPourvoir>(postes)).getResultList());
 
     		String contentType = "application/zip";
     		int size = (int) tmpFile.length();

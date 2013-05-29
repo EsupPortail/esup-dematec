@@ -43,7 +43,7 @@
 										<form:find finderName="ByPostes" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
 											<field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id"
 												items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true" />
-											<field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
+											<field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip (recevable uniquement)"/>
 										</form:find>
 									</div>
 									<div class="span5">
