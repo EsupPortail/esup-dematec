@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -292,14 +293,18 @@ public class MyPosteCandidatureController {
     @RequestMapping(params = "find=ByPostes", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String findPosteCandidaturesByPostes(HttpServletRequest request, HttpServletResponse response, @RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, @RequestParam(required=false, defaultValue="off") Boolean zip, Model uiModel) throws IOException, SQLException {
-    	if(zip) {  		
+    	
+    	if(zip) {  				
+    		if(postes == null) 
+    			return "redirect:/postecandidatures"; 
+    		
     		File tmpFile = zipService.getZip(PosteCandidature.findPosteCandidaturesRecevableByPostes(new HashSet<PosteAPourvoir>(postes)).getResultList());
 
     		String contentType = "application/zip";
     		int size = (int) tmpFile.length();
     		String baseName = "demat.zip";
     		InputStream inputStream = new FileInputStream(tmpFile);
-    		
+
     		response.setContentType(contentType);
     		response.setContentLength(size);
     		//response.setCharacterEncoding("utf-8");
@@ -307,7 +312,8 @@ public class MyPosteCandidatureController {
     		FileCopyUtils.copy(inputStream, response.getOutputStream());
 
     		tmpFile.delete();
-    		return null;
+    		
+    		return null;    		
     	} else {
     		addDateTimeFormatPatterns(uiModel);
     		uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByPostes(postes).getResultList());

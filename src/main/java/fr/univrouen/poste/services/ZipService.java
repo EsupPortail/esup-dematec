@@ -48,7 +48,10 @@ public class ZipService {
 		ZipOutputStream out = new ZipOutputStream(output);
 
 		for (PosteCandidature posteCandidature : posteCandidatures) {
-			String folderName = posteCandidature.getPoste().getNumEmploi().concat("/").concat(posteCandidature.getCandidat().getNumCandidat().concat("/"));
+			String folderName = posteCandidature.getPoste().getNumEmploi().concat("/");
+			folderName = folderName.concat(posteCandidature.getCandidat().getNumCandidat().concat("-"));		
+			folderName = folderName.concat(posteCandidature.getCandidat().getNom().concat("-"));	
+			folderName = folderName.concat(posteCandidature.getCandidat().getPrenom().concat("/"));	
 			for (PosteCandidatureFile posteCandidatureFile : posteCandidature.getCandidatureFiles()) {
 				String fileName = posteCandidatureFile.getId().toString().concat("-").concat(posteCandidatureFile.getFilename());
 				String folderFileName = folderName.concat(fileName);
