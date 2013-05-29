@@ -17,6 +17,8 @@
  */
 package fr.univrouen.poste.web.candidat;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -40,6 +43,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +59,7 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
 import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.ZipService;
 
 @RequestMapping("postecandidatures")
 @Controller
@@ -70,6 +75,9 @@ public class MyPosteCandidatureController {
 	@Autowired
 	LogService logService;
 
+	@Resource
+	ZipService zipService;
+	
 	@ModelAttribute("posteapourvoirs")
 	public List<PosteAPourvoir> getPosteAPourvoirs() {
 		return PosteAPourvoir.findAllPosteAPourvoirs();
@@ -271,7 +279,8 @@ public class MyPosteCandidatureController {
 		}
 
 		uiModel.addAttribute("postecandidatures", postecandidatures);
-
+		uiModel.addAttribute("zip", new Boolean(false));
+		
 		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
 		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
 		
@@ -281,10 +290,28 @@ public class MyPosteCandidatureController {
 	
     @RequestMapping(params = "find=ByPostes", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String findPosteCandidaturesByPostes(@RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, Model uiModel) {
-		addDateTimeFormatPatterns(uiModel);
-    	uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByPostes(postes).getResultList());
-        return "postecandidatures/list";
+    public String findPosteCandidaturesByPostes(HttpServletRequest request, HttpServletResponse response, @RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, @RequestParam(required=false, defaultValue="off") Boolean zip, Model uiModel) throws IOException, SQLException {
+    	if(zip) {  		
+    		File tmpFile = zipService.getZip(PosteCandidature.findPosteCandidaturesByPostes(postes).getResultList());
+
+    		String contentType = "application/zip";
+    		int size = (int) tmpFile.length();
+    		String baseName = "demat.zip";
+    		InputStream inputStream = new FileInputStream(tmpFile);
+    		
+    		response.setContentType(contentType);
+    		response.setContentLength(size);
+    		//response.setCharacterEncoding("utf-8");
+    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+    		FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+    		tmpFile.delete();
+    		return null;
+    	} else {
+    		addDateTimeFormatPatterns(uiModel);
+    		uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByPostes(postes).getResultList());
+    		return "postecandidatures/list";
+    	}
     }
 
     @RequestMapping(params = "find=ByCandidats", method = RequestMethod.GET)

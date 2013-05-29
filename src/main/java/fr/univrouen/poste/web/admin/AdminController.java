@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,11 +41,15 @@ import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.ZipService;
 
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
 
+	@Resource
+	ZipService zipService;
+	
 	@RequestMapping
 	public String stats(Model uiModel) throws IOException {
 
@@ -90,26 +95,8 @@ public class AdminController {
 	@RequestMapping("/zip")
 	@Transactional
 	public void getZip(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-		File tmpFile = File.createTempFile("demat-zip.", ".tmp");
-		// we call tmpFile.deleteOnExit so that ths tmp file will be deleted
-		// when jvm stops ...
-		tmpFile.deleteOnExit();
-
-		FileOutputStream output = new FileOutputStream(tmpFile);
-		ZipOutputStream out = new ZipOutputStream(output);
-
-		for (PosteCandidature posteCandidature : PosteCandidature.findAllPosteCandidatures()) {
-			String folderName = posteCandidature.getPoste().getNumEmploi().concat("/").concat(posteCandidature.getCandidat().getNumCandidat().concat("/"));
-			for (PosteCandidatureFile posteCandidatureFile : posteCandidature.getCandidatureFiles()) {
-				String fileName = posteCandidatureFile.getId().toString().concat("-").concat(posteCandidatureFile.getFilename());
-				String folderFileName = folderName.concat(fileName);
-				out.putNextEntry(new ZipEntry(folderFileName));
-				out.write(IOUtils.toByteArray(posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream()));
-				out.closeEntry();
-			}
-		}
-		out.close();
-		output.close();
+		
+		File tmpFile = zipService.getZip(PosteCandidature.findAllPosteCandidatures());
 
 		String contentType = "application/zip";
 		int size = (int) tmpFile.length();
