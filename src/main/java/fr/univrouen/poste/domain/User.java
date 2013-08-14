@@ -124,16 +124,16 @@ public class User {
     }
 
 	public static Long countAdmins() {
-		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.isAdmin=true", Long.class).getSingleResult();
+		return countFindUsersByIsAdmin(true);
     }
 
 	public static Long countSupermanagers() {
-		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.isSuperManager=true", Long.class).getSingleResult();
-    }
+		return countFindUsersByIsSuperManager(true);
+	}
 
 	public static Long countManagers() {
-		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.isManager=true", Long.class).getSingleResult();
-    }
+		return countFindUsersByIsManager(true);
+	}
 
 	public static Long countMembres() {
 		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.postes is not EMPTY", Long.class).getSingleResult();
