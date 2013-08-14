@@ -9,6 +9,16 @@ import javax.persistence.TypedQuery;
 
 privileged aspect GalaxieEntry_Roo_Finder {
     
+    public static Long GalaxieEntry.countFindGalaxieEntrysByNumEmploiAndNumCandidat(String numEmploi, String numCandidat) {
+        if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
+        if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
+        EntityManager em = GalaxieEntry.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM GalaxieEntry AS o WHERE o.numEmploi = :numEmploi AND o.numCandidat = :numCandidat", Long.class);
+        q.setParameter("numEmploi", numEmploi);
+        q.setParameter("numCandidat", numCandidat);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static TypedQuery<GalaxieEntry> GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(String numEmploi, String numCandidat) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");

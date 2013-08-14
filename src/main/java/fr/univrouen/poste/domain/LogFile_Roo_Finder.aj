@@ -9,6 +9,30 @@ import javax.persistence.TypedQuery;
 
 privileged aspect LogFile_Roo_Finder {
     
+    public static Long LogFile.countFindLogFilesByActionEquals(String action) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM LogFile AS o WHERE o.action = :action", Long.class);
+        q.setParameter("action", action);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long LogFile.countFindLogFilesByNumCandidat(String numCandidat) {
+        if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM LogFile AS o WHERE o.numCandidat = :numCandidat", Long.class);
+        q.setParameter("numCandidat", numCandidat);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long LogFile.countFindLogFilesByNumEmploi(String numEmploi) {
+        if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM LogFile AS o WHERE o.numEmploi = :numEmploi", Long.class);
+        q.setParameter("numEmploi", numEmploi);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static TypedQuery<LogFile> LogFile.findLogFilesByNumCandidat(String numCandidat) {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = LogFile.entityManager();

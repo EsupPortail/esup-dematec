@@ -32,13 +32,4 @@ import fr.univrouen.poste.domain.LogFile;
 @RooWebScaffold(path = "admin/logfiles", formBackingObject = LogFile.class, create=false, update=false, delete=false)
 @RooWebFinder
 public class LogFileController {
-	
-    @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
-    public String findLogFilesByActionEquals(@RequestParam("action") String action, Model uiModel) {
-    	addDateTimeFormatPatterns(uiModel);
-        uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(action).getResultList());
-        return "admin/logfiles/list";
-    }
-
-    
 }

@@ -32,13 +32,5 @@ import fr.univrouen.poste.domain.LogImportGalaxie;
 @RooWebScaffold(path = "admin/logimportgalaxies", formBackingObject = LogImportGalaxie.class)
 @RooWebFinder
 public class LogImportGalaxieController {
-	
-    @RequestMapping(params = "find=ByStatusEquals", method = RequestMethod.GET)
-    public String findLogImportGalaxiesByStatusEquals(@RequestParam("status") String status, Model uiModel) {
-    	addDateTimeFormatPatterns(uiModel);
-    	uiModel.addAttribute("logimportgalaxies", LogImportGalaxie.findLogImportGalaxiesByStatusEquals(status).getResultList());
-        return "admin/logimportgalaxies/list";
-    }
 
-    
 }

@@ -17,14 +17,38 @@ privileged aspect LogFileController_Roo_Controller_Finder {
         return "admin/logfiles/findLogFilesByActionEquals";
     }
     
+    @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
+    public String LogFileController.findLogFilesByActionEquals(@RequestParam("action") String action, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(action).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) LogFile.countFindLogFilesByActionEquals(action) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(action).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/logfiles/list";
+    }
+    
     @RequestMapping(params = { "find=ByNumCandidat", "form" }, method = RequestMethod.GET)
     public String LogFileController.findLogFilesByNumCandidatForm(Model uiModel) {
         return "admin/logfiles/findLogFilesByNumCandidat";
     }
     
     @RequestMapping(params = "find=ByNumCandidat", method = RequestMethod.GET)
-    public String LogFileController.findLogFilesByNumCandidat(@RequestParam("numCandidat") String numCandidat, Model uiModel) {
-        uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumCandidat(numCandidat).getResultList());
+    public String LogFileController.findLogFilesByNumCandidat(@RequestParam("numCandidat") String numCandidat, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumCandidat(numCandidat).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) LogFile.countFindLogFilesByNumCandidat(numCandidat) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumCandidat(numCandidat).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
         return "admin/logfiles/list";
     }
     
@@ -34,8 +58,17 @@ privileged aspect LogFileController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByNumEmploi", method = RequestMethod.GET)
-    public String LogFileController.findLogFilesByNumEmploi(@RequestParam("numEmploi") String numEmploi, Model uiModel) {
-        uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumEmploi(numEmploi).getResultList());
+    public String LogFileController.findLogFilesByNumEmploi(@RequestParam("numEmploi") String numEmploi, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumEmploi(numEmploi).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) LogFile.countFindLogFilesByNumEmploi(numEmploi) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumEmploi(numEmploi).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
         return "admin/logfiles/list";
     }
     

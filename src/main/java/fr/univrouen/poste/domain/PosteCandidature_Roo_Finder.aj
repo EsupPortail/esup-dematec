@@ -11,6 +11,30 @@ import javax.persistence.TypedQuery;
 
 privileged aspect PosteCandidature_Roo_Finder {
     
+    public static Long PosteCandidature.countFindPosteCandidaturesByCandidat(User candidat) {
+        if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.candidat = :candidat", Long.class);
+        q.setParameter("candidat", candidat);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long PosteCandidature.countFindPosteCandidaturesByPoste(PosteAPourvoir poste) {
+        if (poste == null) throw new IllegalArgumentException("The poste argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.poste = :poste", Long.class);
+        q.setParameter("poste", poste);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long PosteCandidature.countFindPosteCandidaturesByRecevable(Boolean recevable) {
+        if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.recevable = :recevable", Long.class);
+        q.setParameter("recevable", recevable);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByCandidat(User candidat) {
         if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
         EntityManager em = PosteCandidature.entityManager();

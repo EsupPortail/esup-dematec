@@ -9,6 +9,16 @@ import javax.persistence.TypedQuery;
 
 privileged aspect CommissionEntry_Roo_Finder {
     
+    public static Long CommissionEntry.countFindCommissionEntrysByNumPosteAndEmail(String numPoste, String email) {
+        if (numPoste == null || numPoste.length() == 0) throw new IllegalArgumentException("The numPoste argument is required");
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM CommissionEntry AS o WHERE o.numPoste = :numPoste AND o.email = :email", Long.class);
+        q.setParameter("numPoste", numPoste);
+        q.setParameter("email", email);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByNumPosteAndEmail(String numPoste, String email) {
         if (numPoste == null || numPoste.length() == 0) throw new IllegalArgumentException("The numPoste argument is required");
         if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");

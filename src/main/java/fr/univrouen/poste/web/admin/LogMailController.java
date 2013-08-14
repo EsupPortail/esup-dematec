@@ -43,14 +43,6 @@ public class LogMailController {
 	@Autowired
 	EmailService emailService;
 	
-    @RequestMapping(params = "find=ByStatusEquals", method = RequestMethod.GET)
-    public String findLogMailsByStatusEquals(@RequestParam("status") String status, Model uiModel) {
-    	addDateTimeFormatPatterns(uiModel);
-        uiModel.addAttribute("logmails", LogMail.findLogMailsByStatusEquals(status).getResultList());
-        return "admin/logmails/list";
-    }
-    
-	
 	@RequestMapping(value = "/{id}/resend")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')")
 	public String modifyRecevableCandidatureFile(@PathVariable("id") Long id) {

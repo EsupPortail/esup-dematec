@@ -18,20 +18,18 @@
     limitations under the License.
 
 -->
-<div xmlns:sec="http://www.springframework.org/security/tags"  xmlns:spring="http://www.springframework.org/tags"  xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_LogMail" object="${logmail}" path="/admin/logmails" update="false" z="Yv55noijl2deUXZfiiUc2JwY0ZY=">
         <field:display date="true" dateTimePattern="${logMail_actiondate_date_format}" field="actionDate" id="s_fr_univrouen_poste_domain_LogMail_actionDate" object="${logmail}" z="I93WyvTIzd5QSpaEJzUxn+578IM="/>
         <field:display field="mailTo" id="s_fr_univrouen_poste_domain_LogMail_mailTo" object="${logmail}" z="RYBwRGxvowuCD9Iuq+EnLBS5guc="/>
-        <field:display field="message" id="s_fr_univrouen_poste_domain_LogMail_message" object="${logmail}" z="43GaxjqxprDgcob0XumoWteJAVc=" pre='true'/>
+        <field:display field="message" id="s_fr_univrouen_poste_domain_LogMail_message" object="${logmail}" pre="true" z="user-managed"/>
         <field:display field="status" id="s_fr_univrouen_poste_domain_LogMail_status" object="${logmail}" z="qtAaGc1V1rx8gVkJ3e2e+HQtcRE="/>
     </page:show>
-    
     <br/>
-	<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
-	    <spring:url value="/admin/logmails/${logmail.id}/resend" var="resendEmailUrl" />
-        <a class="btn btn-warning" href="${resendEmailUrl}" onclick="return confirm('Renvoyer le mail ?');">Renvoyer</a>	
-	</sec:authorize>
-    
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+        <spring:url value="/admin/logmails/${logmail.id}/resend" var="resendEmailUrl"/>
+        <a class="btn btn-warning" href="${resendEmailUrl}" onclick="return confirm('Renvoyer le mail ?');">Renvoyer</a>
+    </sec:authorize>
 </div>

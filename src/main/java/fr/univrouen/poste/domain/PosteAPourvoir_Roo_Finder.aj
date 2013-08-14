@@ -9,6 +9,14 @@ import javax.persistence.TypedQuery;
 
 privileged aspect PosteAPourvoir_Roo_Finder {
     
+    public static Long PosteAPourvoir.countFindPosteAPourvoirsByNumEmploi(String numEmploi) {
+        if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
+        EntityManager em = PosteAPourvoir.entityManager();
+        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi", Long.class);
+        q.setParameter("numEmploi", numEmploi);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByNumEmploi(String numEmploi) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = PosteAPourvoir.entityManager();

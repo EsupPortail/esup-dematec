@@ -28,7 +28,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<AppliConfig, String> ApplicationConversionServiceFactoryBean.getAppliConfigToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.AppliConfig, java.lang.String>() {
             public String convert(AppliConfig appliConfig) {
-                return new StringBuilder().append(appliConfig.getCacheTitre()).append(" ").append(appliConfig.getCacheImageUrl()).append(" ").append(appliConfig.getCachePiedPage()).append(" ").append(appliConfig.getCacheMailFrom()).toString();
+                return new StringBuilder().append(appliConfig.getCacheTitre()).append(' ').append(appliConfig.getCacheImageUrl()).append(' ').append(appliConfig.getCachePiedPage()).append(' ').append(appliConfig.getCacheMailFrom()).toString();
             }
         };
     }
@@ -52,7 +52,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<CommissionEntry, String> ApplicationConversionServiceFactoryBean.getCommissionEntryToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.CommissionEntry, java.lang.String>() {
             public String convert(CommissionEntry commissionEntry) {
-                return new StringBuilder().append(commissionEntry.getNumPoste()).append(" ").append(commissionEntry.getEmail()).append(" ").append(commissionEntry.getNom()).append(" ").append(commissionEntry.getPrenom()).toString();
+                return new StringBuilder().append(commissionEntry.getNumPoste()).append(' ').append(commissionEntry.getEmail()).append(' ').append(commissionEntry.getNom()).append(' ').append(commissionEntry.getPrenom()).toString();
             }
         };
     }
@@ -76,7 +76,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<CommissionExcel, String> ApplicationConversionServiceFactoryBean.getCommissionExcelToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.CommissionExcel, java.lang.String>() {
             public String convert(CommissionExcel commissionExcel) {
-                return new StringBuilder().append(commissionExcel.getFilename()).append(" ").append(commissionExcel.getFile()).append(" ").append(commissionExcel.getCreation()).toString();
+                return new StringBuilder().append(commissionExcel.getFilename()).append(' ').append(commissionExcel.getFile()).append(' ').append(commissionExcel.getCreation()).toString();
             }
         };
     }
@@ -100,7 +100,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<GalaxieEntry, String> ApplicationConversionServiceFactoryBean.getGalaxieEntryToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.GalaxieEntry, java.lang.String>() {
             public String convert(GalaxieEntry galaxieEntry) {
-                return new StringBuilder().append(galaxieEntry.getNumEmploi()).append(" ").append(galaxieEntry.getNumCandidat()).append(" ").append(galaxieEntry.getCivilite()).append(" ").append(galaxieEntry.getNom()).toString();
+                return new StringBuilder().append(galaxieEntry.getNumEmploi()).append(' ').append(galaxieEntry.getNumCandidat()).append(' ').append(galaxieEntry.getCivilite()).append(' ').append(galaxieEntry.getNom()).toString();
             }
         };
     }
@@ -124,7 +124,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<GalaxieExcel, String> ApplicationConversionServiceFactoryBean.getGalaxieExcelToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.GalaxieExcel, java.lang.String>() {
             public String convert(GalaxieExcel galaxieExcel) {
-                return new StringBuilder().append(galaxieExcel.getFilename()).append(" ").append(galaxieExcel.getFile()).append(" ").append(galaxieExcel.getCreation()).toString();
+                return new StringBuilder().append(galaxieExcel.getFilename()).append(' ').append(galaxieExcel.getFile()).append(' ').append(galaxieExcel.getCreation()).toString();
             }
         };
     }
@@ -148,7 +148,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<LogAuth, String> ApplicationConversionServiceFactoryBean.getLogAuthToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.LogAuth, java.lang.String>() {
             public String convert(LogAuth logAuth) {
-                return new StringBuilder().append(logAuth.getActionDate()).append(" ").append(logAuth.getUserId()).append(" ").append(logAuth.getIp()).append(" ").append(logAuth.getAction()).toString();
+                return new StringBuilder().append(logAuth.getActionDate()).append(' ').append(logAuth.getUserId()).append(' ').append(logAuth.getIp()).append(' ').append(logAuth.getAction()).toString();
             }
         };
     }
@@ -172,7 +172,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<LogFile, String> ApplicationConversionServiceFactoryBean.getLogFileToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.LogFile, java.lang.String>() {
             public String convert(LogFile logFile) {
-                return new StringBuilder().append(logFile.getActionDate()).append(" ").append(logFile.getUserId()).append(" ").append(logFile.getNumEmploi()).append(" ").append(logFile.getNumCandidat()).toString();
+                return new StringBuilder().append(logFile.getActionDate()).append(' ').append(logFile.getUserId()).append(' ').append(logFile.getNumEmploi()).append(' ').append(logFile.getNumCandidat()).toString();
             }
         };
     }
@@ -196,7 +196,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<LogImportCommission, String> ApplicationConversionServiceFactoryBean.getLogImportCommissionToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.LogImportCommission, java.lang.String>() {
             public String convert(LogImportCommission logImportCommission) {
-                return new StringBuilder().append(logImportCommission.getActionDate()).append(" ").append(logImportCommission.getMessage()).append(" ").append(logImportCommission.getStatus()).toString();
+                return new StringBuilder().append(logImportCommission.getActionDate()).append(' ').append(logImportCommission.getMessage()).append(' ').append(logImportCommission.getStatus()).toString();
             }
         };
     }
@@ -220,7 +220,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<LogImportGalaxie, String> ApplicationConversionServiceFactoryBean.getLogImportGalaxieToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.LogImportGalaxie, java.lang.String>() {
             public String convert(LogImportGalaxie logImportGalaxie) {
-                return new StringBuilder().append(logImportGalaxie.getActionDate()).append(" ").append(logImportGalaxie.getMessage()).append(" ").append(logImportGalaxie.getStatus()).toString();
+                return new StringBuilder().append(logImportGalaxie.getActionDate()).append(' ').append(logImportGalaxie.getMessage()).append(' ').append(logImportGalaxie.getStatus()).toString();
             }
         };
     }
@@ -244,7 +244,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<LogMail, String> ApplicationConversionServiceFactoryBean.getLogMailToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.LogMail, java.lang.String>() {
             public String convert(LogMail logMail) {
-                return new StringBuilder().append(logMail.getActionDate()).append(" ").append(logMail.getMailTo()).append(" ").append(logMail.getMessage()).append(" ").append(logMail.getStatus()).toString();
+                return new StringBuilder().append(logMail.getActionDate()).append(' ').append(logMail.getMailTo()).append(' ').append(logMail.getMessage()).append(' ').append(logMail.getStatus()).toString();
             }
         };
     }

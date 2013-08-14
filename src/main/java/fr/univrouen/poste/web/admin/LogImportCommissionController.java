@@ -33,11 +33,4 @@ import fr.univrouen.poste.domain.LogImportCommission;
 @RooWebFinder
 public class LogImportCommissionController {
 	
-    @RequestMapping(params = "find=ByStatusEquals", method = RequestMethod.GET)
-    public String findLogImportCommissionsByStatusEquals(@RequestParam("status") String status, Model uiModel) {
-    	addDateTimeFormatPatterns(uiModel);
-    	uiModel.addAttribute("logimportcommissions", LogImportCommission.findLogImportCommissionsByStatusEquals(status).getResultList());
-        return "admin/logimportcommissions/list";
-    }
-	
 }

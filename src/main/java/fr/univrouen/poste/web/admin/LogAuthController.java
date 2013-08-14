@@ -33,12 +33,4 @@ import fr.univrouen.poste.domain.LogAuth;
 @RooWebFinder
 public class LogAuthController {
 
-    @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
-    public String findLogAuthsByActionEquals(@RequestParam("action") String action, Model uiModel) {
-    	addDateTimeFormatPatterns(uiModel);
-        uiModel.addAttribute("logauths", LogAuth.findLogAuthsByActionEquals(action).getResultList());
-        return "admin/logauths/list";
-    }
-
-
 }
