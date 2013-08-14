@@ -22,6 +22,7 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.roo.addon.web.mvc.controller.finder.RooWebFinder;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,7 @@ import fr.univrouen.poste.domain.User;
 @RooWebScaffold(path = "admin/users", formBackingObject = User.class)
 @RequestMapping("/admin/users")
 @Controller
+@RooWebFinder
 public class UserController {
 
 	private final Logger logger = Logger.getLogger(getClass());
@@ -84,28 +86,58 @@ public class UserController {
     
     @RequestMapping(params = "find=ByStatus", method = RequestMethod.GET)
     public String findUsersByStatus(
-    		@RequestParam(value = "status", required=false) String status, Model uiModel) {
+    		@RequestParam(value = "status", required=false) String status, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
     	
     	if("Admin".equals(status))
-    		uiModel.addAttribute("users", User.findUsersByIsAdmin(true).getResultList());
+    		return this.findUsersByIsAdmin(true, page, size, uiModel);
     	
     	else if("SuperManager".equals(status))
-    		uiModel.addAttribute("users", User.findUsersByIsSuperManager(true).getResultList());
+    		return this.findUsersByIsSuperManager(true, page, size, uiModel);
     	
     	else if("Manager".equals(status))
-    		uiModel.addAttribute("users", User.findUsersByIsManager(true).getResultList());
+    		return this.findUsersByIsManager(true, page, size, uiModel);
     	
     	else if("Membre".equals(status))
-    		uiModel.addAttribute("users", User.findAllMembres());
+    		return this.findUsersByMembre(true, page, size, uiModel);
     	
     	else if("Candidat".equals(status))
-    		uiModel.addAttribute("users", User.findAllCandidats());
+    		return this.findUsersByCandidat(true, page, size, uiModel);
     	
     	else
-    		uiModel.addAttribute("users", User.findAllUsers());
-    	  	
-        return "admin/users/list";
+    		return this.list(page, size, uiModel);
     }
+
+
+	private String findUsersByCandidat(boolean b, Integer page, Integer size,
+			Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("users", User.findAllCandidats().setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) User.countCandidats() / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("users", User.findAllCandidats().getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/users/list";
+	}
+
+
+	private String findUsersByMembre(boolean b, Integer page, Integer size,
+			Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("users", User.findAllMembres().setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) User.countMembres() / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("users", User.findAllMembres().getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/users/list";
+	}
 
 
 }

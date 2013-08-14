@@ -17,8 +17,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
-<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+--><!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
 <tiles-definitions>
     <definition extends="default" name="admin/users/list">
         <put-attribute name="body" value="/WEB-INF/views/admin/users/list.jspx"/>
@@ -33,5 +33,23 @@
     </definition>
 <definition extends="default" name="admin/users/update">
         <put-attribute name="body" value="/WEB-INF/views/admin/users/update.jspx"/>
+    </definition>
+<definition extends="default" name="admin/users/findUsersByActivationKeyAndEmailAddress">
+        <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByActivationKeyAndEmailAddress.jspx"/>
+    </definition>
+<definition extends="default" name="admin/users/findUsersByEmailAddress">
+        <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByEmailAddress.jspx"/>
+    </definition>
+<definition extends="default" name="admin/users/findUsersByIsAdmin">
+        <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByIsAdmin.jspx"/>
+    </definition>
+<definition extends="default" name="admin/users/findUsersByIsManager">
+        <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByIsManager.jspx"/>
+    </definition>
+<definition extends="default" name="admin/users/findUsersByIsSuperManager">
+        <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByIsSuperManager.jspx"/>
+    </definition>
+<definition extends="default" name="admin/users/findUsersByNumCandidat">
+        <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByNumCandidat.jspx"/>
     </definition>
 </tiles-definitions>

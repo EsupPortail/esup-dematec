@@ -26,6 +26,7 @@ import javax.persistence.Column;
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -147,12 +148,12 @@ public class User {
 		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' AND o.activationDate is not NULL", Long.class).getSingleResult();
     }
 
-    public static List<User> findAllCandidats() {
-        return entityManager().createQuery("SELECT o FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' order by o.emailAddress", User.class).getResultList();
+    public static TypedQuery<User> findAllCandidats() {
+    	return entityManager().createQuery("SELECT o FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' order by o.emailAddress", User.class);
     }
     
-    public static List<User> findAllMembres() {
-        return entityManager().createQuery("SELECT o FROM User AS o WHERE o.postes is not EMPTY order by o.emailAddress", User.class).getResultList();
+    public static TypedQuery<User> findAllMembres() {
+        return entityManager().createQuery("SELECT o FROM User AS o WHERE o.postes is not EMPTY order by o.emailAddress", User.class);
     }
 
 	public static Object findAllNoCandidats() {
