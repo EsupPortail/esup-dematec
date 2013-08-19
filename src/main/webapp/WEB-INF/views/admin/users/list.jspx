@@ -47,19 +47,19 @@
 							<div class="row-fluid">
 								<form:find finderName="ByStatus" id="ff_fr_univrouen_poste_domain_User" path="/admin/users">
 									<div class="span2">
-										<input name="status" type="radio" value="Admin" />Admin
+										<util:input-attr name="status" type="radio" value="Admin" checked="${param.status eq 'Admin' ? 'checked' : ''}"/>Admin
 									</div>
 									<div class="span3">
-										<input name="status" type="radio" value="SuperManager" />SuperManager
+										<util:input-attr name="status" type="radio" value="SuperManager" checked="${param.status eq 'SuperManager' ? 'checked' : ''}"/>SuperManager
 									</div>
 									<div class="span2">
-										<input name="status" type="radio" value="Manager" />Manager
+										<util:input-attr name="status" type="radio" value="Manager" checked="${param.status eq 'Manager' ? 'checked' : ''}"/>Manager
 									</div>
 									<div class="span2">
-										<input name="status" type="radio" value="Membre" />Membre
+										<util:input-attr name="status" type="radio" value="Membre" checked="${param.status eq 'Membre' ? 'checked' : ''}"/>Membre
 									</div>
 									<div class="span2">
-										<input name="status" type="radio" value="Candidat" />Candidat
+										<util:input-attr name="status" type="radio" value="Candidat" checked="${param.status eq 'Candidat' ? 'checked' : ''}"/>Candidat
 									</div>
 								</form:find>
 							</div>
