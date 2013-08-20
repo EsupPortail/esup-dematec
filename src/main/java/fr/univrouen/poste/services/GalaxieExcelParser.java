@@ -68,7 +68,7 @@ public class GalaxieExcelParser {
 				}
 			}
 
-			TypedQuery<GalaxieEntry> query = GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat());
+			TypedQuery<GalaxieEntry> query = GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat(), null, null);
 			if (query.getResultList().isEmpty()) {
 				galaxieEntry.persist();
 			} else {

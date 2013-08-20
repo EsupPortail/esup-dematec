@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.LogAuth;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,39 @@ privileged aspect LogAuth_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM LogAuth o", Long.class).getSingleResult();
     }
     
+    public static List<LogAuth> LogAuth.findAllLogAuths() {
+        return entityManager().createQuery("SELECT o FROM LogAuth o", LogAuth.class).getResultList();
+    }
+    
+    public static List<LogAuth> LogAuth.findAllLogAuths(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogAuth o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogAuth.class).getResultList();
+    }
+    
     public static LogAuth LogAuth.findLogAuth(Long id) {
         if (id == null) return null;
         return entityManager().find(LogAuth.class, id);
+    }
+    
+    public static List<LogAuth> LogAuth.findLogAuthEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM LogAuth o", LogAuth.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<LogAuth> LogAuth.findLogAuthEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogAuth o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogAuth.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

@@ -62,7 +62,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         }
         
         if(pc != null) {
-	        User user = User.findUsersByEmailAddress(email).getSingleResult();
+	        User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
 	        if(user.getIsCandidat()) {
 	        	if(pc.getCandidat().equals(user))
 	        		return true;

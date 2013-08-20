@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.CommissionExcel;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,39 @@ privileged aspect CommissionExcel_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM CommissionExcel o", Long.class).getSingleResult();
     }
     
+    public static List<CommissionExcel> CommissionExcel.findAllCommissionExcels() {
+        return entityManager().createQuery("SELECT o FROM CommissionExcel o", CommissionExcel.class).getResultList();
+    }
+    
+    public static List<CommissionExcel> CommissionExcel.findAllCommissionExcels(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM CommissionExcel o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, CommissionExcel.class).getResultList();
+    }
+    
     public static CommissionExcel CommissionExcel.findCommissionExcel(Long id) {
         if (id == null) return null;
         return entityManager().find(CommissionExcel.class, id);
+    }
+    
+    public static List<CommissionExcel> CommissionExcel.findCommissionExcelEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM CommissionExcel o", CommissionExcel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<CommissionExcel> CommissionExcel.findCommissionExcelEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM CommissionExcel o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, CommissionExcel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

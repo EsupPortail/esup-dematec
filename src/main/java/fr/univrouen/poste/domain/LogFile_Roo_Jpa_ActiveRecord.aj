@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.LogFile;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,39 @@ privileged aspect LogFile_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM LogFile o", Long.class).getSingleResult();
     }
     
+    public static List<LogFile> LogFile.findAllLogFiles() {
+        return entityManager().createQuery("SELECT o FROM LogFile o", LogFile.class).getResultList();
+    }
+    
+    public static List<LogFile> LogFile.findAllLogFiles(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogFile o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogFile.class).getResultList();
+    }
+    
     public static LogFile LogFile.findLogFile(Long id) {
         if (id == null) return null;
         return entityManager().find(LogFile.class, id);
+    }
+    
+    public static List<LogFile> LogFile.findLogFileEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM LogFile o", LogFile.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<LogFile> LogFile.findLogFileEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogFile o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogFile.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

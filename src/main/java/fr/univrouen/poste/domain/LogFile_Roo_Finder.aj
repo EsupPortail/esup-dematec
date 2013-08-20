@@ -12,7 +12,7 @@ privileged aspect LogFile_Roo_Finder {
     public static Long LogFile.countFindLogFilesByActionEquals(String action) {
         if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
         EntityManager em = LogFile.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM LogFile AS o WHERE o.action = :action", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogFile AS o WHERE o.action = :action", Long.class);
         q.setParameter("action", action);
         return ((Long) q.getSingleResult());
     }
@@ -20,7 +20,7 @@ privileged aspect LogFile_Roo_Finder {
     public static Long LogFile.countFindLogFilesByNumCandidat(String numCandidat) {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = LogFile.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM LogFile AS o WHERE o.numCandidat = :numCandidat", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogFile AS o WHERE o.numCandidat = :numCandidat", Long.class);
         q.setParameter("numCandidat", numCandidat);
         return ((Long) q.getSingleResult());
     }
@@ -28,23 +28,52 @@ privileged aspect LogFile_Roo_Finder {
     public static Long LogFile.countFindLogFilesByNumEmploi(String numEmploi) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = LogFile.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM LogFile AS o WHERE o.numEmploi = :numEmploi", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogFile AS o WHERE o.numEmploi = :numEmploi", Long.class);
         q.setParameter("numEmploi", numEmploi);
         return ((Long) q.getSingleResult());
     }
     
-    public static TypedQuery<LogFile> LogFile.findLogFilesByNumCandidat(String numCandidat) {
+    public static TypedQuery<LogFile> LogFile.findLogFilesByActionEquals(String action, String sortFieldName, String sortOrder) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        EntityManager em = LogFile.entityManager();
+        String jpaQuery = "SELECT o FROM LogFile AS o WHERE o.action = :action";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogFile> q = em.createQuery(jpaQuery, LogFile.class);
+        q.setParameter("action", action);
+        return q;
+    }
+    
+    public static TypedQuery<LogFile> LogFile.findLogFilesByNumCandidat(String numCandidat, String sortFieldName, String sortOrder) {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = LogFile.entityManager();
-        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.numCandidat = :numCandidat", LogFile.class);
+        String jpaQuery = "SELECT o FROM LogFile AS o WHERE o.numCandidat = :numCandidat";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogFile> q = em.createQuery(jpaQuery, LogFile.class);
         q.setParameter("numCandidat", numCandidat);
         return q;
     }
     
-    public static TypedQuery<LogFile> LogFile.findLogFilesByNumEmploi(String numEmploi) {
+    public static TypedQuery<LogFile> LogFile.findLogFilesByNumEmploi(String numEmploi, String sortFieldName, String sortOrder) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = LogFile.entityManager();
-        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.numEmploi = :numEmploi", LogFile.class);
+        String jpaQuery = "SELECT o FROM LogFile AS o WHERE o.numEmploi = :numEmploi";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogFile> q = em.createQuery(jpaQuery, LogFile.class);
         q.setParameter("numEmploi", numEmploi);
         return q;
     }

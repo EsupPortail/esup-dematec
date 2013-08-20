@@ -28,6 +28,17 @@ privileged aspect BigFile_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM BigFile o", BigFile.class).getResultList();
     }
     
+    public static List<BigFile> BigFile.findAllBigFiles(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM BigFile o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, BigFile.class).getResultList();
+    }
+    
     public static BigFile BigFile.findBigFile(Long id) {
         if (id == null) return null;
         return entityManager().find(BigFile.class, id);
@@ -35,6 +46,17 @@ privileged aspect BigFile_Roo_Jpa_ActiveRecord {
     
     public static List<BigFile> BigFile.findBigFileEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM BigFile o", BigFile.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<BigFile> BigFile.findBigFileEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM BigFile o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, BigFile.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

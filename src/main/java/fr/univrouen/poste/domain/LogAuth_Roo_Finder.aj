@@ -12,9 +12,24 @@ privileged aspect LogAuth_Roo_Finder {
     public static Long LogAuth.countFindLogAuthsByActionEquals(String action) {
         if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
         EntityManager em = LogAuth.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM LogAuth AS o WHERE o.action = :action", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogAuth AS o WHERE o.action = :action", Long.class);
         q.setParameter("action", action);
         return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<LogAuth> LogAuth.findLogAuthsByActionEquals(String action, String sortFieldName, String sortOrder) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        EntityManager em = LogAuth.entityManager();
+        String jpaQuery = "SELECT o FROM LogAuth AS o WHERE o.action = :action";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogAuth> q = em.createQuery(jpaQuery, LogAuth.class);
+        q.setParameter("action", action);
+        return q;
     }
     
 }

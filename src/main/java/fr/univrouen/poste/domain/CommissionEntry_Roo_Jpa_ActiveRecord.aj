@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.CommissionEntry;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,31 @@ privileged aspect CommissionEntry_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM CommissionEntry o", Long.class).getSingleResult();
     }
     
+    public static List<CommissionEntry> CommissionEntry.findAllCommissionEntrys(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM CommissionEntry o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, CommissionEntry.class).getResultList();
+    }
+    
     public static CommissionEntry CommissionEntry.findCommissionEntry(Long id) {
         if (id == null) return null;
         return entityManager().find(CommissionEntry.class, id);
+    }
+    
+    public static List<CommissionEntry> CommissionEntry.findCommissionEntryEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM CommissionEntry o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, CommissionEntry.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

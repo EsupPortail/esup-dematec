@@ -89,13 +89,13 @@ public class UserController {
     		@RequestParam(value = "status", required=false) String status, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
     	
     	if("Admin".equals(status))
-    		return this.findUsersByIsAdmin(true, page, size, uiModel);
+    		return this.findUsersByIsAdmin(true, page, size, null, null, uiModel);
     	
     	else if("SuperManager".equals(status))
-    		return this.findUsersByIsSuperManager(true, page, size, uiModel);
+    		return this.findUsersByIsSuperManager(true, page, size, null, null, uiModel);
     	
     	else if("Manager".equals(status))
-    		return this.findUsersByIsManager(true, page, size, uiModel);
+    		return this.findUsersByIsManager(true, page, size, null, null, uiModel);
     	
     	else if("Membre".equals(status))
     		return this.findUsersByMembre(true, page, size, uiModel);
@@ -104,7 +104,7 @@ public class UserController {
     		return this.findUsersByCandidat(true, page, size, uiModel);
     	
     	else
-    		return this.list(page, size, uiModel);
+    		return this.list(page, size, null, null, uiModel);
     }
 
 

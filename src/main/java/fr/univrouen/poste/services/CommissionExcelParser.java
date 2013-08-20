@@ -70,7 +70,7 @@ public class CommissionExcelParser {
 
 			if(commissionEntry.getNumPoste() != null && !commissionEntry.getNumPoste().isEmpty()
 					&& commissionEntry.getEmail() != null && !commissionEntry.getEmail().isEmpty()) {
-				TypedQuery<CommissionEntry> query = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail());
+				TypedQuery<CommissionEntry> query = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail(), null, null);
 				if (query.getResultList().isEmpty()) {
 					commissionEntry.persist();
 				} else {

@@ -45,20 +45,5 @@ public class LogImportCommission {
 
     private String status;
 
-    public static List<fr.univrouen.poste.domain.LogImportCommission> findAllLogImportCommissions() {
-        return entityManager().createQuery("SELECT o FROM LogImportCommission o order by o.actionDate desc", LogImportCommission.class).getResultList();
-    }
-
-    public static List<fr.univrouen.poste.domain.LogImportCommission> findLogImportCommissionEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM LogImportCommission o order by o.actionDate desc", LogImportCommission.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-        
-    public static TypedQuery<LogImportCommission> findLogImportCommissionsByStatusEquals(String status) {
-        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
-        EntityManager em = entityManager();
-        TypedQuery<LogImportCommission> q = em.createQuery("SELECT o FROM LogImportCommission AS o WHERE o.status = :status order by o.actionDate desc", LogImportCommission.class);
-        q.setParameter("status", status);
-        return q;
-    }
 
 }

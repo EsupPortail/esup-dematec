@@ -60,16 +60,16 @@
 
     <page:list id="pl_fr_univrouen_poste_domain_LogFile" items="${logfiles}" z="STxGeOsrMvK/B9WGIadXCaz8F/Q=">
         <table:table create="false" data="${logfiles}" delete="false" id="l_fr_univrouen_poste_domain_LogFile" path="/admin/logfiles" update="false" view="false" z="user-managed">
-            <table:column date="true" dateTimePattern="${logFile_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogFile_actionDate" property="actionDate" z="Z9YHP/E7E2A2EQpcGhfQ4FOTY1Q="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogFile_userId" property="userId" z="ZC3uC1/vaDfdNuw2zv0r8+KkPsM="/>
+            <table:column date="true" dateTimePattern="${logFile_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogFile_actionDate" property="actionDate" z="Z9YHP/E7E2A2EQpcGhfQ4FOTY1Q=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogFile_userId" property="userId" z="ZC3uC1/vaDfdNuw2zv0r8+KkPsM=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_LogFile_ip" property="ip"/>
             <table:column id="c_fr_univrouen_poste_domain_LogFile_userAgent" property="userAgent" />
-            <table:column id="c_fr_univrouen_poste_domain_LogFile_numEmploi" property="numEmploi" z="GMyl7zPhHZoo2HjUFSY/6uRA9q0="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogFile_numCandidat" property="numCandidat" z="Tr6jC1EvPv8hj3Jpz+aOZz94nwM="/>
+            <table:column id="c_fr_univrouen_poste_domain_LogFile_numEmploi" property="numEmploi" z="GMyl7zPhHZoo2HjUFSY/6uRA9q0=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogFile_numCandidat" property="numCandidat" z="Tr6jC1EvPv8hj3Jpz+aOZz94nwM=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_LogFile_civilite" property="civilite" z="t9k6OLlzAmaNYrC3+cIBL4g+WEs="/>
             <table:column id="c_fr_univrouen_poste_domain_LogFile_nom" property="nom" z="BG1DzOGHPBfzYyR/rL0H4+t87HE="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogFile_email" property="email"/>
-            <table:column id="c_fr_univrouen_poste_domain_LogFile_action" property="action"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogFile_email" property="email" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogFile_action" property="action" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_LogFile_filename" property="filename"/>
             <table:column id="c_fr_univrouen_poste_domain_LogFile_fileSizeFormatted" label="Taille" property="fileSize"/>
         </table:table>

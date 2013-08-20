@@ -119,7 +119,7 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 		Boolean enabled;
 
 		try {
-			TypedQuery<User> query = User.findUsersByEmailAddress(username);
+			TypedQuery<User> query = User.findUsersByEmailAddress(username, null, null);
 
 			User targetUser = (User) query.getSingleResult();		
 			

@@ -63,9 +63,9 @@
     
     <page:list id="pl_fr_univrouen_poste_domain_LogImportCommission" items="${logimportcommissions}" z="FozAEqv68dWfn6EzFCneX5q+aJA=">
         <table:table create="false" data="${logimportcommissions}" delete="false" id="l_fr_univrouen_poste_domain_LogImportCommission" path="/admin/logimportcommissions" update="false" view="false" z="user-managed">
-            <table:column date="true" dateTimePattern="${logImportCommission_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogImportCommission_actionDate" property="actionDate" z="MnNH6sLG0LfElmgz+F/fx/PsZn8="/>
+            <table:column date="true" dateTimePattern="${logImportCommission_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogImportCommission_actionDate" property="actionDate" z="MnNH6sLG0LfElmgz+F/fx/PsZn8=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_LogImportCommission_message" property="message" z="3QGKsVPsb8ldwiXVi8Z68hhKmn0="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogImportCommission_status" property="status" z="fH+jUKPQ/8qy2yXQUoETyGoGeBU="/>
+            <table:column id="c_fr_univrouen_poste_domain_LogImportCommission_status" property="status" z="fH+jUKPQ/8qy2yXQUoETyGoGeBU=" sort="true"/>
         </table:table>
     </page:list>
 </div>

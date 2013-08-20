@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.GalaxieExcel;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,39 @@ privileged aspect GalaxieExcel_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM GalaxieExcel o", Long.class).getSingleResult();
     }
     
+    public static List<GalaxieExcel> GalaxieExcel.findAllGalaxieExcels() {
+        return entityManager().createQuery("SELECT o FROM GalaxieExcel o", GalaxieExcel.class).getResultList();
+    }
+    
+    public static List<GalaxieExcel> GalaxieExcel.findAllGalaxieExcels(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM GalaxieExcel o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, GalaxieExcel.class).getResultList();
+    }
+    
     public static GalaxieExcel GalaxieExcel.findGalaxieExcel(Long id) {
         if (id == null) return null;
         return entityManager().find(GalaxieExcel.class, id);
+    }
+    
+    public static List<GalaxieExcel> GalaxieExcel.findGalaxieExcelEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM GalaxieExcel o", GalaxieExcel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<GalaxieExcel> GalaxieExcel.findGalaxieExcelEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM GalaxieExcel o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, GalaxieExcel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

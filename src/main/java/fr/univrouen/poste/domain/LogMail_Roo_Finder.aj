@@ -12,9 +12,24 @@ privileged aspect LogMail_Roo_Finder {
     public static Long LogMail.countFindLogMailsByStatusEquals(String status) {
         if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
         EntityManager em = LogMail.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM LogMail AS o WHERE o.status = :status", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogMail AS o WHERE o.status = :status", Long.class);
         q.setParameter("status", status);
         return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<LogMail> LogMail.findLogMailsByStatusEquals(String status, String sortFieldName, String sortOrder) {
+        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
+        EntityManager em = LogMail.entityManager();
+        String jpaQuery = "SELECT o FROM LogMail AS o WHERE o.status = :status";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogMail> q = em.createQuery(jpaQuery, LogMail.class);
+        q.setParameter("status", status);
+        return q;
     }
     
 }

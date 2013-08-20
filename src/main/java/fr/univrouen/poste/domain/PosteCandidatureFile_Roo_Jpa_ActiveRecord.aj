@@ -28,6 +28,17 @@ privileged aspect PosteCandidatureFile_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM PosteCandidatureFile o", PosteCandidatureFile.class).getResultList();
     }
     
+    public static List<PosteCandidatureFile> PosteCandidatureFile.findAllPosteCandidatureFiles(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PosteCandidatureFile o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PosteCandidatureFile.class).getResultList();
+    }
+    
     public static PosteCandidatureFile PosteCandidatureFile.findPosteCandidatureFile(Long id) {
         if (id == null) return null;
         return entityManager().find(PosteCandidatureFile.class, id);
@@ -35,6 +46,17 @@ privileged aspect PosteCandidatureFile_Roo_Jpa_ActiveRecord {
     
     public static List<PosteCandidatureFile> PosteCandidatureFile.findPosteCandidatureFileEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM PosteCandidatureFile o", PosteCandidatureFile.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<PosteCandidatureFile> PosteCandidatureFile.findPosteCandidatureFileEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PosteCandidatureFile o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PosteCandidatureFile.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

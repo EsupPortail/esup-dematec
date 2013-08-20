@@ -18,15 +18,15 @@ privileged aspect LogFileController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
-    public String LogFileController.findLogFilesByActionEquals(@RequestParam("action") String action, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String LogFileController.findLogFilesByActionEquals(@RequestParam("action") String action, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(action).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(action, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) LogFile.countFindLogFilesByActionEquals(action) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(action).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(action, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/logfiles/list";
@@ -38,15 +38,15 @@ privileged aspect LogFileController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByNumCandidat", method = RequestMethod.GET)
-    public String LogFileController.findLogFilesByNumCandidat(@RequestParam("numCandidat") String numCandidat, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String LogFileController.findLogFilesByNumCandidat(@RequestParam("numCandidat") String numCandidat, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumCandidat(numCandidat).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumCandidat(numCandidat, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) LogFile.countFindLogFilesByNumCandidat(numCandidat) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumCandidat(numCandidat).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumCandidat(numCandidat, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/logfiles/list";
@@ -58,15 +58,15 @@ privileged aspect LogFileController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByNumEmploi", method = RequestMethod.GET)
-    public String LogFileController.findLogFilesByNumEmploi(@RequestParam("numEmploi") String numEmploi, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String LogFileController.findLogFilesByNumEmploi(@RequestParam("numEmploi") String numEmploi, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumEmploi(numEmploi).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumEmploi(numEmploi, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) LogFile.countFindLogFilesByNumEmploi(numEmploi) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumEmploi(numEmploi).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFilesByNumEmploi(numEmploi, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/logfiles/list";

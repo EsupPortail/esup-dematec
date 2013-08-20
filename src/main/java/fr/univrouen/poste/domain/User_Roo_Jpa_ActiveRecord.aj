@@ -28,9 +28,31 @@ privileged aspect User_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM User o", User.class).getResultList();
     }
     
+    public static List<User> User.findAllUsers(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM User o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, User.class).getResultList();
+    }
+    
     public static User User.findUser(Long id) {
         if (id == null) return null;
         return entityManager().find(User.class, id);
+    }
+    
+    public static List<User> User.findUserEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM User o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, User.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

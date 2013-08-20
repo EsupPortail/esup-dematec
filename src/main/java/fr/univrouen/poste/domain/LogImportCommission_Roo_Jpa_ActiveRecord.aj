@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.LogImportCommission;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,39 @@ privileged aspect LogImportCommission_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM LogImportCommission o", Long.class).getSingleResult();
     }
     
+    public static List<LogImportCommission> LogImportCommission.findAllLogImportCommissions() {
+        return entityManager().createQuery("SELECT o FROM LogImportCommission o", LogImportCommission.class).getResultList();
+    }
+    
+    public static List<LogImportCommission> LogImportCommission.findAllLogImportCommissions(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogImportCommission o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogImportCommission.class).getResultList();
+    }
+    
     public static LogImportCommission LogImportCommission.findLogImportCommission(Long id) {
         if (id == null) return null;
         return entityManager().find(LogImportCommission.class, id);
+    }
+    
+    public static List<LogImportCommission> LogImportCommission.findLogImportCommissionEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM LogImportCommission o", LogImportCommission.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<LogImportCommission> LogImportCommission.findLogImportCommissionEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogImportCommission o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogImportCommission.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

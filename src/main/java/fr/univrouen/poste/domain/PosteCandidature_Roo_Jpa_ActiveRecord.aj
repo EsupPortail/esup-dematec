@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.PosteCandidature;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,31 @@ privileged aspect PosteCandidature_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidature o", Long.class).getSingleResult();
     }
     
+    public static List<PosteCandidature> PosteCandidature.findAllPosteCandidatures(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PosteCandidature o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PosteCandidature.class).getResultList();
+    }
+    
     public static PosteCandidature PosteCandidature.findPosteCandidature(Long id) {
         if (id == null) return null;
         return entityManager().find(PosteCandidature.class, id);
+    }
+    
+    public static List<PosteCandidature> PosteCandidature.findPosteCandidatureEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PosteCandidature o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PosteCandidature.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

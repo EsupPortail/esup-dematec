@@ -45,20 +45,4 @@ public class LogAuth {
 
     private String action;
 
-    public static List<fr.univrouen.poste.domain.LogAuth> findAllLogAuths() {
-        return entityManager().createQuery("SELECT o FROM LogAuth o order by o.actionDate desc", LogAuth.class).getResultList();
-    }
-
-    public static List<fr.univrouen.poste.domain.LogAuth> findLogAuthEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM LogAuth o order by o.actionDate desc", LogAuth.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    public static TypedQuery<LogAuth> findLogAuthsByActionEquals(String action) {
-        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
-        EntityManager em = entityManager();
-        TypedQuery<LogAuth> q = em.createQuery("SELECT o FROM LogAuth AS o WHERE o.action = :action order by o.actionDate desc", LogAuth.class);
-        q.setParameter("action", action);
-        return q;
-    }
-
 }

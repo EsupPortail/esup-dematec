@@ -80,7 +80,7 @@ public class SignUpController {
 	private String activateUser(String activationKey, String emailAddress, Model model) {
 	    String textePremierePageAnonyme = AppliConfig.getCacheTextePremierePageAnonyme();
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
-    	TypedQuery<User> query = User.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress);
+    	TypedQuery<User> query = User.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress, null, null);
         User User=query.getSingleResult();
         if(null!=User){
         	if(User.getPassword() != null) {
@@ -105,7 +105,7 @@ public class SignUpController {
     public String initPassword(@Valid UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
     	String textePremierePageAnonyme = AppliConfig.getCacheTextePremierePageAnonyme();
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
-    	TypedQuery<User> query = User.findUsersByActivationKeyAndEmailAddress(userRegistration.getActivationKey(), userRegistration.getEmailAddress());
+    	TypedQuery<User> query = User.findUsersByActivationKeyAndEmailAddress(userRegistration.getActivationKey(), userRegistration.getEmailAddress(), null, null);
         User User=query.getSingleResult();
         if(null!=User && userRegistration.getPassword().equals(userRegistration.getRepeatPassword()) && !userRegistration.getPassword().isEmpty()){
         	if(User.getPassword() == null) {

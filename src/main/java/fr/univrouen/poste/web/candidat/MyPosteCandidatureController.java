@@ -255,7 +255,7 @@ public class MyPosteCandidatureController {
 
 		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
 
-		User user = User.findUsersByEmailAddress(emailAddress).getSingleResult();
+		User user = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
 
 		// pagination only for admin / manager users ...
 		if (user.getIsAdmin() || user.getIsSuperManager() || user.getIsManager()) {
@@ -272,7 +272,7 @@ public class MyPosteCandidatureController {
 		}
 
 		else if (user.getIsCandidat()) {
-			postecandidatures = PosteCandidature.findPosteCandidaturesByCandidat(user).getResultList();
+			postecandidatures = PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList();
 		}
 
 		else if (user.getIsMembre()) {

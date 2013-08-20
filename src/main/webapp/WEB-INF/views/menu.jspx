@@ -35,26 +35,26 @@
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
             <menu:category id="galaxie" label="Galaxie">
                 <menu:item id="i_galaxieexcel_new" messageCode="global_menu_new" render="false" url="/admin/galaxieexcels?form" z="user-managed"/>
-                <menu:item activeMenu="${activeMenu == 'admingalaxieexcels'}" id="i_galaxieexcel_list" messageCode="global_menu_list" url="/admin/galaxieexcels?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'admingalaxieexcels'}" id="i_galaxieexcel_list" messageCode="global_menu_list" url="/admin/galaxieexcels?sortFieldName=creation&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
                 <menu:item activeMenu="${activeMenu == 'admingalaxieentrys'}" id="i_galaxieentry_list" messageCode="global_menu_list" url="/admin/galaxieentrys?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
                 <menu:item id="i_galaxieentry_new" messageCode="global_menu_new" render="false" url="/admin/galaxieentrys?form" z="user-managed"/>
             </menu:category>
             <menu:category id="commissions" label="Commissions">
                 <menu:item id="i_commissionexcel_new" messageCode="global_menu_new" render="false" url="/admin/commissionexcels?form" z="user-managed"/>
-                <menu:item activeMenu="${activeMenu == 'admincommissionexcels'}" id="i_commissionexcel_list" messageCode="global_menu_list" url="/admin/commissionexcels?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'admincommissionexcels'}" id="i_commissionexcel_list" messageCode="global_menu_list" url="/admin/commissionexcels?sortFieldName=creation&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
                 <menu:item activeMenu="${activeMenu == 'admincommissionentrys'}" id="i_commissionentry_list" messageCode="global_menu_list" url="/admin/commissionentrys?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
             </menu:category>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
             <menu:category id="c_logfile" label="Statistiques" z="user-managed">
                 <menu:item activeMenu="${activeMenu == 'admin'}" id="admin_stats" label="Résumé" url="/admin"/>
-                <menu:item activeMenu="${activeMenu == 'adminlogimportgalaxies'}" id="i_logimportgalaxie_list" messageCode="global_menu_list" url="/admin/logimportgalaxies?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
-                <menu:item activeMenu="${activeMenu == 'adminlogimportcommissions'}" id="i_logimportcommission_list" messageCode="global_menu_list" url="/admin/logimportcommissions?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
-                <menu:item activeMenu="${activeMenu == 'adminlogfiles'}" id="i_logfile_list" messageCode="global_menu_list" url="/admin/logfiles?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
-                <menu:item id="fi_logfile_numcandidat" messageCode="global_menu_find" render="false" url="/admin/logfiles?find=ByNumCandidat&amp;form" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogimportgalaxies'}" id="i_logimportgalaxie_list" messageCode="global_menu_list" url="/admin/logimportgalaxies?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogimportcommissions'}" id="i_logimportcommission_list" messageCode="global_menu_list" url="/admin/logimportcommissions?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogfiles'}" id="i_logfile_list" messageCode="global_menu_list" url="/admin/logfiles?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item id="fi_logfile_numcandidat" messageCode="global_menu_find" render="false" url="/admin/logfiles?find=ByNumCandidat&amp;form&amp;" z="user-managed"/>
                 <menu:item id="fi_logfile_numemploi" messageCode="global_menu_find" render="false" url="/admin/logfiles?find=ByNumEmploi&amp;form" z="user-managed"/>
-                <menu:item activeMenu="${activeMenu == 'adminlogauths'}" id="i_logauth_list" messageCode="global_menu_list" url="/admin/logauths?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
-                <menu:item activeMenu="${activeMenu == 'adminlogmails'}" id="i_logmail_list" messageCode="global_menu_list" url="/admin/logmails?page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogauths'}" id="i_logauth_list" messageCode="global_menu_list" url="/admin/logauths?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
+                <menu:item activeMenu="${activeMenu == 'adminlogmails'}" id="i_logmail_list" messageCode="global_menu_list" url="/admin/logmails?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? 40 : param.size}" z="user-managed"/>
                 <menu:item activeMenu="${activeMenu == 'admincurrentsessions'}" id="i_admincurrentsessions" label="Utilisateurs connectés" url="/admin/currentsessions"/>
                 <menu:item id="fi_logfile_actionequals" messageCode="global_menu_find" render="false" url="/admin/logfiles?find=ByActionEquals&amp;form" z="user-managed"/>
             </menu:category>

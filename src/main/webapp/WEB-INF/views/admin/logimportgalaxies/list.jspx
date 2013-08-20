@@ -63,9 +63,9 @@
     
     <page:list id="pl_fr_univrouen_poste_domain_LogImportGalaxie" items="${logimportgalaxies}" z="xsLor0i3NybS3lnFqhIxMNkDEKY=">
         <table:table create="false" data="${logimportgalaxies}" delete="false" id="l_fr_univrouen_poste_domain_LogImportGalaxie" path="/admin/logimportgalaxies" update="false" z="user-managed" view="false">
-            <table:column date="true" dateTimePattern="${logImportGalaxie_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogImportGalaxie_actionDate" property="actionDate" z="xzgfXoC1P17NUM15QyUzjKc2sUQ="/>
+            <table:column date="true" dateTimePattern="${logImportGalaxie_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogImportGalaxie_actionDate" property="actionDate" z="xzgfXoC1P17NUM15QyUzjKc2sUQ=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_LogImportGalaxie_message" property="message" z="6Gi/up8/8JYkqar661NVJzfrZaE="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogImportGalaxie_status" property="status" z="97pXyO5H73PTVKHMctQLPIHjO9k="/>
+            <table:column id="c_fr_univrouen_poste_domain_LogImportGalaxie_status" property="status" z="97pXyO5H73PTVKHMctQLPIHjO9k=" sort="true"/>
         </table:table>
     </page:list>
 </div>

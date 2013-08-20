@@ -52,14 +52,5 @@ public class GalaxieExcel {
     
     @Transient
     private  List<List<String>> cells;
-    
-    public static List<GalaxieExcel> findAllGalaxieExcels() {
-        return entityManager().createQuery("SELECT o FROM GalaxieExcel o order by o.creation desc", GalaxieExcel.class).getResultList();
-    }
-    
-    public static List<GalaxieExcel> findGalaxieExcelEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM GalaxieExcel o order by o.creation desc", GalaxieExcel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-
 
 }

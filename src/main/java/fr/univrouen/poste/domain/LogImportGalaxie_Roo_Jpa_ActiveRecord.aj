@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.LogImportGalaxie;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,39 @@ privileged aspect LogImportGalaxie_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM LogImportGalaxie o", Long.class).getSingleResult();
     }
     
+    public static List<LogImportGalaxie> LogImportGalaxie.findAllLogImportGalaxies() {
+        return entityManager().createQuery("SELECT o FROM LogImportGalaxie o", LogImportGalaxie.class).getResultList();
+    }
+    
+    public static List<LogImportGalaxie> LogImportGalaxie.findAllLogImportGalaxies(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogImportGalaxie o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogImportGalaxie.class).getResultList();
+    }
+    
     public static LogImportGalaxie LogImportGalaxie.findLogImportGalaxie(Long id) {
         if (id == null) return null;
         return entityManager().find(LogImportGalaxie.class, id);
+    }
+    
+    public static List<LogImportGalaxie> LogImportGalaxie.findLogImportGalaxieEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM LogImportGalaxie o", LogImportGalaxie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<LogImportGalaxie> LogImportGalaxie.findLogImportGalaxieEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogImportGalaxie o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogImportGalaxie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

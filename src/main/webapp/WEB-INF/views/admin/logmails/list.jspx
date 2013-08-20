@@ -63,10 +63,10 @@
     
     <page:list id="pl_fr_univrouen_poste_domain_LogMail" items="${logmails}" z="OWaBmEvEaYSB1MBUXLGrA+E0t5k=">
         <table:table create="false" data="${logmails}" delete="false" id="l_fr_univrouen_poste_domain_LogMail" path="/admin/logmails" update="false" z="user-managed">
-            <table:column date="true" dateTimePattern="${logMail_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogMail_actionDate" property="actionDate" z="acKh45p42wwpK0e9AnRxXlY3ctw="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogMail_mailTo" property="mailTo" z="eavOmG8Caxrw3UjoYFk3UkuDZhM="/>
+            <table:column date="true" dateTimePattern="${logMail_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogMail_actionDate" property="actionDate" z="acKh45p42wwpK0e9AnRxXlY3ctw=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogMail_mailTo" property="mailTo" z="eavOmG8Caxrw3UjoYFk3UkuDZhM=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_LogMail_message" property="message" z="ma5o2hBs1H2bjYNJOSWFZ1iYN2k="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogMail_status" property="status" z="zQ5YdDKCN5T7KKu6MMROij310rk="/>
+            <table:column id="c_fr_univrouen_poste_domain_LogMail_status" property="status" z="zQ5YdDKCN5T7KKu6MMROij310rk=" sort="true"/>
         </table:table>
     </page:list>
 </div>

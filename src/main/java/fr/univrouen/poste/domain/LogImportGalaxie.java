@@ -45,20 +45,4 @@ public class LogImportGalaxie {
 
     private String status;
 
-    public static List<fr.univrouen.poste.domain.LogImportGalaxie> findAllLogImportGalaxies() {
-        return entityManager().createQuery("SELECT o FROM LogImportGalaxie o order by o.actionDate desc", LogImportGalaxie.class).getResultList();
-    }
-
-    public static List<fr.univrouen.poste.domain.LogImportGalaxie> findLogImportGalaxieEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM LogImportGalaxie o order by o.actionDate desc", LogImportGalaxie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-      
-    public static TypedQuery<LogImportGalaxie> findLogImportGalaxiesByStatusEquals(String status) {
-        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
-        EntityManager em = entityManager();
-        TypedQuery<LogImportGalaxie> q = em.createQuery("SELECT o FROM LogImportGalaxie AS o WHERE o.status = :status order by o.actionDate desc", LogImportGalaxie.class);
-        q.setParameter("status", status);
-        return q;
-    }
-
 }

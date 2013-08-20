@@ -75,7 +75,7 @@ public class ChangePasswordController {
 						.getContext().getAuthentication().getPrincipal();
 				String newPassword = form.getNewPassword();
 				Query query = User
-						.findUsersByEmailAddress(userDetails.getUsername());
+						.findUsersByEmailAddress(userDetails.getUsername(), null, null);
 				User person = (User) query.getSingleResult();
 				person.setPassword(messageDigestPasswordEncoder.encodePassword(newPassword, null));
 				person.merge();

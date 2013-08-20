@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,31 @@ privileged aspect GalaxieEntry_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM GalaxieEntry o", Long.class).getSingleResult();
     }
     
+    public static List<GalaxieEntry> GalaxieEntry.findAllGalaxieEntrys(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM GalaxieEntry o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, GalaxieEntry.class).getResultList();
+    }
+    
     public static GalaxieEntry GalaxieEntry.findGalaxieEntry(Long id) {
         if (id == null) return null;
         return entityManager().find(GalaxieEntry.class, id);
+    }
+    
+    public static List<GalaxieEntry> GalaxieEntry.findGalaxieEntryEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM GalaxieEntry o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, GalaxieEntry.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

@@ -65,19 +65,4 @@ public class LogFile {
     @Column(length=512)
     private String userAgent;
 
-    public static List<fr.univrouen.poste.domain.LogFile> findAllLogFiles() {
-        return entityManager().createQuery("SELECT o FROM LogFile o order by o.actionDate desc", LogFile.class).getResultList();
-    }
-
-    public static List<fr.univrouen.poste.domain.LogFile> findLogFileEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM LogFile o order by o.actionDate desc", LogFile.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    public static TypedQuery<LogFile> findLogFilesByActionEquals(String action) {
-        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
-        EntityManager em = entityManager();
-        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.action = :action order by o.actionDate desc", LogFile.class);
-        q.setParameter("action", action);
-        return q;
-    }
 }

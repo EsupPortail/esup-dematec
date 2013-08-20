@@ -18,15 +18,15 @@ privileged aspect UserController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByActivationKeyAndEmailAddress", method = RequestMethod.GET)
-    public String UserController.findUsersByActivationKeyAndEmailAddress(@RequestParam("activationKey") String activationKey, @RequestParam("emailAddress") String emailAddress, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String UserController.findUsersByActivationKeyAndEmailAddress(@RequestParam("activationKey") String activationKey, @RequestParam("emailAddress") String emailAddress, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countFindUsersByActivationKeyAndEmailAddress(activationKey, emailAddress) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress).getResultList());
+            uiModel.addAttribute("users", User.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";
@@ -38,15 +38,15 @@ privileged aspect UserController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByEmailAddress", method = RequestMethod.GET)
-    public String UserController.findUsersByEmailAddress(@RequestParam("emailAddress") String emailAddress, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String UserController.findUsersByEmailAddress(@RequestParam("emailAddress") String emailAddress, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findUsersByEmailAddress(emailAddress).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findUsersByEmailAddress(emailAddress, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countFindUsersByEmailAddress(emailAddress) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findUsersByEmailAddress(emailAddress).getResultList());
+            uiModel.addAttribute("users", User.findUsersByEmailAddress(emailAddress, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";
@@ -58,15 +58,15 @@ privileged aspect UserController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByIsAdmin", method = RequestMethod.GET)
-    public String UserController.findUsersByIsAdmin(@RequestParam(value = "isAdmin", required = false) Boolean isAdmin, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String UserController.findUsersByIsAdmin(@RequestParam(value = "isAdmin", required = false) Boolean isAdmin, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findUsersByIsAdmin(isAdmin == null ? Boolean.FALSE : isAdmin).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findUsersByIsAdmin(isAdmin == null ? Boolean.FALSE : isAdmin, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countFindUsersByIsAdmin(isAdmin == null ? Boolean.FALSE : isAdmin) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findUsersByIsAdmin(isAdmin == null ? Boolean.FALSE : isAdmin).getResultList());
+            uiModel.addAttribute("users", User.findUsersByIsAdmin(isAdmin == null ? Boolean.FALSE : isAdmin, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";
@@ -78,15 +78,15 @@ privileged aspect UserController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByIsManager", method = RequestMethod.GET)
-    public String UserController.findUsersByIsManager(@RequestParam(value = "isManager", required = false) Boolean isManager, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String UserController.findUsersByIsManager(@RequestParam(value = "isManager", required = false) Boolean isManager, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findUsersByIsManager(isManager == null ? Boolean.FALSE : isManager).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findUsersByIsManager(isManager == null ? Boolean.FALSE : isManager, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countFindUsersByIsManager(isManager == null ? Boolean.FALSE : isManager) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findUsersByIsManager(isManager == null ? Boolean.FALSE : isManager).getResultList());
+            uiModel.addAttribute("users", User.findUsersByIsManager(isManager == null ? Boolean.FALSE : isManager, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";
@@ -98,15 +98,15 @@ privileged aspect UserController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByIsSuperManager", method = RequestMethod.GET)
-    public String UserController.findUsersByIsSuperManager(@RequestParam(value = "isSuperManager", required = false) Boolean isSuperManager, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String UserController.findUsersByIsSuperManager(@RequestParam(value = "isSuperManager", required = false) Boolean isSuperManager, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findUsersByIsSuperManager(isSuperManager == null ? Boolean.FALSE : isSuperManager).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findUsersByIsSuperManager(isSuperManager == null ? Boolean.FALSE : isSuperManager, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countFindUsersByIsSuperManager(isSuperManager == null ? Boolean.FALSE : isSuperManager) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findUsersByIsSuperManager(isSuperManager == null ? Boolean.FALSE : isSuperManager).getResultList());
+            uiModel.addAttribute("users", User.findUsersByIsSuperManager(isSuperManager == null ? Boolean.FALSE : isSuperManager, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";
@@ -118,15 +118,15 @@ privileged aspect UserController_Roo_Controller_Finder {
     }
     
     @RequestMapping(params = "find=ByNumCandidat", method = RequestMethod.GET)
-    public String UserController.findUsersByNumCandidat(@RequestParam("numCandidat") String numCandidat, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String UserController.findUsersByNumCandidat(@RequestParam("numCandidat") String numCandidat, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findUsersByNumCandidat(numCandidat).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findUsersByNumCandidat(numCandidat, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countFindUsersByNumCandidat(numCandidat) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findUsersByNumCandidat(numCandidat).getResultList());
+            uiModel.addAttribute("users", User.findUsersByNumCandidat(numCandidat, sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";

@@ -58,9 +58,9 @@
 
 	<page:list id="pl_fr_univrouen_poste_domain_LogAuth" items="${logauths}" z="dyl+WI0gNmvcRslPjNrzmR+mveA=">
         <table:table create="false" data="${logauths}" delete="false" id="l_fr_univrouen_poste_domain_LogAuth" path="/admin/logauths" update="false" view="false" z="user-managed">
-            <table:column date="true" dateTimePattern="${logAuth_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogAuth_actionDate" property="actionDate" z="VThjupWxMFpqaqemyZjt88xMwHw="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogAuth_userId" property="userId" z="q9X6VaKjvHi7KtKDZ5zwO6JculM="/>
-            <table:column id="c_fr_univrouen_poste_domain_LogAuth_action" property="action" z="Szx5CMpfSqFsnteW0+msvTdxiSc="/>
+            <table:column date="true" dateTimePattern="${logAuth_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogAuth_actionDate" property="actionDate" z="VThjupWxMFpqaqemyZjt88xMwHw=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogAuth_userId" property="userId" z="q9X6VaKjvHi7KtKDZ5zwO6JculM=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogAuth_action" property="action" z="Szx5CMpfSqFsnteW0+msvTdxiSc=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_LogAuth_ip" property="ip" z="cHnrqk4ghd3LJvHDDDiiVnAl3lY="/>
         </table:table>
     </page:list>

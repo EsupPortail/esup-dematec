@@ -192,14 +192,12 @@ public class User {
 	 * @return true if one of his candidatures has a modification date not nul
 	 */
 	public Boolean isCandidatActif() {
-		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(this).getResultList();
+		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(this, null, null).getResultList();
 		for(PosteCandidature candidature: candidatures)
 			if(candidature.getModification() != null)
 				return true;
 		return false;
 	}
-
-
 	
 }
 

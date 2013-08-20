@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.LogMail;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,39 @@ privileged aspect LogMail_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM LogMail o", Long.class).getSingleResult();
     }
     
+    public static List<LogMail> LogMail.findAllLogMails() {
+        return entityManager().createQuery("SELECT o FROM LogMail o", LogMail.class).getResultList();
+    }
+    
+    public static List<LogMail> LogMail.findAllLogMails(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogMail o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogMail.class).getResultList();
+    }
+    
     public static LogMail LogMail.findLogMail(Long id) {
         if (id == null) return null;
         return entityManager().find(LogMail.class, id);
+    }
+    
+    public static List<LogMail> LogMail.findLogMailEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM LogMail o", LogMail.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<LogMail> LogMail.findLogMailEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM LogMail o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, LogMail.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

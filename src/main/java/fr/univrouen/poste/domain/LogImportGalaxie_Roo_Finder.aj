@@ -12,9 +12,24 @@ privileged aspect LogImportGalaxie_Roo_Finder {
     public static Long LogImportGalaxie.countFindLogImportGalaxiesByStatusEquals(String status) {
         if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
         EntityManager em = LogImportGalaxie.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM LogImportGalaxie AS o WHERE o.status = :status", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogImportGalaxie AS o WHERE o.status = :status", Long.class);
         q.setParameter("status", status);
         return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<LogImportGalaxie> LogImportGalaxie.findLogImportGalaxiesByStatusEquals(String status, String sortFieldName, String sortOrder) {
+        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
+        EntityManager em = LogImportGalaxie.entityManager();
+        String jpaQuery = "SELECT o FROM LogImportGalaxie AS o WHERE o.status = :status";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogImportGalaxie> q = em.createQuery(jpaQuery, LogImportGalaxie.class);
+        q.setParameter("status", status);
+        return q;
     }
     
 }

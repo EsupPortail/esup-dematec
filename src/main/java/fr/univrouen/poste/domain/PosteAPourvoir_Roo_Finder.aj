@@ -12,15 +12,22 @@ privileged aspect PosteAPourvoir_Roo_Finder {
     public static Long PosteAPourvoir.countFindPosteAPourvoirsByNumEmploi(String numEmploi) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi", Long.class);
         q.setParameter("numEmploi", numEmploi);
         return ((Long) q.getSingleResult());
     }
     
-    public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByNumEmploi(String numEmploi) {
+    public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByNumEmploi(String numEmploi, String sortFieldName, String sortOrder) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
-        TypedQuery<PosteAPourvoir> q = em.createQuery("SELECT o FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi", PosteAPourvoir.class);
+        String jpaQuery = "SELECT o FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<PosteAPourvoir> q = em.createQuery(jpaQuery, PosteAPourvoir.class);
         q.setParameter("numEmploi", numEmploi);
         return q;
     }

@@ -96,13 +96,13 @@ public class GalaxieEntryController {
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {			
         	if(galaxieEntry.getCandidat() == null) {
         		User candidat = null;
-        		TypedQuery<User> query = User.findUsersByNumCandidat(galaxieEntry.getNumCandidat());
+        		TypedQuery<User> query = User.findUsersByNumCandidat(galaxieEntry.getNumCandidat(), null, null);
         		if(query.getResultList().isEmpty()) {
         			if(galaxieEntry.getEmail() == null || galaxieEntry.getEmail().isEmpty()) {
         				String message = "Le candidat " + galaxieEntry.getNumCandidat() + " n'a pas de mail de renseigné";
         				logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
         			} else {
-	        			List<User> usersSameEmail = User.findUsersByEmailAddress(galaxieEntry.getEmail()).getResultList();
+	        			List<User> usersSameEmail = User.findUsersByEmailAddress(galaxieEntry.getEmail(), null, null).getResultList();
 	        			if(!usersSameEmail.isEmpty()) {
 	        				String message = "Le candidat " + galaxieEntry.getNumCandidat() + " a le même mail que le(s) utilisateur(s)";
 	        				for(User u : usersSameEmail) 
@@ -147,7 +147,7 @@ public class GalaxieEntryController {
         	
            	if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() == null) {
            		PosteAPourvoir poste = null;
-           		TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(galaxieEntry.getNumEmploi());
+           		TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(galaxieEntry.getNumEmploi(), null, null);
            		if(query.getResultList().isEmpty()) {
            			
            			// new Poste

@@ -95,7 +95,7 @@ public class CommissionEntryController {
         for(CommissionEntry  commissionEntry : commissionEntrys) {     	
         	if(commissionEntry.getMembre()==null) {
         		User membre = null;
-        		TypedQuery<User> query = User.findUsersByEmailAddress(commissionEntry.getEmail());
+        		TypedQuery<User> query = User.findUsersByEmailAddress(commissionEntry.getEmail(), null, null);
         		if(query.getResultList().isEmpty()) {
 
 	        		// new User 
@@ -128,7 +128,7 @@ public class CommissionEntryController {
         	
            	if(commissionEntry.getMembre() != null && commissionEntry.getPoste() == null) {
            		PosteAPourvoir poste = null;
-           		TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(commissionEntry.getNumPoste());
+           		TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(commissionEntry.getNumPoste(), null, null);
            		if(query.getResultList().isEmpty()) {
            			
            			// new Poste

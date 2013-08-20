@@ -35,7 +35,7 @@ public class AuthenticationSuccessEventListener implements ApplicationListener<A
 		
 		String username = ev.getAuthentication().getName();
 
-		TypedQuery<User> query = User.findUsersByEmailAddress(username);
+		TypedQuery<User> query = User.findUsersByEmailAddress(username, null, null);
 		User targetUser = (User) query.getSingleResult();
 
 	    if (targetUser != null) { // only for existing users

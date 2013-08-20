@@ -53,13 +53,4 @@ public class CommissionExcel {
     @Transient
     private  List<List<String>> cells;
 
-    
-    public static List<CommissionExcel> findAllCommissionExcels() {
-        return entityManager().createQuery("SELECT o FROM CommissionExcel o order by o.creation desc", CommissionExcel.class).getResultList();
-    }
-    
-    public static List<CommissionExcel> findCommissionExcelEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM CommissionExcel o order by o.creation desc", CommissionExcel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-
 }

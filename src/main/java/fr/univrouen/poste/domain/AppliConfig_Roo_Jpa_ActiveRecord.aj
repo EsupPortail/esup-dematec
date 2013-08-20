@@ -28,6 +28,17 @@ privileged aspect AppliConfig_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM AppliConfig o", AppliConfig.class).getResultList();
     }
     
+    public static List<AppliConfig> AppliConfig.findAllAppliConfigs(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM AppliConfig o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, AppliConfig.class).getResultList();
+    }
+    
     public static AppliConfig AppliConfig.findAppliConfig(Long id) {
         if (id == null) return null;
         return entityManager().find(AppliConfig.class, id);
@@ -35,6 +46,17 @@ privileged aspect AppliConfig_Roo_Jpa_ActiveRecord {
     
     public static List<AppliConfig> AppliConfig.findAppliConfigEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM AppliConfig o", AppliConfig.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<AppliConfig> AppliConfig.findAppliConfigEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM AppliConfig o";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, AppliConfig.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

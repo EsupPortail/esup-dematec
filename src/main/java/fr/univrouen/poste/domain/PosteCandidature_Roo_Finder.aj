@@ -14,7 +14,7 @@ privileged aspect PosteCandidature_Roo_Finder {
     public static Long PosteCandidature.countFindPosteCandidaturesByCandidat(User candidat) {
         if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
         EntityManager em = PosteCandidature.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.candidat = :candidat", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.candidat = :candidat", Long.class);
         q.setParameter("candidat", candidat);
         return ((Long) q.getSingleResult());
     }
@@ -22,7 +22,7 @@ privileged aspect PosteCandidature_Roo_Finder {
     public static Long PosteCandidature.countFindPosteCandidaturesByPoste(PosteAPourvoir poste) {
         if (poste == null) throw new IllegalArgumentException("The poste argument is required");
         EntityManager em = PosteCandidature.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.poste = :poste", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.poste = :poste", Long.class);
         q.setParameter("poste", poste);
         return ((Long) q.getSingleResult());
     }
@@ -30,23 +30,37 @@ privileged aspect PosteCandidature_Roo_Finder {
     public static Long PosteCandidature.countFindPosteCandidaturesByRecevable(Boolean recevable) {
         if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
         EntityManager em = PosteCandidature.entityManager();
-        TypedQuery q = em.createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.recevable = :recevable", Long.class);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.recevable = :recevable", Long.class);
         q.setParameter("recevable", recevable);
         return ((Long) q.getSingleResult());
     }
     
-    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByCandidat(User candidat) {
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByCandidat(User candidat, String sortFieldName, String sortOrder) {
         if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
         EntityManager em = PosteCandidature.entityManager();
-        TypedQuery<PosteCandidature> q = em.createQuery("SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat", PosteCandidature.class);
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
         q.setParameter("candidat", candidat);
         return q;
     }
     
-    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByPoste(PosteAPourvoir poste) {
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByPoste(PosteAPourvoir poste, String sortFieldName, String sortOrder) {
         if (poste == null) throw new IllegalArgumentException("The poste argument is required");
         EntityManager em = PosteCandidature.entityManager();
-        TypedQuery<PosteCandidature> q = em.createQuery("SELECT o FROM PosteCandidature AS o WHERE o.poste = :poste", PosteCandidature.class);
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste = :poste";
+        if (sortFieldName != null) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
         q.setParameter("poste", poste);
         return q;
     }
