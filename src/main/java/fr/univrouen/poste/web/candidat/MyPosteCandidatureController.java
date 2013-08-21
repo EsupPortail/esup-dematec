@@ -243,7 +243,7 @@ public class MyPosteCandidatureController {
     }
 
 	@RequestMapping(produces = "text/html")
-	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
 
 		// uiModel.addAttribute("users", User.findUserEntries(firstResult,
 		// sizeNo));
@@ -257,14 +257,21 @@ public class MyPosteCandidatureController {
 		// pagination only for admin / manager users ...
 		if (user.getIsAdmin() || user.getIsSuperManager() || user.getIsManager()) {
 
+    		if(sortFieldName == null) 
+            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+    		if("nom".equals(sortFieldName))
+    			sortFieldName = "candidat.nom";
+    		if("email".equals(sortFieldName))
+    			sortFieldName = "candidat.emailAddress";
+    		
 			if (page != null || size != null) {
 				int sizeNo = size == null ? 10 : size.intValue();
 				int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
 				float nrOfPages = (float) PosteCandidature.countPosteCandidatures() / sizeNo;
 				uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo, "o.poste.numEmploi,o.candidat.nom", null);
+				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo, sortFieldName, sortOrder);
 			} else {
-				postecandidatures = PosteCandidature.findAllPosteCandidatures("o.poste.numEmploi,o.candidat.nom", null);
+				postecandidatures = PosteCandidature.findAllPosteCandidatures(sortFieldName, sortOrder);
 			}
 		}
 

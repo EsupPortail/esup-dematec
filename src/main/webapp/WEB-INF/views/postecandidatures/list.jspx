@@ -37,29 +37,27 @@
                             <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
                         </div>
                         <div class="accordion-body collapse" id="collapseFilter">
-							<div class="accordion-inner">
-								<div class="row-fluid">
-									<div class="span4">
-										<form:find finderName="ByPostes" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
-											<field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id"
-												items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true" />
-											<field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip (recevable uniquement)"/>
-										</form:find>
-									</div>
-									<div class="span5">
-										<form:find finderName="ByCandidats" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
-											<field:select disableFormBinding="true" field="candidat" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id"
-												items="${candidats}" multiple="true" path="/admin/users" required="true" />
-										</form:find>
-									</div>
-									<div class="span3">
-										<form:find finderName="ByRecevable" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
-											<field:checkbox disableFormBinding="true" field="recevable" id="f_fr_univrouen_poste_domain_PosteCandidature_recevable" />
-										</form:find>
-									</div>
-								</div>
-							</div>
-						</div>
+                            <div class="accordion-inner">
+                                <div class="row-fluid">
+                                    <div class="span4">
+                                        <form:find finderName="ByPostes" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+                                            <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+                                            <field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip (recevable uniquement)"/>
+                                        </form:find>
+                                    </div>
+                                    <div class="span5">
+                                        <form:find finderName="ByCandidats" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+                                            <field:select disableFormBinding="true" field="candidat" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
+                                        </form:find>
+                                    </div>
+                                    <div class="span3">
+                                        <form:find finderName="ByRecevable" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+                                            <field:checkbox disableFormBinding="true" field="recevable" id="f_fr_univrouen_poste_domain_PosteCandidature_recevable"/>
+                                        </form:find>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,20 +69,19 @@
     <sec:authorize access="hasRole('ROLE_CANDIDAT')">
         ${texteCandidatAideCandidatures}
     </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+        <c:set value="true" var="canManage"/>
+    </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
         <table:table create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed">
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" z="WZy/ey09UhNwiVxNxGVCfc0CNgo="/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canManage}" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom" sort="${canManage}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email" sort="${canManage}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
-            <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" z="user-managed"/>
-            </sec:authorize>
-            <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" z="SFmhS6agTPb4mG7OwAJCmgDQ6fg="/>
-                <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" z="E3G5Yr7/QCaeGKB7NJy5AsXUfUQ="/>
-            </sec:authorize>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" render="${canManage}" sort="${canManage}" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" render="${canManage}" sort="${canManage}" z="user-managed"/>
         </table:table>
     </page:list>
 </div>
