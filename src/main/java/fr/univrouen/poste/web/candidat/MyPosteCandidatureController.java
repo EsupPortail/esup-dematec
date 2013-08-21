@@ -319,8 +319,14 @@ public class MyPosteCandidatureController {
     		
     		return null;    		
     	} else {
+    		
     		if(sortFieldName == null) 
-            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";       
+            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+    		if("nom".equals(sortFieldName))
+    			sortFieldName = "candidat.nom";
+    		if("email".equals(sortFieldName))
+    			sortFieldName = "candidat.emailAddress";
+    		
     		if (page != null || size != null) {
                 int sizeNo = size == null ? 10 : size.intValue();
                 final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
@@ -338,8 +344,14 @@ public class MyPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     @RequestMapping(params = "find=ByCandidats", method = RequestMethod.GET)
     public String findPosteCandidaturesByRecevable(@RequestParam(required=false, value="candidat") List<User> candidats, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {   	
+		
 		if(sortFieldName == null) 
-        	sortFieldName = "o.poste.numEmploi,o.candidat.nom";       
+        	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+		if("nom".equals(sortFieldName))
+			sortFieldName = "candidat.nom";
+		if("email".equals(sortFieldName))
+			sortFieldName = "candidat.emailAddress";
+		
 		if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
@@ -358,7 +370,11 @@ public class MyPosteCandidatureController {
     public String findPosteCandidaturesByRecevable(@RequestParam(value = "recevable", required = false) Boolean recevable, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         
 		if(sortFieldName == null) 
-        	sortFieldName = "o.poste.numEmploi,o.candidat.nom";
+        	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+		if("nom".equals(sortFieldName))
+			sortFieldName = "candidat.nom";
+		if("email".equals(sortFieldName))
+			sortFieldName = "candidat.emailAddress";
         
 		if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
