@@ -79,6 +79,21 @@ width: auto;
 margin-left: 10px;
 }
 
+.sorting {
+padding-right: 20px;
+background: url("images/sort_both.png") no-repeat center right;
+}
+
+.sorting_asc {
+padding-right: 20px;
+background: url("images/sort_asc.png") no-repeat center right;
+}
+
+.sorting_desc {
+padding-right: 20px;
+background: url("images/sort_desc.png") no-repeat center right;
+}
+
 @media (min-width: 1200px) {
 	
 #main .bs-docs-sidenav {
