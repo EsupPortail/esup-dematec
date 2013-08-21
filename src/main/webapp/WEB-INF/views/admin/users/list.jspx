@@ -77,15 +77,15 @@
 	<page:list id="pl_fr_univrouen_poste_domain_User" items="${users}" z="eP3AWaiQl5lLruJK9NEa3CN1F9k=">
 		<table:table create="${canManage}" data="${users}" delete="${canManage}" id="l_fr_univrouen_poste_domain_User" path="/admin/users"
 			update="${canManage}" z="user-managed">
-			<table:column id="c_fr_univrouen_poste_domain_User_emailAddress" property="emailAddress" z="G7gXZ/28v7b79LZxw+D/DuM9+w4=" />
+			<table:column id="c_fr_univrouen_poste_domain_User_emailAddress" property="emailAddress" z="G7gXZ/28v7b79LZxw+D/DuM9+w4=" sort="true"/>
 			<table:column id="c_fr_univrouen_poste_domain_User_password" property="password" render="false" z="user-managed" />
 			<table:column id="c_fr_univrouen_poste_domain_User_activationKey" property="activationKey" render="false" z="user-managed" />
 			<table:column id="c_fr_univrouen_poste_domain_User_status" label="Status" property="status" />
 			<table:column id="c_fr_univrouen_poste_domain_User_civilite" property="civilite" z="VyUDjVlDYyUP+8P3vnpLJvL9bhA=" />
-			<table:column id="c_fr_univrouen_poste_domain_User_nom" property="nom" z="hes4W8xHWG0wCrhbbrr3H9WLCNU=" />
+			<table:column id="c_fr_univrouen_poste_domain_User_nom" property="nom" z="hes4W8xHWG0wCrhbbrr3H9WLCNU=" sort="true"/>
 			<table:column id="c_fr_univrouen_poste_domain_User_prenom" property="prenom" z="iQrCC6V0fxrf9JRmzCUm4ml6cPE=" />
 			<table:column date="true" dateTimePattern="${user_activationdate_date_format}" id="c_fr_univrouen_poste_domain_User_activationDate"
-				property="activationDate" z="eX8VBl1zyTQgyI78Ogxvv3EH3lc=" />
+				property="activationDate" z="eX8VBl1zyTQgyI78Ogxvv3EH3lc=" sort="true"/>
 		</table:table>
 	</page:list>
 </div>

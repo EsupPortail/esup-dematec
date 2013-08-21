@@ -35,9 +35,9 @@
 	<page:list id="pl_fr_univrouen_poste_domain_PosteAPourvoir" items="${posteapourvoirs}" z="TpEp2H0KRxIQuHz9g7sGU0BzTcg=">
 		<table:table create="false" data="${posteapourvoirs}" delete="false" id="l_fr_univrouen_poste_domain_PosteAPourvoir" path="/admin/posteapourvoirs"
 			update="${canManage}" view="true" z="user-managed">
-			<table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" property="numEmploi" z="ltmcpmu+fHbYtXl1xLe9TtfamO8=" />
+			<table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" property="numEmploi" z="ltmcpmu+fHbYtXl1xLe9TtfamO8=" sort="true"/>
 			<table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" property="profil" z="GbIqGAwYsYdwDUxFMNg1+/TlaEo=" />
-			<table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" property="localisation" z="hjlhCuwtqcu1V0DdQpkGUQsC6w0=" />
+			<table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" property="localisation" z="hjlhCuwtqcu1V0DdQpkGUQsC6w0=" sort="true"/>
 			<table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" property="membres" z="Oj8AzSZWWBW0uI0w9Xngx4nqcu0=" />
 		</table:table>
 	</page:list>
