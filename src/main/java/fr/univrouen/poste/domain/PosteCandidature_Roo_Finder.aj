@@ -65,4 +65,19 @@ privileged aspect PosteCandidature_Roo_Finder {
         return q;
     }
     
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByRecevable(Boolean recevable, String sortFieldName, String sortOrder) {
+        if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.recevable = :recevable";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
+        q.setParameter("recevable", recevable);
+        return q;
+    }
+    
 }

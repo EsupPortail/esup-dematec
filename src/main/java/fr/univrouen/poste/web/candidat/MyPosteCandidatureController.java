@@ -22,14 +22,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +36,6 @@ import javax.validation.Valid;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.finder.RooWebFinder;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -265,9 +262,9 @@ public class MyPosteCandidatureController {
 				int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
 				float nrOfPages = (float) PosteCandidature.countPosteCandidatures() / sizeNo;
 				uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo, "o.poste.numEmploi ASC,o.candidat.nom", "ASC");
+				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo, "o.poste.numEmploi,o.candidat.nom", null);
 			} else {
-				postecandidatures = PosteCandidature.findAllPosteCandidatures("o.poste.numEmploi ASC,o.candidat.nom", "ASC");
+				postecandidatures = PosteCandidature.findAllPosteCandidatures("o.poste.numEmploi,o.candidat.nom", null);
 			}
 		}
 
@@ -292,7 +289,7 @@ public class MyPosteCandidatureController {
 	
     @RequestMapping(params = "find=ByPostes", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String findPosteCandidaturesByPostes(HttpServletRequest request, HttpServletResponse response, @RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, @RequestParam(required=false, defaultValue="off") Boolean zip, Model uiModel) throws IOException, SQLException {
+    public String findPosteCandidaturesByPostes(HttpServletRequest request, HttpServletResponse response, @RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, @RequestParam(required=false, defaultValue="off") Boolean zip, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) throws IOException, SQLException {
     	
     	if(zip) {  				
     		if(postes == null) 
@@ -301,12 +298,12 @@ public class MyPosteCandidatureController {
     		File tmpFile = zipService.getZip(PosteCandidature.findPosteCandidaturesRecevableByPostes(new HashSet<PosteAPourvoir>(postes)).getResultList());
 
     		String contentType = "application/zip";
-    		int size = (int) tmpFile.length();
+    		int zipSize = (int) tmpFile.length();
     		String baseName = "demat.zip";
     		InputStream inputStream = new FileInputStream(tmpFile);
 
     		response.setContentType(contentType);
-    		response.setContentLength(size);
+    		response.setContentLength(zipSize);
     		//response.setCharacterEncoding("utf-8");
     		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
     		FileCopyUtils.copy(inputStream, response.getOutputStream());
@@ -315,25 +312,57 @@ public class MyPosteCandidatureController {
     		
     		return null;    		
     	} else {
-    		addDateTimeFormatPatterns(uiModel);
-    		uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByPostes(postes).getResultList());
-    		return "postecandidatures/list";
+    		if(sortFieldName == null) 
+            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";       
+    		if (page != null || size != null) {
+                int sizeNo = size == null ? 10 : size.intValue();
+                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+                uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByPostes(postes, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+                float nrOfPages = (float) PosteCandidature.countFindPosteCandidaturesByPostes(postes) / sizeNo;
+                uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+            } else {
+                uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByPostes(postes, sortFieldName, sortOrder).getResultList());
+            }
+            addDateTimeFormatPatterns(uiModel);       
+            return "postecandidatures/list";           
     	}
     }
 
-    @RequestMapping(params = "find=ByCandidats", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String findPosteCandidaturesByRecevable(@RequestParam(required=false, value="candidat") List<User> candidats, Model uiModel) {
-		addDateTimeFormatPatterns(uiModel);
-    	uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByCandidats(candidats).getResultList());
+    @RequestMapping(params = "find=ByCandidats", method = RequestMethod.GET)
+    public String findPosteCandidaturesByRecevable(@RequestParam(required=false, value="candidat") List<User> candidats, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {   	
+		if(sortFieldName == null) 
+        	sortFieldName = "o.poste.numEmploi,o.candidat.nom";       
+		if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByCandidats(candidats, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) PosteCandidature.countFindPosteCandidaturesByCandidats(candidats) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByCandidats(candidats, sortFieldName, sortOrder).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);       
         return "postecandidatures/list";
     }
 
-    @RequestMapping(params = "find=ByRecevable", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String findPosteCandidaturesByRecevable(@RequestParam(value = "recevable", required = false) Boolean recevable, Model uiModel) {
-		addDateTimeFormatPatterns(uiModel);
-    	uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByRecevable(recevable == null ? Boolean.FALSE : recevable).getResultList());
+    @RequestMapping(params = "find=ByRecevable", method = RequestMethod.GET)
+    public String findPosteCandidaturesByRecevable(@RequestParam(value = "recevable", required = false) Boolean recevable, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+        
+		if(sortFieldName == null) 
+        	sortFieldName = "o.poste.numEmploi,o.candidat.nom";
+        
+		if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByRecevable(recevable == null ? Boolean.FALSE : recevable, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) PosteCandidature.countFindPosteCandidaturesByRecevable(recevable == null ? Boolean.FALSE : recevable) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByRecevable(recevable == null ? Boolean.FALSE : recevable, sortFieldName, sortOrder).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
         return "postecandidatures/list";
     }
 
