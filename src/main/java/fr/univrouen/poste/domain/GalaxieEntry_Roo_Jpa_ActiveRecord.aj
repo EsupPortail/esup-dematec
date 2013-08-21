@@ -14,6 +14,8 @@ privileged aspect GalaxieEntry_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager GalaxieEntry.entityManager;
     
+    public static final List<String> GalaxieEntry.fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "localisation", "profil", "candidat", "poste", "candidature");
+    
     public static final EntityManager GalaxieEntry.entityManager() {
         EntityManager em = new GalaxieEntry().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -26,8 +28,8 @@ privileged aspect GalaxieEntry_Roo_Jpa_ActiveRecord {
     
     public static List<GalaxieEntry> GalaxieEntry.findAllGalaxieEntrys(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM GalaxieEntry o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -42,8 +44,8 @@ privileged aspect GalaxieEntry_Roo_Jpa_ActiveRecord {
     
     public static List<GalaxieEntry> GalaxieEntry.findGalaxieEntryEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM GalaxieEntry o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

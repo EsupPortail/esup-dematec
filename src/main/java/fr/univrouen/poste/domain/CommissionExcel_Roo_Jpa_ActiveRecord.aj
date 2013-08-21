@@ -14,6 +14,8 @@ privileged aspect CommissionExcel_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager CommissionExcel.entityManager;
     
+    public static final List<String> CommissionExcel.fieldNames4OrderClauseFilter = java.util.Arrays.asList("filename", "bigFile", "file", "creation", "cells");
+    
     public static final EntityManager CommissionExcel.entityManager() {
         EntityManager em = new CommissionExcel().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -30,8 +32,8 @@ privileged aspect CommissionExcel_Roo_Jpa_ActiveRecord {
     
     public static List<CommissionExcel> CommissionExcel.findAllCommissionExcels(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM CommissionExcel o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -50,8 +52,8 @@ privileged aspect CommissionExcel_Roo_Jpa_ActiveRecord {
     
     public static List<CommissionExcel> CommissionExcel.findCommissionExcelEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM CommissionExcel o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

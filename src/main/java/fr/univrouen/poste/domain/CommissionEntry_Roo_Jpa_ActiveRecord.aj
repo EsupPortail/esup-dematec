@@ -14,6 +14,8 @@ privileged aspect CommissionEntry_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager CommissionEntry.entityManager;
     
+    public static final List<String> CommissionEntry.fieldNames4OrderClauseFilter = java.util.Arrays.asList("numPoste", "email", "nom", "prenom", "membre", "poste");
+    
     public static final EntityManager CommissionEntry.entityManager() {
         EntityManager em = new CommissionEntry().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -26,8 +28,8 @@ privileged aspect CommissionEntry_Roo_Jpa_ActiveRecord {
     
     public static List<CommissionEntry> CommissionEntry.findAllCommissionEntrys(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM CommissionEntry o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -42,8 +44,8 @@ privileged aspect CommissionEntry_Roo_Jpa_ActiveRecord {
     
     public static List<CommissionEntry> CommissionEntry.findCommissionEntryEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM CommissionEntry o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

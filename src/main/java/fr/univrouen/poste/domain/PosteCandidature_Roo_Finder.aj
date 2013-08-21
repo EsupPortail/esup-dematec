@@ -39,8 +39,8 @@ privileged aspect PosteCandidature_Roo_Finder {
         if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
         EntityManager em = PosteCandidature.entityManager();
         String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -54,8 +54,8 @@ privileged aspect PosteCandidature_Roo_Finder {
         if (poste == null) throw new IllegalArgumentException("The poste argument is required");
         EntityManager em = PosteCandidature.entityManager();
         String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste = :poste";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

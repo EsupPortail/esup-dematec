@@ -21,8 +21,8 @@ privileged aspect PosteAPourvoir_Roo_Finder {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
         String jpaQuery = "SELECT o FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

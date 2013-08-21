@@ -24,8 +24,8 @@ privileged aspect CommissionEntry_Roo_Finder {
         if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
         EntityManager em = CommissionEntry.entityManager();
         String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.numPoste = :numPoste AND o.email = :email";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

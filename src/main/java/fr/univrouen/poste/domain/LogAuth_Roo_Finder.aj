@@ -21,8 +21,8 @@ privileged aspect LogAuth_Roo_Finder {
         if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
         EntityManager em = LogAuth.entityManager();
         String jpaQuery = "SELECT o FROM LogAuth AS o WHERE o.action = :action";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

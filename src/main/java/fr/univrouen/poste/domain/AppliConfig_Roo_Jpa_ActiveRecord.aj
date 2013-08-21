@@ -14,6 +14,8 @@ privileged aspect AppliConfig_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager AppliConfig.entityManager;
     
+    public static final List<String> AppliConfig.fieldNames4OrderClauseFilter = java.util.Arrays.asList("cacheTitre", "cacheImageUrl", "cachePiedPage", "cacheMailFrom", "cacheMailSubject", "cacheTexteMailActivation", "cacheMailSubjectMembre", "cacheTexteMailActivationMembre", "cacheTexteMailPasswordOublie", "cacheTextePremierePageAnonyme", "cacheTexteMembreAideCandidatures", "cacheTextePremierePageCandidat", "cacheTextePremierePageMembre", "cacheTexteCandidatAideCandidatures", "cacheTexteCandidatAideCandidatureDepot", "cacheDateEndCandidat", "cacheDateEndCandidatActif", "cacheDateEndMembre", "dateEndCandidat", "dateEndCandidatActif", "dateEndMembre", "titre", "imageUrl", "piedPage", "mailFrom", "mailSubject", "texteMailActivation", "texteMailPasswordOublie", "textePremierePageAnonyme", "texteMembreAideCandidatures", "mailSubjectMembre", "texteMailActivationMembre", "textePremierePageCandidat", "textePremierePageMembre", "texteCandidatAideCandidatures", "texteCandidatAideCandidatureDepot");
+    
     public static final EntityManager AppliConfig.entityManager() {
         EntityManager em = new AppliConfig().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -30,8 +32,8 @@ privileged aspect AppliConfig_Roo_Jpa_ActiveRecord {
     
     public static List<AppliConfig> AppliConfig.findAllAppliConfigs(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM AppliConfig o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -50,8 +52,8 @@ privileged aspect AppliConfig_Roo_Jpa_ActiveRecord {
     
     public static List<AppliConfig> AppliConfig.findAppliConfigEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM AppliConfig o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

@@ -14,6 +14,8 @@ privileged aspect LogAuth_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager LogAuth.entityManager;
     
+    public static final List<String> LogAuth.fieldNames4OrderClauseFilter = java.util.Arrays.asList("actionDate", "userId", "ip", "action");
+    
     public static final EntityManager LogAuth.entityManager() {
         EntityManager em = new LogAuth().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -30,8 +32,8 @@ privileged aspect LogAuth_Roo_Jpa_ActiveRecord {
     
     public static List<LogAuth> LogAuth.findAllLogAuths(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM LogAuth o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -50,8 +52,8 @@ privileged aspect LogAuth_Roo_Jpa_ActiveRecord {
     
     public static List<LogAuth> LogAuth.findLogAuthEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM LogAuth o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

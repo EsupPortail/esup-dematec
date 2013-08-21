@@ -14,6 +14,8 @@ privileged aspect PosteAPourvoir_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager PosteAPourvoir.entityManager;
     
+    public static final List<String> PosteAPourvoir.fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "profil", "localisation", "membres");
+    
     public static final EntityManager PosteAPourvoir.entityManager() {
         EntityManager em = new PosteAPourvoir().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -26,8 +28,8 @@ privileged aspect PosteAPourvoir_Roo_Jpa_ActiveRecord {
     
     public static List<PosteAPourvoir> PosteAPourvoir.findAllPosteAPourvoirs(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM PosteAPourvoir o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -42,8 +44,8 @@ privileged aspect PosteAPourvoir_Roo_Jpa_ActiveRecord {
     
     public static List<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM PosteAPourvoir o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

@@ -24,10 +24,14 @@ privileged aspect PosteCandidature_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidature o", Long.class).getSingleResult();
     }
     
+    public static List<PosteCandidature> PosteCandidature.findAllPosteCandidatures() {
+        return entityManager().createQuery("SELECT o FROM PosteCandidature o", PosteCandidature.class).getResultList();
+    }
+    
     public static List<PosteCandidature> PosteCandidature.findAllPosteCandidatures(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM PosteCandidature o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -40,10 +44,14 @@ privileged aspect PosteCandidature_Roo_Jpa_ActiveRecord {
         return entityManager().find(PosteCandidature.class, id);
     }
     
+    public static List<PosteCandidature> PosteCandidature.findPosteCandidatureEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM PosteCandidature o", PosteCandidature.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
     public static List<PosteCandidature> PosteCandidature.findPosteCandidatureEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM PosteCandidature o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

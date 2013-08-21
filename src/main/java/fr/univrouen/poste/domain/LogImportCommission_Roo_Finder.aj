@@ -21,8 +21,8 @@ privileged aspect LogImportCommission_Roo_Finder {
         if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
         EntityManager em = LogImportCommission.entityManager();
         String jpaQuery = "SELECT o FROM LogImportCommission AS o WHERE o.status = :status";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

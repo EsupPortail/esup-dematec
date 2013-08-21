@@ -21,17 +21,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
+
 import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -41,6 +41,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString(excludeFields = "candidatureFiles")
 @RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat", "findPosteCandidaturesByPoste", "findPosteCandidaturesByRecevable" })
 public class PosteCandidature {
+
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi ASC,o.candidat.nom");
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
@@ -81,14 +83,6 @@ public class PosteCandidature {
         TypedQuery<PosteCandidature> q = entityManager().createQuery("SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes AND o.recevable = TRUE ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class);
         q.setParameter("postes", postes);
         return q;
-    }
-
-    public static List<fr.univrouen.poste.domain.PosteCandidature> findAllPosteCandidatures() {
-        return entityManager().createQuery("SELECT o FROM PosteCandidature o ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class).getResultList();
-    }
-
-    public static List<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidatureEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM PosteCandidature o ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
     public static Long countPosteActifCandidatures() {

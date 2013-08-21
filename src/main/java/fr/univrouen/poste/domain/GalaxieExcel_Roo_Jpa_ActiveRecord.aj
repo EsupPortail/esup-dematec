@@ -14,6 +14,8 @@ privileged aspect GalaxieExcel_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager GalaxieExcel.entityManager;
     
+    public static final List<String> GalaxieExcel.fieldNames4OrderClauseFilter = java.util.Arrays.asList("filename", "bigFile", "file", "creation", "cells");
+    
     public static final EntityManager GalaxieExcel.entityManager() {
         EntityManager em = new GalaxieExcel().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -30,8 +32,8 @@ privileged aspect GalaxieExcel_Roo_Jpa_ActiveRecord {
     
     public static List<GalaxieExcel> GalaxieExcel.findAllGalaxieExcels(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM GalaxieExcel o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -50,8 +52,8 @@ privileged aspect GalaxieExcel_Roo_Jpa_ActiveRecord {
     
     public static List<GalaxieExcel> GalaxieExcel.findGalaxieExcelEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM GalaxieExcel o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

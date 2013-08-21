@@ -14,6 +14,8 @@ privileged aspect LogImportCommission_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager LogImportCommission.entityManager;
     
+    public static final List<String> LogImportCommission.fieldNames4OrderClauseFilter = java.util.Arrays.asList("actionDate", "message", "status");
+    
     public static final EntityManager LogImportCommission.entityManager() {
         EntityManager em = new LogImportCommission().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -30,8 +32,8 @@ privileged aspect LogImportCommission_Roo_Jpa_ActiveRecord {
     
     public static List<LogImportCommission> LogImportCommission.findAllLogImportCommissions(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM LogImportCommission o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -50,8 +52,8 @@ privileged aspect LogImportCommission_Roo_Jpa_ActiveRecord {
     
     public static List<LogImportCommission> LogImportCommission.findLogImportCommissionEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM LogImportCommission o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

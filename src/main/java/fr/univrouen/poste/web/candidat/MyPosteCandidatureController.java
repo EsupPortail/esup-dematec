@@ -265,9 +265,9 @@ public class MyPosteCandidatureController {
 				int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
 				float nrOfPages = (float) PosteCandidature.countPosteCandidatures() / sizeNo;
 				uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo);
+				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo, "o.poste.numEmploi ASC,o.candidat.nom", "ASC");
 			} else {
-				postecandidatures = PosteCandidature.findAllPosteCandidatures();
+				postecandidatures = PosteCandidature.findAllPosteCandidatures("o.poste.numEmploi ASC,o.candidat.nom", "ASC");
 			}
 		}
 

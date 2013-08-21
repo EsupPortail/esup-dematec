@@ -14,6 +14,8 @@ privileged aspect LogFile_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager LogFile.entityManager;
     
+    public static final List<String> LogFile.fieldNames4OrderClauseFilter = java.util.Arrays.asList("actionDate", "userId", "numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "ip", "action", "filename", "fileSize", "userAgent");
+    
     public static final EntityManager LogFile.entityManager() {
         EntityManager em = new LogFile().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -30,8 +32,8 @@ privileged aspect LogFile_Roo_Jpa_ActiveRecord {
     
     public static List<LogFile> LogFile.findAllLogFiles(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM LogFile o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
@@ -50,8 +52,8 @@ privileged aspect LogFile_Roo_Jpa_ActiveRecord {
     
     public static List<LogFile> LogFile.findLogFileEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM LogFile o";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }

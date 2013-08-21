@@ -24,8 +24,8 @@ privileged aspect GalaxieEntry_Roo_Finder {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = GalaxieEntry.entityManager();
         String jpaQuery = "SELECT o FROM GalaxieEntry AS o WHERE o.numEmploi = :numEmploi AND o.numCandidat = :numCandidat";
-        if (sortFieldName != null) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName.replaceAll("\\W", "");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
