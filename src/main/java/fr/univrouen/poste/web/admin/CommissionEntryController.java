@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.CommissionEntry;
+import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.CreateUserService;
@@ -68,18 +69,22 @@ public class CommissionEntryController {
         Map<String, String> unknowPostes = new HashMap<String, String>();
         Map<List<String>, String> unknowCommission = new HashMap<List<String>, String>();
         
-        List<CommissionEntry> commissionEntrys = CommissionEntry.findAllCommissionEntrys();
-        for(CommissionEntry  commissionEntry : commissionEntrys) {
-        	if(commissionEntry.getMembre()==null)
-        		unknowMembres.put(commissionEntry.getEmail(), "dummy");
-           	if(commissionEntry.getPoste() == null)
-        		unknowPostes.put(commissionEntry.getNumPoste(), "dummy");
-           	if(commissionEntry.getMembre() == null || commissionEntry.getPoste() == null) {
-           		List<String> commissionKey = new Vector<String>();
-           		commissionKey.add(commissionEntry.getEmail());
-           		commissionKey.add(commissionEntry.getNumPoste());
-           		unknowCommission.put(commissionKey, "dummy");
-           	}
+        List<CommissionEntry> commissionEntrysWithMembreNull = CommissionEntry.findAllCommissionEntrysWithMembreNull();
+        for(CommissionEntry  commissionEntry : commissionEntrysWithMembreNull) {
+        	unknowMembres.put(commissionEntry.getEmail(), "dummy");
+       		List<String> candidatureKey = new Vector<String>();
+       		candidatureKey.add(commissionEntry.getEmail());
+       		candidatureKey.add(commissionEntry.getNumPoste());
+       		unknowCommission.put(candidatureKey, "dummy");
+        }
+        
+        List<CommissionEntry> commissionEntrysWithPosteNull = CommissionEntry.findAllCommissionEntrysWithPosteNull();
+        for(CommissionEntry  commissionEntry : commissionEntrysWithPosteNull) {
+        	unknowPostes.put(commissionEntry.getNumPoste(), "dummy");
+       		List<String> candidatureKey = new Vector<String>();
+       		candidatureKey.add(commissionEntry.getEmail());
+       		candidatureKey.add(commissionEntry.getNumPoste());
+       		unknowCommission.put(candidatureKey, "dummy");
         }
         
         uiModel.addAttribute("unknowMembres", unknowMembres.keySet());

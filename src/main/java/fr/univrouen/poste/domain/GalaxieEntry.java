@@ -70,4 +70,12 @@ public class GalaxieEntry {
     	return candidat == null && poste == null && candidature == null;
     }
 
+	public static List<GalaxieEntry> findAllGalaxieEntrysWithCandidatNull() {
+		return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.candidat is NULL", GalaxieEntry.class).getResultList();
+	}
+
+	public static List<GalaxieEntry> findAllGalaxieEntrysWithPosteNull() {
+		return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.poste is NULL", GalaxieEntry.class).getResultList();
+	}
+
 }

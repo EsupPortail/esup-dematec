@@ -55,4 +55,12 @@ public class CommissionEntry {
     	return membre == null && poste == null;
     }
 
+	public static List<CommissionEntry> findAllCommissionEntrysWithMembreNull() {
+		return entityManager().createQuery("SELECT o FROM CommissionEntry o WHERE o.membre is NULL", CommissionEntry.class).getResultList();
+	}
+
+	public static List<CommissionEntry> findAllCommissionEntrysWithPosteNull() {
+		return entityManager().createQuery("SELECT o FROM CommissionEntry o WHERE o.poste is NULL", CommissionEntry.class).getResultList();
+	}
+
 }

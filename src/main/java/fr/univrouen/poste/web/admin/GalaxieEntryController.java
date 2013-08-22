@@ -68,25 +68,29 @@ public class GalaxieEntryController {
         
         Map<String, String> unknowCandidats = new HashMap<String, String>();
         Map<String, String> unknowPostes = new HashMap<String, String>();
-        Map<List<String>, String> unknowCanidatures = new HashMap<List<String>, String>();
+        Map<List<String>, String> unknowCandidatures = new HashMap<List<String>, String>();
         
-        List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findAllGalaxieEntrys();
-        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {
-        	if(galaxieEntry.getCandidat() == null)
-        		unknowCandidats.put(galaxieEntry.getNumCandidat(), "dummy");
-           	if(galaxieEntry.getPoste() == null)
-        		unknowPostes.put(galaxieEntry.getNumEmploi(), "dummy");
-           	if(galaxieEntry.getCandidat() == null || galaxieEntry.getPoste() == null) {
-           		List<String> candidatureKey = new Vector<String>();
-           		candidatureKey.add(galaxieEntry.getNumEmploi());
-           		candidatureKey.add(galaxieEntry.getNumCandidat());
-           		unknowCanidatures.put(candidatureKey, "dummy");
-           	}
+        List<GalaxieEntry> galaxieEntrysWithCandidatNull = GalaxieEntry.findAllGalaxieEntrysWithCandidatNull();
+        for(GalaxieEntry  galaxieEntry : galaxieEntrysWithCandidatNull) {
+        	unknowCandidats.put(galaxieEntry.getNumCandidat(), "dummy");
+       		List<String> candidatureKey = new Vector<String>();
+       		candidatureKey.add(galaxieEntry.getNumEmploi());
+       		candidatureKey.add(galaxieEntry.getNumCandidat());
+       		unknowCandidatures.put(candidatureKey, "dummy");
+        }
+        
+        List<GalaxieEntry> galaxieEntrysWithPosteNull = GalaxieEntry.findAllGalaxieEntrysWithPosteNull();
+        for(GalaxieEntry  galaxieEntry : galaxieEntrysWithPosteNull) {
+        	unknowCandidats.put(galaxieEntry.getNumCandidat(), "dummy");
+       		List<String> candidatureKey = new Vector<String>();
+       		candidatureKey.add(galaxieEntry.getNumEmploi());
+       		candidatureKey.add(galaxieEntry.getNumCandidat());
+       		unknowCandidatures.put(candidatureKey, "dummy");
         }
         
         uiModel.addAttribute("unknowCandidats", unknowCandidats.keySet());
         uiModel.addAttribute("unknowPostes", unknowPostes.keySet());
-        uiModel.addAttribute("unknowCanidatures", unknowCanidatures.keySet());
+        uiModel.addAttribute("unknowCandidatures", unknowCandidatures.keySet());
         
         return "admin/galaxieentrys/list";
     }
