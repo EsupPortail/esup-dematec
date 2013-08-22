@@ -34,14 +34,15 @@
             </ul>
         </p>
     </util:help>
-    <c:if test="${not empty unknowCandidats or not empty unknowPostes or not empty unknowCanidatures}">
+    <c:if test="${not empty unknowCandidats or not empty unknowPostes or not empty unknowCandidatures}">
         <div class="well">
             <div class="row-fluid">
-                <c:if test="${not empty unknowCanidatures}">
+                <c:if test="${not empty unknowCandidatures}">
                     <div class="span8">
-                        <strong>Les éléments correspondants à ces candidatures sont manquants :</strong>
-                        <c:forEach items="${unknowCanidatures}" var="candidature">
-	                       ${candidature}, 
+                        <strong>Les éléments correspondants à ces candidatures sont manquants : </strong>
+                        <c:forEach items="${unknowCandidatures}" var="candidature">
+                            <spring:url value="/admin/galaxieentrys/${candidature[2]}" var="candidatureUrl" />
+	                        <a href="${candidatureUrl}">[${candidature[0]}, ${candidature[1]}]</a>, 
 	                    </c:forEach>
                     </div>
                 </c:if>

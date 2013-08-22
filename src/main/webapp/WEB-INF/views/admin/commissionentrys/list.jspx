@@ -39,9 +39,10 @@
             <div class="row-fluid">
                 <c:if test="${not empty unknowCommission}">
                     <div class="span8">
-                        <strong>Les éléments correspondants à ces affectations de membres (commission) sont manquants :</strong>
+                        <strong>Les éléments correspondants à ces affectations de membres (commission) sont manquants : </strong>
                         <c:forEach items="${unknowCommission}" var="commission">
-                           ${commission}, 
+                            <spring:url value="/admin/commissionentrys/${commission[2]}" var="commissionUrl" />
+	                        <a href="${commissionUrl}">[${commission[0]}, ${commission[1]}]</a>, 
                         </c:forEach>
                     </div>
                 </c:if>

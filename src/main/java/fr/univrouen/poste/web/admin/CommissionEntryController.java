@@ -75,6 +75,7 @@ public class CommissionEntryController {
        		List<String> candidatureKey = new Vector<String>();
        		candidatureKey.add(commissionEntry.getEmail());
        		candidatureKey.add(commissionEntry.getNumPoste());
+       		candidatureKey.add(commissionEntry.getId().toString());
        		unknowCommission.put(candidatureKey, "dummy");
         }
         
@@ -84,6 +85,7 @@ public class CommissionEntryController {
        		List<String> candidatureKey = new Vector<String>();
        		candidatureKey.add(commissionEntry.getEmail());
        		candidatureKey.add(commissionEntry.getNumPoste());
+       		candidatureKey.add(commissionEntry.getId().toString());
        		unknowCommission.put(candidatureKey, "dummy");
         }
         
@@ -166,7 +168,7 @@ public class CommissionEntryController {
         }
         
 
-        return "redirect:/admin/logimportcommissions";
+        return "redirect:/admin/logimportcommissions?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
     }
     
     
