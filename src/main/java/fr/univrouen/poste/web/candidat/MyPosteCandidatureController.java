@@ -84,7 +84,7 @@ public class MyPosteCandidatureController {
 
 	@ModelAttribute("candidats")
 	public List<User> getCandidats() {
-		return User.findAllCandidats().getResultList();
+		return User.findAllCandidats(null, null).getResultList();
 	}
 
 	@RequestMapping(value = "/{id}/{idFile}")

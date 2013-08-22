@@ -148,20 +148,36 @@ public class User {
 		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' AND o.activationDate is not NULL", Long.class).getSingleResult();
     }
 
-    public static TypedQuery<User> findAllCandidats() {
-    	return entityManager().createQuery("SELECT o FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' order by o.emailAddress", User.class);
+    public static TypedQuery<User> findAllCandidats(String sortFieldName, String sortOrder) {
+    	String jpaQuery = "SELECT o FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> ''";  	
+    	if(sortFieldName == null) 
+    		sortFieldName = "emailAddress";
+
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, User.class);
     }
     
-    public static TypedQuery<User> findAllMembres() {
-        return entityManager().createQuery("SELECT o FROM User AS o WHERE o.postes is not EMPTY order by o.emailAddress", User.class);
+    public static TypedQuery<User> findAllMembres(String sortFieldName, String sortOrder) {
+    	String jpaQuery = "SELECT o FROM User AS o WHERE o.postes is not EMPTY";
+    	if(sortFieldName == null) 
+    		sortFieldName = "emailAddress";
+    	
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, User.class);
     }
 
 	public static Object findAllNoCandidats() {
         return entityManager().createQuery("SELECT o FROM User AS o WHERE o.numCandidat is NULL OR o.numCandidat = '' order by o.emailAddress", User.class).getResultList();
-    }
-
-    public static List<User> findUserEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM User o order by o.emailAddress", User.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 	public void reportLoginFailure() {

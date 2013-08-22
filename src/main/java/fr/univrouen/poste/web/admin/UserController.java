@@ -86,38 +86,38 @@ public class UserController {
     
     @RequestMapping(params = "find=ByStatus", method = RequestMethod.GET)
     public String findUsersByStatus(
-    		@RequestParam(value = "status", required=false) String status, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    		@RequestParam(value = "status", required=false) String status, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
     	
     	if("Admin".equals(status))
-    		return this.findUsersByIsAdmin(true, page, size, null, null, uiModel);
+    		return this.findUsersByIsAdmin(true, page, size, sortFieldName, sortOrder, uiModel);
     	
     	else if("SuperManager".equals(status))
-    		return this.findUsersByIsSuperManager(true, page, size, null, null, uiModel);
+    		return this.findUsersByIsSuperManager(true, page, size, sortFieldName, sortOrder, uiModel);
     	
     	else if("Manager".equals(status))
-    		return this.findUsersByIsManager(true, page, size, null, null, uiModel);
+    		return this.findUsersByIsManager(true, page, size, sortFieldName, sortOrder, uiModel);
     	
     	else if("Membre".equals(status))
-    		return this.findUsersByMembre(true, page, size, uiModel);
+    		return this.findUsersByMembre(true, page, size, sortFieldName, sortOrder, uiModel);
     	
     	else if("Candidat".equals(status))
-    		return this.findUsersByCandidat(true, page, size, uiModel);
+    		return this.findUsersByCandidat(true, page, size, sortFieldName, sortOrder, uiModel);
     	
     	else
-    		return this.list(page, size, null, null, uiModel);
+    		return this.list(page, size, sortFieldName, sortOrder, uiModel);
     }
 
 
 	private String findUsersByCandidat(boolean b, Integer page, Integer size,
-			Model uiModel) {
+			String sortFieldName, String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findAllCandidats().setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findAllCandidats(sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countCandidats() / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findAllCandidats().getResultList());
+            uiModel.addAttribute("users", User.findAllCandidats(sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";
@@ -125,15 +125,15 @@ public class UserController {
 
 
 	private String findUsersByMembre(boolean b, Integer page, Integer size,
-			Model uiModel) {
+			String sortFieldName, String sortOrder, Model uiModel) {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findAllMembres().setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            uiModel.addAttribute("users", User.findAllMembres(sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
             float nrOfPages = (float) User.countMembres() / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("users", User.findAllMembres().getResultList());
+            uiModel.addAttribute("users", User.findAllMembres(sortFieldName, sortOrder).getResultList());
         }
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";

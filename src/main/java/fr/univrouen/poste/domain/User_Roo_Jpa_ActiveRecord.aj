@@ -46,6 +46,10 @@ privileged aspect User_Roo_Jpa_ActiveRecord {
         return entityManager().find(User.class, id);
     }
     
+    public static List<User> User.findUserEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM User o", User.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
     public static List<User> User.findUserEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM User o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
