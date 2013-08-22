@@ -61,11 +61,11 @@
     </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_CommissionEntry" items="${commissionentrys}" z="MLiY86bMNnQuxNPQUQGnOwdqJOs=">
         <table:table create="${canCreate}" data="${commissionentrys}" delete="false" id="l_fr_univrouen_poste_domain_CommissionEntry" path="/admin/commissionentrys" update="false" z="user-managed">
-            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_numPoste" property="numPoste" z="Owu9YANM2GCP3//bUZaM1X4N0tg="/>
-            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_email" property="email" z="CJJUUhZTmJ4Drcbmz4LLFDVMMnQ="/>
-            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_nom" property="nom" z="j4rpXEOJiWcLUogKOhE1l2z6CB4="/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_numPoste" property="numPoste" z="Owu9YANM2GCP3//bUZaM1X4N0tg=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_email" property="email" z="CJJUUhZTmJ4Drcbmz4LLFDVMMnQ=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_nom" property="nom" z="j4rpXEOJiWcLUogKOhE1l2z6CB4=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_prenom" property="prenom" z="op2gk/O9vAZ1DNkY1rTSbGjBNzM="/>
-            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_poste" property="poste" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_poste" property="poste" render="false" z="user-managed" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_membre" property="membre" render="false" z="user-managed"/>
         </table:table>
     </page:list>

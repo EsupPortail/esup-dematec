@@ -14,8 +14,6 @@ privileged aspect CommissionEntry_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager CommissionEntry.entityManager;
     
-    public static final List<String> CommissionEntry.fieldNames4OrderClauseFilter = java.util.Arrays.asList("numPoste", "email", "nom", "prenom", "membre", "poste");
-    
     public static final EntityManager CommissionEntry.entityManager() {
         EntityManager em = new CommissionEntry().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -24,6 +22,10 @@ privileged aspect CommissionEntry_Roo_Jpa_ActiveRecord {
     
     public static long CommissionEntry.countCommissionEntrys() {
         return entityManager().createQuery("SELECT COUNT(o) FROM CommissionEntry o", Long.class).getSingleResult();
+    }
+    
+    public static List<CommissionEntry> CommissionEntry.findAllCommissionEntrys() {
+        return entityManager().createQuery("SELECT o FROM CommissionEntry o", CommissionEntry.class).getResultList();
     }
     
     public static List<CommissionEntry> CommissionEntry.findAllCommissionEntrys(String sortFieldName, String sortOrder) {
@@ -40,6 +42,10 @@ privileged aspect CommissionEntry_Roo_Jpa_ActiveRecord {
     public static CommissionEntry CommissionEntry.findCommissionEntry(Long id) {
         if (id == null) return null;
         return entityManager().find(CommissionEntry.class, id);
+    }
+    
+    public static List<CommissionEntry> CommissionEntry.findCommissionEntryEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM CommissionEntry o", CommissionEntry.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     public static List<CommissionEntry> CommissionEntry.findCommissionEntryEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {

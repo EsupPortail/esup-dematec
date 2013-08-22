@@ -14,8 +14,6 @@ privileged aspect GalaxieEntry_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager GalaxieEntry.entityManager;
     
-    public static final List<String> GalaxieEntry.fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "localisation", "profil", "candidat", "poste", "candidature");
-    
     public static final EntityManager GalaxieEntry.entityManager() {
         EntityManager em = new GalaxieEntry().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -24,6 +22,10 @@ privileged aspect GalaxieEntry_Roo_Jpa_ActiveRecord {
     
     public static long GalaxieEntry.countGalaxieEntrys() {
         return entityManager().createQuery("SELECT COUNT(o) FROM GalaxieEntry o", Long.class).getSingleResult();
+    }
+    
+    public static List<GalaxieEntry> GalaxieEntry.findAllGalaxieEntrys() {
+        return entityManager().createQuery("SELECT o FROM GalaxieEntry o", GalaxieEntry.class).getResultList();
     }
     
     public static List<GalaxieEntry> GalaxieEntry.findAllGalaxieEntrys(String sortFieldName, String sortOrder) {
@@ -40,6 +42,10 @@ privileged aspect GalaxieEntry_Roo_Jpa_ActiveRecord {
     public static GalaxieEntry GalaxieEntry.findGalaxieEntry(Long id) {
         if (id == null) return null;
         return entityManager().find(GalaxieEntry.class, id);
+    }
+    
+    public static List<GalaxieEntry> GalaxieEntry.findGalaxieEntryEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM GalaxieEntry o", GalaxieEntry.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     public static List<GalaxieEntry> GalaxieEntry.findGalaxieEntryEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {

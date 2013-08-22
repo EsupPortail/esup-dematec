@@ -30,7 +30,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(finders = { "findCommissionEntrysByNumPosteAndEmail"})
 public class CommissionEntry {
 
-
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numPoste", "email", "nom", "prenom", "membre", "poste", "numPoste,email");
  
     private String numPoste;
 
@@ -53,14 +53,6 @@ public class CommissionEntry {
 
     public Boolean getDeletable() {
     	return membre == null && poste == null;
-    }
-    
-    public static List<CommissionEntry> findAllCommissionEntrys() {
-        return entityManager().createQuery("SELECT o FROM CommissionEntry o order by o.numPoste, o.email", CommissionEntry.class).getResultList();
-    }
-    
-    public static List<CommissionEntry> findCommissionEntryEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM CommissionEntry o order by o.numPoste, o.email", CommissionEntry.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 }

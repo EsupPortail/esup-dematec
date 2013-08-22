@@ -31,6 +31,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(finders = { "findGalaxieEntrysByNumEmploiAndNumCandidat"})
 public class GalaxieEntry {
 
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "localisation", "profil", "candidat", "poste", "candidature", "numEmploi,numCandidat");
+
     private String numEmploi;
 
     private String numCandidat;
@@ -67,12 +69,5 @@ public class GalaxieEntry {
     public Boolean getDeletable() {
     	return candidat == null && poste == null && candidature == null;
     }
-    
-    public static List<GalaxieEntry> findAllGalaxieEntrys() {
-        return entityManager().createQuery("SELECT o FROM GalaxieEntry o order by o.numEmploi, o.numCandidat", GalaxieEntry.class).getResultList();
-    }
-    
-    public static List<GalaxieEntry> findGalaxieEntryEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM GalaxieEntry o order by o.numEmploi, o.numCandidat", GalaxieEntry.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
+
 }

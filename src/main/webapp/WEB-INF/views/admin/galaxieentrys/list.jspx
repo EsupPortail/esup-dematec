@@ -61,12 +61,12 @@
     </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_GalaxieEntry" items="${galaxieentrys}" z="v5AkSlwQu/oFzDKeZV7Bkl1TFRU=">
         <table:table create="${canCreate}" data="${galaxieentrys}" delete="false" id="l_fr_univrouen_poste_domain_GalaxieEntry" path="/admin/galaxieentrys" update="false" z="user-managed">
-            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_numEmploi" property="numEmploi" z="ePWOeWYCZPHdwBhTOZcHbbbwb6w="/>
-            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_numCandidat" property="numCandidat" z="JmM//eFC9CZOKbfteFX8JLDbw8c="/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_numEmploi" property="numEmploi" z="ePWOeWYCZPHdwBhTOZcHbbbwb6w=" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_numCandidat" property="numCandidat" z="JmM//eFC9CZOKbfteFX8JLDbw8c=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_civilite" property="civilite" z="m7MvWXNdl9oQvleRrexSUOAy+ZY="/>
-            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_nom" property="nom" z="AOpKSc5fTy3xxcQeQY/WUyy2UMc="/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_nom" property="nom" z="AOpKSc5fTy3xxcQeQY/WUyy2UMc=" sort="true"/>
             <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_prenom" property="prenom" z="n9EC27M1WFIJ9Lsg1V0z9670nzg="/>
-            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_email" property="email" z="DhVQhCQjxPrVsRO489GlhsX8gFI="/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieEntry_email" property="email" z="DhVQhCQjxPrVsRO489GlhsX8gFI=" sort="true"/>
         </table:table>
     </page:list>
 </div>
