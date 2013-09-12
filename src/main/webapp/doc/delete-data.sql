@@ -26,6 +26,6 @@ delete from c_user where is_admin=false and is_manager=false and is_super_manage
 -- na pas faire de truncate sur big_file pour appel du trigger et suppression effective du blob
 delete from big_file;
 
-VACUUM;
+VACUUM FULL;
 
 
