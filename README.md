@@ -46,13 +46,14 @@ CREATE EXTENSION lo;
 ```
 --
 
-Et enfin ajout du trigger : 
+Et enfin ajout du trigger* : 
 ```
 CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
 ```
 
 CF http://docs.postgresqlfr.org/8.3/lo.html
 
+\* afin que les tables soient préalablement créées, notamment la table big_file sur lequel on souhaite mettre le trigger lo_manage, vous devez démarrer l'application une fois ; en n'oubliant pas ensuite, pour ne pas écraser la base au redémarrage, de __modifier src/main/resources/META-INF/persistence.xml : create-> update__ - cf ci-dessous.
 
 ## Configurations 
 
