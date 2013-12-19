@@ -22,7 +22,6 @@ package fr.univrouen.poste.provider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +39,6 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
@@ -62,6 +60,9 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 
 	@Autowired
 	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
+	
+	@Autowired
+	private DatabaseUserDetailsService databaseUserDetailsService;
 
 	private List<String> ipsStart4AdminManagerAuthList;
 
@@ -100,6 +101,8 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 	@Transactional(noRollbackFor = BadCredentialsException.class)
 	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
+		UserDetails userDetails = null;
+		
 		logger.debug("Inside retrieveUser");
 
 		WebAuthenticationDetails wad = (WebAuthenticationDetails) authentication.getDetails();
@@ -161,22 +164,7 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 			}         
 	        
 	        
-			// Roles
-			if (targetUser.getIsAdmin())
-				authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
-			if (targetUser.getIsCandidat())
-				authorities.add(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
-			if (targetUser.getIsManager())
-				authorities.add(new GrantedAuthorityImpl("ROLE_MANAGER"));
-			if (targetUser.getIsSuperManager()) {
-				authorities.add(new GrantedAuthorityImpl("ROLE_MANAGER"));
-				authorities.add(new GrantedAuthorityImpl("ROLE_SUPER_MANAGER"));
-			}
-			if (targetUser.getIsMembre())
-				authorities.add(new GrantedAuthorityImpl("ROLE_MEMBRE"));
-
-			// Enabled
-			enabled = targetUser.getEnabled();
+	        userDetails = databaseUserDetailsService.loadUserByUser(targetUser);
 
 		} catch (EmptyResultDataAccessException e) {
 			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
@@ -191,11 +179,7 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 
 		logService.logActionAuth(LogService.AUTH_SUCCESS, username, userIPAddress);
 
-		return new org.springframework.security.core.userdetails.User(username, password, enabled, // enabled
-		        true, // account not expired
-		        true, // credentials not expired
-		        true, // account not locked
-		        authorities);
+		return userDetails;
 	}
 
 	private Boolean isIpCanBeUsed4AuthAdminManager(String userIPAddress) {

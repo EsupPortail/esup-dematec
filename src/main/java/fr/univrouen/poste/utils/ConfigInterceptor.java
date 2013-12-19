@@ -51,6 +51,7 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	    put("/admin/currentsessions",   "Sessions courantes / Utilisateurs connectés"); 
 	    put("/admin/logimportgalaxies",   "Logs (Rapports) Imports Galaxie"); 
 	    put("/admin/logimportcommissions",   "Logs (Rapports) Imports Commission"); 
+	    put("/admin/su",   "SU");
 	    put("/admin",   "Résumé");
 	}};
 	

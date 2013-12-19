@@ -25,6 +25,7 @@
         <form-login authentication-failure-url="/login?login_error=t" login-page="/login" login-processing-url="/resources/j_spring_security_check"/>
         <logout logout-url="/resources/j_spring_security_logout" invalidate-session="true"/>
         <!-- Configure these elements to secure URIs in your application -->
+        <intercept-url pattern="/j_spring_security_switch_user" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')"/>
         <intercept-url access="isAuthenticated()" pattern="/"/>
         <intercept-url access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" pattern="/admin/**"/>
         <intercept-url access="hasRole('ROLE_MEMBRE') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" pattern="/membre/**"/>
@@ -39,6 +40,7 @@
            <concurrency-control session-registry-alias="sessionRegistry" max-sessions="5"/>
         </session-management>
         <access-denied-handler error-page="/denied"/>
+        <custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
     </http>
 
     <!-- Configure Authentication mechanism -->
@@ -58,5 +60,14 @@
 	
 	<!-- Automatically receives AuthenticationEvent messages -->
     <beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/>
+
+
+	<beans:bean id="switchUserProcessingFilter"
+		class="org.springframework.security.web.authentication.switchuser.SwitchUserFilter">
+		<beans:property name="userDetailsService" ref="databaseUserDetailsService" />
+		<beans:property name="switchUserUrl" value="/j_spring_security_switch_user" />
+		<beans:property name="exitUserUrl" value="/j_spring_security_exit_user" />
+		<beans:property name="targetUrl" value="/" />
+	</beans:bean>
 
 </beans:beans>

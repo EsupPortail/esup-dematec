@@ -22,7 +22,9 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import fr.univrouen.poste.domain.LogAuth;
@@ -70,7 +72,14 @@ public class LogService {
 		
 		LogFile logFile = new LogFile();
 		
-		String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();		
+		// Switch User par un admin / super-manager ?                                                                                                                                                            
+		for (GrantedAuthority a : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+			if (a instanceof SwitchUserGrantedAuthority) {
+				userId = ((SwitchUserGrantedAuthority)a).getSource().getName() + " [SU] " + userId;
+			}
+		}
+		
 		logFile.setUserId(userId);
 	    	    
 	    logFile.setNumEmploi(poste.getNumEmploi());
