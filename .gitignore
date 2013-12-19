@@ -5,3 +5,4 @@ log.roo
 .hg
 .classpath
 .hgignore
+/target
