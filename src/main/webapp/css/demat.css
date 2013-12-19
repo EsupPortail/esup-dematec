@@ -109,5 +109,64 @@ float: left;
 float: left;
 margin-left: 20px;
 }
-
 }
+
+
+/* Responsive Tables - mobile */
+
+#_title_pl_fr_univrouen_poste_domain_PosteAPourvoir_id table td:nth-child(4) {
+	word-wrap: break-word;
+	max-width: 450px;
+}
+
+
+@media (max-width: 480px) {
+	#_title_pl_fr_univrouen_poste_domain_User_id table th:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_User_id table th:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_User_id table th:nth-child(5),
+	#_title_pl_fr_univrouen_poste_domain_User_id table th:nth-child(6),
+	#_title_pl_fr_univrouen_poste_domain_User_id table td:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_User_id table td:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_User_id table td:nth-child(5),
+	#_title_pl_fr_univrouen_poste_domain_User_id table td:nth-child(6) {
+		display: none;
+	}
+	
+	#_title_pl_fr_univrouen_poste_domain_PosteAPourvoir_id table th:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_PosteAPourvoir_id table td:nth-child(4) {
+		display: none;
+	}
+
+
+	#_title_pl_fr_univrouen_poste_domain_GalaxieEntry_id table th:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_GalaxieEntry_id table th:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_GalaxieEntry_id table th:nth-child(5),
+	#_title_pl_fr_univrouen_poste_domain_GalaxieEntry_id table td:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_GalaxieEntry_id table td:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_GalaxieEntry_id table td:nth-child(5) {
+		display: none;
+	}
+
+	#_title_pl_fr_univrouen_poste_domain_CommissionEntry_id table th:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_CommissionEntry_id table th:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_CommissionEntry_id table td:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_CommissionEntry_id table td:nth-child(4){
+		display: none;
+	}
+	
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table th:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table th:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table th:nth-child(5),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table th:nth-child(7),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table th:nth-child(8),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table th:nth-child(9),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table td:nth-child(3),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table td:nth-child(4),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table td:nth-child(5),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table td:nth-child(7),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table td:nth-child(8),
+	#_title_pl_fr_univrouen_poste_domain_LogFile_id table td:nth-child(9){
+		display: none;
+	}
+}
+
