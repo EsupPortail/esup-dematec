@@ -57,6 +57,7 @@ import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
+import fr.univrouen.poste.services.EmailService;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.services.ReturnReceiptService;
 import fr.univrouen.poste.services.ZipService;
@@ -80,6 +81,9 @@ public class MyPosteCandidatureController {
 	
 	@Resource
 	ZipService zipService;
+	
+    @Resource
+    private transient EmailService emailService;
 	
 	@ModelAttribute("posteapourvoirs")
 	public List<PosteAPourvoir> getPosteAPourvoirs() {
@@ -204,6 +208,17 @@ public class MyPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+		
+		if(auditionnable) {
+			String mailTo = postecandidature.getEmail();
+    	    String mailFrom = AppliConfig.getCacheMailFrom();
+    	    String mailSubject = AppliConfig.getCacheMailSubject();
+    	    
+    	    String mailMessage = AppliConfig.getCacheTexteMailCandidatAuditionnable();
+    	    mailMessage = mailMessage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());        
+    		    		
+    		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
+		}
 		
 		postecandidature.setAuditionnable(auditionnable);
 		postecandidature.persist();
