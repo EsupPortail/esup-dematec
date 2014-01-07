@@ -39,7 +39,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString(excludeFields = "candidatureFiles")
-@RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat", "findPosteCandidaturesByPoste", "findPosteCandidaturesByRecevable" })
+@RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat", "findPosteCandidaturesByPoste", "findPosteCandidaturesByRecevable", "findPosteCandidaturesByAuditionnable" })
 public class PosteCandidature {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress");

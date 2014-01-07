@@ -358,7 +358,7 @@ public class MyPosteCandidatureController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     @RequestMapping(params = "find=ByCandidats", method = RequestMethod.GET)
-    public String findPosteCandidaturesByRecevable(@RequestParam(required=false, value="candidat") List<User> candidats, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {   	
+    public String findPosteCandidaturesByCandidats(@RequestParam(required=false, value="candidat") List<User> candidats, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {   	
 		
 		if(sortFieldName == null) 
         	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
@@ -404,4 +404,27 @@ public class MyPosteCandidatureController {
         return "postecandidatures/list";
     }
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+    @RequestMapping(params = "find=ByAuditionnable", method = RequestMethod.GET)
+    public String findPosteCandidaturesByAuditionnable(@RequestParam(value = "auditionnable", required = false) Boolean auditionnable, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+        
+		if(sortFieldName == null) 
+        	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+		if("nom".equals(sortFieldName))
+			sortFieldName = "candidat.nom";
+		if("email".equals(sortFieldName))
+			sortFieldName = "candidat.emailAddress";
+        
+		if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByAuditionnable(auditionnable == null ? Boolean.FALSE : auditionnable, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) PosteCandidature.countFindPosteCandidaturesByAuditionnable(auditionnable == null ? Boolean.FALSE : auditionnable) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("postecandidatures", PosteCandidature.findPosteCandidaturesByAuditionnable(auditionnable == null ? Boolean.FALSE : auditionnable, sortFieldName, sortOrder).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "postecandidatures/list";
+    }
 }

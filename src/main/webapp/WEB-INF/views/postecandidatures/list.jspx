@@ -55,6 +55,11 @@
                                             <field:checkbox disableFormBinding="true" field="recevable" id="f_fr_univrouen_poste_domain_PosteCandidature_recevable"/>
                                         </form:find>
                                     </div>
+                                    <div class="span3">
+                                        <form:find finderName="ByAuditionnable" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+                                            <field:checkbox disableFormBinding="true" field="auditionnable" id="f_fr_univrouen_poste_domain_PosteCandidature_auditionnable"/>
+                                        </form:find>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -80,6 +85,7 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email" sort="${canManage}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${canManage}" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" render="${canManage}" sort="${canManage}" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" render="${canManage}" sort="${canManage}" z="user-managed"/>
         </table:table>

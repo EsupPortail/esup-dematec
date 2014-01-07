@@ -11,6 +11,14 @@ import javax.persistence.TypedQuery;
 
 privileged aspect PosteCandidature_Roo_Finder {
     
+    public static Long PosteCandidature.countFindPosteCandidaturesByAuditionnable(Boolean auditionnable) {
+        if (auditionnable == null) throw new IllegalArgumentException("The auditionnable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.auditionnable = :auditionnable", Long.class);
+        q.setParameter("auditionnable", auditionnable);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long PosteCandidature.countFindPosteCandidaturesByCandidat(User candidat) {
         if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
         EntityManager em = PosteCandidature.entityManager();
@@ -33,6 +41,29 @@ privileged aspect PosteCandidature_Roo_Finder {
         TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.recevable = :recevable", Long.class);
         q.setParameter("recevable", recevable);
         return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByAuditionnable(Boolean auditionnable) {
+        if (auditionnable == null) throw new IllegalArgumentException("The auditionnable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery<PosteCandidature> q = em.createQuery("SELECT o FROM PosteCandidature AS o WHERE o.auditionnable = :auditionnable", PosteCandidature.class);
+        q.setParameter("auditionnable", auditionnable);
+        return q;
+    }
+    
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByAuditionnable(Boolean auditionnable, String sortFieldName, String sortOrder) {
+        if (auditionnable == null) throw new IllegalArgumentException("The auditionnable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.auditionnable = :auditionnable";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
+        q.setParameter("auditionnable", auditionnable);
+        return q;
     }
     
     public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByCandidat(User candidat) {
