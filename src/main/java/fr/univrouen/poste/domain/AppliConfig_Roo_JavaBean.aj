@@ -80,4 +80,12 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.texteCandidatAideCandidatureDepot;
     }
     
+    public MailReturnReceiptModeTypes AppliConfig.getMailReturnReceiptModeType() {
+        return this.mailReturnReceiptModeType;
+    }
+    
+    public String AppliConfig.getTexteMailCandidatReturnReceipt() {
+        return this.texteMailCandidatReturnReceipt;
+    }
+    
 }

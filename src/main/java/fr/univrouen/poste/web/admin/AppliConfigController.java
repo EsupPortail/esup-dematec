@@ -17,13 +17,26 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import fr.univrouen.poste.domain.AppliConfig;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.AppliConfig.MailReturnReceiptModeTypes;
 
 @RequestMapping("/admin/appliconfig")
 @Controller
 @RooWebScaffold(path = "admin/appliconfig", formBackingObject = AppliConfig.class, create=false, delete=false)
 public class AppliConfigController {
+	
+    @ModelAttribute("receiptModeTypes")
+    public List<MailReturnReceiptModeTypes> getEnumTypes() {
+            List<MailReturnReceiptModeTypes> receiptModeTypes = Arrays.asList(MailReturnReceiptModeTypes.values());
+            return receiptModeTypes;
+    }
+
 }

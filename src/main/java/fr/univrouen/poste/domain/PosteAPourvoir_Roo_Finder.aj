@@ -17,6 +17,14 @@ privileged aspect PosteAPourvoir_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByNumEmploi(String numEmploi) {
+        if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
+        EntityManager em = PosteAPourvoir.entityManager();
+        TypedQuery<PosteAPourvoir> q = em.createQuery("SELECT o FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi", PosteAPourvoir.class);
+        q.setParameter("numEmploi", numEmploi);
+        return q;
+    }
+    
     public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByNumEmploi(String numEmploi, String sortFieldName, String sortOrder) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = PosteAPourvoir.entityManager();

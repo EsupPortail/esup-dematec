@@ -58,6 +58,7 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
 import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.ReturnReceiptService;
 import fr.univrouen.poste.services.ZipService;
 
 @RequestMapping("postecandidatures")
@@ -74,6 +75,9 @@ public class MyPosteCandidatureController {
 	@Autowired
 	LogService logService;
 
+	@Autowired
+	ReturnReceiptService returnReceiptService;
+	
 	@Resource
 	ZipService zipService;
 	
@@ -172,6 +176,7 @@ public class MyPosteCandidatureController {
 				postecandidature.persist();
 		
 				logService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, posteCandidatureFile, request, currentTime);
+				returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, posteCandidatureFile, request, currentTime);
 			}
 		} else {
 			String userId = SecurityContextHolder.getContext().getAuthentication().getName();

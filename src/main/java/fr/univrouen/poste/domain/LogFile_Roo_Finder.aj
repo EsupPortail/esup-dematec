@@ -33,6 +33,14 @@ privileged aspect LogFile_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static TypedQuery<LogFile> LogFile.findLogFilesByActionEquals(String action) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.action = :action", LogFile.class);
+        q.setParameter("action", action);
+        return q;
+    }
+    
     public static TypedQuery<LogFile> LogFile.findLogFilesByActionEquals(String action, String sortFieldName, String sortOrder) {
         if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
         EntityManager em = LogFile.entityManager();
@@ -48,6 +56,14 @@ privileged aspect LogFile_Roo_Finder {
         return q;
     }
     
+    public static TypedQuery<LogFile> LogFile.findLogFilesByNumCandidat(String numCandidat) {
+        if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.numCandidat = :numCandidat", LogFile.class);
+        q.setParameter("numCandidat", numCandidat);
+        return q;
+    }
+    
     public static TypedQuery<LogFile> LogFile.findLogFilesByNumCandidat(String numCandidat, String sortFieldName, String sortOrder) {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = LogFile.entityManager();
@@ -60,6 +76,14 @@ privileged aspect LogFile_Roo_Finder {
         }
         TypedQuery<LogFile> q = em.createQuery(jpaQuery, LogFile.class);
         q.setParameter("numCandidat", numCandidat);
+        return q;
+    }
+    
+    public static TypedQuery<LogFile> LogFile.findLogFilesByNumEmploi(String numEmploi) {
+        if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.numEmploi = :numEmploi", LogFile.class);
+        q.setParameter("numEmploi", numEmploi);
         return q;
     }
     

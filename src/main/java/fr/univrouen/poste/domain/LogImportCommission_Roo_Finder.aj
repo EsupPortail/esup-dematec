@@ -17,6 +17,14 @@ privileged aspect LogImportCommission_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static TypedQuery<LogImportCommission> LogImportCommission.findLogImportCommissionsByStatusEquals(String status) {
+        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
+        EntityManager em = LogImportCommission.entityManager();
+        TypedQuery<LogImportCommission> q = em.createQuery("SELECT o FROM LogImportCommission AS o WHERE o.status = :status", LogImportCommission.class);
+        q.setParameter("status", status);
+        return q;
+    }
+    
     public static TypedQuery<LogImportCommission> LogImportCommission.findLogImportCommissionsByStatusEquals(String status, String sortFieldName, String sortOrder) {
         if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
         EntityManager em = LogImportCommission.entityManager();

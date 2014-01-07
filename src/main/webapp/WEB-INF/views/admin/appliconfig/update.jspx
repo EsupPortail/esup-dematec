@@ -17,8 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+--><div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <div class="well help">
@@ -65,6 +64,8 @@
         <field:input field="mailSubjectMembre" id="c_fr_univrouen_poste_domain_AppliConfig_mailSubjectMembre" z="h1LpAsl6JiJ1SXDt6Ydz65K6woE="/>
         <field:textarea field="texteMailActivationMembre" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailActivationMembre" z="user-managed"/>
         <field:textarea field="texteMailPasswordOublie" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie" z="user-managed"/>
+        <field:select required="true" items="${receiptModeTypes}" path="mailReturnReceiptModeType" field="mailReturnReceiptModeType" id="c_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType" z="0rIyy0JdpFTew1w2DHyOXI1lxFk="/>
+        <field:textarea field="texteMailCandidatReturnReceipt" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" z="XZYtasP7lETZqQJoYbqt+JYbAv4="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>

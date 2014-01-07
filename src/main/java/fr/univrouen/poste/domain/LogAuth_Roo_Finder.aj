@@ -17,6 +17,14 @@ privileged aspect LogAuth_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static TypedQuery<LogAuth> LogAuth.findLogAuthsByActionEquals(String action) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        EntityManager em = LogAuth.entityManager();
+        TypedQuery<LogAuth> q = em.createQuery("SELECT o FROM LogAuth AS o WHERE o.action = :action", LogAuth.class);
+        q.setParameter("action", action);
+        return q;
+    }
+    
     public static TypedQuery<LogAuth> LogAuth.findLogAuthsByActionEquals(String action, String sortFieldName, String sortOrder) {
         if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
         EntityManager em = LogAuth.entityManager();

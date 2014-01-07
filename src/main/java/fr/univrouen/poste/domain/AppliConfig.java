@@ -22,8 +22,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -33,6 +36,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord
 public class AppliConfig {
+	
+	public static enum MailReturnReceiptModeTypes {NEVER, EACH_UPLOAD};
 
 	private static String cacheTitre;
 	
@@ -63,12 +68,16 @@ public class AppliConfig {
 	private static String cacheTexteCandidatAideCandidatures;
 
 	private static String cacheTexteCandidatAideCandidatureDepot;
+
+	private static String cacheTexteMailCandidatReturnReceipt;
 		
 	private static Date cacheDateEndCandidat;
 	
 	private static Date cacheDateEndCandidatActif;
 
 	private static Date cacheDateEndMembre;
+	
+	private static MailReturnReceiptModeTypes cacheMailReturnReceiptModeType;
 	
 	
     @Temporal(TemporalType.TIMESTAMP)
@@ -141,6 +150,12 @@ public class AppliConfig {
     @Column(columnDefinition="TEXT")
     private String texteCandidatAideCandidatureDepot;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private MailReturnReceiptModeTypes mailReturnReceiptModeType;
+    
+    @Column(columnDefinition="TEXT")
+    private String texteMailCandidatReturnReceipt;
     
     
     public void setTitre(String titre) {
@@ -232,6 +247,16 @@ public class AppliConfig {
 	public void setDateEndMembre(Date dateEndMembre) {
     	this.dateEndMembre = dateEndMembre;
     	cacheDateEndMembre = dateEndMembre;
+    }
+	
+	public void setMailReturnReceiptModeType(MailReturnReceiptModeTypes mailReturnReceiptModeType) {
+    	this.mailReturnReceiptModeType = mailReturnReceiptModeType;
+    	cacheMailReturnReceiptModeType = mailReturnReceiptModeType;
+    }
+	
+	public void setTexteMailCandidatReturnReceipt(String texteMailCandidatReturnReceipt) {
+    	this.texteMailCandidatReturnReceipt = texteMailCandidatReturnReceipt;
+    	cacheTexteMailCandidatReturnReceipt = texteMailCandidatReturnReceipt;
     }
 
 	public static String getCacheTitre() {
@@ -462,5 +487,30 @@ public class AppliConfig {
 		}
 		return cacheDateEndMembre;
 	}
+	
+	public static MailReturnReceiptModeTypes getCacheMailReturnReceiptModeType() {
+    	if(cacheMailReturnReceiptModeType == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheMailReturnReceiptModeType = configs.get(0).getMailReturnReceiptModeType();
+    		} else {
+    			cacheMailReturnReceiptModeType = MailReturnReceiptModeTypes.NEVER;
+    		}
+    	}
+    	return cacheMailReturnReceiptModeType;
+    }
+
+	public static String getCacheTexteMailCandidatReturnReceipt() {
+    	if(cacheTexteMailCandidatReturnReceipt == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheTexteMailCandidatReturnReceipt = configs.get(0).getTexteMailCandidatReturnReceipt();		
+    		} else {
+    			cacheTexteMailCandidatReturnReceipt = "";
+    		}
+    	}
+    	return cacheTexteMailCandidatReturnReceipt;
+    }
+	
 	
 }

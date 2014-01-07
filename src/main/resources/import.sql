@@ -54,7 +54,9 @@ version,
 pied_page, 
 image_url,
 mail_subject_membre, 
-texte_mail_activation_membre) 
+texte_mail_activation_membre,
+mail_return_receipt_mode_type,
+texte_mail_candidat_return_receipt) 
 
 VALUES (
 
@@ -115,7 +117,11 @@ E'Bonjour.\n\nEn votre qualité de membre du comité de sélection, nous venons 
 Merci d''activer ce lien en le copiant dans la barre d''adresse de votre navigateur Internet :\n\
 http://localhost:8080/EsupDematEC/signup/activate/@@mailAddress@@/@@activationKey@@\n
 Il vous sera demandé de saisir le mot de passe de votre choix.\n
-Cordialement.\n\n--\nUniversité ESUP\nDirection des Ressources Humaines\nBureau des Personnels Enseignants\n'
+Cordialement.\n\n--\nUniversité ESUP\nDirection des Ressources Humaines\nBureau des Personnels Enseignants\n',
+
+'NEVER',
+
+E'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''application de l''Université ESUP pour le poste @@numEmploi@@.\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n'
 
 );
 

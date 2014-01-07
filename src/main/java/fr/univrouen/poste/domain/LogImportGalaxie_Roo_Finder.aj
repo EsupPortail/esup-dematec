@@ -17,6 +17,14 @@ privileged aspect LogImportGalaxie_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static TypedQuery<LogImportGalaxie> LogImportGalaxie.findLogImportGalaxiesByStatusEquals(String status) {
+        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
+        EntityManager em = LogImportGalaxie.entityManager();
+        TypedQuery<LogImportGalaxie> q = em.createQuery("SELECT o FROM LogImportGalaxie AS o WHERE o.status = :status", LogImportGalaxie.class);
+        q.setParameter("status", status);
+        return q;
+    }
+    
     public static TypedQuery<LogImportGalaxie> LogImportGalaxie.findLogImportGalaxiesByStatusEquals(String status, String sortFieldName, String sortOrder) {
         if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
         EntityManager em = LogImportGalaxie.entityManager();

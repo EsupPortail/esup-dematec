@@ -19,6 +19,16 @@ privileged aspect CommissionEntry_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByNumPosteAndEmail(String numPoste, String email) {
+        if (numPoste == null || numPoste.length() == 0) throw new IllegalArgumentException("The numPoste argument is required");
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery<CommissionEntry> q = em.createQuery("SELECT o FROM CommissionEntry AS o WHERE o.numPoste = :numPoste AND o.email = :email", CommissionEntry.class);
+        q.setParameter("numPoste", numPoste);
+        q.setParameter("email", email);
+        return q;
+    }
+    
     public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByNumPosteAndEmail(String numPoste, String email, String sortFieldName, String sortOrder) {
         if (numPoste == null || numPoste.length() == 0) throw new IllegalArgumentException("The numPoste argument is required");
         if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");

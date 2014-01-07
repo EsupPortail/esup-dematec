@@ -35,6 +35,14 @@ privileged aspect PosteCandidature_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByCandidat(User candidat) {
+        if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery<PosteCandidature> q = em.createQuery("SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat", PosteCandidature.class);
+        q.setParameter("candidat", candidat);
+        return q;
+    }
+    
     public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByCandidat(User candidat, String sortFieldName, String sortOrder) {
         if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
         EntityManager em = PosteCandidature.entityManager();
@@ -50,6 +58,14 @@ privileged aspect PosteCandidature_Roo_Finder {
         return q;
     }
     
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByPoste(PosteAPourvoir poste) {
+        if (poste == null) throw new IllegalArgumentException("The poste argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery<PosteCandidature> q = em.createQuery("SELECT o FROM PosteCandidature AS o WHERE o.poste = :poste", PosteCandidature.class);
+        q.setParameter("poste", poste);
+        return q;
+    }
+    
     public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByPoste(PosteAPourvoir poste, String sortFieldName, String sortOrder) {
         if (poste == null) throw new IllegalArgumentException("The poste argument is required");
         EntityManager em = PosteCandidature.entityManager();
@@ -62,6 +78,14 @@ privileged aspect PosteCandidature_Roo_Finder {
         }
         TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
         q.setParameter("poste", poste);
+        return q;
+    }
+    
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByRecevable(Boolean recevable) {
+        if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery<PosteCandidature> q = em.createQuery("SELECT o FROM PosteCandidature AS o WHERE o.recevable = :recevable", PosteCandidature.class);
+        q.setParameter("recevable", recevable);
         return q;
     }
     

@@ -83,7 +83,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 		// Enabled
 		enabled = targetUser.getEnabled();
 
-		return new org.springframework.security.core.userdetails.User(targetUser.getEmailAddress(), targetUser.getPassword(), enabled, // enabled
+		return new org.springframework.security.core.userdetails.User(targetUser.getEmailAddress(), targetUser.getPassword() == null ? "dummy" : targetUser.getPassword(), enabled, // enabled
 				true, // account not expired
 				true, // credentials not expired
 				true, // account not locked
