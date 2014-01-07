@@ -60,4 +60,12 @@ privileged aspect PosteCandidature_Roo_JavaBean {
         this.recevable = recevable;
     }
     
+    public Boolean PosteCandidature.getAuditionnable() {
+        return this.auditionnable;
+    }
+    
+    public void PosteCandidature.setAuditionnable(Boolean auditionnable) {
+        this.auditionnable = auditionnable;
+    }
+    
 }

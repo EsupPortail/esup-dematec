@@ -17,6 +17,7 @@
  */
 package fr.univrouen.poste.services;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +36,9 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 
 @Service
 @Scope(value = "session", proxyMode=ScopedProxyMode.TARGET_CLASS)
-public class ReturnReceiptService {
+public class ReturnReceiptService implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private final Logger logger = Logger.getLogger(getClass());
 

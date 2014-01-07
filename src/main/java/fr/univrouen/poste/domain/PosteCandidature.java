@@ -65,7 +65,9 @@ public class PosteCandidature {
     private User candidat;
 
     private Boolean recevable = true;
-
+    
+    private Boolean auditionnable = false;
+    
     public String getNom() {
         return this.candidat.getNom();
     }

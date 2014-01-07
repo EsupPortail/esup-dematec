@@ -200,6 +200,16 @@ public class MyPosteCandidatureController {
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 	
+	@RequestMapping(value = "/{id}/auditionnable")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable) {
+		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+		
+		postecandidature.setAuditionnable(auditionnable);
+		postecandidature.persist();
+
+		return "redirect:/postecandidatures/" + id.toString();
+	}
 	
 	/*
 	 * @RequestMapping(method = RequestMethod.POST, produces = "text/html")
