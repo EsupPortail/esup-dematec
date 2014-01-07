@@ -56,7 +56,8 @@ image_url,
 mail_subject_membre, 
 texte_mail_activation_membre,
 mail_return_receipt_mode_type,
-texte_mail_candidat_return_receipt) 
+texte_mail_candidat_return_receipt,
+texte_mail_candidat_auditionnable) 
 
 VALUES (
 
@@ -121,7 +122,9 @@ Cordialement.\n\n--\nUniversité ESUP\nDirection des Ressources Humaines\nBureau
 
 'NEVER',
 
-E'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''application de l''Université ESUP pour le poste @@numEmploi@@.\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n'
+E'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''application de l''Université ESUP pour le poste @@numEmploi@@.\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
+
+E'Bonjour.\n\nVous êtes maintenant auditionnable sur le poste @@numEmploi@@.\n\nMerci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/PosteCandidature/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n'
 
 );
 

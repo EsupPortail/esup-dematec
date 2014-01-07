@@ -30,6 +30,7 @@
             <table:column date="true" dateTimePattern="${appliConfig_dateendcandidat_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat" property="dateEndCandidat" render="false" z="user-managed"/>
             <table:column date="true" dateTimePattern="${appliConfig_dateendmembre_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre" property="dateEndMembre" render="false" z="user-managed"/>
             <table:column date="true" dateTimePattern="${appliConfig_dateendcandidatactif_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif" property="dateEndCandidatActif" render="false" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${appliConfig_dateendcandidatauditionnable_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatAuditionnable" property="dateEndCandidatAuditionnable" z="hkPlrQH/z4Hd3BHa1Q6bha/AN/k="/>
         </table:table>
     </page:list>
 </div>

@@ -16,6 +16,10 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.dateEndCandidatActif;
     }
     
+    public Date AppliConfig.getDateEndCandidatAuditionnable() {
+        return this.dateEndCandidatAuditionnable;
+    }
+    
     public Date AppliConfig.getDateEndMembre() {
         return this.dateEndMembre;
     }
@@ -86,6 +90,10 @@ privileged aspect AppliConfig_Roo_JavaBean {
     
     public String AppliConfig.getTexteMailCandidatReturnReceipt() {
         return this.texteMailCandidatReturnReceipt;
+    }
+    
+    public String AppliConfig.getTexteMailCandidatAuditionnable() {
+        return this.texteMailCandidatAuditionnable;
     }
     
 }

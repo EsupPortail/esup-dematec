@@ -70,11 +70,15 @@ public class AppliConfig {
 	private static String cacheTexteCandidatAideCandidatureDepot;
 
 	private static String cacheTexteMailCandidatReturnReceipt;
+	
+	private static String cacheTexteMailCandidatAuditionnable;
 		
 	private static Date cacheDateEndCandidat;
 	
 	private static Date cacheDateEndCandidatActif;
-
+	
+	private static Date cacheDateEndCandidatAuditionnable;
+	
 	private static Date cacheDateEndMembre;
 	
 	private static MailReturnReceiptModeTypes cacheMailReturnReceiptModeType;
@@ -88,7 +92,11 @@ public class AppliConfig {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateEndCandidatActif;
-
+    
+	
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date dateEndCandidatAuditionnable;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -156,6 +164,9 @@ public class AppliConfig {
     
     @Column(columnDefinition="TEXT")
     private String texteMailCandidatReturnReceipt;
+    
+    @Column(columnDefinition="TEXT")
+    private String texteMailCandidatAuditionnable;
     
     
     public void setTitre(String titre) {
@@ -244,6 +255,11 @@ public class AppliConfig {
     	cacheDateEndCandidatActif = dateEndCandidatActif;
     }
 
+	public void setDateEndCandidatAuditionnable(Date dateEndCandidatAuditionnable) {
+    	this.dateEndCandidatAuditionnable = dateEndCandidatAuditionnable;
+    	cacheDateEndCandidatAuditionnable = dateEndCandidatAuditionnable;
+    }	
+
 	public void setDateEndMembre(Date dateEndMembre) {
     	this.dateEndMembre = dateEndMembre;
     	cacheDateEndMembre = dateEndMembre;
@@ -257,6 +273,11 @@ public class AppliConfig {
 	public void setTexteMailCandidatReturnReceipt(String texteMailCandidatReturnReceipt) {
     	this.texteMailCandidatReturnReceipt = texteMailCandidatReturnReceipt;
     	cacheTexteMailCandidatReturnReceipt = texteMailCandidatReturnReceipt;
+    }
+	
+	public void setTexteMailCandidatAuditionnable(String texteMailCandidatAuditionnable) {
+    	this.texteMailCandidatAuditionnable = texteMailCandidatAuditionnable;
+    	cacheTexteMailCandidatAuditionnable= texteMailCandidatAuditionnable;
     }
 
 	public static String getCacheTitre() {
@@ -472,6 +493,22 @@ public class AppliConfig {
 		return cacheDateEndCandidatActif;
     }
 	
+	public static Date getCacheDateEndCandidatAuditionnable() {
+		if (cacheDateEndCandidatAuditionnable == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();
+			if (!configs.isEmpty()) {
+				cacheDateEndCandidatAuditionnable = configs.get(0).getDateEndCandidatAuditionnable();
+			}
+		}
+		if (cacheDateEndCandidatAuditionnable == null) {
+			// initialize to this currentTime + 5 years
+			Calendar c = Calendar.getInstance();
+			c.roll(Calendar.YEAR, 5);
+			cacheDateEndCandidatAuditionnable = c.getTime();
+		}
+		return cacheDateEndCandidatAuditionnable;
+    }
+	
 	public static Date getCacheDateEndMembre() {
 		if (cacheDateEndMembre == null) {
 			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();
@@ -512,5 +549,16 @@ public class AppliConfig {
     	return cacheTexteMailCandidatReturnReceipt;
     }
 	
+	public static String getCacheTexteMailCandidatAuditionnable() {
+    	if(cacheTexteMailCandidatAuditionnable == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheTexteMailCandidatAuditionnable = configs.get(0).getTexteMailCandidatAuditionnable();		
+    		} else {
+    			cacheTexteMailCandidatAuditionnable = "";
+    		}
+    	}
+    	return cacheTexteMailCandidatAuditionnable;
+    }
 	
 }
