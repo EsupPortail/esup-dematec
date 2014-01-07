@@ -18,11 +18,13 @@
 package fr.univrouen.poste.utils;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
+import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
@@ -64,8 +66,16 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         if(pc != null) {
 	        User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
 	        if(user.getIsCandidat()) {
-	        	if(pc.getCandidat().equals(user))
-	        		return true;
+	        	if(pc.getCandidat().equals(user)) {
+	        		// restrictions si phase auditionnable
+	        		Date currentTime = new Date();     
+	    			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
+	    				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) {
+	    				return pc.getAuditionnable();
+	    			} else {
+	    				return true;
+	    			}
+	        	}
 	        }  
 	        
 	        if("view".equals(permissionKey) && user.getIsMembre()) {

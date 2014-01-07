@@ -307,6 +307,17 @@ public class MyPosteCandidatureController {
 
 		else if (user.getIsCandidat()) {
 			postecandidatures = PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList();
+			
+			// restrictions si phase auditionnable
+	        Date currentTime = new Date();     
+			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
+				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) { 
+				for(PosteCandidature postecandidature: postecandidatures) {
+					if(!postecandidature.getAuditionnable()) {
+						postecandidatures.remove(postecandidature);
+					}
+				}
+			}
 		}
 
 		else if (user.getIsMembre()) {
