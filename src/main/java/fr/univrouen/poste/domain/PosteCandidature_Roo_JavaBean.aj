@@ -3,6 +3,7 @@
 
 package fr.univrouen.poste.domain;
 
+import fr.univrouen.poste.domain.ManagerReview;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
@@ -66,6 +67,14 @@ privileged aspect PosteCandidature_Roo_JavaBean {
     
     public void PosteCandidature.setAuditionnable(Boolean auditionnable) {
         this.auditionnable = auditionnable;
+    }
+    
+    public ManagerReview PosteCandidature.getManagerReview() {
+        return this.managerReview;
+    }
+    
+    public void PosteCandidature.setManagerReview(ManagerReview managerReview) {
+        this.managerReview = managerReview;
     }
     
 }

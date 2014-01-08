@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -36,6 +35,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
+import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 
 @RooJavaBean
 @RooToString(excludeFields = "candidatureFiles")
@@ -68,6 +69,8 @@ public class PosteCandidature {
     
     private Boolean auditionnable = false;
     
+    private ManagerReview managerReview;
+    
     public String getNom() {
         return this.candidat.getNom();
     }
@@ -78,6 +81,18 @@ public class PosteCandidature {
 
     public String getEmail() {
         return this.candidat.getEmailAddress();
+    }
+    
+    public ReviewStatusTypes getManagerReviewState() {
+    	if(managerReview == null) {
+    		return ReviewStatusTypes.Non_vue;
+    	} else {
+    		if(modification.compareTo(managerReview.getReviewDate()) > 0) {
+    			return ReviewStatusTypes.Vue_mais_modifie_depuis;
+    		} else {
+    			return ReviewStatusTypes.Vue;
+    		}
+    	}
     }
 
     public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<fr.univrouen.poste.domain.PosteAPourvoir> postes) {
