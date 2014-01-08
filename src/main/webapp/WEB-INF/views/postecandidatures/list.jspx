@@ -86,6 +86,7 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${canManage}" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewState" property="managerReviewState" render="${canManage}" label="Vue" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" render="${canManage}" sort="${canManage}" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" render="${canManage}" sort="${canManage}" z="user-managed"/>
         </table:table>
