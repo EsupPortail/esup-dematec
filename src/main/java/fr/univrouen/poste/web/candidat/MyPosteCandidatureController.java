@@ -83,7 +83,7 @@ public class MyPosteCandidatureController {
 	ZipService zipService;
 	
     @Resource
-    private transient EmailService emailService;
+    EmailService emailService;
 	
 	@ModelAttribute("posteapourvoirs")
 	public List<PosteAPourvoir> getPosteAPourvoirs() {
@@ -123,7 +123,7 @@ public class MyPosteCandidatureController {
 	}
 
 	@RequestMapping(value = "/{id}/delFile/{idFile}")
-	@PreAuthorize("hasPermission(#id, 'manage')")
+	@PreAuthorize("hasPermission(#id, 'manage') and hasPermission(#idFile, 'delFile') or hasRole('ROLE_ADMIN')")
 	public String deleteCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
@@ -199,7 +199,6 @@ public class MyPosteCandidatureController {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
 		postecandidature.setRecevable(recevable);
-		postecandidature.persist();
 
 		return "redirect:/postecandidatures/" + id.toString();
 	}
@@ -220,8 +219,11 @@ public class MyPosteCandidatureController {
     		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 		}
 		
+		for(PosteCandidatureFile candidatureFile : postecandidature.getCandidatureFiles()) {
+			candidatureFile.setWriteable(false);
+		}
+		
 		postecandidature.setAuditionnable(auditionnable);
-		postecandidature.persist();
 
 		return "redirect:/postecandidatures/" + id.toString();
 	}

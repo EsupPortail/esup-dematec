@@ -49,6 +49,8 @@ public class PosteCandidatureFile {
     private Date sendTime;
 
     private Long fileSize;
+    
+    private Boolean writeable = true;
 
     private String contentType;
     

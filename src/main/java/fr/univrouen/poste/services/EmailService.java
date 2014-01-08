@@ -17,14 +17,16 @@
  */
 package fr.univrouen.poste.services;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-public class EmailService {
+public class EmailService implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	private final Logger logger = Logger.getLogger(getClass());
 	
     private transient MailSender mailSender; 

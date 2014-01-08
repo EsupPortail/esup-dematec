@@ -42,6 +42,14 @@ privileged aspect PosteCandidatureFile_Roo_JavaBean {
         this.fileSize = fileSize;
     }
     
+    public Boolean PosteCandidatureFile.getWriteable() {
+        return this.writeable;
+    }
+    
+    public void PosteCandidatureFile.setWriteable(Boolean writeable) {
+        this.writeable = writeable;
+    }
+    
     public String PosteCandidatureFile.getContentType() {
         return this.contentType;
     }

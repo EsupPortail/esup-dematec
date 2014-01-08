@@ -46,7 +46,7 @@
                 <field:datetime dateTimePattern="${appliConfig_dateendcandidatactif_date_format}" field="dateEndCandidatActif" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif" z="KY7SP48bKvSXgv3L6aBjyvU5mVo="/>
             </div>
             <div class="span3">
-        		<field:datetime dateTimePattern="${appliConfig_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatAuditionnable" z="gEfuOWgWTtJ5Jri+S0aFSlV0k9c="/>
+                <field:datetime dateTimePattern="${appliConfig_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatAuditionnable" z="gEfuOWgWTtJ5Jri+S0aFSlV0k9c="/>
             </div>
             <div class="span3">
                 <field:datetime dateTimePattern="${appliConfig_dateendmembre_date_format}" field="dateEndMembre" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre" z="YylI67UYwuYSE6w8kWsOTlvKe2I="/>
@@ -69,7 +69,7 @@
         <field:textarea field="texteMailPasswordOublie" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie" z="user-managed"/>
         <field:select field="mailReturnReceiptModeType" id="c_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType" items="${receiptModeTypes}" path="mailReturnReceiptModeType" required="true" z="user-managed"/>
         <field:textarea field="texteMailCandidatReturnReceipt" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" z="user-managed"/>
-        <field:textarea field="texteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatAuditionnable" z="Zu8tb7Ni+8X6++TYa4mXOzhiqY8="/>
+        <field:textarea field="texteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatAuditionnable" z="user-managed"/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>

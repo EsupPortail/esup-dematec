@@ -27,6 +27,7 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
 
 public class PostePermissionEvaluator implements PermissionEvaluator {
@@ -41,6 +42,12 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 		
 		
 		String permissionKey = (String) permission;
+		
+		if("delFile".equals(permissionKey)) {
+        	Long id = (Long) targetDomainObject;
+        	PosteCandidatureFile pcFile = PosteCandidatureFile.findPosteCandidatureFile(id);
+			return pcFile.getWriteable();
+		}
 		
 		if(!"manage".equals(permissionKey) && !"view".equals(permissionKey))
 				return false;

@@ -54,7 +54,7 @@
                         <td>
                             <spring:eval expression="candidatureFile.sendTime"/>
                         </td>
-                        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_CANDIDAT')">
+                        <sec:authorize access="hasRole('ROLE_ADMIN')">
                             <spring:url value="/postecandidatures/${postecandidature.id}/delFile/${candidatureFile.id}" var="deleteCandidatureFileUrl"/>
                             <td>
                                 <a class="btn btn-danger" href="${deleteCandidatureFileUrl}" onclick="return confirm('${delete_confirm_msg}');">
@@ -63,6 +63,23 @@
                                     </i>Supprimer
 							</a>
                             </td>
+                        </sec:authorize>
+                        <sec:authorize access="hasRole('ROLE_CANDIDAT')">
+                        	<c:choose>
+	                        	<c:when test="${candidatureFile.writeable}">
+		                            <spring:url value="/postecandidatures/${postecandidature.id}/delFile/${candidatureFile.id}" var="deleteCandidatureFileUrl"/>
+		                            <td>
+		                                <a class="btn btn-danger" href="${deleteCandidatureFileUrl}" onclick="return confirm('${delete_confirm_msg}');">
+		                                    <i class="icon-trash">
+		                                        <!--  -->
+		                                    </i>Supprimer
+									</a>
+		                            </td>
+	                            </c:when>
+	                            <c:otherwise>
+	                            	<td><!--  --></td>
+	                            </c:otherwise>
+                            </c:choose>
                         </sec:authorize>
                     </tr>
                 </c:forEach>
@@ -78,7 +95,7 @@
         <field:display field="poste" id="s_fr_univrouen_poste_domain_PosteCandidature_poste" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="candidat" id="s_fr_univrouen_poste_domain_PosteCandidature_candidat" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="recevable" id="s_fr_univrouen_poste_domain_PosteCandidature_recevable" object="${postecandidature}" render="false" z="user-managed"/>
-        <field:display field="auditionnable" id="s_fr_univrouen_poste_domain_PosteCandidature_auditionnable" object="${postecandidature}" z="/gkRiY08olaygr6NkaJYlNzrl2o=" render="false"/>
+        <field:display field="auditionnable" id="s_fr_univrouen_poste_domain_PosteCandidature_auditionnable" object="${postecandidature}" render="false" z="user-managed"/>
     </page:show>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
         <c:choose>
@@ -105,5 +122,4 @@
             </c:otherwise>
         </c:choose>
     </sec:authorize>
-    
 </div>
