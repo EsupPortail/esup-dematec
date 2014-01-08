@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.ManagerReview;
+import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
@@ -43,6 +44,14 @@ privileged aspect PosteCandidature_Roo_JavaBean {
     
     public void PosteCandidature.setCandidatureFiles(Set<PosteCandidatureFile> candidatureFiles) {
         this.candidatureFiles = candidatureFiles;
+    }
+    
+    public Set<MemberReviewFile> PosteCandidature.getMemberReviewFiles() {
+        return this.memberReviewFiles;
+    }
+    
+    public void PosteCandidature.setMemberReviewFiles(Set<MemberReviewFile> memberReviewFiles) {
+        this.memberReviewFiles = memberReviewFiles;
     }
     
     public User PosteCandidature.getCandidat() {

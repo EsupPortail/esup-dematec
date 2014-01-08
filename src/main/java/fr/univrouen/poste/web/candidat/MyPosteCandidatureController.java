@@ -53,6 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.ManagerReview;
+import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
@@ -96,6 +97,15 @@ public class MyPosteCandidatureController {
 		return User.findAllCandidats(null, null).getResultList();
 	}
 
+	@ModelAttribute("currentUser")
+	public User getCurrentUser() {
+		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
+		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		return currentUser;
+	}
+	
+	
+
 	@RequestMapping(value = "/{id}/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'view')")
 	public void downloadCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
@@ -123,6 +133,35 @@ public class MyPosteCandidatureController {
 		}
 	}
 
+
+	@RequestMapping(value = "/{id}/reviewFile/{idFile}")
+	@PreAuthorize("hasPermission(#id, 'review') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+	public void downloadReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+		try {
+			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+			MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
+			// byte[] file = postecandidatureFile.getBigFile().getBinaryFile();
+			String filename = memberReviewFile.getFilename();
+			Long size = memberReviewFile.getFileSize();
+			String contentType = memberReviewFile.getContentType();
+			response.setContentType(contentType);
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+			response.setContentLength(size.intValue());
+			IOUtils.copy(memberReviewFile.getBigFile().getBinaryFile().getBinaryStream(), response.getOutputStream());
+	
+			Calendar cal = Calendar.getInstance();
+			Date currentTime = cal.getTime();
+			//postecandidature.setModification(currentTime);
+	
+			// TODO
+			//logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidature, memberReviewFile, request, currentTime);
+		} catch(IOException ioe) {
+	        String ip = request.getRemoteAddr();	
+			logger.warn("Download IOException, that can be just because the client [" + ip +
+					"] canceled the download process : " + ioe.getCause());
+		}
+	}
+	
 	@RequestMapping(value = "/{id}/delFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'manage') and hasPermission(#idFile, 'delFile') or hasRole('ROLE_ADMIN')")
 	public String deleteCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -134,11 +173,22 @@ public class MyPosteCandidatureController {
 		Date currentTime = cal.getTime();
 		postecandidature.setModification(currentTime);
 
-		postecandidature.persist();
 		logService.logActionFile(LogService.DELETE_ACTION, postecandidature, postecandidatureFile, request, currentTime);
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 
+	@RequestMapping(value = "/{id}/delMemberReviewFile/{idFile}")
+	@PreAuthorize("hasPermission(#id, 'review') and hasPermission(#idFile, 'delMemberReviewFile') or hasRole('ROLE_ADMIN')")
+	public String delMemberReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+		MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
+		postecandidature.getMemberReviewFiles().remove(memberReviewFile);
+
+		// TODO
+		//logService.logActionFile(LogService.DELETE_ACTION, postecandidature, postecandidatureFile, request, currentTime);
+		return "redirect:/postecandidatures/" + id.toString();
+	}
+	
 	@RequestMapping(value = "/{id}/addFile", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'manage')")
 	public String addFile(@PathVariable("id") Long id, @Valid PosteCandidatureFile posteCandidatureFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
@@ -194,6 +244,63 @@ public class MyPosteCandidatureController {
 	}
 
 	
+	@RequestMapping(value = "/{id}/addMemberReviewFile", method = RequestMethod.POST, produces = "text/html")
+	@PreAuthorize("hasPermission(#id, 'review')")
+	public String addMemberReviewFile(@PathVariable("id") Long id, @Valid MemberReviewFile memberReviewFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
+		if (bindingResult.hasErrors()) {
+			logger.warn(bindingResult.getAllErrors());
+			return "redirect:/postecandidatures/" + id.toString();
+		}
+		uiModel.asMap().clear();
+
+		// get PosteCandidature from id
+		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+
+		// upload file
+		MultipartFile file = memberReviewFile.getFile();
+		// sometimes file is null here, but I don't know how to reproduce this issue ... maybe that can occur only with some specifics browsers ?
+		if(file != null) {
+			String filename = file.getOriginalFilename();
+			Long fileSize = file.getSize();
+			
+			if(fileSize != 0) {
+				String contentType = file.getContentType();
+				InputStream inputStream = file.getInputStream();
+				//byte[] bytes = IOUtils.toByteArray(inputStream);
+		
+				memberReviewFile.setFilename(filename);
+				memberReviewFile.setFileSize(fileSize);
+				memberReviewFile.setContentType(contentType);
+				logger.warn("Upload and set file in DB with filesize = " + fileSize);
+				memberReviewFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
+				memberReviewFile.getBigFile().persist();
+		
+				Calendar cal = Calendar.getInstance();
+				Date currentTime = cal.getTime();
+				memberReviewFile.setSendTime(currentTime);
+				
+				User currentUser = getCurrentUser();
+				memberReviewFile.setMember(currentUser);
+		
+				postecandidature.getMemberReviewFiles().add(memberReviewFile);
+		
+				//postecandidature.setModification(currentTime);
+		
+				postecandidature.persist();
+		
+				// TODO
+				// logService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, memberReviewFile, request, currentTime);
+			}
+		} else {
+			String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+			String ip = request.getRemoteAddr();
+			String userAgent = request.getHeader("User-Agent");
+			logger.warn(userId + "[" + ip + "] tried to add a 'null file' ... his userAgent is : " + userAgent);
+		}
+
+		return "redirect:/postecandidatures/" + id.toString();
+	}
+	
 	@RequestMapping(value = "/{id}/modify")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 	public String modifyRecevableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean recevable) {
@@ -234,8 +341,7 @@ public class MyPosteCandidatureController {
 	public String reviewCandidatureFile(@PathVariable("id") Long id) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
-		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
-		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		User currentUser = getCurrentUser();
 		
 		ManagerReview managerReview = postecandidature.getManagerReview();
 		if(managerReview == null) {
@@ -284,6 +390,7 @@ public class MyPosteCandidatureController {
 		uiModel.addAttribute("postecandidature", postecandidature);
 		uiModel.addAttribute("posteCandidatureFile", new PosteCandidatureFile());
 		uiModel.addAttribute("texteCandidatAideCandidatureDepot", AppliConfig.getCacheTexteCandidatAideCandidatureDepot());
+		uiModel.addAttribute("memberReviewFile", new MemberReviewFile());
 		return "postecandidatures/show";
 	}
 	

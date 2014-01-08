@@ -25,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
@@ -42,16 +43,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 		
 		
 		String permissionKey = (String) permission;
-		
-		if("delFile".equals(permissionKey)) {
-        	Long id = (Long) targetDomainObject;
-        	PosteCandidatureFile pcFile = PosteCandidatureFile.findPosteCandidatureFile(id);
-			return pcFile.getWriteable();
-		}
-		
-		if(!"manage".equals(permissionKey) && !"view".equals(permissionKey))
-				return false;
-		
+
 		if(auth == null || auth.getName() == null || "".equals(auth.getName()))
 			return false;
 		
@@ -59,7 +51,23 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         	return false;
         
         String email = auth.getName();
-        			
+		
+		if("delFile".equals(permissionKey)) {
+        	Long id = (Long) targetDomainObject;
+        	PosteCandidatureFile pcFile = PosteCandidatureFile.findPosteCandidatureFile(id);
+			return pcFile.getWriteable();
+		}
+		
+		if("delMemberReviewFile".equals(permissionKey)) {
+        	Long id = (Long) targetDomainObject;
+        	MemberReviewFile reviewFile = MemberReviewFile.findMemberReviewFile(id);
+        	User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+			return reviewFile.getMember().equals(user);
+		}
+		
+		if(!"manage".equals(permissionKey) && !"view".equals(permissionKey) && !"review".equals(permissionKey))
+				return false;
+        
         PosteCandidature pc;
         
         if(targetDomainObject instanceof PosteCandidature) {
@@ -72,6 +80,12 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         
         if(pc != null) {
 	        User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+	        
+	        if("review".equals(permissionKey)) {
+        		PosteAPourvoir poste = pc.getPoste();
+        		return user.getIsAdmin() || user.getIsManager() || user.getIsMembre() && poste.getMembres().contains(user) && pc.getRecevable();
+	        }
+	        
 	        if(user.getIsCandidat()) {
 	        	if(pc.getCandidat().equals(user)) {
 	        		// restrictions si phase auditionnable

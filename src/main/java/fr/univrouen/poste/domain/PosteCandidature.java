@@ -61,7 +61,11 @@ public class PosteCandidature {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sendTime DESC")
     private Set<PosteCandidatureFile> candidatureFiles = new HashSet<PosteCandidatureFile>();
-
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sendTime DESC")
+    private Set<MemberReviewFile> memberReviewFiles = new HashSet<MemberReviewFile>();
+    
     @NotNull
     @ManyToOne
     private User candidat;
