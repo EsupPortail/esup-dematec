@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.ManagerReview;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
@@ -224,6 +225,29 @@ public class MyPosteCandidatureController {
 		}
 		
 		postecandidature.setAuditionnable(auditionnable);
+
+		return "redirect:/postecandidatures/" + id.toString();
+	}
+	
+	@RequestMapping(value = "/{id}/review")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+	public String reviewCandidatureFile(@PathVariable("id") Long id) {
+		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+		
+		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
+		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		
+		ManagerReview managerReview = postecandidature.getManagerReview();
+		if(managerReview == null) {
+			managerReview = new ManagerReview();
+			managerReview.setManager(currentUser);
+			managerReview.setReviewDate(new Date());
+			postecandidature.setManagerReview(managerReview);
+			managerReview.persist();
+		} else {	
+			managerReview.setManager(currentUser);
+			managerReview.setReviewDate(new Date());
+		}
 
 		return "redirect:/postecandidatures/" + id.toString();
 	}

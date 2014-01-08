@@ -23,6 +23,7 @@ public class ManagerReview {
     @ManyToOne
     private User manager;
     
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date reviewDate;

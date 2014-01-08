@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -68,7 +69,8 @@ public class PosteCandidature {
     private Boolean recevable = true;
     
     private Boolean auditionnable = false;
-    
+
+    @OneToOne
     private ManagerReview managerReview;
     
     public String getNom() {
@@ -83,14 +85,14 @@ public class PosteCandidature {
         return this.candidat.getEmailAddress();
     }
     
-    public ReviewStatusTypes getManagerReviewState() {
+    public String getManagerReviewState() {
     	if(managerReview == null) {
-    		return ReviewStatusTypes.Non_vue;
+    		return ReviewStatusTypes.Non_vue.toString();
     	} else {
-    		if(modification.compareTo(managerReview.getReviewDate()) > 0) {
-    			return ReviewStatusTypes.Vue_mais_modifie_depuis;
+    		if(modification != null && modification.compareTo(managerReview.getReviewDate()) > 0) {
+    			return ReviewStatusTypes.Vue_mais_modifie_depuis.toString();
     		} else {
-    			return ReviewStatusTypes.Vue;
+    			return ReviewStatusTypes.Vue.toString();
     		}
     	}
     }
