@@ -153,8 +153,7 @@ public class MyPosteCandidatureController {
 			Date currentTime = cal.getTime();
 			//postecandidature.setModification(currentTime);
 	
-			// TODO
-			//logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidature, memberReviewFile, request, currentTime);
+			logService.logActionFile(LogService.DOWNLOAD_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
 		} catch(IOException ioe) {
 	        String ip = request.getRemoteAddr();	
 			logger.warn("Download IOException, that can be just because the client [" + ip +
@@ -183,9 +182,12 @@ public class MyPosteCandidatureController {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
 		postecandidature.getMemberReviewFiles().remove(memberReviewFile);
-
-		// TODO
-		//logService.logActionFile(LogService.DELETE_ACTION, postecandidature, postecandidatureFile, request, currentTime);
+		
+		Calendar cal = Calendar.getInstance();
+		Date currentTime = cal.getTime();
+		postecandidature.setModification(currentTime);
+		
+		logService.logActionFile(LogService.DELETE_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 	
@@ -288,8 +290,7 @@ public class MyPosteCandidatureController {
 		
 				postecandidature.persist();
 		
-				// TODO
-				// logService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, memberReviewFile, request, currentTime);
+				logService.logActionFile(LogService.UPLOAD_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
 			}
 		} else {
 			String userId = SecurityContextHolder.getContext().getAuthentication().getName();

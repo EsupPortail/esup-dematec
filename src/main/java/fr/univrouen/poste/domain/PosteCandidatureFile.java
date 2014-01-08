@@ -37,7 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RooJavaBean
 @RooToString(excludeFields = "bigFile,file")
 @RooJpaActiveRecord
-public class PosteCandidatureFile {
+public class PosteCandidatureFile implements DematFile {
 
     private String filename;
 

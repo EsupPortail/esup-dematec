@@ -27,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import fr.univrouen.poste.domain.DematFile;
 import fr.univrouen.poste.domain.LogAuth;
 import fr.univrouen.poste.domain.LogFile;
 import fr.univrouen.poste.domain.LogImportCommission;
@@ -46,6 +47,12 @@ public class LogService {
 
 	public static final String DOWNLOAD_ACTION = "DOWNLOAD";
 
+	public final static String UPLOAD_REVIEW_ACTION = "UPLOAD_REVIEW";
+	
+	public final static String DELETE_REVIEW_ACTION = "DELETE_REVIEW";
+
+	public static final String DOWNLOAD_REVIEW_ACTION = "DOWNLOAD_REVIEW";
+	
 	public static final String AUTH_SUCCESS = "AUTH SUCCESS";
 
 	public static final String AUTH_FAILED = "AUTH FAILED";
@@ -64,7 +71,7 @@ public class LogService {
 	
 	public static final String IMPORT_FAILED = "IMPORT FAILED";
 
-	public void logActionFile(String action, PosteCandidature postecandidature, PosteCandidatureFile postecandidatureFile, HttpServletRequest request, Date currentTime) {
+	public void logActionFile(String action, PosteCandidature postecandidature, DematFile dematFile, HttpServletRequest request, Date currentTime) {
 	    
 
 	    User candidat = postecandidature.getCandidat();
@@ -89,8 +96,8 @@ public class LogService {
 	    logFile.setAction(action);
 	    logFile.setActionDate(currentTime);
 	    
-	    logFile.setFilename(postecandidatureFile.getFilename());
-	    logFile.setFileSize(postecandidatureFile.getFileSizeFormatted());
+	    logFile.setFilename(dematFile.getFilename());
+	    logFile.setFileSize(dematFile.getFileSizeFormatted());
 	    
 	    logFile.setCivilite(candidat.getCivilite());
 	    logFile.setEmail(candidat.getEmailAddress());

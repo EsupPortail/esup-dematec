@@ -32,7 +32,7 @@
                         <div class="accordion-inner">
                             <div class="row-fluid">
                                 <form:find finderName="ByActionEquals" id="ff_fr_univrouen_poste_domain_LogFile" path="/admin/logfiles">
-                                    <c:forTokens xmlns:c="http://java.sun.com/jsp/jstl/core" delims=";" items="UPLOAD;DELETE;DOWNLOAD" var="action">
+                                    <c:forTokens xmlns:c="http://java.sun.com/jsp/jstl/core" delims=";" items="UPLOAD;DELETE;DOWNLOAD;UPLOAD_REVIEW;DELETE_REVIEW;DOWNLOAD_REVIEW" var="action">
                                         <div class="span3">
                                             <c:choose>
                                                 <c:when test="${param.action == action or param.action == null and action == 'UPLOAD'}">
