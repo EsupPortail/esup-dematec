@@ -154,7 +154,7 @@
 	<sec:authorize
 		access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
 		<hr/>
-			<h4>Rapports de commissions</h4>
+			<h4>Rapports du comité de sélection</h4>
             ----
         <c:if test="${not empty postecandidature.memberReviewFiles}">
 				<table class="table  table-bordered table-striped">
