@@ -45,9 +45,7 @@
             <div class="span3">
                 <field:datetime dateTimePattern="${appliConfig_dateendcandidatactif_date_format}" field="dateEndCandidatActif" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif" z="KY7SP48bKvSXgv3L6aBjyvU5mVo="/>
             </div>
-            <div class="span3">
-                <field:datetime dateTimePattern="${appliConfig_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatAuditionnable" z="gEfuOWgWTtJ5Jri+S0aFSlV0k9c="/>
-            </div>
+            <div class="span3"/>
             <div class="span3">
                 <field:datetime dateTimePattern="${appliConfig_dateendmembre_date_format}" field="dateEndMembre" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre" z="YylI67UYwuYSE6w8kWsOTlvKe2I="/>
             </div>
@@ -115,7 +113,6 @@ $(document).ready(function(){
     
     $( "#_dateEndCandidat_id" ).datepicker({ dateFormat: 'dd/mm/yy' });   
     $( "#_dateEndCandidatActif_id" ).datepicker({ dateFormat: 'dd/mm/yy' }); 
-    $( "#_dateEndCandidatAuditionnable_id" ).datepicker({ dateFormat: 'dd/mm/yy' }); 
     $( "#_dateEndMembre_id" ).datepicker({ dateFormat: 'dd/mm/yy' });
     
 });

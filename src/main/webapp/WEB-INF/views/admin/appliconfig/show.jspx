@@ -41,7 +41,6 @@
         <field:display field="texteMailActivationMembre" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailActivationMembre" object="${appliconfig}" z="6GRbkrhfeSEIghtAui2xBB72Sjw="/>
         <field:display field="mailReturnReceiptModeType" id="s_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType" object="${appliconfig}" z="dyhgj7SSRyAkcspkdx+OMT/NMQE="/>
         <field:display field="texteMailCandidatReturnReceipt" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" object="${appliconfig}" z="Fbimmw9mmTVFlJqk08c6yvdAruA="/>
-        <field:display date="true" dateTimePattern="${appliConfig_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="s_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatAuditionnable" object="${appliconfig}" z="GIhvSzlkoWnHoDxBw6sgPNZ+daU="/>
         <field:display field="texteMailCandidatAuditionnable" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatAuditionnable" object="${appliconfig}" z="MPR6EuUSVmPdqMF7YPb1Z+zIcrc="/>
     </page:show>
 </div>

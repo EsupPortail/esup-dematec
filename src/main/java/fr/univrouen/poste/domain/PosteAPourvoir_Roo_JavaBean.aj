@@ -5,6 +5,7 @@ package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
+import java.util.Date;
 import java.util.Set;
 
 privileged aspect PosteAPourvoir_Roo_JavaBean {
@@ -39,6 +40,14 @@ privileged aspect PosteAPourvoir_Roo_JavaBean {
     
     public void PosteAPourvoir.setMembres(Set<User> membres) {
         this.membres = membres;
+    }
+    
+    public Date PosteAPourvoir.getDateEndCandidatAuditionnable() {
+        return this.dateEndCandidatAuditionnable;
+    }
+    
+    public void PosteAPourvoir.setDateEndCandidatAuditionnable(Date dateEndCandidatAuditionnable) {
+        this.dateEndCandidatAuditionnable = dateEndCandidatAuditionnable;
     }
     
 }

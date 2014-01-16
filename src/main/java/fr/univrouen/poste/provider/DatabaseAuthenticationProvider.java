@@ -161,12 +161,25 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 		        	auditionnable = auditionnable || candidature.getAuditionnable();
 		        }
 		        if(!auditionnable && !targetUser.isCandidatActif() && currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
-		        		!auditionnable && targetUser.isCandidatActif() && currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0 || 
-		        		auditionnable &&  currentTime.compareTo(AppliConfig.getCacheDateEndCandidatAuditionnable()) > 0) {
+		        		!auditionnable && targetUser.isCandidatActif() && currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) {
 		        	logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
 		        	logger.warn("User " + username + " tried to access to his candidat account but the dateEndCandidat is < current time");
 		        	throw new BadCredentialsException("La date de clôture des dépôts est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
-		        }    
+		        }   
+		        else if(auditionnable) {
+		        	Date dateEndCandidatAuditionnable = null;
+		        	for(PosteCandidature candidature: candidatures) {
+		        		Date datePosteAuditionnable = candidature.getPoste().getDateEndCandidatAuditionnable();
+		        		if(candidature.getAuditionnable() && (dateEndCandidatAuditionnable == null || datePosteAuditionnable.compareTo(dateEndCandidatAuditionnable) > 0 )) {
+		        			dateEndCandidatAuditionnable = datePosteAuditionnable;
+		        		}
+		        	}
+		        	if(dateEndCandidatAuditionnable == null || currentTime.compareTo(dateEndCandidatAuditionnable) > 0) {
+			        	logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
+			        	logger.warn("User " + username + " tried to access to his candidat account but all the dateEndCandidatAuditionnable for this account is < current time");
+			        	throw new BadCredentialsException("La date de clôture des dépôts pour les candidatures est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
+		        	}
+		        }
 	        }
 	        if(targetUser.getIsMembre() && currentTime.compareTo(AppliConfig.getCacheDateEndMembre()) > 0) {
 				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);

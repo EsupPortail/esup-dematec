@@ -447,7 +447,7 @@ public class MyPosteCandidatureController {
 			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
 				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) { 
 				for(PosteCandidature postecandidature: postecandidatures) {
-					if(!postecandidature.getAuditionnable()) {
+					if(!postecandidature.getAuditionnable() || currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) < 0) {
 						postecandidatures.remove(postecandidature);
 					}
 				}

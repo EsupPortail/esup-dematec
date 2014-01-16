@@ -17,8 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
-<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
+--><div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <util:help>
@@ -35,6 +34,7 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" property="profil" z="GbIqGAwYsYdwDUxFMNg1+/TlaEo="/>
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" property="localisation" sort="true" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" property="membres" z="Oj8AzSZWWBW0uI0w9Xngx4nqcu0="/>
+            <table:column date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" property="dateEndCandidatAuditionnable" z="eRnuqrnQy3FWVT6pYNm6mwfwD5g="/>
         </table:table>
     </page:list>
 </div>

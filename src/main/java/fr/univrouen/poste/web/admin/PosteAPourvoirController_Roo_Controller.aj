@@ -21,6 +21,7 @@ privileged aspect PosteAPourvoirController_Roo_Controller {
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String PosteAPourvoirController.show(@PathVariable("id") Long id, Model uiModel) {
+        addDateTimeFormatPatterns(uiModel);
         uiModel.addAttribute("posteapourvoir", PosteAPourvoir.findPosteAPourvoir(id));
         uiModel.addAttribute("itemId", id);
         return "admin/posteapourvoirs/show";
@@ -37,6 +38,7 @@ privileged aspect PosteAPourvoirController_Roo_Controller {
         } else {
             uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirs(sortFieldName, sortOrder));
         }
+        addDateTimeFormatPatterns(uiModel);
         return "admin/posteapourvoirs/list";
     }
     
@@ -55,6 +57,10 @@ privileged aspect PosteAPourvoirController_Roo_Controller {
     public String PosteAPourvoirController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, PosteAPourvoir.findPosteAPourvoir(id));
         return "admin/posteapourvoirs/update";
+    }
+    
+    void PosteAPourvoirController.addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("posteAPourvoir_dateendcandidatauditionnable_date_format", "dd/MM/yyyy");
     }
     
     String PosteAPourvoirController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

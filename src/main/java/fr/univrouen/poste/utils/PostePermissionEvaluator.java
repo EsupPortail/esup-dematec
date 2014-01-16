@@ -92,7 +92,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        		Date currentTime = new Date();     
 	    			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
 	    				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) {
-	    				return pc.getAuditionnable();
+	    				return pc.getAuditionnable() && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;
 	    			} else {
 	    				return true;
 	    			}

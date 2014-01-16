@@ -17,8 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+--><div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_PosteAPourvoir" object="${posteapourvoir}" path="/admin/posteapourvoirs" z="mpHS5ZIJ9yV9fTTXDWYz2qJ8eSI=">
@@ -26,5 +25,6 @@
         <field:display field="profil" id="s_fr_univrouen_poste_domain_PosteAPourvoir_profil" object="${posteapourvoir}" z="EF61CajqcUTOBsuATnw6XBWRK50="/>
         <field:display field="localisation" id="s_fr_univrouen_poste_domain_PosteAPourvoir_localisation" object="${posteapourvoir}" z="EVKhrRCWMnOipqXdkpoJiOPY7sM="/>
         <field:display field="membres" id="s_fr_univrouen_poste_domain_PosteAPourvoir_membres" object="${posteapourvoir}" z="1kOjOg6dZs98xSvMo40SIBEPLkY="/>
+        <field:display date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" object="${posteapourvoir}" z="1VnsoSTnmJ0OS+Gz46nlYuS9DLs="/>
     </page:show>
 </div>
