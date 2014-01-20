@@ -16,19 +16,16 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-
 import java.util.List;
-
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
-@RooToString(excludeFields="candidat,poste,candidature")
-@RooJpaActiveRecord(finders = { "findGalaxieEntrysByNumEmploiAndNumCandidat"})
+@RooToString(excludeFields = "candidat,poste,candidature")
+@RooJpaActiveRecord(finders = { "findGalaxieEntrysByNumEmploiAndNumCandidat", "findGalaxieEntrysByCandidat" })
 public class GalaxieEntry {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "localisation", "profil", "candidat", "poste", "candidature", "numEmploi,numCandidat");
@@ -57,25 +54,21 @@ public class GalaxieEntry {
 
     @OneToOne
     private PosteCandidature candidature;
-    
+
     // don't care of upper/lower case for authentication with email ...
-	public void setEmail(String email) {
-		if(email != null)
-			this.email = email.toLowerCase();
-		else
-			this.email = null;
+    public void setEmail(String email) {
+        if (email != null) this.email = email.toLowerCase(); else this.email = null;
     }
 
     public Boolean getDeletable() {
-    	return candidat == null && poste == null && candidature == null;
+        return candidat == null && poste == null && candidature == null;
     }
 
-	public static List<GalaxieEntry> findAllGalaxieEntrysWithCandidatNull() {
-		return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.candidat is NULL", GalaxieEntry.class).getResultList();
-	}
+    public static List<GalaxieEntry> findAllGalaxieEntrysWithCandidatNull() {
+        return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.candidat is NULL", GalaxieEntry.class).getResultList();
+    }
 
-	public static List<GalaxieEntry> findAllGalaxieEntrysWithPosteNull() {
-		return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.poste is NULL", GalaxieEntry.class).getResultList();
-	}
-
+    public static List<GalaxieEntry> findAllGalaxieEntrysWithPosteNull() {
+        return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.poste is NULL", GalaxieEntry.class).getResultList();
+    }
 }

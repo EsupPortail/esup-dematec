@@ -68,17 +68,6 @@ privileged aspect User_Roo_Jpa_ActiveRecord {
     }
     
     @Transactional
-    public void User.remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            User attached = User.findUser(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
     public void User.flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();

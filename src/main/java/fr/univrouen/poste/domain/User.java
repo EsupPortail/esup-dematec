@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.EntityManager;
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,6 +36,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
 
 @RooJavaBean
 @RooToString(excludeFields = "postes")
@@ -215,5 +217,39 @@ public class User {
 		return false;
 	}
 	
+	
+	
+	@Transactional
+	public void remove() {
+		EntityManager entityManager = entityManager();
+		User user = this;
+		if (!entityManager.contains(this)) {
+			user = User.findUser(this.getId());
+		}
+		
+		// candidat
+		List<GalaxieEntry> galaxieEntries = GalaxieEntry.findGalaxieEntrysByCandidat(user).getResultList();
+		for(GalaxieEntry galaxieEntry: galaxieEntries) {
+			galaxieEntry.remove();
+		}
+		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(user).getResultList();
+		for(PosteCandidature candidature : candidatures) {
+			candidature.remove();
+		}  
+		
+		// membre
+		List<CommissionEntry> commissionEntries = CommissionEntry.findCommissionEntrysByMembre(user).getResultList();
+		for(CommissionEntry commissionEntry: commissionEntries) {
+			commissionEntry.getPoste().getMembres().remove(user);
+			commissionEntry.remove();
+		}   
+		Set<PosteAPourvoir> postes = user.getPostes();
+		for(PosteAPourvoir poste: postes) {
+			poste.getMembres().remove(user);
+		}   
+		
+		entityManager.remove(user);
+	}
+    
 }
 

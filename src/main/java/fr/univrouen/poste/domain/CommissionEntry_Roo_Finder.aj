@@ -4,10 +4,19 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.CommissionEntry;
+import fr.univrouen.poste.domain.User;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 privileged aspect CommissionEntry_Roo_Finder {
+    
+    public static Long CommissionEntry.countFindCommissionEntrysByMembre(User membre) {
+        if (membre == null) throw new IllegalArgumentException("The membre argument is required");
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM CommissionEntry AS o WHERE o.membre = :membre", Long.class);
+        q.setParameter("membre", membre);
+        return ((Long) q.getSingleResult());
+    }
     
     public static Long CommissionEntry.countFindCommissionEntrysByNumPosteAndEmail(String numPoste, String email) {
         if (numPoste == null || numPoste.length() == 0) throw new IllegalArgumentException("The numPoste argument is required");
@@ -17,6 +26,29 @@ privileged aspect CommissionEntry_Roo_Finder {
         q.setParameter("numPoste", numPoste);
         q.setParameter("email", email);
         return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByMembre(User membre) {
+        if (membre == null) throw new IllegalArgumentException("The membre argument is required");
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery<CommissionEntry> q = em.createQuery("SELECT o FROM CommissionEntry AS o WHERE o.membre = :membre", CommissionEntry.class);
+        q.setParameter("membre", membre);
+        return q;
+    }
+    
+    public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByMembre(User membre, String sortFieldName, String sortOrder) {
+        if (membre == null) throw new IllegalArgumentException("The membre argument is required");
+        EntityManager em = CommissionEntry.entityManager();
+        String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.membre = :membre";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
+        q.setParameter("membre", membre);
+        return q;
     }
     
     public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByNumPosteAndEmail(String numPoste, String email) {

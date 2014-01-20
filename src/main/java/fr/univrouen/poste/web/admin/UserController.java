@@ -17,6 +17,8 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -28,10 +30,12 @@ import org.springframework.security.authentication.encoding.MessageDigestPasswor
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.User;
 
 @RooWebScaffold(path = "admin/users", formBackingObject = User.class)
@@ -138,7 +142,6 @@ public class UserController {
         addDateTimeFormatPatterns(uiModel);
         return "admin/users/list";
 	}
-
 
 }
 
