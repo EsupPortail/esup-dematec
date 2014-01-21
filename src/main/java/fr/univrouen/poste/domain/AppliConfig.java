@@ -71,8 +71,10 @@ public class AppliConfig {
 
 	private static String cacheTexteMailCandidatReturnReceipt;
 	
-	private static String cacheTexteMailCandidatAuditionnable;
-		
+	private static String cacheTexteEnteteMailCandidatAuditionnable;
+	
+	private static String cacheTextePiedpageMailCandidatAuditionnable;
+	
 	private static Date cacheDateEndCandidat;
 	
 	private static Date cacheDateEndCandidatActif;
@@ -160,8 +162,10 @@ public class AppliConfig {
     private String texteMailCandidatReturnReceipt;
     
     @Column(columnDefinition="TEXT")
-    private String texteMailCandidatAuditionnable;
+    private String texteEnteteMailCandidatAuditionnable;
     
+    @Column(columnDefinition="TEXT")
+    private String textePiedpageMailCandidatAuditionnable;
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -265,11 +269,16 @@ public class AppliConfig {
     	cacheTexteMailCandidatReturnReceipt = texteMailCandidatReturnReceipt;
     }
 	
-	public void setTexteMailCandidatAuditionnable(String texteMailCandidatAuditionnable) {
-    	this.texteMailCandidatAuditionnable = texteMailCandidatAuditionnable;
-    	cacheTexteMailCandidatAuditionnable= texteMailCandidatAuditionnable;
+	public void setTexteEnteteMailCandidatAuditionnable(String texteEnteteMailCandidatAuditionnable) {
+    	this.texteEnteteMailCandidatAuditionnable = texteEnteteMailCandidatAuditionnable;
+    	cacheTexteEnteteMailCandidatAuditionnable= texteEnteteMailCandidatAuditionnable;
     }
-
+	
+	public void setTextePiedpageMailCandidatAuditionnable(String textePiedpageMailCandidatAuditionnable) {
+    	this.textePiedpageMailCandidatAuditionnable = textePiedpageMailCandidatAuditionnable;
+    	cacheTextePiedpageMailCandidatAuditionnable= textePiedpageMailCandidatAuditionnable;
+    }
+	
 	public static String getCacheTitre() {
     	if(cacheTitre == null) {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
@@ -523,16 +532,27 @@ public class AppliConfig {
     	return cacheTexteMailCandidatReturnReceipt;
     }
 	
-	public static String getCacheTexteMailCandidatAuditionnable() {
-    	if(cacheTexteMailCandidatAuditionnable == null) {
+	public static String getCacheTexteEnteteMailCandidatAuditionnable() {
+    	if(cacheTexteEnteteMailCandidatAuditionnable == null) {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
-    			cacheTexteMailCandidatAuditionnable = configs.get(0).getTexteMailCandidatAuditionnable();		
+    			cacheTexteEnteteMailCandidatAuditionnable = configs.get(0).getTexteEnteteMailCandidatAuditionnable();		
     		} else {
-    			cacheTexteMailCandidatAuditionnable = "";
+    			cacheTexteEnteteMailCandidatAuditionnable = "";
     		}
     	}
-    	return cacheTexteMailCandidatAuditionnable;
+    	return cacheTexteEnteteMailCandidatAuditionnable;
     }
 	
+	public static String getCacheTextePiedpageMailCandidatAuditionnable() {
+    	if(cacheTextePiedpageMailCandidatAuditionnable == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheTextePiedpageMailCandidatAuditionnable = configs.get(0).getTextePiedpageMailCandidatAuditionnable();		
+    		} else {
+    			cacheTextePiedpageMailCandidatAuditionnable = "";
+    		}
+    	}
+    	return cacheTextePiedpageMailCandidatAuditionnable;
+    }
 }

@@ -88,8 +88,12 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.texteMailCandidatReturnReceipt;
     }
     
-    public String AppliConfig.getTexteMailCandidatAuditionnable() {
-        return this.texteMailCandidatAuditionnable;
+    public String AppliConfig.getTexteEnteteMailCandidatAuditionnable() {
+        return this.texteEnteteMailCandidatAuditionnable;
+    }
+    
+    public String AppliConfig.getTextePiedpageMailCandidatAuditionnable() {
+        return this.textePiedpageMailCandidatAuditionnable;
     }
     
 }

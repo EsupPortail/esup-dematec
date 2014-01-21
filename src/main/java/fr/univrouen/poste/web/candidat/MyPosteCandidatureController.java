@@ -314,7 +314,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/auditionnable")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable) {
+	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=true) String mailCorps) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
 		if(auditionnable) {
@@ -322,7 +322,8 @@ public class MyPosteCandidatureController {
     	    String mailFrom = AppliConfig.getCacheMailFrom();
     	    String mailSubject = AppliConfig.getCacheMailSubject();
     	    
-    	    String mailMessage = AppliConfig.getCacheTexteMailCandidatAuditionnable();
+    	    String mailMessage = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable() + mailCorps + AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable(); 	    
+    	    
     	    mailMessage = mailMessage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());        
     		    		
     		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
