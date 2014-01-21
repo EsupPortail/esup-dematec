@@ -117,11 +117,40 @@
         <c:choose>
             <c:when test="${postecandidature.auditionnable}">
                 <spring:url value="/postecandidatures/${postecandidature.id}/auditionnable?auditionnable=false" var="auditionnableCandidatureUrl"/>
-                <a class="btn btn-danger" href="${auditionnableCandidatureUrl}" onclick="return confirm('Candidat non auditionnable sur cette candidature ? Aucun mail ne sera envoyé automatiquement au candidat pour lui informer de ce changement ... !');">Non Auditionnable</a>
+                <a class="btn btn-danger" href="${auditionnableCandidatureUrl}" onclick="return confirm('Candidat non auditionnable sur cette candidature ? Aucun mail ne sera envoyé automatiquement au candidat pour lui informer de ce changement ... !');">Non retenu pour audition</a>
             </c:when>
             <c:otherwise>
-                <spring:url value="/postecandidatures/${postecandidature.id}/auditionnable?auditionnable=true" var="auditionnableCandidatureUrl"/>
-                <a class="btn btn-danger" href="${auditionnableCandidatureUrl}" onclick="return confirm('Candidat auditionnable sur cette candidature ? Attention, un mail sera alors envoyé au candidat pour lui demander de compléter sa candidature !');">Auditionnable</a>
+            
+				<div id="auditionnableDialog" class="modal hide fade" tabindex="-1"
+					role="dialog" aria-hidden="true">
+					<spring:url value="/postecandidatures/${postecandidature.id}/auditionnable" var="auditionnableCandidatureUrl"/>				
+					<form action="${auditionnableCandidatureUrl}">
+						<input type="hidden" name="auditionnable" value="true"/>
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true">×</button>
+							<h3 id="myModalLabel">Candidat retenu pour audition sur cette candidature ?</h3>
+						</div>
+						<div class="modal-body">
+							<p>Si vous confirmez, ce candidat sera considéré comme <b>retenu pour audition</b>.</p>
+							<p>
+							Il recevra de fait un mail (que vous pouvez 'modifier' ci-dessous en y insérant du texte supplémentaire) et il pourra compléter sa candidature dans l'application ; c'est à dire
+							qu'il pourra ajouter de nouveaux éléments dans l'applciation (sans toutefois supprimer les fichiers déposés lors de la première phase).</p>
+							<p>
+							<h4>Mail :</h4>
+								<i><pre>${mailAuditionnableEntete}</pre></i>
+								<textarea name="mailCorps" rows="8" cols="100"><!--  --></textarea>
+								<i><pre>${mailAuditionnablePiedPage}</pre></i>
+							</p>
+						</div>
+						<div class="modal-footer">
+							<button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+							
+	                		<button class="btn btn-danger" href="${auditionnableCandidatureUrl}" onclick="return confirm('Êtes-vous sûr ?');" type="submit">Confirmer</button>
+						</div>
+					</form>
+				</div>
+				<a href="#auditionnableDialog" role="button" data-toggle="modal" class="btn btn-danger">Retenu pour audition ?</a>
             </c:otherwise>
         </c:choose>
     </sec:authorize>

@@ -314,15 +314,21 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/auditionnable")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=true) String mailCorps) {
+	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=false) String mailCorps) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
+		mailCorps = mailCorps == null ? "" : mailCorps;
+				
 		if(auditionnable) {
 			String mailTo = postecandidature.getEmail();
     	    String mailFrom = AppliConfig.getCacheMailFrom();
     	    String mailSubject = AppliConfig.getCacheMailSubject();
     	    
-    	    String mailMessage = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable() + mailCorps + AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable(); 	    
+    	    String mailMessage = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable() + 
+    	    		"\n" +
+    	    		mailCorps + 
+    	    		"\n" +
+    	    		AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable(); 	    
     	    
     	    mailMessage = mailMessage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());        
     		    		
@@ -392,6 +398,15 @@ public class MyPosteCandidatureController {
 		uiModel.addAttribute("postecandidature", postecandidature);
 		uiModel.addAttribute("posteCandidatureFile", new PosteCandidatureFile());
 		uiModel.addAttribute("texteCandidatAideCandidatureDepot", AppliConfig.getCacheTexteCandidatAideCandidatureDepot());
+		
+		
+	    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
+	    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
+	    mailAuditionnableEntete = mailAuditionnableEntete.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());  
+	    mailAuditionnablePiedPage = mailAuditionnablePiedPage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());  
+	    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
+	    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
+	    
 		uiModel.addAttribute("memberReviewFile", new MemberReviewFile());
 		return "postecandidatures/show";
 	}

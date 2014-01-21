@@ -125,7 +125,7 @@ Cordialement.\n\n--\nUniversité ESUP\nDirection des Ressources Humaines\nBureau
 
 E'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''application de l''Université ESUP pour le poste @@numEmploi@@.\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
 
-E'Bonjour.\n\nVous êtes maintenant auditionnable sur le poste @@numEmploi@@.',
+E'Bonjour.\n\nVous avez été retenu pour audition sur le poste @@numEmploi@@.',
 
 E'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/PosteCandidature/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n'
 

@@ -113,6 +113,16 @@ font-weight: bold;
 text-decoration: underline;
 } 
 
+/* Dialog */
+.modal {
+width: 1000px;
+left: 30%;
+}
+
+.modal-body {
+max-height: 600px;
+}
+
 @media (min-width: 1200px) {
 	
 #main .bs-docs-sidenav {
