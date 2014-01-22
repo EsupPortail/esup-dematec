@@ -24,12 +24,12 @@
         <table:table create="false" data="${appliconfigs}" delete="false" id="l_fr_univrouen_poste_domain_AppliConfig" path="/admin/appliconfig" view="false" z="user-managed">
             <table:column date="true" dateTimePattern="${appliConfig_begindate_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_beginDate" property="beginDate" render="false" z="user-managed"/>
             <table:column date="true" dateTimePattern="${appliConfig_enddate_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_endDate" property="endDate" render="false" z="user-managed"/>
-            <table:column id="c_fr_univrouen_poste_domain_AppliConfig_titre" property="titre" z="EQL+m1gTK/YwWOtLsjR2M9OjOl0="/>
             <table:column id="c_fr_univrouen_poste_domain_AppliConfig_piedPage" property="piedPage" render="false" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_AppliConfig_imageUrl" property="imageUrl" render="false" z="user-managed"/>
             <table:column date="true" dateTimePattern="${appliConfig_dateendcandidat_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat" property="dateEndCandidat" render="false" z="user-managed"/>
             <table:column date="true" dateTimePattern="${appliConfig_dateendmembre_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre" property="dateEndMembre" render="false" z="user-managed"/>
             <table:column date="true" dateTimePattern="${appliConfig_dateendcandidatactif_date_format}" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif" property="dateEndCandidatActif" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_AppliConfig_titre" property="titre" z="EQL+m1gTK/YwWOtLsjR2M9OjOl0="/>
         </table:table>
     </page:list>
 </div>

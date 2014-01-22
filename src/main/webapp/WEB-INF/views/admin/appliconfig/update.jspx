@@ -69,6 +69,11 @@
         <field:textarea field="texteMailCandidatReturnReceipt" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" z="user-managed"/>
         <field:textarea field="texteEnteteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" z="user-managed"/>
         <field:textarea field="textePiedpageMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable" z="user-managed"/>
+        <field:input field="colorCandidatureVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue" z="IRF9nWR/rjzjf2oSlgelWo5Aesc="/>
+        <field:input field="colorCandidatureVueIncomplet" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet" z="jYQO1rZ98h3nCzevrtzO4VthQU0="/>
+        <field:input field="colorCandidatureVueModifieDepuis" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis" z="TnUbt+9ScJK91KVpcN2SHNOwNCY="/>
+        <field:input field="colorCandidatureVueIncompletModifieDepuis" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis" z="7Zk7y6kEyKZZb13EQIaSSajCkVM="/>
+        <field:input field="colorCandidatureNonVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue" z="9ZGoi4SHWI1+elYQmJU+Txy4Yp0="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>

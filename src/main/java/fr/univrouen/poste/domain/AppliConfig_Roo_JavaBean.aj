@@ -96,4 +96,24 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.textePiedpageMailCandidatAuditionnable;
     }
     
+    public String AppliConfig.getColorCandidatureNonVue() {
+        return this.colorCandidatureNonVue;
+    }
+    
+    public String AppliConfig.getColorCandidatureVue() {
+        return this.colorCandidatureVue;
+    }
+    
+    public String AppliConfig.getColorCandidatureVueIncomplet() {
+        return this.colorCandidatureVueIncomplet;
+    }
+    
+    public String AppliConfig.getColorCandidatureVueModifieDepuis() {
+        return this.colorCandidatureVueModifieDepuis;
+    }
+    
+    public String AppliConfig.getColorCandidatureVueIncompletModifieDepuis() {
+        return this.colorCandidatureVueIncompletModifieDepuis;
+    }
+    
 }

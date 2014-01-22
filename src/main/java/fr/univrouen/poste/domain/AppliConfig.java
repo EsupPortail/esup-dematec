@@ -83,6 +83,18 @@ public class AppliConfig {
 	
 	private static MailReturnReceiptModeTypes cacheMailReturnReceiptModeType;
 	
+	private static String cacheColorCandidatureNonVue;
+	
+	private static String cacheColorCandidatureVue;
+	
+	private static String cacheColorCandidatureVueModifieDepuis;
+	
+	private static String cacheColorCandidatureVueIncomplet;
+	
+	private static String cacheColorCandidatureVueIncompletModifieDepuis;
+	
+	
+	
 	
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -166,6 +178,21 @@ public class AppliConfig {
     
     @Column(columnDefinition="TEXT")
     private String textePiedpageMailCandidatAuditionnable;
+    
+    @Column(columnDefinition="TEXT")
+    private String colorCandidatureNonVue;
+    
+    @Column(columnDefinition="TEXT")
+    private String colorCandidatureVue;
+    
+    @Column(columnDefinition="TEXT")
+    private String colorCandidatureVueIncomplet;
+    
+    @Column(columnDefinition="TEXT")
+    private String colorCandidatureVueModifieDepuis;
+    
+    @Column(columnDefinition="TEXT")
+    private String colorCandidatureVueIncompletModifieDepuis;
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -278,7 +305,34 @@ public class AppliConfig {
     	this.textePiedpageMailCandidatAuditionnable = textePiedpageMailCandidatAuditionnable;
     	cacheTextePiedpageMailCandidatAuditionnable= textePiedpageMailCandidatAuditionnable;
     }
-	
+
+	public void setColorCandidatureNonVue(String colorCandidatureNonVue) {
+		this.colorCandidatureNonVue = colorCandidatureNonVue;
+		cacheColorCandidatureNonVue = colorCandidatureNonVue;
+	}
+
+	public void setColorCandidatureVue(String colorCandidatureVue) {
+		this.colorCandidatureVue = colorCandidatureVue;
+		cacheColorCandidatureVue = colorCandidatureVue;
+	}
+
+	public void setColorCandidatureVueIncomplet(String colorCandidatureVueIncomplet) {
+		this.colorCandidatureVueIncomplet = colorCandidatureVueIncomplet;
+		cacheColorCandidatureVueIncomplet = colorCandidatureVueIncomplet;
+	}
+
+	public void setColorCandidatureVueModifieDepuis(
+			String colorCandidatureVueModifieDepuis) {
+		this.colorCandidatureVueModifieDepuis = colorCandidatureVueModifieDepuis;
+		cacheColorCandidatureVueModifieDepuis = colorCandidatureVueModifieDepuis;
+	}
+
+	public void setColorCandidatureVueIncompletModifieDepuis(
+			String colorCandidatureVueIncompletModifieDepuis) {
+		this.colorCandidatureVueIncompletModifieDepuis = colorCandidatureVueIncompletModifieDepuis;
+		cacheColorCandidatureVueIncompletModifieDepuis = colorCandidatureVueIncompletModifieDepuis;
+	}
+
 	public static String getCacheTitre() {
     	if(cacheTitre == null) {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
@@ -555,4 +609,67 @@ public class AppliConfig {
     	}
     	return cacheTextePiedpageMailCandidatAuditionnable;
     }
+	
+	public static String getCacheColorCandidatureNonVue() {
+    	if(cacheColorCandidatureNonVue == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheColorCandidatureNonVue = configs.get(0).getColorCandidatureNonVue();		
+    		} else {
+    			cacheColorCandidatureNonVue = "#FFFFFF";
+    		}
+    	}
+    	return cacheColorCandidatureNonVue;
+    }
+	
+	public static String getCacheColorCandidatureVue() {
+    	if(cacheColorCandidatureVue == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheColorCandidatureVue = configs.get(0).getColorCandidatureVue();		
+    		} else {
+    			cacheColorCandidatureVue = "#FFFFFF";
+    		}
+    	}
+    	return cacheColorCandidatureVue;
+    }
+	
+	
+	public static String getCacheColorCandidatureVueIncomplet() {
+    	if(cacheColorCandidatureVueIncomplet == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheColorCandidatureVueIncomplet = configs.get(0).getColorCandidatureVueIncomplet();		
+    		} else {
+    			cacheColorCandidatureVueIncomplet = "#FFFFFF";
+    		}
+    	}
+    	return cacheColorCandidatureVueIncomplet;
+    }
+	
+	public static String getCacheColorCandidatureVueModifieDepuis() {
+    	if(cacheColorCandidatureVueModifieDepuis == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheColorCandidatureVueModifieDepuis = configs.get(0).getColorCandidatureVueModifieDepuis();		
+    		} else {
+    			cacheColorCandidatureVueModifieDepuis = "#FFFFFF";
+    		}
+    	}
+    	return cacheColorCandidatureVueModifieDepuis;
+    }
+	
+	
+	public static String getCacheColorCandidatureVueIncompletModifieDepuis() {
+    	if(cacheColorCandidatureVueIncompletModifieDepuis == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheColorCandidatureVueIncompletModifieDepuis = configs.get(0).getColorCandidatureVueIncompletModifieDepuis();		
+    		} else {
+    			cacheColorCandidatureVueIncompletModifieDepuis = "#FFFFFF";
+    		}
+    	}
+    	return cacheColorCandidatureVueIncompletModifieDepuis;
+    }
+	
 }

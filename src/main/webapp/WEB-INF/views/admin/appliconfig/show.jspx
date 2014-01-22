@@ -43,5 +43,10 @@
         <field:display field="texteMailCandidatReturnReceipt" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" object="${appliconfig}" z="Fbimmw9mmTVFlJqk08c6yvdAruA="/>
         <field:display field="texteEnteteMailCandidatAuditionnable" id="s_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" object="${appliconfig}" z="WiXs0MD0YZIn02lboehBlStfis8="/>
         <field:display field="textePiedpageMailCandidatAuditionnable" id="s_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable" object="${appliconfig}" z="lDjx9bnqvNlh7ungYTenVhi4W3w="/>
+        <field:display field="colorCandidatureVue" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue" object="${appliconfig}" z="1qFJbUkXSvFZvSRgHxS7/IJdonU="/>
+        <field:display field="colorCandidatureVueIncomplet" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet" object="${appliconfig}" z="CpjDX5bFshB8fw9qbvxEDdk7aJA="/>
+        <field:display field="colorCandidatureVueModifieDepuis" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis" object="${appliconfig}" z="sL916nUeLxhorb2/nku180U8rEM="/>
+        <field:display field="colorCandidatureVueIncompletModifieDepuis" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis" object="${appliconfig}" z="cDR8WhMXOpXy1AIMGdtK7QOhC9w="/>
+        <field:display field="colorCandidatureNonVue" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue" object="${appliconfig}" z="vlXIeYFQyvcHByD37aJfzugi6VU="/>
     </page:show>
 </div>
