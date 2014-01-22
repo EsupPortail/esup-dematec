@@ -89,21 +89,49 @@ public class PosteCandidature {
         return this.candidat.getEmailAddress();
     }
     
-    public String getManagerReviewState() {
+    private ReviewStatusTypes getManagerReviewStateType() {
     	if(managerReview == null) {
-    		return ReviewStatusTypes.Non_vue.toString();
+    		return ReviewStatusTypes.Non_vue;
     	} else {
     		if(modification != null && modification.compareTo(managerReview.getReviewDate()) > 0) {
     			if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
-    				return ReviewStatusTypes.Vue_mais_modifie_depuis.toString();
+    				return ReviewStatusTypes.Vue_mais_modifie_depuis;
     			} else {
-    				return ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis.toString();
+    				return ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis;
     			}
     			
     		} else {
-    			return managerReview.getReviewStatus().toString();
+    			return managerReview.getReviewStatus();
     		}
     	}
+    }
+    
+    public String getManagerReviewState() {
+    	return this.getManagerReviewStateType().toString();
+    }
+    
+    public String getManagerReviewStateColor() {
+    	String color = "#FFFFFF";
+    	switch(this.getManagerReviewStateType()) {
+    		case Non_vue: 
+    			color = AppliConfig.getCacheColorCandidatureNonVue();
+    			break;
+			case Vue: 
+    			color = AppliConfig.getCacheColorCandidatureVue();
+				break;
+			case Vue_incomplet: 
+    			color = AppliConfig.getCacheColorCandidatureVueIncomplet();
+				break;
+			case Vue_incomplet_mais_modifie_depuis : 
+    			color = AppliConfig.getCacheColorCandidatureVueIncompletModifieDepuis();
+				break;
+			case Vue_mais_modifie_depuis : 
+    			color = AppliConfig.getCacheColorCandidatureVueModifieDepuis();
+				break;
+			default:
+				break;	   			
+    	}
+    	return color;
     }
 
     public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<fr.univrouen.poste.domain.PosteAPourvoir> postes) {
