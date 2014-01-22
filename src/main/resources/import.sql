@@ -57,8 +57,8 @@ mail_subject_membre,
 texte_mail_activation_membre,
 mail_return_receipt_mode_type,
 texte_mail_candidat_return_receipt,
-texte_entete_mail_candidat_auditionnable text,
-texte_piedpage_mail_candidat_auditionnable text) 
+texte_entete_mail_candidat_auditionnable,
+texte_piedpage_mail_candidat_auditionnable) 
 
 VALUES (
 
