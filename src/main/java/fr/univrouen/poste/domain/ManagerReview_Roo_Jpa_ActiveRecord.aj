@@ -14,7 +14,7 @@ privileged aspect ManagerReview_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager ManagerReview.entityManager;
     
-    public static final List<String> ManagerReview.fieldNames4OrderClauseFilter = java.util.Arrays.asList("manager", "reviewDate");
+    public static final List<String> ManagerReview.fieldNames4OrderClauseFilter = java.util.Arrays.asList("manager", "reviewDate", "reviewStatus");
     
     public static final EntityManager ManagerReview.entityManager() {
         EntityManager em = new ManagerReview().entityManager;

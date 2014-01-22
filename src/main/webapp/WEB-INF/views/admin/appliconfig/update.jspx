@@ -67,8 +67,8 @@
         <field:textarea field="texteMailPasswordOublie" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie" z="user-managed"/>
         <field:select field="mailReturnReceiptModeType" id="c_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType" items="${receiptModeTypes}" path="mailReturnReceiptModeType" required="true" z="user-managed"/>
         <field:textarea field="texteMailCandidatReturnReceipt" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" z="user-managed"/>
-        <field:textarea field="texteEnteteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" z="X9VLtI4KSMDH3vlapm+zIgHQPUc="/>
-        <field:textarea field="textePiedpageMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable" z="7xSLkV317mAwkrNoiu+opXr65wU="/>
+        <field:textarea field="texteEnteteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" z="user-managed"/>
+        <field:textarea field="textePiedpageMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable" z="user-managed"/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>

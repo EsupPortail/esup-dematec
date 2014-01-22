@@ -53,6 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.ManagerReview;
+import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
@@ -346,7 +347,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/review")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String reviewCandidatureFile(@PathVariable("id") Long id) {
+	public String modifyReviewCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) String reviewStatus) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
 		User currentUser = getCurrentUser();
@@ -361,6 +362,12 @@ public class MyPosteCandidatureController {
 		} else {	
 			managerReview.setManager(currentUser);
 			managerReview.setReviewDate(new Date());
+		}
+		if(ReviewStatusTypes.Vue_incomplet.toString().equals(reviewStatus)) {
+			managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet);
+		}
+		if(ReviewStatusTypes.Vue.toString().equals(reviewStatus)) {
+			managerReview.setReviewStatus(ReviewStatusTypes.Vue);
 		}
 
 		return "redirect:/postecandidatures/" + id.toString();

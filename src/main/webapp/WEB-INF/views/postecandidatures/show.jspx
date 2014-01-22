@@ -157,23 +157,34 @@
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
         <br/>
         <hr/>
-        <c:choose>
-            <c:when test="${postecandidature.managerReviewState != 'Vue'}">
-                <spring:url value="/postecandidatures/${postecandidature.id}/review" var="reviewCandidatureUrl"/>
-                <a class="btn btn-warning" href="${reviewCandidatureUrl}" onclick="return confirm('Vous allez marquer cette candidature comme vue.');">Marquer comme Vue</a>
-            </c:when>
-            <c:otherwise>
-                <span class="btn btn-success">Vue</span>
-            </c:otherwise>
-        </c:choose>
+        	<h4>Status : ${postecandidature.managerReviewState}</h4>
+            <c:if test="${postecandidature.managerReviewState != 'Vue'}">
+                <spring:url value="/postecandidatures/${postecandidature.id}/review?reviewStatus=Vue" var="reviewVueCandidatureUrl"/>
+                <a class="btn btn-warning" href="${reviewVueCandidatureUrl}" onclick="return confirm('Vous allez marquer cette candidature comme vue.');">Marquer comme Vue</a>
+            	&amp;nbsp;
+            </c:if>
+             <c:if test="${postecandidature.managerReviewState != 'Vue_incomplet'}">
+                <spring:url value="/postecandidatures/${postecandidature.id}/review?reviewStatus=Vue_incomplet" var="reviewIncompletCandidatureUrl"/>
+                <a class="btn btn-warning" href="${reviewIncompletCandidatureUrl}" onclick="return confirm('Vous allez marquer cette candidature comme vue mais incomplet.');">Marquer comme Vue mais incomplet</a>
+                &amp;nbsp;
+            </c:if>
         <br/>
         <c:choose>
             <c:when test="${postecandidature.managerReviewState == 'Vue'}">
                 <i>Vue par ${postecandidature.managerReview.manager.emailAddress} le <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.managerReview.reviewDate}"/>
                 </i>
             </c:when>
+            <c:when test="${postecandidature.managerReviewState == 'Vue_incomplet' }">
+                <i>Vue par ${postecandidature.managerReview.manager.emailAddress} le <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.managerReview.reviewDate}"/> mais notée comme <b>incomplet</b>
+                </i>
+            </c:when>
             <c:when test="${postecandidature.managerReviewState == 'Vue_mais_modifie_depuis'}">
-                <i>Vue par ${postecandidature.managerReview.manager.emailAddress} le <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.managerReview.reviewDate}"/>
+                <i>Vue par ${postecandidature.managerReview.manager.emailAddress} le <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.managerReview.reviewDate}"/> ...
+                    <b> mais modifiée depuis (<fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.modification}"/>)</b>
+                </i>
+            </c:when>
+            <c:when test="${postecandidature.managerReviewState == 'Vue_incomplet_mais_modifie_depuis'}">
+                <i>Vue par ${postecandidature.managerReview.manager.emailAddress} le <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.managerReview.reviewDate}"/> et notée comme <b>incomplet</b> ...
                     <b> mais modifiée depuis (<fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.modification}"/>)</b>
                 </i>
             </c:when>

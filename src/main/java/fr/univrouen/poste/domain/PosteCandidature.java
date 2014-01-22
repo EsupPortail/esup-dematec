@@ -94,9 +94,14 @@ public class PosteCandidature {
     		return ReviewStatusTypes.Non_vue.toString();
     	} else {
     		if(modification != null && modification.compareTo(managerReview.getReviewDate()) > 0) {
-    			return ReviewStatusTypes.Vue_mais_modifie_depuis.toString();
+    			if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
+    				return ReviewStatusTypes.Vue_mais_modifie_depuis.toString();
+    			} else {
+    				return ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis.toString();
+    			}
+    			
     		} else {
-    			return ReviewStatusTypes.Vue.toString();
+    			return managerReview.getReviewStatus().toString();
     		}
     	}
     }

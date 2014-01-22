@@ -25,4 +25,12 @@ privileged aspect ManagerReview_Roo_JavaBean {
         this.reviewDate = reviewDate;
     }
     
+    public ReviewStatusTypes ManagerReview.getReviewStatus() {
+        return this.reviewStatus;
+    }
+    
+    public void ManagerReview.setReviewStatus(ReviewStatusTypes reviewStatus) {
+        this.reviewStatus = reviewStatus;
+    }
+    
 }
