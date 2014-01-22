@@ -82,8 +82,14 @@
     <spring:url value="/resources/css/jquery-ui-smoothness-1.10.2.css" var="jquery_ui_css_url"/>
     <spring:url value="/resources/js/jquery-ui-1.10.2.js" var="jquery_ui_js_url"/>
     <spring:url value="/resources/js/jquery.ui.datepicker-fr.js" var="jquery_ui_datepicker_fr_js_url"/>
+    
+    <spring:url value="/resources/js/jquery.minicolors.min.js" var="jquery_minicolors_js_url"/>
+    <spring:url value="/resources/css/jquery.minicolors.css" var="jquery_minicolors_css_url"/>
+    
     <link href="${bootstrap_wysihtml5_css_url}" rel="stylesheet" type="text/css"/>
     <link href="${jquery_ui_css_url}" rel="stylesheet" type="text/css"/>
+    <link href="${jquery_minicolors_css_url}" rel="stylesheet" type="text/css"/>
+        
     <script src="${wysihtml5_js_url}">
         <!-- required for FF3 and Opera -->
     </script>
@@ -99,6 +105,10 @@
     <script src="${jquery_ui_datepicker_fr_js_url}">
         <!-- required for FF3 and Opera -->
     </script>
+    <script src="${jquery_minicolors_js_url}">
+        <!-- required for FF3 and Opera -->
+    </script>
+    
     <spring:url value="/resources/css/bootstrap.min.css" var="bootstrap_css_url"/>
     <spring:url value="/resources/css/docs.css" var="docs_css_url"/>
     <spring:url value="/resources/css/demat.css" var="demat_css_url"/>
@@ -120,6 +130,12 @@ $(document).ready(function(){
     $( "#_dateEndCandidat_id" ).datepicker({ dateFormat: 'dd/mm/yy' });   
     $( "#_dateEndCandidatActif_id" ).datepicker({ dateFormat: 'dd/mm/yy' }); 
     $( "#_dateEndMembre_id" ).datepicker({ dateFormat: 'dd/mm/yy' });
+      
+    $('#_colorCandidatureVue_id').minicolors();
+    $('#_colorCandidatureVueIncomplet_id').minicolors();
+    $('#_colorCandidatureVueModifieDepuis_id').minicolors();
+    $('#_colorCandidatureVueIncompletModifieDepuis_id').minicolors();
+    $('#_colorCandidatureNonVue_id').minicolors();
     
 });
 </script>
