@@ -22,11 +22,9 @@ public class ManagerReview {
 	
 	public static enum ReviewStatusTypes {Non_vue, Vue, Vue_mais_modifie_depuis, Vue_incomplet, Vue_incomplet_mais_modifie_depuis};
 
-    @NotNull
     @ManyToOne
     private User manager;
     
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date reviewDate;

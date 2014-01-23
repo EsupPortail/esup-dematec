@@ -26,10 +26,6 @@ privileged aspect PosteCandidature_Roo_JavaBean {
         return this.modification;
     }
     
-    public void PosteCandidature.setModification(Date modification) {
-        this.modification = modification;
-    }
-    
     public PosteAPourvoir PosteCandidature.getPoste() {
         return this.poste;
     }

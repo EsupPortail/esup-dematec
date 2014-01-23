@@ -44,7 +44,7 @@ import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 @RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat", "findPosteCandidaturesByPoste", "findPosteCandidaturesByRecevable", "findPosteCandidaturesByAuditionnable" })
 public class PosteCandidature {
 
-    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress");
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus");
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
@@ -74,8 +74,9 @@ public class PosteCandidature {
     
     private Boolean auditionnable = false;
 
-    @OneToOne
-    private ManagerReview managerReview;
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private ManagerReview managerReview = new ManagerReview();
     
     public String getNom() {
         return this.candidat.getNom();
@@ -89,32 +90,26 @@ public class PosteCandidature {
         return this.candidat.getEmailAddress();
     }
     
-    private ReviewStatusTypes getManagerReviewStateType() {
-    	if(managerReview == null) {
-    		return ReviewStatusTypes.Non_vue;
-    	} else {
-    		if(modification != null && modification.compareTo(managerReview.getReviewDate()) > 0) {
-    			if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
-    				return ReviewStatusTypes.Vue_mais_modifie_depuis;
-    			} else {
-    				return ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis;
-    			}
-    			
-    		} else {
-    			return managerReview.getReviewStatus();
-    		}
-    	}
-    }
-    
     public String getManagerReviewState() {
-    	return this.getManagerReviewStateType().toString();
+    	return managerReview.getReviewStatus().toString();
     }
     
     public String getManagerReviewStateColor() {
-    	return ManagerReviewLegendColor.getColor(this.getManagerReviewStateType());
+    	return ManagerReviewLegendColor.getColor(managerReview.getReviewStatus());
     }
 
-    public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<fr.univrouen.poste.domain.PosteAPourvoir> postes) {
+    public void setModification(Date modification) {
+    	if(modification != null && modification.compareTo(managerReview.getReviewDate()) > 0) {
+    		if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
+    			managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
+    		} else {
+    			managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis);
+    		}
+    	}
+    	this.modification = modification;
+	}
+
+	public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<fr.univrouen.poste.domain.PosteAPourvoir> postes) {
         if (postes == null) throw new IllegalArgumentException("The postes argument is required");
         TypedQuery<PosteCandidature> q = entityManager().createQuery("SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes AND o.recevable = TRUE ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class);
         q.setParameter("postes", postes);

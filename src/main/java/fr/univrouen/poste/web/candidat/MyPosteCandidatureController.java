@@ -450,6 +450,8 @@ public class MyPosteCandidatureController {
     			sortFieldName = "candidat.nom";
     		if("email".equals(sortFieldName))
     			sortFieldName = "candidat.emailAddress";
+    		if("managerReviewState".equals(sortFieldName))
+    			sortFieldName = "managerReview.reviewStatus";
     		
 			if (page != null || size != null) {
 				int sizeNo = size == null ? 10 : size.intValue();
