@@ -99,12 +99,10 @@ public class PosteCandidature {
     }
 
     public void setModification(Date modification) {
-    	if(modification != null && modification.compareTo(managerReview.getReviewDate()) > 0) {
-    		if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
-    			managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
-    		} else {
-    			managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis);
-    		}
+    	if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
+    		managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
+    	} else {
+    		managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis);
     	}
     	this.modification = modification;
 	}
