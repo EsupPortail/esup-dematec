@@ -35,7 +35,6 @@ import fr.univrouen.poste.domain.LogImportGalaxie;
 import fr.univrouen.poste.domain.LogMail;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
 
 @Service
