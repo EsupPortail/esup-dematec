@@ -111,27 +111,7 @@ public class PosteCandidature {
     }
     
     public String getManagerReviewStateColor() {
-    	String color = "#FFFFFF";
-    	switch(this.getManagerReviewStateType()) {
-    		case Non_vue: 
-    			color = AppliConfig.getCacheColorCandidatureNonVue();
-    			break;
-			case Vue: 
-    			color = AppliConfig.getCacheColorCandidatureVue();
-				break;
-			case Vue_incomplet: 
-    			color = AppliConfig.getCacheColorCandidatureVueIncomplet();
-				break;
-			case Vue_incomplet_mais_modifie_depuis : 
-    			color = AppliConfig.getCacheColorCandidatureVueIncompletModifieDepuis();
-				break;
-			case Vue_mais_modifie_depuis : 
-    			color = AppliConfig.getCacheColorCandidatureVueModifieDepuis();
-				break;
-			default:
-				break;	   			
-    	}
-    	return color;
+    	return ManagerReviewLegendColor.getColor(this.getManagerReviewStateType());
     }
 
     public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<fr.univrouen.poste.domain.PosteAPourvoir> postes) {

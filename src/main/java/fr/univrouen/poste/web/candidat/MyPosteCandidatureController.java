@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -54,6 +55,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.ManagerReview;
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
+import fr.univrouen.poste.domain.ManagerReviewLegendColor;
 import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
@@ -104,8 +106,6 @@ public class MyPosteCandidatureController {
 		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
 		return currentUser;
 	}
-	
-	
 
 	@RequestMapping(value = "/{id}/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'view')")
@@ -487,6 +487,8 @@ public class MyPosteCandidatureController {
 		
 		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
 		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
+		
+		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
 		
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";
