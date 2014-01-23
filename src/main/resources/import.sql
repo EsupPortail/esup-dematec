@@ -58,7 +58,12 @@ texte_mail_activation_membre,
 mail_return_receipt_mode_type,
 texte_mail_candidat_return_receipt,
 texte_entete_mail_candidat_auditionnable,
-texte_piedpage_mail_candidat_auditionnable) 
+texte_piedpage_mail_candidat_auditionnable,
+color_candidature_non_vue,
+color_candidature_vue,
+color_candidature_vue_incomplet,
+color_candidature_vue_incomplet_modifie_depuis,
+color_candidature_vue_modifie_depuis) 
 
 VALUES (
 
@@ -127,7 +132,9 @@ E'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''applicatio
 
 E'Bonjour.\n\nVous avez été retenu pour audition sur le poste @@numEmploi@@.',
 
-E'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/PosteCandidature/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n'
+E'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/PosteCandidature/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
+
+'#b2beff', '#7bfa94', '#fa9696', '#faa3ee', '#d9faa0'
 
 );
 
