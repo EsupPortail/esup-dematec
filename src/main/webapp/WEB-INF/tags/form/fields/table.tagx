@@ -22,8 +22,10 @@
   <jsp:directive.attribute name="render" type="java.lang.Boolean" required="false" rtexprvalue="true"
                description="Indicate if the contents of this tag and all enclosed tags should be rendered (default 'true')" />
   <jsp:directive.attribute name="z" type="java.lang.String" required="false"
-               description="Used for checking if element has been modified (to recalculate simply provide empty string value)" />
-
+               description="Used for checking if element has been modified (to recalculate simply provide empty string value)" />             
+  <jsp:directive.attribute name="color" type="java.lang.String" required="false"
+               description="color for the tr" />
+               
   <c:if test="${empty render or render}">
 
     <c:set var="columnProperties" scope="request" />
@@ -122,7 +124,7 @@
         </thead>
       </c:if>
       <c:forEach items="${data}" var="item">
-        <tr>
+        <tr style="${empty color ? '' : 'background-color:'.concat(item[color])}">
           <c:forTokens items="${columnProperties}" delims="${'&#9999;'}" var="column" varStatus="num">
             <c:set var="columnMaxLength" value="${lengths[num.count-1]}" />
             <c:set var="columnType" value="${types[num.count-1]}" />

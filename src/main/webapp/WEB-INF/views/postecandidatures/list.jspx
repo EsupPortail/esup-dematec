@@ -76,9 +76,15 @@
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
         <c:set value="true" var="canManage"/>
+        
+   		<style type="text/css">
+        	.table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {background-color: rgba(249, 249, 249, 0.2);}
+        	<c:set value="managerReviewStateColor" var="tableColorField"/>
+  		</style>
+        
     </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
-        <table:table create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed">
+        <table:table create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed" color="${tableColorField}">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canManage}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom" sort="${canManage}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
