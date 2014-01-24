@@ -123,6 +123,14 @@ left: 30%;
 max-height: 600px;
 }
 
+
+.demat-pc-manage {
+border: 1px solid #800;
+border-radius: 10px;
+padding: 10px;
+}
+
+
 @media (min-width: 1200px) {
 	
 #main .bs-docs-sidenav {

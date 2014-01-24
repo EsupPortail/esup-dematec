@@ -42,6 +42,7 @@
       <c:choose>
         <c:when test="${not empty object}">
           <jsp:doBody />
+           <c:if test="${delete or update or create or list}">
           <div class="row-fluid">
           <div class="quicklinks span12">
             <span>
@@ -91,6 +92,7 @@
             </span>
           </div>
           </div>
+          </c:if>
         </c:when>
         <c:otherwise>
           <spring:message arguments="${label}" code="entity_not_found_single" />

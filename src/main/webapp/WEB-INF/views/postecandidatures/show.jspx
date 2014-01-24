@@ -26,9 +26,13 @@
     
     <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_PosteCandidature" list="false" object="${postecandidature}" path="/postecandidatures" update="false" z="user-managed">
         <h4>Candidat ${postecandidature.candidat.numCandidat} (${postecandidature.candidat.emailAddress}) / Poste ${postecandidature.poste.numEmploi}</h4>
-        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_CANDIDAT')">
+        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_CANDIDAT')">
             ${texteCandidatAideCandidatureDepot}
         </sec:authorize>
+        
+        
+        
+        
         <c:if test="${not empty postecandidature.candidatureFiles}">
             <table class="table  table-bordered table-striped">
                 <thead>
@@ -108,10 +112,10 @@
     </div>
     
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-    <hr/>
-    <div class="row-fluid">
-    	<h4>Gestion de la candidature</h4>
-       <div class="span4 well">
+    <div class="row-fluid demat-pc-manage">
+       <div class="span6">
+                      	<h4>Gestion de la candidature</h4>
+           	<div class="well">
         <c:choose>
             <c:when test="${postecandidature.recevable}">
                 <spring:url value="/postecandidatures/${postecandidature.id}/modify?recevable=false" var="modifyRecevableCandidatureUrl"/>
@@ -163,8 +167,10 @@
             </c:otherwise>
         </c:choose>
         </div>
-        <div class="span6 well">
-        	<h4>Status : ${postecandidature.managerReviewState}</h4>
+        </div>
+        <div class="span6">
+                	<h4>Status : ${postecandidature.managerReviewState}</h4>
+                   	<div class="well">
             <c:if test="${postecandidature.managerReviewState != 'Vue'}">
                 <spring:url value="/postecandidatures/${postecandidature.id}/review?reviewStatus=Vue" var="reviewVueCandidatureUrl"/>
                 <a class="btn btn-warning" href="${reviewVueCandidatureUrl}" onclick="return confirm('Vous allez marquer cette candidature comme vue.');">Marquer comme Vue</a>
@@ -175,7 +181,7 @@
                 <a class="btn btn-warning" href="${reviewIncompletCandidatureUrl}" onclick="return confirm('Vous allez marquer cette candidature comme vue mais incomplet.');">Marquer comme Vue mais incomplet</a>
                 &amp;nbsp;
             </c:if>
-            <hr/>
+            </div>
         <c:choose>
             <c:when test="${postecandidature.managerReviewState == 'Vue'}">
                 <i>Vue par ${postecandidature.managerReview.manager.emailAddress} le <fmt:formatDate pattern="dd/MM/yyyy HH:mm" value="${postecandidature.managerReview.reviewDate}"/>
