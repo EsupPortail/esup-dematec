@@ -50,19 +50,24 @@ public class ArchiveService {
 		if(destFolderFile.mkdir()) {
 	
 			for (PosteCandidature posteCandidature : posteCandidatures) {
-				String folderName = destFolder;
+				String folderName = destFolder.concat("/");
 				folderName = folderName.concat(posteCandidature.getPoste().getNumEmploi().concat("/"));	
+				
+				File folder = new File(folderName);
+				folder.mkdir();
+				
 				folderName = folderName.concat(posteCandidature.getCandidat().getNom().concat("-"));	
 				folderName = folderName.concat(posteCandidature.getCandidat().getPrenom().concat("-"));	
 				folderName = folderName.concat(posteCandidature.getCandidat().getNumCandidat().concat("/"));
 				
-				File folder = new File(folderName);
+				folder = new File(folderName);
 				folder.mkdir();
 
 				for (PosteCandidatureFile posteCandidatureFile : posteCandidature.getCandidatureFiles()) {
 					String fileName = posteCandidatureFile.getId().toString().concat("-").concat(posteCandidatureFile.getFilename());
 					String folderFileName = folderName.concat(fileName);
 					File file = new File(folderFileName);
+					file.createNewFile();
 					
 					OutputStream outputStream = new FileOutputStream(file);
 					InputStream inputStream = posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream();					
