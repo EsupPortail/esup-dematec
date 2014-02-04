@@ -101,7 +101,7 @@ public class PosteCandidature {
     public void setModification(Date modification) {
     	if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
     		managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
-    	} else {
+    	} else if(ReviewStatusTypes.Vue_incomplet.equals(managerReview.getReviewStatus())) {
     		managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis);
     	}
     	this.modification = modification;
