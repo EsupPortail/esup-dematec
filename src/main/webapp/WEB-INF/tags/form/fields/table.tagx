@@ -124,7 +124,10 @@
         </thead>
       </c:if>
       <c:forEach items="${data}" var="item">
-        <tr style="${empty color ? '' : 'background-color:'.concat(item[color])}">
+        <c:if test="${not empty color}">
+	 <c:set var="trstyle" value="background-color:${item[color]}" />  
+	</c:if>
+        <tr style="${trstyle}">
           <c:forTokens items="${columnProperties}" delims="${'&#9999;'}" var="column" varStatus="num">
             <c:set var="columnMaxLength" value="${lengths[num.count-1]}" />
             <c:set var="columnType" value="${types[num.count-1]}" />
