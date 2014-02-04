@@ -118,16 +118,24 @@ create USER esupdematec with password 'esup';
 grant ALL ON DATABASE esupdematec to esupdematec;
 ```
 
+### Paramétrage mémoire JVM :
+
+Pensez à paramétrer les espaces mémoire JVM : 
+```
+export JAVA_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=256m"
+```
+
+Pour maven :
+```
+export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=256m"
+```
+
 ### Lancement simple avec jetty :
 ```
 mvn jetty:run
 ```
 Puis firefox http://localhost:8080/EsupDematEC (compte admin/admin)
 
-Pensez à paramétrer les espaces mémoire JVM : 
-```
-export JAVA_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=256m"
-```
 
 ### Obtention du war pour déploiement sur tomcat ou autre :
 ```
