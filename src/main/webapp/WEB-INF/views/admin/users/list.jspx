@@ -45,19 +45,19 @@
                             <div class="row-fluid">
                                 <form:find finderName="ByStatus" id="ff_fr_univrouen_poste_domain_User" path="/admin/users">
                                     <div class="span2">
-                                        <util:input-attr checked="${param.status eq 'Admin' ? 'checked' : ''}" name="status" type="radio" value="Admin"/>Admin
+                                        <util:input-attr checked="${param.status == 'Admin' ? 'checked' : ''}" name="status" type="radio" value="Admin"/>Admin
 									</div>
                                     <div class="span3">
-                                        <util:input-attr checked="${param.status eq 'SuperManager' ? 'checked' : ''}" name="status" type="radio" value="SuperManager"/>SuperManager
+                                        <util:input-attr checked="${param.status == 'SuperManager' ? 'checked' : ''}" name="status" type="radio" value="SuperManager"/>SuperManager
 									</div>
                                     <div class="span2">
-                                        <util:input-attr checked="${param.status eq 'Manager' ? 'checked' : ''}" name="status" type="radio" value="Manager"/>Manager
+                                        <util:input-attr checked="${param.status == 'Manager' ? 'checked' : ''}" name="status" type="radio" value="Manager"/>Manager
 									</div>
                                     <div class="span2">
-                                        <util:input-attr checked="${param.status eq 'Membre' ? 'checked' : ''}" name="status" type="radio" value="Membre"/>Membre
+                                        <util:input-attr checked="${param.status == 'Membre' ? 'checked' : ''}" name="status" type="radio" value="Membre"/>Membre
 									</div>
                                     <div class="span2">
-                                        <util:input-attr checked="${param.status eq 'Candidat' ? 'checked' : ''}" name="status" type="radio" value="Candidat"/>Candidat
+                                        <util:input-attr checked="${param.status == 'Candidat' ? 'checked' : ''}" name="status" type="radio" value="Candidat"/>Candidat
 									</div>
                                 </form:find>
                             </div>
