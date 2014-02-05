@@ -13,47 +13,6 @@ Elle permet aux membres de consulter les fichiers des candidatures correspondant
 
 L'ensemble des données est stocké dans une base de données, fichiers compris, cela nous a ammené à utiliser PostgreSQL (et non MySQL) pour ses possibilités de streaming sur les blobs. 
 
-## POSTGRESQL
-
-Cette application a été dévelopée en utilisant Spring ROO et donc ses technologies associées.
-Elle peut théoriquement supporter les différentes bases de données supportées par Spring ROO dans lequel on utilise ici JPA (pour la gestion des blob nous avons également une adhérence avec Hibernate).
-
-Comme annoncé ci-dessus, l'application a cependant été développée et optimisée dans l'optique d'être installée sur un PostgreSQL : lecture/écriture des blobs dans une transaction par streaming si supporté ; cela afin de pouvoir stocker et récupérer des fichiers de taille importante sans saturation de la RAM.
-Nous recommandons donc l'usage de PostgreSQL pour cette application.
-
-Pour une bonne gestion des blob de cette application, il faut ajouter dans PostgreSQL un trigger sur la base de données sur la table big_file.
-La fonction lo_manage est nécessaire ici.
-
-Sous debian : 
-```
-apt-get install postgresql-contrib
-```
-
-Puis la création de l'extension lo se fait via un super-user:
-
-* avec postgresql 8 :
-```
-psql
-\c esupdematec
-\i /usr/share/postgresql/8.4/contrib/lo.sql
-```
-
-* avec postgresql 9 :
-```
-psql
-\c esupdematec
-CREATE EXTENSION lo;
-```
---
-
-Et enfin ajout du trigger* : 
-```
-CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
-```
-
-CF http://docs.postgresqlfr.org/8.3/lo.html
-
-\* afin que les tables soient préalablement créées, notamment la table big_file sur lequel on souhaite mettre le trigger lo_manage, vous devez démarrer l'application une fois ; en n'oubliant pas ensuite, pour ne pas écraser la base au redémarrage, de __modifier src/main/resources/META-INF/persistence.xml : create-> update__ - cf ci-dessous.
 
 ## Configurations 
 
@@ -141,6 +100,52 @@ Puis firefox http://localhost:8080/EsupDematEC (compte admin/admin)
 ```
 mvn clean package
 ```
+
+
+
+## POSTGRESQL
+
+Cette application a été dévelopée en utilisant Spring ROO et donc ses technologies associées.
+Elle peut théoriquement supporter les différentes bases de données supportées par Spring ROO dans lequel on utilise ici JPA (pour la gestion des blob nous avons également une adhérence avec Hibernate).
+
+Comme annoncé ci-dessus, l'application a cependant été développée et optimisée dans l'optique d'être installée sur un PostgreSQL : lecture/écriture des blobs dans une transaction par streaming si supporté ; cela afin de pouvoir stocker et récupérer des fichiers de taille importante sans saturation de la RAM.
+Nous recommandons donc l'usage de PostgreSQL pour cette application.
+
+Pour une bonne gestion des blob de cette application, il faut ajouter dans PostgreSQL un trigger sur la base de données sur la table big_file.
+La fonction lo_manage est nécessaire ici.
+
+Sous debian : 
+```
+apt-get install postgresql-contrib
+```
+
+Puis la création de l'extension lo se fait via un super-user:
+
+* avec postgresql 8 :
+```
+psql
+\c esupdematec
+\i /usr/share/postgresql/8.4/contrib/lo.sql
+```
+
+* avec postgresql 9 :
+```
+psql
+\c esupdematec
+CREATE EXTENSION lo;
+```
+--
+
+Et enfin ajout du trigger* : 
+```
+CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
+```
+
+CF http://docs.postgresqlfr.org/8.3/lo.html
+
+\* afin que les tables soient préalablement créées, notamment la table big_file sur lequel on souhaite mettre le trigger lo_manage, vous devez démarrer l'application une fois ; en n'oubliant pas ensuite, pour ne pas écraser la base au redémarrage, de __modifier src/main/resources/META-INF/persistence.xml : create-> update__ - cf ci-dessous.
+
+
 
 ## Screenshots
 http://www.esup-portail.org/pages/viewpage.action?pageId=282099720#ESUP-DématérialisationEnseignantsChercheurs(etATER)-Screenshots
