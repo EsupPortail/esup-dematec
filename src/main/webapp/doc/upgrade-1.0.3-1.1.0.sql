@@ -1,3 +1,10 @@
+/*
+Commandes à exécuter pour passage de la version 1.0.3 à 1.1.0, 
+à faire après avoir redémarré EsupDematEC avec hibernate.hbm2ddl.auto (persitence.xml) positionné à update 
+
+Il faut également renseigner / compléter la configuration (éléments nouveaux depuis la 1.0.3, à vide après l'update) via l'IHM directement.
+
+*/
 -- SET statement_timeout = 0;
 -- SET client_encoding = 'UTF8';
 -- SET standard_conforming_strings = off;
