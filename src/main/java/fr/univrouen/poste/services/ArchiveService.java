@@ -42,6 +42,7 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 
@@ -88,7 +89,6 @@ public class ArchiveService {
 				
 				ICsvBeanWriter beanWriter =  new CsvBeanWriter(new FileWriter(folderName.concat("metadata.csv")), CsvPreference.STANDARD_PREFERENCE);
 				beanWriter.writeHeader(header);
-
 				for (PosteCandidatureFile posteCandidatureFile : posteCandidature.getCandidatureFiles()) {
 					String fileName = posteCandidatureFile.getId().toString().concat("-").concat(posteCandidatureFile.getFilename());
 					String folderFileName = folderName.concat(fileName);
@@ -102,8 +102,31 @@ public class ArchiveService {
 					ArchiveMetadataFileBean archiveMetadataFileBean = new ArchiveMetadataFileBean(fileName, posteCandidatureFile.getFilename(), posteCandidatureFile.getSendTime(), posteCandidature.getCandidat().getEmailAddress());
 					beanWriter.write(archiveMetadataFileBean, header, processors);
 				}
-				
 				beanWriter.close();
+				
+				if(!posteCandidature.getMemberReviewFiles().isEmpty()) {
+					folderName = folderName.concat("Rapports_commission").concat("/");	
+					folder = new File(folderName);
+					folder.mkdir();
+					
+					beanWriter =  new CsvBeanWriter(new FileWriter(folderName.concat("metadata.csv")), CsvPreference.STANDARD_PREFERENCE);
+					beanWriter.writeHeader(header);
+					for (MemberReviewFile memberReviewFile : posteCandidature.getMemberReviewFiles()) {
+						String fileName = memberReviewFile.getId().toString().concat("-").concat(memberReviewFile.getFilename());
+						String folderFileName = folderName.concat(fileName);
+						File file = new File(folderFileName);
+						file.createNewFile();
+						
+						OutputStream outputStream = new FileOutputStream(file);
+						InputStream inputStream = memberReviewFile.getBigFile().getBinaryFile().getBinaryStream();					
+						IOUtils.copyLarge(inputStream, outputStream);
+						
+						ArchiveMetadataFileBean archiveMetadataFileBean = new ArchiveMetadataFileBean(fileName, memberReviewFile.getFilename(), memberReviewFile.getSendTime(), memberReviewFile.getMember().getEmailAddress());
+						beanWriter.write(archiveMetadataFileBean, header, processors);
+					}
+					beanWriter.close();
+				}
+				
 			}
 		
 		}
