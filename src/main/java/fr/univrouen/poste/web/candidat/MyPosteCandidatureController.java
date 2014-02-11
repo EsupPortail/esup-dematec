@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -430,7 +432,7 @@ public class MyPosteCandidatureController {
     }
 
 	@RequestMapping(produces = "text/html")
-	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, @RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, Model uiModel) {
 
 		// uiModel.addAttribute("users", User.findUserEntries(firstResult,
 		// sizeNo));
@@ -480,8 +482,23 @@ public class MyPosteCandidatureController {
 		}
 
 		else if (user.getIsMembre()) {
-			Set<PosteAPourvoir> postes = user.getPostes();
-			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(postes).getResultList();
+			Set<PosteAPourvoir> membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
+			if(postes != null && !postes.isEmpty()) {
+				membresPostes.retainAll(postes);
+			}
+			if(membresPostes.isEmpty()) {
+				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
+			}
+			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes).getResultList();			
+			List<PosteAPourvoir> membresPostes2Display = new ArrayList<PosteAPourvoir>(user.getPostes());
+			
+			Collections.sort(membresPostes2Display, new Comparator<PosteAPourvoir>(){
+				@Override
+				public int compare(PosteAPourvoir p1, PosteAPourvoir p2) {
+					return p1.getNumEmploi().compareTo(p2.getNumEmploi());
+				}} );
+			
+			uiModel.addAttribute("membresPostes", membresPostes2Display);
 		}
 
 		uiModel.addAttribute("postecandidatures", postecandidatures);
