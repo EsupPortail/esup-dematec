@@ -116,4 +116,8 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.colorCandidatureVueIncompletModifieDepuis;
     }
     
+    public Boolean AppliConfig.getMembreSupprReviewFile() {
+        return this.membreSupprReviewFile;
+    }
+    
 }

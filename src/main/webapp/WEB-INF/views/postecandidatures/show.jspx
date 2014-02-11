@@ -259,7 +259,7 @@
 							</sec:authorize>
 							<sec:authorize access="hasRole('ROLE_MEMBRE')">
 								<c:choose>
-									<c:when test="${memberReviewFile.member == currentUser}">
+									<c:when test="${supprReview and memberReviewFile.member == currentUser}">
 										<spring:url
 											value="/postecandidatures/${postecandidature.id}/delMemberReviewFile/${memberReviewFile.id}"
 											var="deleteMemberReviewFileUrl" />

@@ -59,6 +59,10 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 		}
 		
 		if("delMemberReviewFile".equals(permissionKey)) {
+			Boolean confSupprReviewFile = AppliConfig.getCacheMembreSupprReviewFile();
+			if(!confSupprReviewFile) {
+				return false;
+			}
         	Long id = (Long) targetDomainObject;
         	MemberReviewFile reviewFile = MemberReviewFile.findMemberReviewFile(id);
         	User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();

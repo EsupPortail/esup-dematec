@@ -417,6 +417,8 @@ public class MyPosteCandidatureController {
 	    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
 	    
 		uiModel.addAttribute("memberReviewFile", new MemberReviewFile());
+		uiModel.addAttribute("supprReview", AppliConfig.getCacheMembreSupprReviewFile());
+		
 		return "postecandidatures/show";
 	}
 	

@@ -48,5 +48,6 @@
         <field:display field="colorCandidatureVueModifieDepuis" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis" object="${appliconfig}" z="sL916nUeLxhorb2/nku180U8rEM="/>
         <field:display field="colorCandidatureVueIncompletModifieDepuis" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis" object="${appliconfig}" z="cDR8WhMXOpXy1AIMGdtK7QOhC9w="/>
         <field:display field="colorCandidatureNonVue" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue" object="${appliconfig}" z="vlXIeYFQyvcHByD37aJfzugi6VU="/>
+        <field:display field="membreSupprReviewFile" id="s_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" object="${appliconfig}" z="Z7nCrH2zAYGZvn4YK5drTkST9DA="/>
     </page:show>
 </div>

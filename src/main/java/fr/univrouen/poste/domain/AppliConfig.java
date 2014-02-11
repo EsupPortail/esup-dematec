@@ -93,6 +93,7 @@ public class AppliConfig {
 	
 	private static String cacheColorCandidatureVueIncompletModifieDepuis;
 	
+	private static Boolean cacheMembreSupprReviewFile;
 	
 	
 	
@@ -193,6 +194,10 @@ public class AppliConfig {
     
     @Column(columnDefinition="TEXT")
     private String colorCandidatureVueIncompletModifieDepuis;
+    
+    @Column
+    private Boolean membreSupprReviewFile;
+    
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -331,6 +336,11 @@ public class AppliConfig {
 			String colorCandidatureVueIncompletModifieDepuis) {
 		this.colorCandidatureVueIncompletModifieDepuis = colorCandidatureVueIncompletModifieDepuis;
 		cacheColorCandidatureVueIncompletModifieDepuis = colorCandidatureVueIncompletModifieDepuis;
+	}
+
+	public void setMembreSupprReviewFile(Boolean membreSupprReviewFile) {
+		this.membreSupprReviewFile = membreSupprReviewFile;
+		cacheMembreSupprReviewFile = membreSupprReviewFile;
 	}
 
 	public static String getCacheTitre() {
@@ -671,5 +681,18 @@ public class AppliConfig {
     	}
     	return cacheColorCandidatureVueIncompletModifieDepuis;
     }
+
+	public static Boolean getCacheMembreSupprReviewFile() {
+		if(cacheMembreSupprReviewFile == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheMembreSupprReviewFile = configs.get(0).getMembreSupprReviewFile();		
+    		} else {
+    			cacheMembreSupprReviewFile = false;
+    		}
+    	}
+    	return cacheMembreSupprReviewFile;
+	}
+
 	
 }
