@@ -64,14 +64,24 @@ public class ArchiveService {
 			
 			for (PosteCandidature posteCandidature : posteCandidatures) {
 				String folderName = destFolder.concat("/");
-				folderName = folderName.concat(posteCandidature.getPoste().getNumEmploi().concat("/"));	
+				folderName = folderName.concat(posteCandidature.getPoste().getNumEmploi()).concat("/");	
 				
 				File folder = new File(folderName);
 				folder.mkdir();
 				
-				folderName = folderName.concat(posteCandidature.getCandidat().getNom().concat("-"));	
-				folderName = folderName.concat(posteCandidature.getCandidat().getPrenom().concat("-"));	
-				folderName = folderName.concat(posteCandidature.getCandidat().getNumCandidat().concat("/"));
+				folderName = folderName.concat(posteCandidature.getRecevable() ? "Recevable" : "Non_Recevable").concat("/");	
+				folder = new File(folderName);
+				folder.mkdir();
+				
+				if(posteCandidature.getAuditionnable() != null) {
+					folderName = folderName.concat(posteCandidature.getAuditionnable() ? "Auditionnable" : "Non_Auditionnable").concat("/");	
+					folder = new File(folderName);
+					folder.mkdir();			
+				}
+				
+				folderName = folderName.concat(posteCandidature.getCandidat().getNom()).concat("-");	
+				folderName = folderName.concat(posteCandidature.getCandidat().getPrenom()).concat("-");	
+				folderName = folderName.concat(posteCandidature.getCandidat().getNumCandidat()).concat("/");
 				
 				folder = new File(folderName);
 				folder.mkdir();
