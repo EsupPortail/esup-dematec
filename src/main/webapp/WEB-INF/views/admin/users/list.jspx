@@ -26,11 +26,12 @@
             <util:help>
                 <p>Les utilisateurs donnés ici sont des comptes utilisateurs qui ont été
 				<ul>
-                        <li>soit générés depuis une importation Galaxie,</li>
+                        <li>soit générés depuis une importation Galaxie (candidats),</li>
+                        <li>soit générés depuis une importation Commission (membres),</li>
                         <li>soit créés manuellement.</li>
                     </ul>
                 </p>
-                <p>Ces pages permettent donc (éventuellement) de créer manuellement un utilisateur pour lui donner des droits d'aministration, de modifier un
+                <p>Ces pages permettent donc de créer manuellement un utilisateur pour lui donner des droits d'aministration (admin, super-manager ou manager), de modifier un
 					utilisateur: password, droits, ...</p>
             </util:help>
         </div>
