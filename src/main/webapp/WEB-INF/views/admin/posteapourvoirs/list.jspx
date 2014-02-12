@@ -24,6 +24,7 @@
         <p>Les différents postes donnés ici ont été générés depuis le menu Importation. Vous pouvez ici vérifier que l'ensemble des postes a bien été
 			créé.</p>
         <p>Pour chacun des postes, vous pouvez également éditer leurs membres, pour ce faire, cliquez sur le bouton "Modifier" du poste voulu.</p>
+        <p>Enfin, vous pouvez saisir une "Date Fin Candidat Auditionnable" correspondant à la date à partir de laquelle les candidats retenus pour audition n'ont plus accès à l'application.</p>
     </util:help>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
         <c:set value="true" var="canManage"/>
