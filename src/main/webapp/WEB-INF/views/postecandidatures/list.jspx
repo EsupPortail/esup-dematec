@@ -105,6 +105,9 @@
   		</style>
 
     </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
+        <c:set value="true" var="seeAuditionnable"/>
+    </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
         <table:table create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed" color="${tableColorField}">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canManage}" z="user-managed"/>
@@ -113,7 +116,7 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email" sort="${canManage}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${canManage}" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${seeAuditionnable}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewState" property="managerReviewState" render="${canManage}" label="Vue" z="user-managed" sort="true"/>
             <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" render="${canManage}" sort="true" z="user-managed"/>
@@ -122,7 +125,7 @@
         </table:table>
     </page:list>
     
-    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
        	<hr/>
        	<i>Légende :</i>
   		<div id="legendColor">
