@@ -134,6 +134,22 @@
   			 	</tr>
   			 </table>
   		</div>
+  		
+  	    <spring:url value="/images/accept.png" var="img_true_url"/>
+  	    <spring:url value="/images/cross.png" var="img_false_url"/>
+  		
+  		<script>
+		$(document).ready(function(){
+			var html_img_true= '<img src="${img_true_url}"/>';
+			var html_img_false= '<img src="${img_false_url}"/>';
+			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
+			    return $(this).text() === "true";
+			}).css("font-weight", "bold").css("color", "green").css("text-align", "center").html(html_img_true);
+			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
+			    return $(this).text() === "false";
+			}).css("font-weight", "bold").css("color", "red").css("text-align", "center").html(html_img_false);
+		});
+		</script>
         
     </sec:authorize>
 </div>
