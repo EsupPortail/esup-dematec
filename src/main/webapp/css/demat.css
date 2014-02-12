@@ -19,6 +19,10 @@ table {
 font-size: 14px;
 }
 
+label {
+font-weight: bold;
+}
+
 #main .row-fluid .span-demat-right {
 margin-left: 20px;
 }

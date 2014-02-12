@@ -70,7 +70,7 @@
               <form:password id="_${sec_field}_id" path="${sec_field}" disabled="${disabled}" />
             </c:when>
             <c:otherwise>
-              <form:input id="_${sec_field}_id" path="${sec_field}" disabled="${disabled}" />
+              <form:input id="_${sec_field}_id" path="${sec_field}" disabled="${disabled}" cssClass="input-xxlarge"/>
             </c:otherwise>
           </c:choose>
           <br />
