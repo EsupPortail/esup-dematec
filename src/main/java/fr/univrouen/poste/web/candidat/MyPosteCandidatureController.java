@@ -476,7 +476,7 @@ public class MyPosteCandidatureController {
 			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
 				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) { 
 				for(PosteCandidature postecandidature: PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList()) {
-					if(!postecandidature.getAuditionnable() || currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) > 0) {
+					if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) > 0) {
 						postecandidatures.remove(postecandidature);
 					}
 				}
