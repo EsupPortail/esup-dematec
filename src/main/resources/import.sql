@@ -63,7 +63,8 @@ color_candidature_non_vue,
 color_candidature_vue,
 color_candidature_vue_incomplet,
 color_candidature_vue_incomplet_modifie_depuis,
-color_candidature_vue_modifie_depuis) 
+color_candidature_vue_modifie_depuis,
+membre_suppr_review_file) 
 
 VALUES (
 
@@ -134,7 +135,7 @@ E'Bonjour.\n\nVous avez été retenu pour audition sur le poste @@numEmploi@@.',
 
 E'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/PosteCandidature/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
 
-'#b2beff', '#7bfa94', '#fa9696', '#faa3ee', '#d9faa0'
+'#b2beff', '#7bfa94', '#fa9696', '#faa3ee', '#d9faa0', false
 
 );
 
