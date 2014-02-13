@@ -344,95 +344,103 @@ public class AppliConfig {
 	}
 
 	public static String getCacheTitre() {
-    	if(cacheTitre == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheTitre = configs.get(0).getTitre();		
-    		} else {
-    			cacheTitre = "";
-    		}
-    	}
+		if(cacheTitre == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cacheTitre = configs.get(0).getTitre();		
+			}
+			if(cacheTitre == null) {
+				cacheTitre = "";
+			}    	
+		}
 		return cacheTitre;
-    }
-	
+	}
+
 	public static String getCacheImageUrl() {
-    	if(cacheImageUrl == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheImageUrl = configs.get(0).getImageUrl();		
-    		} else {
-    			cacheImageUrl = "";
-    		}
-    	}
+		if(cacheImageUrl == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cacheImageUrl = configs.get(0).getImageUrl();		
+			} 
+			if(cacheImageUrl == null) {
+				cacheImageUrl = "";
+			}
+		}		
 		return cacheImageUrl;
-    }
-	
+	}
+
 	public static String getCachePiedPage() {
-    	if(cachePiedPage == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cachePiedPage = configs.get(0).getPiedPage();
-    		} else {
-    			cachePiedPage = "";
-    		}
-    	}
+		if(cachePiedPage == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cachePiedPage = configs.get(0).getPiedPage();
+			} 
+			if(cachePiedPage == null) {
+				cachePiedPage = "";
+			}
+		}
 		return cachePiedPage;
-    }
-		
+	}
+
 	public static String getCacheMailFrom() {
-    	if(cacheMailFrom == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheMailFrom = configs.get(0).getMailFrom();	
-    		} else {
-    			cacheMailFrom = "";
-    		}
-    	}
+		if(cacheMailFrom == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cacheMailFrom = configs.get(0).getMailFrom();	
+			}
+			if(cacheMailFrom == null) {
+				cacheMailFrom = "";
+			}
+		}
 		return cacheMailFrom;
-    }
-	
+	}
+
 	public static String getCacheMailSubject() {
-    	if(cacheMailSubject == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheMailSubject = configs.get(0).getMailSubject();	
-    		} else {
-    			cacheMailSubject = "";
-    		}
-    	}
+		if(cacheMailSubject == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cacheMailSubject = configs.get(0).getMailSubject();	
+			} 
+			if(cacheMailSubject == null) {
+				cacheMailSubject = "";
+			}
+		}
 		return cacheMailSubject;
-    }
+	}
 
 	public static String getCacheTexteMailActivation() {
-    	if(cacheTexteMailActivation == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheTexteMailActivation = configs.get(0).getTexteMailActivation();	
-    		} else {
-    			cacheTexteMailActivation = "";
-    		}
-    	}
-    	return cacheTexteMailActivation;
-    }
-	
+		if(cacheTexteMailActivation == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cacheTexteMailActivation = configs.get(0).getTexteMailActivation();	
+			}
+			if(cacheTexteMailActivation == null) {
+				cacheTexteMailActivation = "";
+			}
+		}
+		return cacheTexteMailActivation;
+	}
+
 	public static String getCacheMailSubjectMembre() {
-    	if(cacheMailSubjectMembre == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheMailSubjectMembre = configs.get(0).getMailSubjectMembre();	
-    		} else {
-    			cacheMailSubjectMembre = "";
-    		}
-    	}
+		if(cacheMailSubjectMembre == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cacheMailSubjectMembre = configs.get(0).getMailSubjectMembre();	
+			} 
+			if(cacheMailSubjectMembre == null) {	
+				cacheMailSubjectMembre = "";
+			}
+		}
 		return cacheMailSubjectMembre;
-    }
+	}
 
 	public static String getCacheTexteMailActivationMembre() {
     	if(cacheTexteMailActivationMembre == null) {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTexteMailActivationMembre = configs.get(0).getTexteMailActivationMembre();	
-    		} else {
+    		} 
+    		if(cacheTexteMailActivationMembre == null) {
     			cacheTexteMailActivationMembre = "";
     		}
     	}
@@ -444,7 +452,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTexteMailPasswordOublie = configs.get(0).getTexteMailPasswordOublie();		
-    		} else {
+    		} 
+    		if(cacheTexteMailPasswordOublie == null) {
     			cacheTexteMailPasswordOublie = "";
     		}
     	}
@@ -456,7 +465,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTextePremierePageAnonyme = configs.get(0).getTextePremierePageAnonyme();		
-    		} else {
+    		} 
+    		if(cacheTextePremierePageAnonyme == null) {
     			cacheTextePremierePageAnonyme = "";
     		}
     	}
@@ -468,7 +478,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTexteMembreAideCandidatures = configs.get(0).getTexteMembreAideCandidatures();		
-    		} else {
+    		} 
+    		if(cacheTexteMembreAideCandidatures == null) {
     			cacheTexteMembreAideCandidatures = "";
     		}
     	}
@@ -480,7 +491,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTextePremierePageCandidat = configs.get(0).getTextePremierePageCandidat();	
-    		} else {
+    		}
+    		if(cacheTextePremierePageCandidat == null) {
     			cacheTextePremierePageCandidat = "";
     		}
     	}
@@ -492,7 +504,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTextePremierePageMembre = configs.get(0).getTextePremierePageMembre();
-    		} else {
+    		} 
+    		if(cacheTextePremierePageMembre == null) {
     			cacheTextePremierePageMembre = "";
     		}
     	}
@@ -504,7 +517,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTexteCandidatAideCandidatures = configs.get(0).getTexteCandidatAideCandidatures();
-    		} else {
+    		} 
+    		if(cacheTexteCandidatAideCandidatures == null) {
     			cacheTexteCandidatAideCandidatures = "";
     		}
     	}
@@ -516,7 +530,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTexteCandidatAideCandidatureDepot = configs.get(0).getTexteCandidatAideCandidatureDepot();
-    		} else {
+    		} 
+    		if(cacheTexteCandidatAideCandidatureDepot == null) {
     			cacheTexteCandidatAideCandidatureDepot = "";
     		}
     	}
@@ -530,44 +545,44 @@ public class AppliConfig {
 			if (!configs.isEmpty()) {
 				cacheDateEndCandidat = configs.get(0).getDateEndCandidat();
 			}
-		}
-		if (cacheDateEndCandidat == null) {
-			// initialize to this currentTime + 5 years
-			Calendar c = Calendar.getInstance();
-			c.roll(Calendar.YEAR, 5);
-			cacheDateEndCandidat = c.getTime();
+			if (cacheDateEndCandidat == null) {
+				// initialize to this currentTime + 5 years
+				Calendar c = Calendar.getInstance();
+				c.roll(Calendar.YEAR, 5);
+				cacheDateEndCandidat = c.getTime();
+			}
 		}
 		return cacheDateEndCandidat;
-    }
-	
+	}
+
 	public static Date getCacheDateEndCandidatActif() {
 		if (cacheDateEndCandidatActif == null) {
 			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();
 			if (!configs.isEmpty()) {
 				cacheDateEndCandidatActif = configs.get(0).getDateEndCandidatActif();
 			}
-		}
-		if (cacheDateEndCandidatActif == null) {
-			// initialize to this currentTime + 5 years
-			Calendar c = Calendar.getInstance();
-			c.roll(Calendar.YEAR, 5);
-			cacheDateEndCandidatActif = c.getTime();
+			if (cacheDateEndCandidatActif == null) {
+				// initialize to this currentTime + 5 years
+				Calendar c = Calendar.getInstance();
+				c.roll(Calendar.YEAR, 5);
+				cacheDateEndCandidatActif = c.getTime();
+			}
 		}
 		return cacheDateEndCandidatActif;
-    }
-	
+	}
+
 	public static Date getCacheDateEndMembre() {
 		if (cacheDateEndMembre == null) {
 			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();
 			if (!configs.isEmpty()) {
 				cacheDateEndMembre = configs.get(0).getDateEndMembre();
 			}
-		}
-		if (cacheDateEndMembre == null) {
-			// initialize to this currentTime + 5 years
-			Calendar c = Calendar.getInstance();
-			c.roll(Calendar.YEAR, 5);
-			cacheDateEndMembre = c.getTime();
+			if (cacheDateEndMembre == null) {
+				// initialize to this currentTime + 5 years
+				Calendar c = Calendar.getInstance();
+				c.roll(Calendar.YEAR, 5);
+				cacheDateEndMembre = c.getTime();
+			}
 		}
 		return cacheDateEndMembre;
 	}
@@ -577,7 +592,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheMailReturnReceiptModeType = configs.get(0).getMailReturnReceiptModeType();
-    		} else {
+    		} 
+    		if(cacheMailReturnReceiptModeType == null) {
     			cacheMailReturnReceiptModeType = MailReturnReceiptModeTypes.NEVER;
     		}
     	}
@@ -589,7 +605,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTexteMailCandidatReturnReceipt = configs.get(0).getTexteMailCandidatReturnReceipt();		
-    		} else {
+    		} 
+    		if(cacheTexteMailCandidatReturnReceipt == null) {
     			cacheTexteMailCandidatReturnReceipt = "";
     		}
     	}
@@ -601,7 +618,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTexteEnteteMailCandidatAuditionnable = configs.get(0).getTexteEnteteMailCandidatAuditionnable();		
-    		} else {
+    		} 
+    		if(cacheTexteEnteteMailCandidatAuditionnable == null) {
     			cacheTexteEnteteMailCandidatAuditionnable = "";
     		}
     	}
@@ -613,7 +631,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheTextePiedpageMailCandidatAuditionnable = configs.get(0).getTextePiedpageMailCandidatAuditionnable();		
-    		} else {
+    		} 
+    		if(cacheTextePiedpageMailCandidatAuditionnable == null) {
     			cacheTextePiedpageMailCandidatAuditionnable = "";
     		}
     	}
@@ -625,7 +644,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheColorCandidatureNonVue = configs.get(0).getColorCandidatureNonVue();		
-    		} else {
+    		} 
+    		if(cacheColorCandidatureNonVue == null) {
     			cacheColorCandidatureNonVue = "#FFFFFF";
     		}
     	}
@@ -637,7 +657,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheColorCandidatureVue = configs.get(0).getColorCandidatureVue();		
-    		} else {
+    		} 
+    		if(cacheColorCandidatureVue == null) {
     			cacheColorCandidatureVue = "#FFFFFF";
     		}
     	}
@@ -650,7 +671,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheColorCandidatureVueIncomplet = configs.get(0).getColorCandidatureVueIncomplet();		
-    		} else {
+    		} 
+    		if(cacheColorCandidatureVueIncomplet == null) {
     			cacheColorCandidatureVueIncomplet = "#FFFFFF";
     		}
     	}
@@ -662,7 +684,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheColorCandidatureVueModifieDepuis = configs.get(0).getColorCandidatureVueModifieDepuis();		
-    		} else {
+    		} 
+    		if(cacheColorCandidatureVueModifieDepuis == null) {
     			cacheColorCandidatureVueModifieDepuis = "#FFFFFF";
     		}
     	}
@@ -675,7 +698,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheColorCandidatureVueIncompletModifieDepuis = configs.get(0).getColorCandidatureVueIncompletModifieDepuis();		
-    		} else {
+    		} 
+    		if(cacheColorCandidatureVueIncompletModifieDepuis == null) {
     			cacheColorCandidatureVueIncompletModifieDepuis = "#FFFFFF";
     		}
     	}
@@ -687,7 +711,8 @@ public class AppliConfig {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
     			cacheMembreSupprReviewFile = configs.get(0).getMembreSupprReviewFile();		
-    		} else {
+    		}
+    		if(cacheMembreSupprReviewFile == null) {
     			cacheMembreSupprReviewFile = false;
     		}
     	}

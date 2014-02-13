@@ -53,9 +53,6 @@ public class DbToolService {
 				statement.execute();
 				connection.close();
 				
-				// "update" config with default value
-				List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-	    		configs.get(0).merge();
 	    		logger.warn("\n\n#####\n\t" +
 	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
 	    				"\n#####\n");
