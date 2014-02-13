@@ -12,9 +12,10 @@ public class BatchMain {
 	public static void main(String[] args) throws IOException, SQLException  {
 		ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext("classpath*:META-INF/spring/applicationContext*.xml");
 		
-		if(args.length < 2) {
+		if(args.length < 1 || !"archive".equals(args[0]) && !"dbupgrade".equals(args[0])) {
 			System.err.println("Merci de préciser les arguments. Exemple : \n" +
-					"mvn exec:java -Dexec.args=\"archive /opt/archive-demat\"");
+					"mvn exec:java -Dexec.args=\"archive /opt/archive-demat\"\n" +
+					"mvn exec:java -Dexec.args=\"dbupgrade\"");
 			return;
 		}
 
@@ -23,6 +24,9 @@ public class BatchMain {
 			String destFolder = args[1];
 			ArchiveService archiveService = springContext.getBean("archiveService", ArchiveService.class);
 			archiveService.archive(destFolder);
+		} else if("dbupgrade".equals(args[0])) {
+			DbUpgradeService dbUpgradeService = springContext.getBean("dbUpgradeService", DbUpgradeService.class);
+			dbUpgradeService.upgrade();			
 		} else {
 			System.err.println("Commande non trouvée.");
 		}

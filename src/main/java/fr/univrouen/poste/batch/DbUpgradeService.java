@@ -1,0 +1,74 @@
+package fr.univrouen.poste.batch;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.AppliVersion;
+
+@Service
+public class DbUpgradeService {
+
+	private final Logger logger = Logger.getLogger(getClass());
+	
+	final static String currentEsupDematEcVersion = "1.1.x";
+	
+	@Resource
+	DataSource dataSource;
+	
+	@Transactional
+	public void upgrade() {
+		AppliVersion appliVersion = null;
+		List<AppliVersion> appliVersions = AppliVersion.findAllAppliVersions();
+		if(appliVersions.isEmpty()) {
+			appliVersion = new AppliVersion();
+			appliVersion.setEsupDematEcVersion("1.0.x");
+			appliVersion.persist();
+		} else {
+			appliVersion = appliVersions.get(0);
+		}
+		upgradeIfNeeded(appliVersion);
+	}
+
+	private void upgradeIfNeeded(AppliVersion appliVersion) {
+		String esupDematEcVersion = appliVersion.getEsupDematEcVersion();
+		try{
+			if("1.0.x".equals(esupDematEcVersion)) {
+				String sqlUpdate = "alter table poste_candidature add column manager_review bigint;" +
+						"WITH manager_review_id AS (" +
+						"UPDATE poste_candidature SET manager_review=nextval('hibernate_sequence') RETURNING manager_review" +
+						")" +
+						"INSERT INTO manager_review (id, review_status) SELECT manager_review,'Non_vue' FROM manager_review_id;";
+				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
+				Connection connection = dataSource.getConnection();
+				CallableStatement statement = connection.prepareCall(sqlUpdate);
+				statement.execute();
+				connection.close();
+				
+				// "update" config with default value
+				List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+	    		configs.get(0).merge();
+	    		logger.warn("\n\n#####\n\t" +
+	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
+	    				"\n#####\n");
+			} else {
+				logger.warn("\n\n#####\n\t" +
+	    				"Base de données à jour !" +
+	    				"\n#####\n");
+			}
+			appliVersion.setEsupDematEcVersion(currentEsupDematEcVersion);
+			appliVersion.merge();
+		} catch(Exception e) {
+			throw new RuntimeException("Erreur durant le mise à jour de la base de données", e);
+		}
+	}
+
+}
