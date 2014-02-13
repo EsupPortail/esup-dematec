@@ -85,16 +85,16 @@
             <p>Les codes  couleurs ci-dessous permettent aux managers et admins ()uniquement) de distinguer les candidatures marquées comme Vue, Vue_Incomplet, etc.
 	        </p>
         </util:help>
-        <util:help>
-            <p>Par défaut, les membres ne peuvent pas supprimer les rapports de commission qui sont uniquement en lecture seul.
-	        </p>
-            <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
-        </util:help>
         <field:input field="colorCandidatureNonVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue" z="9ZGoi4SHWI1+elYQmJU+Txy4Yp0="/>
         <field:input field="colorCandidatureVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue" z="IRF9nWR/rjzjf2oSlgelWo5Aesc="/>
         <field:input field="colorCandidatureVueIncomplet" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet" z="jYQO1rZ98h3nCzevrtzO4VthQU0="/>
         <field:input field="colorCandidatureVueModifieDepuis" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis" z="TnUbt+9ScJK91KVpcN2SHNOwNCY="/>
         <field:input field="colorCandidatureVueIncompletModifieDepuis" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis" z="7Zk7y6kEyKZZb13EQIaSSajCkVM="/>
+        <util:help>
+            <p>Par défaut, les membres ne peuvent pas supprimer les rapports de commission qui sont uniquement en lecture seul.
+	        </p>
+            <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
+        </util:help>
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
         
         
