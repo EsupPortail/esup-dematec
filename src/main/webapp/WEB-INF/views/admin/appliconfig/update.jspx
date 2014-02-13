@@ -103,9 +103,8 @@
             <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature.</p>
         </util:help>
         <field:input field="candidatureFileMoSizeMax" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureFileMoSizeMax" validationMessageCode="field_invalid_integer" z="obNA2mVcAlrReK+gt98geVJwNCA="/>
-        <field:input field="candidatureNbFileMax" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureNbFileMax" validationMessageCode="field_invalid_integer" z="QleraQ1nTzc27QspMjkMdorhTxE="/>
         <field:input field="candidatureContentTypeRestrictionRegexp" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureContentTypeRestrictionRegexp" z="/lG/RmEVlzwC+7pICDUn/XTQ7QQ="/>
-        <field:textarea field="texteAlertRestrictionTailleContentType" id="c_fr_univrouen_poste_domain_AppliConfig_texteAlertRestrictionTailleContentType" z="UOG3sZshKoZiPJ2F0kX0V2ERTaQ=" wysiwyg="true"/>
+        <field:input field="candidatureNbFileMax" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureNbFileMax" validationMessageCode="field_invalid_integer" z="QleraQ1nTzc27QspMjkMdorhTxE="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>

@@ -101,8 +101,6 @@ public class AppliConfig {
 	
 	private static String cacheCandidatureContentTypeRestrictionRegexp; 
 	
-	private static String cacheTexteAlertRestrictionTailleContentType;
-	
 	
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -212,10 +210,6 @@ public class AppliConfig {
 	
     @Column(columnDefinition="TEXT")
 	private String candidatureContentTypeRestrictionRegexp; 
-	
-    @Column(columnDefinition="TEXT")
-	private String texteAlertRestrictionTailleContentType;
-    
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -359,6 +353,24 @@ public class AppliConfig {
 	public void setMembreSupprReviewFile(Boolean membreSupprReviewFile) {
 		this.membreSupprReviewFile = membreSupprReviewFile;
 		cacheMembreSupprReviewFile = membreSupprReviewFile;
+	}
+	
+	
+
+	public void setCandidatureFileMoSizeMax(Long candidatureFileMoSizeMax) {
+		this.candidatureFileMoSizeMax = candidatureFileMoSizeMax;
+		cacheCandidatureFileMoSizeMax = candidatureFileMoSizeMax;
+	}
+
+	public void setCandidatureNbFileMax(Long candidatureNbFileMax) {
+		this.candidatureNbFileMax = candidatureNbFileMax;
+		cacheCandidatureNbFileMax = candidatureNbFileMax;
+	}
+
+	public void setCandidatureContentTypeRestrictionRegexp(
+			String candidatureContentTypeRestrictionRegexp) {
+		this.candidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
+		cacheCandidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
 	}
 
 	public static String getCacheTitre() {
@@ -771,24 +783,12 @@ public class AppliConfig {
     		if(!configs.isEmpty()) {
     			cacheCandidatureContentTypeRestrictionRegexp = configs.get(0).getCandidatureContentTypeRestrictionRegexp();		
     		} 
-    		if(cacheCandidatureContentTypeRestrictionRegexp == null) {
+    		if(cacheCandidatureContentTypeRestrictionRegexp == null || cacheCandidatureContentTypeRestrictionRegexp.isEmpty()) {
     			cacheCandidatureContentTypeRestrictionRegexp = ".*";
     		}
     	}
     	return cacheCandidatureContentTypeRestrictionRegexp;
     }
 	
-	public static String getCacheTexteAlertRestrictionTailleContentType() {
-    	if(cacheTexteAlertRestrictionTailleContentType == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheTexteAlertRestrictionTailleContentType = configs.get(0).getTexteAlertRestrictionTailleContentType();		
-    		} 
-    		if(cacheTexteAlertRestrictionTailleContentType == null) {
-    			cacheTexteAlertRestrictionTailleContentType = "";
-    		}
-    	}
-    	return cacheTexteAlertRestrictionTailleContentType;
-    }
 	
 }

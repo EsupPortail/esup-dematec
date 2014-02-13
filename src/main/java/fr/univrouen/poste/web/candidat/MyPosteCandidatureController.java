@@ -204,7 +204,7 @@ public class MyPosteCandidatureController {
 		uiModel.asMap().clear();
 
 		// get PosteCandidature from id
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+		PosteCandidature posteCandidature = PosteCandidature.findPosteCandidature(id);
 
 		// upload file
 		MultipartFile file = posteCandidatureFile.getFile();
@@ -217,30 +217,45 @@ public class MyPosteCandidatureController {
 			if(fileSize != 0) {
 				String contentType = file.getContentType();
 				
-				logger.info("Begin upload file '" + filename + "' with size=" + fileSize + " and contentType=" + contentType);
+				logger.info("Try to upload file '" + filename + "' with size=" + fileSize + " and contentType=" + contentType);
 				
-				InputStream inputStream = file.getInputStream();
-				//byte[] bytes = IOUtils.toByteArray(inputStream);
-		
-				posteCandidatureFile.setFilename(filename);
-				posteCandidatureFile.setFileSize(fileSize);
-				posteCandidatureFile.setContentType(contentType);
-				logger.warn("Upload and set file in DB with filesize = " + fileSize);
-				posteCandidatureFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
-				posteCandidatureFile.getBigFile().persist();
-		
-				Calendar cal = Calendar.getInstance();
-				Date currentTime = cal.getTime();
-				posteCandidatureFile.setSendTime(currentTime);
-		
-				postecandidature.getCandidatureFiles().add(posteCandidatureFile);
-		
-				postecandidature.setModification(currentTime);
-		
-				postecandidature.persist();
-		
-				logService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, posteCandidatureFile, request, currentTime);
-				returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, postecandidature, posteCandidatureFile, request, currentTime);
+				Long maxFileMoSize = AppliConfig.getCacheCandidatureFileMoSizeMax();
+				Long maxFileSize = maxFileMoSize*1024*1024;
+				String mimeTypeRegexp = AppliConfig.getCacheCandidatureContentTypeRestrictionRegexp();
+				
+				boolean sizeRestriction = fileSize > maxFileSize;
+				boolean contentTypeRestriction = !contentType.matches(mimeTypeRegexp);
+				
+				
+				if(sizeRestriction || contentTypeRestriction) {
+					String restriction = sizeRestriction ? "SizeRestriction" : "";
+					restriction = contentTypeRestriction ? restriction + "ContentTypeRestriction" : restriction;
+					uiModel.addAttribute("upload_restricion_size_contentype", restriction);
+					logger.warn("Upload Restriction sur " + filename + "' avec taille=" + fileSize + " et contentType=" + contentType + " pour une candidature de " + posteCandidature.getCandidat().getEmailAddress());
+				} else {			
+					InputStream inputStream = file.getInputStream();
+					//byte[] bytes = IOUtils.toByteArray(inputStream);
+			
+					posteCandidatureFile.setFilename(filename);
+					posteCandidatureFile.setFileSize(fileSize);
+					posteCandidatureFile.setContentType(contentType);
+					logger.warn("Upload and set file in DB with filesize = " + fileSize);
+					posteCandidatureFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
+					posteCandidatureFile.getBigFile().persist();
+			
+					Calendar cal = Calendar.getInstance();
+					Date currentTime = cal.getTime();
+					posteCandidatureFile.setSendTime(currentTime);
+			
+					posteCandidature.getCandidatureFiles().add(posteCandidatureFile);
+			
+					posteCandidature.setModification(currentTime);
+			
+					posteCandidature.persist();
+			
+					logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+					returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+				}
 			}
 		} else {
 			String userId = SecurityContextHolder.getContext().getAuthentication().getName();

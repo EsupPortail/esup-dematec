@@ -52,6 +52,5 @@
         <field:display field="candidatureFileMoSizeMax" id="s_fr_univrouen_poste_domain_AppliConfig_candidatureFileMoSizeMax" object="${appliconfig}" z="0eW6GrwtkVQNwkMsVkCCr3rlx8o="/>
         <field:display field="candidatureNbFileMax" id="s_fr_univrouen_poste_domain_AppliConfig_candidatureNbFileMax" object="${appliconfig}" z="ECEDvQjtgsWVj9iFeF+3vxtFWfI="/>
         <field:display field="candidatureContentTypeRestrictionRegexp" id="s_fr_univrouen_poste_domain_AppliConfig_candidatureContentTypeRestrictionRegexp" object="${appliconfig}" z="lqvCqxHOeQRMr+0gSMLnZrLX1c4="/>
-        <field:display field="texteAlertRestrictionTailleContentType" id="s_fr_univrouen_poste_domain_AppliConfig_texteAlertRestrictionTailleContentType" object="${appliconfig}" z="xrzsJsJUVfQAbDeFS6QjhsMKROY="/>
     </page:show>
 </div>

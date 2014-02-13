@@ -42,6 +42,8 @@ public class LogService {
 	
 	public final static String UPLOAD_ACTION = "UPLOAD";
 	
+	public final static String UPLOAD_FAILED_ACTION = "UPLOAD FAILED";
+	
 	public final static String DELETE_ACTION = "DELETE";
 
 	public static final String DOWNLOAD_ACTION = "DOWNLOAD";

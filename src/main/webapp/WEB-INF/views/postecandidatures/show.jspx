@@ -30,9 +30,26 @@
             ${texteCandidatAideCandidatureDepot}
         </sec:authorize>
         
-        
-        
-        
+	    <c:if test="${not empty param.upload_restricion_size_contentype}">
+		    <c:choose>
+		    	<c:when test="${param.upload_restricion_size_contentype == 'SizeRestriction'}">
+		    		<c:set var="alertRestriction" value="Fichier trop volumineux !"/>
+		    	</c:when>
+		    	<c:when test="${param.upload_restricion_size_contentype == 'ContentTypeRestriction'}">
+		    		<c:set var="alertRestriction" value="Type de fichier non accepté !"/>
+		    	</c:when>
+		    	<c:otherwise>
+		    		<c:set var="alertRestriction" value="Type de fichier non accepté et trop volumineux !"/>
+		    	</c:otherwise>
+		    </c:choose>
+		    <script>
+		    var alertRestriction = '${alertRestriction}';
+			$(document).ready(function(){
+				alert(alertRestriction);
+			});
+			</script>
+	    </c:if>
+
         <c:if test="${not empty postecandidature.candidatureFiles}">
             <table class="table  table-bordered table-striped">
                 <thead>
