@@ -90,7 +90,7 @@ http://localhost:8080/EsupDematEC/signup/activate/@@mailAddress@@/@@activationKe
 --\nUniversité ESUP - Direction des Ressources Humaines',  
 
 E'Bonjour,\n\nVous avez demandé à récupérer un nouveau password. \n\nVotre nouveau password est:\n\n @@newPassword@@ \n
-http://localhost:8080/PosteCandidature/changepassword/index \n
+http://localhost:8080/EsupDematEC/changepassword/index \n
 --\nUniversité ESUP - Direction des Ressources Humaines',
 
 '<div class="well help">  <p>En tant que membre (d''une commission) sur un ou plusieurs postes donnés, vous pouvez consulter ici les différentes candidatures liées à ce ou    ces poste(s).</p>
@@ -137,7 +137,7 @@ E'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''applicatio
 
 E'Bonjour.\n\nVous avez été retenu pour audition sur le poste @@numEmploi@@.',
 
-E'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/PosteCandidature/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
+E'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/EsupDematEC/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
 
 '#b2beff', '#7bfa94', '#fa9696', '#faa3ee', '#d9faa0',
 
