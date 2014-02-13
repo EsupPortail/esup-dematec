@@ -99,8 +99,17 @@
         
         
         <util:help>
-            <p>Les configurations vous permettent de contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain type et avec une taille ne dépassant pas un certain seuil.</p>
-            <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature.</p>
+            <p>Les configurations suivantes vous permettent de contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain type et avec une taille ne dépassant pas un certain seuil.</p>
+	            <ul>
+	            	<li>
+	            		La taille correspond à des Mo, <b>-1</b> correspond à ne fixer aucune limite.
+	            	</li>
+	            	<li>
+		            	Le mime-type peut être une expression régulière. <b>.*</b> revient à accepter tous les types de fichiers, 
+		            	<b>application/pdf</b> uniquement les pdf, <b>application/pdf|application/zip</b> les pdf ou zip, <b>application/pdf|image/.*</b> les pdf et tous types d'images, etc.
+	            	</li>
+	            </ul>
+            <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature. <b>-1</b> correspond à ne fixer aucune limite.</p>
         </util:help>
         <field:input field="candidatureFileMoSizeMax" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureFileMoSizeMax" validationMessageCode="field_invalid_integer" z="obNA2mVcAlrReK+gt98geVJwNCA="/>
         <field:input field="candidatureContentTypeRestrictionRegexp" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureContentTypeRestrictionRegexp" z="/lG/RmEVlzwC+7pICDUn/XTQ7QQ="/>
