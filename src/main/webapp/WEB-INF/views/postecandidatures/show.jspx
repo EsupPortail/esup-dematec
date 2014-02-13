@@ -113,9 +113,17 @@
             </table>
         </c:if>
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_CANDIDAT')">
-            <form:create id="fc_fr_univrouen_poste_domain_PosteCandidatureFile" modelAttribute="posteCandidatureFile" multipart="true" path="${postecandidature.id}/addFile" save_button="Valider">
-                <input id="c_fr_univrouen_poste_domain_PosteCandidatureFile_file" name="file" required="required" type="file"/>
-            </form:create>
+        	<c:choose>
+	        	<c:when test="${restrictionNbFileMax}">
+		            <b>Nombre de fichiers maximum autorisé atteint.</b>
+		            <hr/>
+	            </c:when>
+	            <c:otherwise>
+	           		<form:create id="fc_fr_univrouen_poste_domain_PosteCandidatureFile" modelAttribute="posteCandidatureFile" multipart="true" path="${postecandidature.id}/addFile" save_button="Valider">
+		                <input id="c_fr_univrouen_poste_domain_PosteCandidatureFile_file" name="file" required="required" type="file"/>
+		            </form:create>
+	            </c:otherwise>          
+            </c:choose>
         </sec:authorize>
         <field:display date="true" dateTimePattern="${posteCandidature_creation_date_format}" field="creation" id="s_fr_univrouen_poste_domain_PosteCandidature_creation" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display date="true" dateTimePattern="${posteCandidature_modification_date_format}" field="modification" id="s_fr_univrouen_poste_domain_PosteCandidature_modification" object="${postecandidature}" render="false" z="user-managed"/>

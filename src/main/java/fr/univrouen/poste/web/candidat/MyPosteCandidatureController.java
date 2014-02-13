@@ -438,6 +438,16 @@ public class MyPosteCandidatureController {
 		uiModel.addAttribute("memberReviewFile", new MemberReviewFile());
 		uiModel.addAttribute("supprReview", AppliConfig.getCacheMembreSupprReviewFile());
 		
+		// Pour phase auditionnable, on ne compte que les fichiers supprimables (writeable).
+		int nbFiles = 0;
+		for(PosteCandidatureFile f : postecandidature.getCandidatureFiles()) {
+			if(f.getWriteable()) {
+				nbFiles++;
+			}
+		}
+		Boolean restrictionNbFileMax = AppliConfig.getCacheCandidatureNbFileMax() <= nbFiles;
+		uiModel.addAttribute("restrictionNbFileMax", restrictionNbFileMax);
+		
 		return "postecandidatures/show";
 	}
 	
