@@ -12,10 +12,16 @@ public class BatchMain {
 	public static void main(String[] args) throws IOException, SQLException  {
 		ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext("classpath*:META-INF/spring/applicationContext*.xml");
 		
-		if(args.length < 1 || !"archive".equals(args[0]) && !"dbupgrade".equals(args[0])) {
-			System.err.println("Merci de préciser les arguments. Exemple : \n" +
-					"mvn exec:java -Dexec.args=\"archive /opt/archive-demat\"\n" +
-					"mvn exec:java -Dexec.args=\"dbupgrade\"");
+		if(args.length < 1 || !"archive".equals(args[0]) && !"dbupgrade".equals(args[0]) && !"deletedata".equals(args[0])) {
+			System.err.println("#####\n" +
+					"Merci de préciser les arguments.\n" +
+					"Voici les possibilités : \n" +
+					"\t* mvn exec:java -Dexec.args=\"archive /opt/archive-demat\"\n" +
+					"\t* mvn exec:java -Dexec.args=\"dbupgrade\"\n" +
+					"\t* mvn exec:java -Dexec.args=\"deletedata\"\n" +
+					"-- Attention, cette dernière commande efface les données de candidature de la base !! " +
+					"A utiliser pour nettoyer une base pour l'utiliser sur une nouvelle campagne --\n" +
+					"#####");
 			return;
 		}
 
@@ -25,8 +31,11 @@ public class BatchMain {
 			ArchiveService archiveService = springContext.getBean("archiveService", ArchiveService.class);
 			archiveService.archive(destFolder);
 		} else if("dbupgrade".equals(args[0])) {
-			DbUpgradeService dbUpgradeService = springContext.getBean("dbUpgradeService", DbUpgradeService.class);
-			dbUpgradeService.upgrade();			
+			DbToolService dbToolService = springContext.getBean("dbToolService", DbToolService.class);
+			dbToolService.upgrade();		
+		} else if("deletedata".equals(args[0])) {
+			DbToolService dbToolService = springContext.getBean("dbToolService", DbToolService.class);
+			dbToolService.deleteData();					
 		} else {
 			System.err.println("Commande non trouvée.");
 		}
