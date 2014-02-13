@@ -445,7 +445,8 @@ public class MyPosteCandidatureController {
 				nbFiles++;
 			}
 		}
-		Boolean restrictionNbFileMax = AppliConfig.getCacheCandidatureNbFileMax() <= nbFiles;
+		Long nbFileMax = AppliConfig.getCacheCandidatureNbFileMax();
+		Boolean restrictionNbFileMax = nbFileMax > -1 && nbFileMax <= nbFiles;
 		uiModel.addAttribute("restrictionNbFileMax", restrictionNbFileMax);
 		
 		return "postecandidatures/show";
