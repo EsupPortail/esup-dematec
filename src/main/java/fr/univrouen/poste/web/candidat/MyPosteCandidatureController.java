@@ -208,6 +208,7 @@ public class MyPosteCandidatureController {
 
 		// upload file
 		MultipartFile file = posteCandidatureFile.getFile();
+		
 		// sometimes file is null here, but I don't know how to reproduce this issue ... maybe that can occur only with some specifics browsers ?
 		if(file != null) {
 			String filename = file.getOriginalFilename();
@@ -215,6 +216,9 @@ public class MyPosteCandidatureController {
 			
 			if(fileSize != 0) {
 				String contentType = file.getContentType();
+				
+				logger.info("Begin upload file '" + filename + "' with size=" + fileSize + " and contentType=" + contentType);
+				
 				InputStream inputStream = file.getInputStream();
 				//byte[] bytes = IOUtils.toByteArray(inputStream);
 		
