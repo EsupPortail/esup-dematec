@@ -17,7 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---><div xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+--><div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <div class="well help">
@@ -38,17 +38,19 @@
         </p>
     </div>
     <form:update id="fu_fr_univrouen_poste_domain_AppliConfig" modelAttribute="appliConfig" path="/admin/appliconfig" versionField="Version" z="+3ji0WJNMOrr2O0BUHNLY5BxIZ4=">
-        
         <util:help>
-	        <p>Les différentes dates à paramétrer ci-dessous permettent d'interdire l'accès aux candidats et membres à partir d'une date donnée (incluse).
+            <p>Les différentes dates à paramétrer ci-dessous permettent d'interdire l'accès aux candidats et membres à partir d'une date donnée (incluse).
 		        <ul>
-			        <li><strong>Date fin candidat :</strong> date à partir de laquelle les candidats (non actifs) n'ont plus accès à l'application.</li>
-			        <li><strong>Date fin candidat actif :</strong> date à partir de laquelle les candidats actifs n'ont plus accès à l'application (un candidat actif est un candidat qui a procédé à au moins un envoi de fichier - même si il a ensuite supprimé celui-ci).</li>
-			        <li><strong>Date fin membre :</strong> date à partir de laquelle les membres n'ont plus accès à l'application.</li>
-		        </ul>
+                    <li>
+                        <strong>Date fin candidat :</strong> date à partir de laquelle les candidats (non actifs) n'ont plus accès à l'application.</li>
+                    <li>
+                        <strong>Date fin candidat actif :</strong> date à partir de laquelle les candidats actifs n'ont plus accès à l'application (un candidat actif est un candidat qui a procédé à au moins un envoi de fichier - même si il a ensuite supprimé celui-ci).</li>
+                    <li>
+                        <strong>Date fin membre :</strong> date à partir de laquelle les membres n'ont plus accès à l'application.</li>
+                </ul>
 		        Notez que pour les candidats retenus pour audition, la "Date fin candidat auditionnable" est quand à elle à paramétrer sur chaque poste (menu "Liste des postes").
 	        </p>
-	    </util:help>
+        </util:help>
         <div class="row-fluid">
             <div class="span4">
                 <field:datetime dateTimePattern="${appliConfig_dateendcandidat_date_format}" field="dateEndCandidat" id="c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat" z="xv3Ez+7CNZDoJ3CxSSD83eMLqV8="/>
@@ -79,20 +81,20 @@
         <field:textarea field="texteMailCandidatReturnReceipt" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" z="user-managed"/>
         <field:textarea field="texteEnteteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" z="user-managed"/>
         <field:textarea field="textePiedpageMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable" z="user-managed"/>
-         <util:help>
-	        <p>Les codes  couleurs ci-dessous permettent aux managers et admins ()uniquement) de distinguer les candidatures marquées comme Vue, Vue_Incomplet, etc.
+        <util:help>
+            <p>Les codes  couleurs ci-dessous permettent aux managers et admins ()uniquement) de distinguer les candidatures marquées comme Vue, Vue_Incomplet, etc.
 	        </p>
-	    </util:help>
+        </util:help>
+        <util:help>
+            <p>Par défaut, les membres ne peuvent pas supprimer les rapports de commission qui sont uniquement en lecture seul.
+	        </p>
+            <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
+        </util:help>
+        <field:input field="colorCandidatureNonVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue" z="9ZGoi4SHWI1+elYQmJU+Txy4Yp0="/>
         <field:input field="colorCandidatureVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue" z="IRF9nWR/rjzjf2oSlgelWo5Aesc="/>
         <field:input field="colorCandidatureVueIncomplet" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet" z="jYQO1rZ98h3nCzevrtzO4VthQU0="/>
         <field:input field="colorCandidatureVueModifieDepuis" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis" z="TnUbt+9ScJK91KVpcN2SHNOwNCY="/>
         <field:input field="colorCandidatureVueIncompletModifieDepuis" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis" z="7Zk7y6kEyKZZb13EQIaSSajCkVM="/>
-        <field:input field="colorCandidatureNonVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue" z="9ZGoi4SHWI1+elYQmJU+Txy4Yp0="/>
-        <util:help>
-	        <p>Par défaut, les membres ne peuvent pas supprimer les rapports de commission qui sont uniquement en lecture seul.
-	        </p>
-	        <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
-	    </util:help>
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
