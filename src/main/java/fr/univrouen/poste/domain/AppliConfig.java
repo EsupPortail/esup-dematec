@@ -95,6 +95,13 @@ public class AppliConfig {
 	
 	private static Boolean cacheMembreSupprReviewFile;
 	
+	private static Long cacheCandidatureFileMoSizeMax; 
+	
+	private static Long cacheCandidatureNbFileMax; 
+	
+	private static String cacheCandidatureContentTypeRestrictionRegexp; 
+	
+	private static String cacheTexteAlertRestrictionTailleContentType;
 	
 	
     @Temporal(TemporalType.TIMESTAMP)
@@ -152,6 +159,8 @@ public class AppliConfig {
     @Column(columnDefinition="TEXT")
     private String texteMailActivationMembre;
     
+    @Column
+    private Boolean membreSupprReviewFile;
     
     // Candidat
     
@@ -196,7 +205,16 @@ public class AppliConfig {
     private String colorCandidatureVueIncompletModifieDepuis;
     
     @Column
-    private Boolean membreSupprReviewFile;
+	private Long candidatureFileMoSizeMax; 
+	
+    @Column
+	private Long candidatureNbFileMax; 
+	
+    @Column(columnDefinition="TEXT")
+	private String candidatureContentTypeRestrictionRegexp; 
+	
+    @Column(columnDefinition="TEXT")
+	private String texteAlertRestrictionTailleContentType;
     
     
     public void setTitre(String titre) {
@@ -719,5 +737,58 @@ public class AppliConfig {
     	return cacheMembreSupprReviewFile;
 	}
 
+	
+	public static Long getCacheCandidatureFileMoSizeMax() {
+    	if(cacheCandidatureFileMoSizeMax == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheCandidatureFileMoSizeMax = configs.get(0).getCandidatureFileMoSizeMax();		
+    		} 
+    		if(cacheCandidatureFileMoSizeMax == null) {
+    			cacheCandidatureFileMoSizeMax = new Long(-1);
+    		}
+    	}
+    	return cacheCandidatureFileMoSizeMax;
+    }
+	
+	
+	public static Long getCacheCandidatureNbFileMax() {
+    	if(cacheCandidatureNbFileMax == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheCandidatureNbFileMax = configs.get(0).getCandidatureNbFileMax();		
+    		} 
+    		if(cacheCandidatureNbFileMax == null) {
+    			cacheCandidatureNbFileMax = new Long(-1);
+    		}
+    	}
+    	return cacheCandidatureNbFileMax;
+    }
+	
+	public static String getCacheCandidatureContentTypeRestrictionRegexp() {
+    	if(cacheCandidatureContentTypeRestrictionRegexp == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheCandidatureContentTypeRestrictionRegexp = configs.get(0).getCandidatureContentTypeRestrictionRegexp();		
+    		} 
+    		if(cacheCandidatureContentTypeRestrictionRegexp == null) {
+    			cacheCandidatureContentTypeRestrictionRegexp = ".*";
+    		}
+    	}
+    	return cacheCandidatureContentTypeRestrictionRegexp;
+    }
+	
+	public static String getCacheTexteAlertRestrictionTailleContentType() {
+    	if(cacheTexteAlertRestrictionTailleContentType == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheTexteAlertRestrictionTailleContentType = configs.get(0).getTexteAlertRestrictionTailleContentType();		
+    		} 
+    		if(cacheTexteAlertRestrictionTailleContentType == null) {
+    			cacheTexteAlertRestrictionTailleContentType = "";
+    		}
+    	}
+    	return cacheTexteAlertRestrictionTailleContentType;
+    }
 	
 }
