@@ -134,6 +134,13 @@ border-radius: 10px;
 padding: 10px;
 }
 
+/* Password */
+
+.errors {
+color: red;
+font-weight: bold;	
+}
+
 
 @media (min-width: 1200px) {
 	

@@ -23,6 +23,9 @@
     xmlns:jsp="http://java.sun.com/JSP/Page" 
     xmlns:spring="http://www.springframework.org/tags" version="2.0">
     
+
+    
+    
   <jsp:output omit-xml-declaration="yes"/>
   <div id="_title_div">
     <h4>Modification du password</h4>
@@ -58,4 +61,5 @@
       <form:errors cssClass="errors text-error" delimiter="&lt;p/&gt;"/>
     </form:form>
   </div>
+
 </div>
