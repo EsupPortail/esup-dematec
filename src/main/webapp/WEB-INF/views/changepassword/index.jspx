@@ -18,48 +18,64 @@
     limitations under the License.
 
 -->
-<div xmlns:c="http://java.sun.com/jsp/jstl/core" 
-    xmlns:form="http://www.springframework.org/tags/form" 
-    xmlns:jsp="http://java.sun.com/JSP/Page" 
-    xmlns:spring="http://www.springframework.org/tags" version="2.0">
-    
+<div xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:form="http://www.springframework.org/tags/form"
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:spring="http://www.springframework.org/tags" version="2.0">
 
-    
-    
-  <jsp:output omit-xml-declaration="yes"/>
-  <div id="_title_div">
-    <h4>Modification du password</h4>
-    <spring:url value="/changepassword" var="form_url"/>
-    <form:form action="update" method="POST" commandName="changePasswordForm">
-      <br/>
-      <div id="changepassword_oldpassword">
-        <label for="_oldpassword_id">Password actuel:</label>
-        <form:password cssStyle="width:250px" id="_changepassword_oldpassword" maxlength="30" path="oldPassword"/>
-        <br/>
-        <form:errors cssClass="errors" path="oldPassword"/>
-      </div>
-      <br/>
-      <div id="changepassword_newpassword">
-        <label for="_newpassword_id">Nouveau Password:</label>
-        <form:password cssStyle="width:250px" id="_changepassword_newpassword" maxlength="30" path="newPassword"/>
-        <br/>
-        <form:errors cssClass="errors" path="newPassword"/>
-      </div>
-      <br/>
-      <div id="changepassword_newpasswordagain">
-        <label for="_newpasswordagain_id">Nouveau Password (répéter):</label>
-        <form:password cssStyle="width:250px" id="_changepassword_newpasswordagain" maxlength="30" path="newPasswordAgain"/>
-        <br/>
-        <form:errors cssClass="errors" path="newPasswordAgain"/>
-      </div>
-      <br/><br/>
-      <div class="submit" id="changepassword_submit">
-        
-        <input id="proceed" type="submit" value="Enregistrer" class="btn btn-success"/>
-      </div>
-      <br/>
-      <form:errors cssClass="errors text-error" delimiter="&lt;p/&gt;"/>
-    </form:form>
-  </div>
+
+
+
+	<jsp:output omit-xml-declaration="yes" />
+	<div id="_title_div">
+		<h4>Modification du password</h4>
+		<spring:url value="/changepassword" var="form_url" />
+		<form:form action="update" method="POST"
+			commandName="changePasswordForm">
+			<div class="password-container">
+				<br />
+				<div id="changepassword_oldpassword">
+					<label for="_oldpassword_id">Password actuel:</label>
+					<form:password cssStyle="width:250px"
+						id="_changepassword_oldpassword" maxlength="30" path="oldPassword" />
+					<br />
+					<form:errors cssClass="errors" path="oldPassword" />
+				</div>
+				<br />
+				<div id="changepassword_newpassword">
+					<label for="_newpassword_id">Nouveau Password:</label>
+					<form:password cssStyle="width:250px"
+						id="_changepassword_newpassword" maxlength="30" path="newPassword"
+						cssClass="strong-password" />
+					<br />
+					<form:errors cssClass="errors" path="newPassword" />
+				</div>
+				<br />
+				<div id="changepassword_newpasswordagain">
+					<label for="_newpasswordagain_id">Nouveau Password
+						(répéter):</label>
+					<form:password cssStyle="width:250px"
+						id="_changepassword_newpasswordagain" maxlength="30"
+						path="newPasswordAgain" />
+					<br />
+					<form:errors cssClass="errors" path="newPasswordAgain" />
+				</div>
+				<br />
+				<br />
+				<div class="submit" id="changepassword_submit">
+
+					<input id="proceed" type="submit" value="Enregistrer"
+						class="btn btn-success" />
+				</div>
+				<br />
+				<form:errors cssClass="errors text-error" delimiter="&lt;p/&gt;" />
+				<div class="strength-indicator">
+					<span id="password-robust">Robustesse du password</span>
+					<div class="meter"><!--  --></div>
+					Un password robuste doit contenir entre 8 et 16 caractères et proposer des majuscules, minuscules, chiffres et caractères spéciaux.
+				</div>
+			</div>
+		</form:form>
+	</div>
 
 </div>

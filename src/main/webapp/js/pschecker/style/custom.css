@@ -1,0 +1,13 @@
+.meter{
+	position: absolute;
+	left: 400px;
+	top: 25px;
+	left: 420px;
+	line-height: 18px;
+}
+.form-horizontal .control-label {
+	padding-top: 0;
+}
+.panel-body h4{
+	margin-bottom: 25px;
+}

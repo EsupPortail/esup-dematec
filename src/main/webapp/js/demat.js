@@ -8,7 +8,12 @@
 				alert('Merci de saisir un password contenant au moins 6 caractères.');
 				 event.preventDefault();
 			} 
-    	});  
+    	});
+    	
+    	$('.password-container').pschecker({ 
+    	});
+
+    	
     });  
     
     

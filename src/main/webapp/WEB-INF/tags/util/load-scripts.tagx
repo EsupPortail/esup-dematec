@@ -8,15 +8,18 @@
   <spring:url value="/resources/css/bootstrap.min.css" var="bootstrap_css_url" />
   <spring:url value="/resources/css/bootstrap-responsive.min.css" var="bootstrap_responsive_css_url" />
   <spring:url value="/resources/css/docs.css" var="docs_css_url" />
+  <spring:url value="/resources/js/pschecker/style/style.css" var="pschecker_style_css_url" />
   <spring:url value="/resources/css/demat.css" var="demat_css_url" />
   <spring:url value="/resources/js/jquery-1.9.0.min.js" var="jquery_url" />
   <spring:url value="/resources/js/bootstrap.min.js" var="bootstrap_url" />
+  <spring:url value="/resources/js/pschecker/js/pschecker.js" var="pschecker_url" />
   <spring:url value="/resources/js/demat.js" var="demat_js_url" />
   <spring:url value="/resources/images/favicon.ico" var="favicon" />
   
   <link rel="stylesheet" type="text/css" href="${bootstrap_css_url}" />
   <link rel="stylesheet" type="text/css" href="${bootstrap_responsive_css_url}" />
   <link rel="stylesheet" type="text/css" href="${docs_css_url}" />
+  <link rel="stylesheet" type="text/css" href="${pschecker_style_css_url}" />
   <link rel="stylesheet" type="text/css" href="${demat_css_url}" />
   
   <link rel="SHORTCUT ICON" href="${favicon}" />
@@ -24,6 +27,7 @@
 
   <script src="${jquery_url}" type="text/javascript"><!-- required for FF3 and Opera --></script>
   <script src="${bootstrap_url}" type="text/javascript"><!-- required for FF3 and Opera --></script>
+  <script src="${pschecker_url}" type="text/javascript"><!-- required for FF3 and Opera --></script>
   <script src="${demat_js_url}" type="text/javascript"><!-- required for FF3 and Opera --></script>
   
 </jsp:root>

@@ -136,11 +136,24 @@ padding: 10px;
 
 /* Password */
 
-.errors {
+.password-container .errors {
 color: red;
 font-weight: bold;	
 }
 
+.password-container #password-robust {
+font-weight: bold;
+color: #800;
+text-decoration: underline;
+}
+
+.password-container .meter {
+margin: 5px;
+}
+
+.password-container .strength-indicator {
+width: 300px;
+}
 
 @media (min-width: 1200px) {
 	
