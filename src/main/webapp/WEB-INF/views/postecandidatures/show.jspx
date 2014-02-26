@@ -49,6 +49,16 @@
 			});
 			</script>
 	    </c:if>
+	    
+	    <c:if test="${not empty param.filename_already_used}">
+			<c:set var="alertFilenameAlreadyUsed" value="Un fichier de même nom existe déjà !"/>
+		    <script>
+		    var alertRestriction = '${alertFilenameAlreadyUsed}';
+			$(document).ready(function(){
+				alert(alertRestriction);
+			});
+			</script>
+	    </c:if>
 
         <c:if test="${not empty postecandidature.candidatureFiles}">
             <table class="table  table-bordered table-striped">

@@ -212,49 +212,64 @@ public class MyPosteCandidatureController {
 		// sometimes file is null here, but I don't know how to reproduce this issue ... maybe that can occur only with some specifics browsers ?
 		if(file != null) {
 			String filename = file.getOriginalFilename();
-			Long fileSize = file.getSize();
 			
-			if(fileSize != 0) {
-				String contentType = file.getContentType();
+			boolean filenameAlreadyUsed = false;
+			for(PosteCandidatureFile pcFile : posteCandidature.getCandidatureFiles()) {
+				if(pcFile.getFilename().equals(filename)) {
+					filenameAlreadyUsed = true;
+					break;
+				}
+			}		
+			
+			if(filenameAlreadyUsed) {
+				uiModel.addAttribute("filename_already_used", filename);
+				logger.warn("Upload Restriction sur '" + filename + "' un fichier de même nom existe déjà pour une candidature de " + posteCandidature.getCandidat().getEmailAddress());
+			} else {
 				
-				logger.info("Try to upload file '" + filename + "' with size=" + fileSize + " and contentType=" + contentType);
+				Long fileSize = file.getSize();
 				
-				Long maxFileMoSize = AppliConfig.getCacheCandidatureFileMoSizeMax();
-				Long maxFileSize = maxFileMoSize*1024*1024;
-				String mimeTypeRegexp = AppliConfig.getCacheCandidatureContentTypeRestrictionRegexp();
+				if(fileSize != 0) {
+					String contentType = file.getContentType();
+					
+					logger.info("Try to upload file '" + filename + "' with size=" + fileSize + " and contentType=" + contentType);
+					
+					Long maxFileMoSize = AppliConfig.getCacheCandidatureFileMoSizeMax();
+					Long maxFileSize = maxFileMoSize*1024*1024;
+					String mimeTypeRegexp = AppliConfig.getCacheCandidatureContentTypeRestrictionRegexp();
+					
+					boolean sizeRestriction = fileSize > maxFileSize;
+					boolean contentTypeRestriction = !contentType.matches(mimeTypeRegexp);
+					
+					
+					if(sizeRestriction || contentTypeRestriction) {
+						String restriction = sizeRestriction ? "SizeRestriction" : "";
+						restriction = contentTypeRestriction ? restriction + "ContentTypeRestriction" : restriction;
+						uiModel.addAttribute("upload_restricion_size_contentype", restriction);
+						logger.info("addFile - upload restriction sur " + filename + "' avec taille=" + fileSize + " et contentType=" + contentType + " pour une candidature de " + posteCandidature.getCandidat().getEmailAddress());
+					} else {			
+						InputStream inputStream = file.getInputStream();
+						//byte[] bytes = IOUtils.toByteArray(inputStream);
 				
-				boolean sizeRestriction = fileSize > maxFileSize;
-				boolean contentTypeRestriction = !contentType.matches(mimeTypeRegexp);
+						posteCandidatureFile.setFilename(filename);
+						posteCandidatureFile.setFileSize(fileSize);
+						posteCandidatureFile.setContentType(contentType);
+						logger.info("Upload and set file in DB with filesize = " + fileSize);
+						posteCandidatureFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
+						posteCandidatureFile.getBigFile().persist();
 				
+						Calendar cal = Calendar.getInstance();
+						Date currentTime = cal.getTime();
+						posteCandidatureFile.setSendTime(currentTime);
 				
-				if(sizeRestriction || contentTypeRestriction) {
-					String restriction = sizeRestriction ? "SizeRestriction" : "";
-					restriction = contentTypeRestriction ? restriction + "ContentTypeRestriction" : restriction;
-					uiModel.addAttribute("upload_restricion_size_contentype", restriction);
-					logger.warn("Upload Restriction sur " + filename + "' avec taille=" + fileSize + " et contentType=" + contentType + " pour une candidature de " + posteCandidature.getCandidat().getEmailAddress());
-				} else {			
-					InputStream inputStream = file.getInputStream();
-					//byte[] bytes = IOUtils.toByteArray(inputStream);
-			
-					posteCandidatureFile.setFilename(filename);
-					posteCandidatureFile.setFileSize(fileSize);
-					posteCandidatureFile.setContentType(contentType);
-					logger.warn("Upload and set file in DB with filesize = " + fileSize);
-					posteCandidatureFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
-					posteCandidatureFile.getBigFile().persist();
-			
-					Calendar cal = Calendar.getInstance();
-					Date currentTime = cal.getTime();
-					posteCandidatureFile.setSendTime(currentTime);
-			
-					posteCandidature.getCandidatureFiles().add(posteCandidatureFile);
-			
-					posteCandidature.setModification(currentTime);
-			
-					posteCandidature.persist();
-			
-					logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
-					returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+						posteCandidature.getCandidatureFiles().add(posteCandidatureFile);
+				
+						posteCandidature.setModification(currentTime);
+				
+						posteCandidature.persist();
+				
+						logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+						returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+					}
 				}
 			}
 		} else {
@@ -287,32 +302,46 @@ public class MyPosteCandidatureController {
 			String filename = file.getOriginalFilename();
 			Long fileSize = file.getSize();
 			
-			if(fileSize != 0) {
-				String contentType = file.getContentType();
-				InputStream inputStream = file.getInputStream();
-				//byte[] bytes = IOUtils.toByteArray(inputStream);
-		
-				memberReviewFile.setFilename(filename);
-				memberReviewFile.setFileSize(fileSize);
-				memberReviewFile.setContentType(contentType);
-				logger.warn("Upload and set file in DB with filesize = " + fileSize);
-				memberReviewFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
-				memberReviewFile.getBigFile().persist();
-		
-				Calendar cal = Calendar.getInstance();
-				Date currentTime = cal.getTime();
-				memberReviewFile.setSendTime(currentTime);
-				
-				User currentUser = getCurrentUser();
-				memberReviewFile.setMember(currentUser);
-		
-				postecandidature.getMemberReviewFiles().add(memberReviewFile);
-		
-				//postecandidature.setModification(currentTime);
-		
-				postecandidature.persist();
-		
-				logService.logActionFile(LogService.UPLOAD_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
+			boolean filenameAlreadyUsed = false;
+			for(MemberReviewFile rFile : postecandidature.getMemberReviewFiles()) {
+				if(rFile.getFilename().equals(filename)) {
+					filenameAlreadyUsed = true;
+					break;
+				}
+			}		
+			
+			if(filenameAlreadyUsed) {
+				uiModel.addAttribute("filename_already_used", filename);
+				logger.info("addMemberReviewFile - upload restriction sur '" + filename + "' un fichier de même nom existe déjà pour une candidature de " + postecandidature.getCandidat().getEmailAddress());
+			} else {
+			
+				if(fileSize != 0) {
+					String contentType = file.getContentType();
+					InputStream inputStream = file.getInputStream();
+					//byte[] bytes = IOUtils.toByteArray(inputStream);
+			
+					memberReviewFile.setFilename(filename);
+					memberReviewFile.setFileSize(fileSize);
+					memberReviewFile.setContentType(contentType);
+					logger.info("Upload and set file in DB with filesize = " + fileSize);
+					memberReviewFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
+					memberReviewFile.getBigFile().persist();
+			
+					Calendar cal = Calendar.getInstance();
+					Date currentTime = cal.getTime();
+					memberReviewFile.setSendTime(currentTime);
+					
+					User currentUser = getCurrentUser();
+					memberReviewFile.setMember(currentUser);
+			
+					postecandidature.getMemberReviewFiles().add(memberReviewFile);
+			
+					//postecandidature.setModification(currentTime);
+			
+					postecandidature.persist();
+			
+					logService.logActionFile(LogService.UPLOAD_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
+				}
 			}
 		} else {
 			String userId = SecurityContextHolder.getContext().getAuthentication().getName();
