@@ -117,7 +117,7 @@ http://localhost:8080/EsupDematEC/changepassword/index \n
 <span><a href="http://www.esup-portail.org/">Université ESUP</a></span> - 
 <span>Direction des Ressources Humaines</span></footer><small id="mention-legale">   
 <p>Les informations recueillies font l’objet d’un traitement informatique destiné à la gestion dématérialisée des campagnes de recrutement      d''Enseignants-Chercheurs &amp; d''Attachés Temporaires d''Enseignement et de Recherche (ATER).         </p>        
-<p>     Nous vous informons que les données vous concernant sont        informatisées. Elles ne sont pas transmises à des tiers et seront traitées de façon confidentielle. Ces données sont conservées pour la durée de la     campagne de recrutement.        </p>        
+<p>     Nous vous informons que les données vous concernant sont        informatisées. Elles ne sont pas transmises à des tiers et seront traitées de façon confidentielle. Ces données sont conservées 5 ans.        </p>        
 <p>Conformément à la loi « informatique et libertés » du 6 janvier 1978 modifiée en 2004, vous bénéficiez d’un droit d’accès        et de rectification aux informations qui vous concernent, que vous pouvez exercer en vous adressant à :     </p>        
 <p>*** Adresse de l''université *** </p></small>', 
 
