@@ -53,6 +53,7 @@ public class GalaxieExcelParser {
 		for (String cellName : cellsHead) {
 			cellsPosition.put(cellName, new Long(p++));
 		}
+		galaxieMappingService.checkCellsHead(cellsPosition);
 
 		for (List<String> row : cells) {
 
@@ -67,7 +68,7 @@ public class GalaxieExcelParser {
 					logger.debug("can't get " + cellName + " for this row in excel file ...");
 				}
 			}
-
+			
 			TypedQuery<GalaxieEntry> query = GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat(), null, null);
 			if (query.getResultList().isEmpty()) {
 				galaxieEntry.persist();

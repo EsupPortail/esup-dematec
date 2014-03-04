@@ -17,11 +17,19 @@
  */
 package fr.univrouen.poste.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
 import fr.univrouen.poste.domain.GalaxieEntry;
 
 public class GalaxieMappingService {
 
-
+	private final Logger logger = Logger.getLogger(getClass());
+	
     private String id_numemploi = "dummy";
     private String id_numCandidat = "dummy";
     private String id_civilite = "dummy";
@@ -72,6 +80,27 @@ public class GalaxieMappingService {
         if (id_email.equals(cellName)) galaxieEntry.setEmail(cellValue.trim());
         if (id_localisation.equals(cellName)) galaxieEntry.setLocalisation(cellValue.trim());
         if (id_profil.equals(cellName)) galaxieEntry.setProfil(cellValue.trim());
+	}
+
+	public void checkCellsHead(Map<String, Long> cellsPosition) {
+		
+		List<String> columnsNotFound = new ArrayList<String>();
+		String[] columnNamesRequired = {id_numemploi, id_numCandidat, id_email};
+		
+		for(String columnName: columnNamesRequired) {
+			if(!cellsPosition.keySet().contains(columnName)) {
+				columnsNotFound.add(columnName);
+			}
+		}
+		
+		if(!columnsNotFound.isEmpty()) {
+			String errorMsg = "La (les) colonne(s) " + StringUtils.join(columnsNotFound, ", ") + 
+					" est (sont) manquante(s) dans le fichier Excel fourni. Les colonnes " + StringUtils.join(columnNamesRequired, ", ") + 
+					" sont obligatoires ; ces libellés étant à configurer pour chaque campagne dans applicationContext-galaxie.xml" +
+					" , ce en fonction de la structure des fichiers Excel Galaxie.";
+			logger.error(errorMsg);
+			throw new RuntimeException(errorMsg);
+		}
 	}
 	
 }
