@@ -29,6 +29,13 @@
         </sec:authorize>
     </c:set>
     
+    <c:if test="${hbm2ddlAuto == 'create' }">
+        <div class="alert alert-error">
+           <p>Votre fichier persistence.xml présente la propriété hibernate.hbm2ddl.auto à <span class="label label-important">create</span>.</p>
+           <p>Si vous ne modifiez pas cette propriété à <span class="label label-important">update</span>, votre base de données sera écrasée au prochain redémarrage de l'application !</p> 
+        </div>
+    </c:if>
+    
     <c:if test="${userName == 'admin' }">
         <div class="alert alert-error">
             <spring:url var="usersUrl" value="/admin/users" />
@@ -37,7 +44,7 @@
             <p>Pour ce faire, vous pouvez modifier ces 2 champs (email+password) directement via le menu <a href="${usersUrl}">Utilisateurs</a> ; déconnectez-vous et reconnectez-vous alors de suite avec ce nouvel identifiant.</p>
         </div>
     </c:if>
-
+    
 	<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
 		<spring:url var="logoEsupDemat" value="/resources/images/logo-esup-dematec.png" />
 		<h3>

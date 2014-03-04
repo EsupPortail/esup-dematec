@@ -18,8 +18,13 @@
 package fr.univrouen.poste.web.admin;
 
 import java.io.IOException;
-import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
+import org.hibernate.cfg.Settings;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +35,9 @@ import fr.univrouen.poste.domain.AppliConfig;
 @Controller
 public class IndexController {
 
+    @PersistenceContext
+    transient EntityManager entityManager;
+    
 	@RequestMapping
 	public String index(Model uiModel) throws IOException {
 
@@ -38,8 +46,19 @@ public class IndexController {
 
 		uiModel.addAttribute("textePremierePageCandidat", textePremierePageCandidat);
 		uiModel.addAttribute("textePremierePageMembre", textePremierePageMembre);
-
+		
+		String hbm2ddlAuto = getHbm2ddlAuto();
+		uiModel.addAttribute("hbm2ddlAuto", hbm2ddlAuto);
+		
 		return "index";
+	}
+
+	private String getHbm2ddlAuto() {
+		Session session = entityManager.unwrap(Session.class);
+		SessionFactoryImpl sessionImpl = (SessionFactoryImpl)session.getSessionFactory();
+		Settings setting = sessionImpl.getSettings();
+		String hbm2ddlAuto = setting.isAutoCreateSchema() ? "create" : "update";
+		return hbm2ddlAuto;
 	}
 
 }
