@@ -17,6 +17,7 @@
  */
 table {
 font-size: 14px;
+empty-cells: show;
 }
 
 label {

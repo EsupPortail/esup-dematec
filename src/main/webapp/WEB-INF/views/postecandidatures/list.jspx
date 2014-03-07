@@ -128,6 +128,7 @@
     </page:list>
     
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
+      <div id="demat-legende">
        	<hr/>
        	<i>Légende :</i>
   		<div id="legendColor">
@@ -160,6 +161,6 @@
 			}).text("");
 		});
 		</script>
-        
+       </div>
     </sec:authorize>
 </div>
