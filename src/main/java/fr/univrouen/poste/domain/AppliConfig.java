@@ -101,6 +101,7 @@ public class AppliConfig {
 	
 	private static String cacheCandidatureContentTypeRestrictionRegexp; 
 	
+	private static Boolean cacheCandidatureRecevableDefault;
 	
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -210,6 +211,9 @@ public class AppliConfig {
 	
     @Column(columnDefinition="TEXT")
 	private String candidatureContentTypeRestrictionRegexp; 
+    
+    @Column
+    private Boolean candidatureRecevableDefault;
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -371,6 +375,11 @@ public class AppliConfig {
 			String candidatureContentTypeRestrictionRegexp) {
 		this.candidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
 		cacheCandidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
+	}
+
+	public void setCandidatureRecevableDefault(Boolean candidatureRecevableDefault) {
+		this.candidatureRecevableDefault = candidatureRecevableDefault;
+		cacheCandidatureRecevableDefault = candidatureRecevableDefault;
 	}
 
 	public static String getCacheTitre() {
@@ -789,6 +798,18 @@ public class AppliConfig {
     	}
     	return cacheCandidatureContentTypeRestrictionRegexp;
     }
-	
+
+	public static Boolean getCacheCandidatureRecevableDefault() {
+		if(cacheCandidatureRecevableDefault == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheCandidatureRecevableDefault = configs.get(0).getCandidatureRecevableDefault();		
+    		}
+    		if(cacheCandidatureRecevableDefault == null) {
+    			cacheCandidatureRecevableDefault = true;
+    		}
+    	}
+    	return cacheCandidatureRecevableDefault;
+	}
 	
 }

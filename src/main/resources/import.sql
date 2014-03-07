@@ -67,7 +67,8 @@ color_candidature_vue_modifie_depuis,
 membre_suppr_review_file,
 candidature_content_type_restriction_regexp,
 candidature_file_mo_size_max,
-candidature_nb_file_max
+candidature_nb_file_max,
+candidature_recevable_default
 ) 
 
 VALUES (
@@ -143,7 +144,9 @@ E'Merci de compléter le dossier de cette candidature via l''application de l''U
 
 false, 
 
-'.*', 1024, -1
+'.*', 1024, -1,
+
+true
 
 );
 

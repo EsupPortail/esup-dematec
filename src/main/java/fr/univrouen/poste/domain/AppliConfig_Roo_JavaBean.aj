@@ -132,4 +132,8 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.candidatureContentTypeRestrictionRegexp;
     }
     
+    public Boolean AppliConfig.getCandidatureRecevableDefault() {
+        return this.candidatureRecevableDefault;
+    }
+    
 }

@@ -33,6 +33,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
@@ -184,6 +185,9 @@ public class GalaxieEntryController {
                 Calendar cal = Calendar.getInstance();
                 Date currentTime = cal.getTime();
                 candidature.setCreation(currentTime);
+                
+                Boolean recevable = AppliConfig.getCacheCandidatureRecevableDefault();
+                candidature.setRecevable(recevable);
                 
            		candidature.persist();
            		galaxieEntry.setCandidature(candidature);
