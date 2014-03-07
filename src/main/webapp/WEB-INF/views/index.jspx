@@ -29,12 +29,14 @@
         </sec:authorize>
     </c:set>
     
-    <c:if test="${hbm2ddlAuto == 'create' }">
-        <div class="alert alert-error">
-           <p>Votre fichier persistence.xml présente la propriété hibernate.hbm2ddl.auto à <span class="label label-important">create</span>.</p>
-           <p>Si vous ne modifiez pas cette propriété à <span class="label label-important">update</span>, votre base de données sera écrasée au prochain redémarrage de l'application !</p> 
-        </div>
-    </c:if>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+	    <c:if test="${hbm2ddlAuto == 'create' }">
+	        <div class="alert alert-error">
+	           <p>Votre fichier persistence.xml présente la propriété hibernate.hbm2ddl.auto à <span class="label label-important">create</span>.</p>
+	           <p>Si vous ne modifiez pas cette propriété à <span class="label label-important">update</span>, votre base de données sera écrasée au prochain redémarrage de l'application !</p> 
+	        </div>
+	    </c:if>
+	</sec:authorize>
     
     <c:if test="${userName == 'admin' }">
         <div class="alert alert-error">
