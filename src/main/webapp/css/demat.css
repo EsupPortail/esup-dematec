@@ -155,6 +155,16 @@ margin: 5px;
 width: 300px;
 }
 
+.demat-finder-candidatures {
+width: 100%;	
+}
+
+.demat-finder-candidatures .demat-filter {
+border: 1px solid #ccc;
+padding: 10px;
+margin: 5px;
+}
+
 @media (min-width: 1200px) {
 	
 #main .bs-docs-sidenav {
