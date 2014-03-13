@@ -27,6 +27,9 @@ font-weight: bold;
 #main .row-fluid .span-demat-right {
 margin-left: 20px;
 }
+#main .row-fluid .span12#demat-right {
+margin-left: 0px;
+}
 
 #toggleSidebar {
     float:left;
