@@ -31,6 +31,10 @@
 		<put-attribute name="body" value="/WEB-INF/views/signup/error.jspx" />
 	</definition>
 	
+	<definition extends="public" name="signup/errorlink">
+		<put-attribute name="body" value="/WEB-INF/views/signup/error-link.jspx" />
+	</definition>
+	
     <definition extends="public" name="signup/initpassword">
         <put-attribute name="body" value="/WEB-INF/views/signup/initpassword.jspx" />
     </definition>

@@ -81,12 +81,12 @@ public class SignUpController {
 	    String textePremierePageAnonyme = AppliConfig.getCacheTextePremierePageAnonyme();
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
     	TypedQuery<User> query = User.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress, null, null);
-        User User=query.getSingleResult();
-        if(null!=User){
-        	if(User.getPassword() != null) {
-        		User.setActivationDate(new Date());
-        		User.setEnabled(true);
-        		User.merge();
+    	if(!query.getResultList().isEmpty()) {
+        	User user = query.getSingleResult();
+        	if(user.getPassword() != null) {
+        		user.setActivationDate(new Date());
+        		user.setEnabled(true);
+        		user.merge();
         		return "login";
         	} else {
         		UserRegistrationForm form = new UserRegistrationForm();
@@ -97,7 +97,7 @@ public class SignUpController {
         	}
         }
         else{
-        	return "signup/error";
+        	return "signup/errorlink";
         }
     }
     

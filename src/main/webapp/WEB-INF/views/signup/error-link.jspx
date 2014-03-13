@@ -24,7 +24,7 @@
   <jsp:directive.page contentType="text/html;charset=UTF-8"/>
   <jsp:output omit-xml-declaration="yes"/>
   <div id="_title_div">
-    <h3>L'activation du compte a échoué.</h3>
-    <span>Merci de retenter l'opération en vous assurant de bien saisir un même password (non vide) dans les 2 champs prévus à cet effet.</span>
+    <h3>Lien d'activation non reconnu.</h3>
+    <span>Merci de retenter l'opération en vous assurant de saisir un lien d'activation valide.</span>
   </div>
 </div>
