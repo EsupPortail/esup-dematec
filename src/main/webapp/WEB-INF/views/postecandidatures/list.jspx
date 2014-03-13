@@ -148,14 +148,16 @@
 		$(document).ready(function(){
 			var html_img_true= '<img src="${img_true_url}"/>';
 			var html_img_false= '<img src="${img_false_url}"/>';
+			
 			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
 			    return $(this).text() === "true";
 			}).css("font-weight", "bold").css("color", "green").css("text-align", "center").html(html_img_true);
-			/*
-			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
+			
+			/* pour colonne recevable uniquement (colonne 5) */
+			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td").filter(function() {
 			    return $(this).text() === "false";
 			}).css("font-weight", "bold").css("color", "red").css("text-align", "center").html(html_img_false);
-			*/
+			
 			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
 			    return $(this).text() === "false";
 			}).text("");
