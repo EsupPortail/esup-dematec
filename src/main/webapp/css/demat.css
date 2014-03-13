@@ -28,6 +28,12 @@ font-weight: bold;
 margin-left: 20px;
 }
 
+#toggleSidebar {
+    float:left;
+    color:#779DD7;
+    padding:2px 4px;
+}
+
 small#mention-legale {
 display: block;
 padding-top: 5px;

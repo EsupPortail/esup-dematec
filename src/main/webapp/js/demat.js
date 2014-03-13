@@ -19,7 +19,39 @@
     	
     	$('.password-container').pschecker({ 
     	});
+    	
+    	
+    	
+    	function toogleSidebarLeft() {
+    	    $('#toggleSidebar i').addClass('icon-chevron-right');
+    	    $('#toggleSidebar i').removeClass('icon-chevron-left');
+  	        $('#demat-right').removeClass('span9');
+	        $('#demat-right').addClass('span12');
+	        $('#demat-left').hide();
+	        sessionStorage.setItem("dematSidebar", "left");
+    	}
+    	
+    	function toogleSidebarRight() {
+    	    $('#toggleSidebar i').removeClass('icon-chevron-right');
+    	    $('#toggleSidebar i').addClass('icon-chevron-left');
+  	        $('#demat-right').removeClass('span12');
+	        $('#demat-right').addClass('span9');
+	        $('#demat-left').show();
+	        sessionStorage.setItem("dematSidebar", "right");
+    	}
+    	
+    	// toogle sur menu gauche    	
+    	$('#toggleSidebar').click(function() {
+    	  if ($('#toggleSidebar i').hasClass('icon-chevron-left')) {
+    		  toogleSidebarLeft();
+    	  } else {
+    		  toogleSidebarRight();
+    	  }
+    	});
 
+    	if(sessionStorage.getItem("dematSidebar") === "left") {
+    		toogleSidebarLeft();
+    	}
     	
     });  
     
