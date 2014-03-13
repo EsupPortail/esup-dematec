@@ -24,17 +24,40 @@ label {
 font-weight: bold;
 }
 
-#main .row-fluid .span-demat-right {
-margin-left: 20px;
+#main .row-fluid .span-demat-left {
+width: auto;
 }
+
+#main .row-fluid #demat-right {
+margin-left: 240px;
+width: auto;
+float: none;
+}
+
 #main .row-fluid .span12#demat-right {
 margin-left: 0px;
 }
 
+.demat6 {
+float: left;
+width: 48%;
+margin-right: 1%;
+}
+
+.demat-fluid {
+clear: right;
+}
+
+hr {
+width: 100%
+}
+
 #toggleSidebar {
-    float:left;
-    color:#779DD7;
-    padding:2px 4px;
+left: 10px;
+margin-top: -20px;
+position: absolute;
+color:#779DD7;
+padding:2px 4px;
 }
 
 small#mention-legale {
@@ -60,7 +83,7 @@ margin-bottom: 10px;
 }
 
 select[multiple] {
-    width: 300px;
+width: 300px;
 }
 
 .help .accordion-group {
@@ -83,14 +106,6 @@ border-radius: 4px;
 
 textarea[cols] {
 width: auto;
-}
-
-#main .row-fluid .span-demat-left {
-width: auto;
-}
-
-#main .row-fluid .span-demat-right {
-margin-left: 10px;
 }
 
 .sorting {
@@ -141,7 +156,8 @@ max-height: 600px;
 .demat-pc-manage {
 border: 1px solid #800;
 border-radius: 10px;
-padding: 10px;
+padding: 1%;
+width: 45%;
 }
 
 /* Password */
@@ -183,13 +199,8 @@ width: 228px;
 
 #main .row-fluid .span-demat-left {
 width: 228px;
-float: left;
 }
 
-#main .row-fluid .span-demat-right {
-float: left;
-margin-left: 20px;
-}
 }
 
 
@@ -200,6 +211,17 @@ margin-left: 20px;
 	max-width: 450px;
 }
 
+
+@media (max-width: 767px) {
+#main .row-fluid #demat-right {
+margin-left: 0px;
+}
+}
+@media (max-width: 979px) and (min-width: 768px){
+#main .row-fluid #demat-right {
+margin-left: 170px;
+}
+}
 
 @media (max-width: 480px) {
 	#_title_pl_fr_univrouen_poste_domain_User_id table th:nth-child(3),

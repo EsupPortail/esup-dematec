@@ -41,13 +41,13 @@
 	<tiles:insertAttribute name="header" ignore="true" />
 	<div id="main" class="container-fluid">
 		<div class="row-fluid">
-			<div class="span3 span-demat-left" id="demat-left">
+			<div class="span-demat-left" id="demat-left">
 				<tiles:insertAttribute name="menu" ignore="true" />
 			</div>
 			<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
 				<a id="toggleSidebar" href="#" class="toggles"><i class="icon-chevron-left"><!--  --></i></a>
 			</sec:authorize>
-			<div class="span9 span-demat-right" id="demat-right">
+			<div id="demat-right">
 				<tiles:insertAttribute name="body" />
 			</div>
 		</div>
