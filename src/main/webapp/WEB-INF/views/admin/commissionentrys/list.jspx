@@ -35,9 +35,8 @@
     </util:help>
     <c:if test="${not empty unknowMembres or not empty unknowPostes or not empty unknowCommission}">
         <div class="well">
-            <div class="row-fluid">
                 <c:if test="${not empty unknowCommission}">
-                    <div class="span8">
+                    <div>
                         <strong>Les éléments correspondants à ces affectations de membres (commission) sont manquants : </strong>
                         <c:forEach items="${unknowCommission}" var="commission">
                             <spring:url value="/admin/commissionentrys/${commission[2]}" var="commissionUrl"/>
@@ -45,7 +44,7 @@
                         </c:forEach>
                     </div>
                 </c:if>
-                <div class="span4">
+                <div>
                     <spring:url value="/admin/commissionentrys/generatecommissions" var="createCommissionUrl"/>
                     <a class="btn btn-large btn-danger" href="${createCommissionUrl}">
                         <i class="icon-play-circle">
@@ -53,7 +52,6 @@
                         </i>Générer
                     </a>
                 </div>
-            </div>
         </div>
     </c:if>
     <sec:authorize access="hasRole('ROLE_ADMIN')">
