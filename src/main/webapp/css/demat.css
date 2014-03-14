@@ -24,6 +24,11 @@ label {
 font-weight: bold;
 }
 
+#dematconfig .row-fluid {
+display: initial;
+}
+
+
 #main .row-fluid .span-demat-left {
 width: auto;
 }
