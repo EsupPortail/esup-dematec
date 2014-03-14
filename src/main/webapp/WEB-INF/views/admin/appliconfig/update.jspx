@@ -104,7 +104,9 @@
 	            	</li>
                 <li>
 		            	Le mime-type peut être une expression régulière. <b>.*</b> revient à accepter tous les types de fichiers, 
-		            	<b>application/pdf</b> uniquement les pdf, <b>application/pdf|application/zip</b> les pdf ou zip, <b>application/pdf|image/.*</b> les pdf et tous types d'images, etc.
+		            	<b>application/pdf</b> uniquement les pdf, <b>application/pdf|application/zip</b> les pdf ou zip, <b>application/pdf|image/.*</b> les pdf et tous types d'images, etc. 
+		            	<b>Attention</b> cependant, le mime-type est une information communiquée par le navigateur du client, et ce dernier ne le détectera pas forcément correctement. 
+		            	Aussi un pdf peut avoir un mime-type générique renseigné par le navigateur, comme <i>application/download</i> ou encore <i>application/binary</i> ...
 	            	</li>
             </ul>
             <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature. <b>-1</b> correspond à ne fixer aucune limite.</p>
