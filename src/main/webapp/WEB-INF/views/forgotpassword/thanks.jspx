@@ -20,7 +20,7 @@
 <div xmlns:c="http://java.sun.com/jsp/jstl/core" 
     xmlns:form="http://www.springframework.org/tags/form" 
     xmlns:jsp="http://java.sun.com/JSP/Page" 
-    xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    xmlns:spring="http://www.springframework.org/tags" >
   <jsp:output omit-xml-declaration="yes"/>
   <div id="_title_div">
     <h4>Si votre adresse est bien correcte et connue de l'application, un nouveau password vous a &amp;eacute;t&amp;eacute; envoy&amp;eacute; par mail.</h4>
