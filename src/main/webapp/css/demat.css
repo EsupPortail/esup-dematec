@@ -24,7 +24,7 @@ label {
 font-weight: bold;
 }
 
-.row-fluid {
+.row-fluid, .row-fluid:before, .row-fluid:after {
 display: initial;
 }
 
