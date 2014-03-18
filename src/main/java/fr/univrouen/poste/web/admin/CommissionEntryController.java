@@ -18,12 +18,9 @@
 package fr.univrouen.poste.web.admin;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
@@ -33,23 +30,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.CommissionEntry;
-import fr.univrouen.poste.domain.GalaxieEntry;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.CreateUserService;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.web.UserRegistrationForm;
+import fr.univrouen.poste.services.CommissionEntryService;
 
 @RequestMapping("/admin/commissionentrys")
 @Controller
 @RooWebScaffold(path = "admin/commissionentrys", formBackingObject = CommissionEntry.class)
 public class CommissionEntryController {
-	
+
 	@Autowired 
-	private CreateUserService createUserService;
-	
-	@Autowired 
-    private LogService logService;
+	CommissionEntryService commissionEntryService;
 	
     @RequestMapping(produces = "text/html")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
@@ -98,80 +87,14 @@ public class CommissionEntryController {
     
     
     @RequestMapping("/generatecommissions")
-    public String createCommission() {
+    public String generateCommissions() {
  
     	List<CommissionEntry> commissionEntrys = CommissionEntry.findAllCommissionEntrys();
         for(CommissionEntry  commissionEntry : commissionEntrys) {     	
-        	if(commissionEntry.getMembre()==null) {
-        		User membre = null;
-        		TypedQuery<User> query = User.findUsersByEmailAddress(commissionEntry.getEmail(), null, null);
-        		if(query.getResultList().isEmpty()) {
-
-	        		// new User 
-	        		UserRegistrationForm userRegistration = new UserRegistrationForm();
-	        		userRegistration.setEmailAddress(commissionEntry.getEmail());
-	        		membre = createUserService.createMembreUser(userRegistration);
-	        			
-	        		if(membre != null) {
-	        			// Membre
-	        			membre.setNom(commissionEntry.getNom());
-	        			membre.setPrenom(commissionEntry.getPrenom());
-	        			membre.persist();     
-	        			
-	        			logService.logImportCommission("Membre " + membre.getEmailAddress() + " créé.", LogService.IMPORT_SUCCESS);
-        			} else {
-        				String message = "Le mail n'a pu être envoyé pour le membre " + commissionEntry.getEmail();
-        				logService.logImportCommission(message, LogService.IMPORT_FAILED);
-					}
-        			
-        		} else {
-        			membre = query.getSingleResult();
-        		}
-        		if(membre.getIsCandidat()) {
-        			logService.logImportCommission("L'utilisateur " + membre.getEmailAddress() + " est déjà candidat, il ne peut également être membre dans l'application (avec ce même email).", LogService.IMPORT_FAILED);
-        		} else {
-        			commissionEntry.setMembre(membre);
-        		}
-        		commissionEntry.persist();       		
-        	}
-        	
-           	if(commissionEntry.getMembre() != null && commissionEntry.getPoste() == null) {
-           		PosteAPourvoir poste = null;
-           		TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(commissionEntry.getNumPoste(), null, null);
-           		if(query.getResultList().isEmpty()) {
-           			
-           			// new Poste
-           			poste = new PosteAPourvoir();
-           			poste.setNumEmploi(commissionEntry.getNumPoste());
-           			poste.persist();
-           			
-           			logService.logImportCommission("Poste " + poste.getNumEmploi() + " créé.", LogService.IMPORT_SUCCESS);
-           			
-           		} else {
-           			poste = query.getSingleResult();
-        		}
-           		commissionEntry.setPoste(poste);
-           		commissionEntry.persist(); 
-           	}
-           	
-           	if(commissionEntry.getMembre() != null && commissionEntry.getPoste() != null) {
-	           	if(commissionEntry.getPoste().getMembres() == null || !commissionEntry.getPoste().getMembres().contains(commissionEntry.getMembre())) {           		
-	           		PosteAPourvoir poste = commissionEntry.getPoste();
-	           		if(poste.getMembres() == null) 
-	           			poste.setMembres(new HashSet<User>());       			
-	           			
-	           		poste.getMembres().add(commissionEntry.getMembre());
-	           		poste.persist();  
-	           		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS);   		
-	           	}
-           	}
+        	commissionEntryService.generateCommission(commissionEntry);
         }
         
-
         return "redirect:/admin/logimportcommissions?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
     }
-    
-    
- 
     
 }
