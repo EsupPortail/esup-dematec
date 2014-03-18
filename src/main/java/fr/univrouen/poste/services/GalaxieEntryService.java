@@ -8,6 +8,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.GalaxieEntry;
@@ -25,6 +26,7 @@ public class GalaxieEntryService {
 	@Autowired 
     private LogService logService;
 	
+	@Transactional
 	public void generateCandidatPoste(GalaxieEntry galaxieEntry) {
 		if(galaxieEntry.getCandidat() == null) {
 			User candidat = null;
@@ -66,14 +68,9 @@ public class GalaxieEntryService {
 			} else {
 				candidat = query.getSingleResult();
 			}
-			 			
-			// re-attach galaxieEntry : galaxieEntry can be detached here because of a transaction rollback
-			// @see CreateUserService.createCandidatUser/createMembreUser
-			galaxieEntry.merge();
 			
 			if(candidat != null) {
 				galaxieEntry.setCandidat(candidat);
-				galaxieEntry.persist();
 			}
 		}
 		
@@ -95,7 +92,6 @@ public class GalaxieEntryService {
 				poste = query.getSingleResult();
 			}
 			galaxieEntry.setPoste(poste);
-			galaxieEntry.persist(); 
 		}
 		
 		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
@@ -113,8 +109,7 @@ public class GalaxieEntryService {
 		    candidature.setRecevable(recevable);
 		    
 			candidature.persist();
-			galaxieEntry.setCandidature(candidature);
-			galaxieEntry.persist();    
+			galaxieEntry.setCandidature(candidature);   
 			
 			logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
 			
