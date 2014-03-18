@@ -54,8 +54,7 @@ public class GalaxieEntryService {
 			        		candidat.setCivilite(galaxieEntry.getCivilite());
 			        		candidat.setEmailAddress(galaxieEntry.getEmail());
 			        		candidat.setNom(galaxieEntry.getNom());
-			        		candidat.setPrenom(galaxieEntry.getPrenom());
-			        		candidat.persist();    
+			        		candidat.setPrenom(galaxieEntry.getPrenom());   
 			        		
 			        		logService.logImportGalaxie("Candidat " + candidat.getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
 		        		} else {
