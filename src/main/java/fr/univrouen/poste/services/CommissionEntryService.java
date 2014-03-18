@@ -6,6 +6,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
@@ -21,7 +22,7 @@ public class CommissionEntryService {
 	@Autowired 
     private LogService logService;
 	
-
+	@Transactional
 	public void generateCommission(CommissionEntry commissionEntry) {
 		if(commissionEntry.getMembre()==null) {
 			User membre = null;
@@ -36,8 +37,7 @@ public class CommissionEntryService {
 				if(membre != null) {
 					// Membre
 					membre.setNom(commissionEntry.getNom());
-					membre.setPrenom(commissionEntry.getPrenom());
-					membre.persist();     
+					membre.setPrenom(commissionEntry.getPrenom());   
 					
 					logService.logImportCommission("Membre " + membre.getEmailAddress() + " créé.", LogService.IMPORT_SUCCESS);
 				} else {
@@ -52,8 +52,7 @@ public class CommissionEntryService {
 				logService.logImportCommission("L'utilisateur " + membre.getEmailAddress() + " est déjà candidat, il ne peut également être membre dans l'application (avec ce même email).", LogService.IMPORT_FAILED);
 			} else {
 				commissionEntry.setMembre(membre);
-			}
-			commissionEntry.persist();       		
+			}    		
 		}
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() == null) {
@@ -72,7 +71,6 @@ public class CommissionEntryService {
 				poste = query.getSingleResult();
 			}
 			commissionEntry.setPoste(poste);
-			commissionEntry.persist(); 
 		}
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() != null) {
@@ -82,7 +80,6 @@ public class CommissionEntryService {
 		   			poste.setMembres(new HashSet<User>());       			
 		   			
 		   		poste.getMembres().add(commissionEntry.getMembre());
-		   		poste.persist();  
 		   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS);   		
 		   	}
 		}
