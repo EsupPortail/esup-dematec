@@ -15,6 +15,7 @@ import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.exceptions.EsupDematEcException;
 import fr.univrouen.poste.web.UserRegistrationForm;
 
 @Service
@@ -34,14 +35,15 @@ public class GalaxieEntryService {
 			if(query.getResultList().isEmpty()) {
 				if(galaxieEntry.getEmail() == null || galaxieEntry.getEmail().isEmpty()) {
 					String message = "Le candidat " + galaxieEntry.getNumCandidat() + " n'a pas de mail de renseigné";
-					logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
+					throw new EsupDematEcException(message);
 				} else {
 					List<User> usersSameEmail = User.findUsersByEmailAddress(galaxieEntry.getEmail(), null, null).getResultList();
 					if(!usersSameEmail.isEmpty()) {
 						String message = "Le candidat " + galaxieEntry.getNumCandidat() + " a le même mail que le(s) utilisateur(s)";
-						for(User u : usersSameEmail) 
+						for(User u : usersSameEmail) {
 							message = message + " " + u.getEmailAddress() + "(n° candidat : " + u.getNumCandidat() + ")";
-						logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
+						}
+						throw new EsupDematEcException(message);
 					} else {
 		        		// new User 
 		        		UserRegistrationForm userRegistration = new UserRegistrationForm();
@@ -59,7 +61,7 @@ public class GalaxieEntryService {
 			        		logService.logImportGalaxie("Candidat " + candidat.getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
 		        		} else {
 		        			String message = "Le mail n'a pu être envoyé pour le candidat " + galaxieEntry.getNumCandidat() + " [" + galaxieEntry.getEmail() + "]";
-		        			logService.logImportGalaxie(message, LogService.IMPORT_FAILED);
+		        			throw new EsupDematEcException(message);
 						}		        			
 		    		}
 				}

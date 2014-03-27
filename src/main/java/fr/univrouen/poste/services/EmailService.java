@@ -22,6 +22,8 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public class EmailService implements Serializable {
 	
@@ -48,6 +50,7 @@ public class EmailService implements Serializable {
     	this.isEnabled = isEnabled;
     }
 	
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public boolean sendMessage(String mailFrom, String mailTo, String subject, String mailMessage) {
 		if(this.isEnabled) {
 	    	try {

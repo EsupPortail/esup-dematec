@@ -17,15 +17,12 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.persistence.TypedQuery;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
@@ -33,23 +30,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.GalaxieEntry;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.CreateUserService;
 import fr.univrouen.poste.services.GalaxieEntryService;
 import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.web.UserRegistrationForm;
 
 @RequestMapping("/admin/galaxieentrys")
 @Controller
 @RooWebScaffold(path = "admin/galaxieentrys", formBackingObject = GalaxieEntry.class)
 public class GalaxieEntryController {
 	
+	private final Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired 
 	GalaxieEntryService galaxieEntryService;
+	
+	@Autowired 
+    private LogService logService;
 	
     @RequestMapping(produces = "text/html")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
@@ -100,8 +96,13 @@ public class GalaxieEntryController {
     public String generateCandidatsPostes (Model uiModel) {
     	
     	List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findAllGalaxieEntrys();
-        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {			
-        	galaxieEntryService.generateCandidatPoste(galaxieEntry);          	
+        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
+        	try{
+        		galaxieEntryService.generateCandidatPoste(galaxieEntry);
+        	} catch(Exception e) {
+				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
+				logger.error("Import of " + galaxieEntry + " failed", e);
+        	}
         }      
 
         return "redirect:/admin/logimportgalaxies?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
