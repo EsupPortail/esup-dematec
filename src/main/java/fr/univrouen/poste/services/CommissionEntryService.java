@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.exceptions.EsupDematEcException;
 import fr.univrouen.poste.web.UserRegistrationForm;
 
 @Service
@@ -22,6 +23,10 @@ public class CommissionEntryService {
 	@Autowired 
     private LogService logService;
 	
+	/**
+	 * 	IMPORTANT : le commissionEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (commissionEntry.merge())
+		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
+	 */
 	@Transactional
 	public void generateCommission(CommissionEntry commissionEntry) {
 		if(commissionEntry.getMembre()==null) {
@@ -42,17 +47,18 @@ public class CommissionEntryService {
 					logService.logImportCommission("Membre " + membre.getEmailAddress() + " créé.", LogService.IMPORT_SUCCESS);
 				} else {
 					String message = "Le mail n'a pu être envoyé pour le membre " + commissionEntry.getEmail();
-					logService.logImportCommission(message, LogService.IMPORT_FAILED);
+					throw new EsupDematEcException(message);
 				}
 				
 			} else {
 				membre = query.getSingleResult();
 			}
 			if(membre.getIsCandidat()) {
-				logService.logImportCommission("L'utilisateur " + membre.getEmailAddress() + " est déjà candidat, il ne peut également être membre dans l'application (avec ce même email).", LogService.IMPORT_FAILED);
+				throw new EsupDematEcException("L'utilisateur " + membre.getEmailAddress() + " est déjà candidat, il ne peut également être membre dans l'application (avec ce même email).");
 			} else {
 				commissionEntry.setMembre(membre);
-			}    		
+			}    	
+			commissionEntry.merge();
 		}
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() == null) {
@@ -71,6 +77,8 @@ public class CommissionEntryService {
 				poste = query.getSingleResult();
 			}
 			commissionEntry.setPoste(poste);
+			
+			commissionEntry.merge();
 		}
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() != null) {
@@ -82,6 +90,8 @@ public class CommissionEntryService {
 		   		poste.getMembres().add(commissionEntry.getMembre());
 		   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS);   		
 		   	}
+		   	commissionEntry.merge();
 		}
+
 	}
 }

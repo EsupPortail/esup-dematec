@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
@@ -31,14 +32,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.services.CommissionEntryService;
+import fr.univrouen.poste.services.LogService;
 
 @RequestMapping("/admin/commissionentrys")
 @Controller
 @RooWebScaffold(path = "admin/commissionentrys", formBackingObject = CommissionEntry.class)
 public class CommissionEntryController {
-
+	
+	private final Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired 
 	CommissionEntryService commissionEntryService;
+	
+	@Autowired 
+    private LogService logService;
 	
     @RequestMapping(produces = "text/html")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
@@ -91,7 +98,12 @@ public class CommissionEntryController {
  
     	List<CommissionEntry> commissionEntrys = CommissionEntry.findAllCommissionEntrys();
         for(CommissionEntry  commissionEntry : commissionEntrys) {     	
-        	commissionEntryService.generateCommission(commissionEntry);
+        	try{
+        		commissionEntryService.generateCommission(commissionEntry);
+        	} catch(Exception e) {
+        		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
+				logger.error("Import of " + commissionEntry + " failed", e);
+        	}
         }
         
         return "redirect:/admin/logimportcommissions?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
