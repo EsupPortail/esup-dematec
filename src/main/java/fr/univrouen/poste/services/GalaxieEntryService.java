@@ -27,9 +27,15 @@ public class GalaxieEntryService {
 	@Autowired 
     private LogService logService;
 	
+	/**
+	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
+		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
+	 */
 	@Transactional
 	public void generateCandidatPoste(GalaxieEntry galaxieEntry) {
 
+		boolean galaxieEntryModified = false;
+		
 		if(galaxieEntry.getCandidat() == null) {
 			User candidat = null;
 			TypedQuery<User> query = User.findUsersByNumCandidat(galaxieEntry.getNumCandidat(), null, null);
@@ -74,6 +80,8 @@ public class GalaxieEntryService {
 			if(candidat != null) {
 				galaxieEntry.setCandidat(candidat);
 			}
+			
+			galaxieEntryModified = true;
 		}
 		
 		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() == null) {
@@ -94,6 +102,8 @@ public class GalaxieEntryService {
 				poste = query.getSingleResult();
 			}
 			galaxieEntry.setPoste(poste);
+			
+			galaxieEntryModified = true;
 		}
 		
 		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
@@ -115,10 +125,12 @@ public class GalaxieEntryService {
 			
 			logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
 			
+			galaxieEntryModified = true;
 		}
 		
-		// IMPORTANT : le galaxiesEntry ayant été récupéré dans un autre contexte transactionnel, on doti faire un merge ici.
-		galaxieEntry.merge();
+		if(galaxieEntryModified) {
+			galaxieEntry.merge();
+		}
 		
 	}
 }

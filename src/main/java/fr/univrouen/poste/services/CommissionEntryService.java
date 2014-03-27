@@ -29,6 +29,9 @@ public class CommissionEntryService {
 	 */
 	@Transactional
 	public void generateCommission(CommissionEntry commissionEntry) {
+
+		boolean commissionEntryModified = false;
+		
 		if(commissionEntry.getMembre()==null) {
 			User membre = null;
 			TypedQuery<User> query = User.findUsersByEmailAddress(commissionEntry.getEmail(), null, null);
@@ -58,7 +61,7 @@ public class CommissionEntryService {
 			} else {
 				commissionEntry.setMembre(membre);
 			}    	
-			commissionEntry.merge();
+			commissionEntryModified = true;
 		}
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() == null) {
@@ -78,7 +81,7 @@ public class CommissionEntryService {
 			}
 			commissionEntry.setPoste(poste);
 			
-			commissionEntry.merge();
+			commissionEntryModified = true;
 		}
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() != null) {
@@ -90,7 +93,11 @@ public class CommissionEntryService {
 		   		poste.getMembres().add(commissionEntry.getMembre());
 		   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS);   		
 		   	}
-		   	commissionEntry.merge();
+		   	commissionEntryModified = true;
+		}
+		
+		if(commissionEntryModified) {
+			commissionEntry.merge();
 		}
 
 	}
