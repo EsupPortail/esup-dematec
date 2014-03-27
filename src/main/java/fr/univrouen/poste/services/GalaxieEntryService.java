@@ -29,6 +29,7 @@ public class GalaxieEntryService {
 	
 	@Transactional
 	public void generateCandidatPoste(GalaxieEntry galaxieEntry) {
+
 		if(galaxieEntry.getCandidat() == null) {
 			User candidat = null;
 			TypedQuery<User> query = User.findUsersByNumCandidat(galaxieEntry.getNumCandidat(), null, null);
@@ -115,5 +116,9 @@ public class GalaxieEntryService {
 			logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
 			
 		}
+		
+		// IMPORTANT : le galaxiesEntry ayant été récupéré dans un autre contexte transactionnel, on doti faire un merge ici.
+		galaxieEntry.merge();
+		
 	}
 }
