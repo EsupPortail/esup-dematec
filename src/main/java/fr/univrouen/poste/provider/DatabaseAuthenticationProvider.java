@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
@@ -49,6 +50,7 @@ import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.utils.DateClotureChecker;
 
 
 @Service("databaseAuthenticationProvider")
@@ -56,14 +58,17 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 
 	private final Logger logger = Logger.getLogger(getClass());
 
-	@Autowired
+	@Resource
 	private LogService logService;
 
-	@Autowired
+	@Resource
 	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
 	
-	@Autowired
+	@Resource
 	private DatabaseUserDetailsService databaseUserDetailsService;
+	
+	@Resource
+	DateClotureChecker dateClotureChecker;
 
 	private List<String> ipsStart4AdminManagerAuthList;
 
@@ -151,42 +156,18 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 			}
 
 			// restriction dates accés pour candidats et membres 
-	        Date currentTime = new Date();     
-	        
-	        if(targetUser.getIsCandidat()) {
-		        // récupération candidatures candidat : auditionnable ?
-	        	boolean auditionnable = false;
-		        List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(targetUser).getResultList();
-		        for(PosteCandidature candidature: candidatures) {
-		        	auditionnable = auditionnable || candidature.getAuditionnable();
-		        }
-		        if(!auditionnable && !targetUser.isCandidatActif() && currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
-		        		!auditionnable && targetUser.isCandidatActif() && currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) {
-		        	logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-		        	logger.warn("User " + username + " tried to access to his candidat account but the dateEndCandidat is < current time");
-		        	throw new BadCredentialsException("La date de clôture des dépôts est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
-		        }   
-		        else if(auditionnable) {
-		        	Date dateEndCandidatAuditionnable = null;
-		        	for(PosteCandidature candidature: candidatures) {
-		        		Date datePosteAuditionnable = candidature.getPoste().getDateEndCandidatAuditionnable();
-		        		if(candidature.getAuditionnable() && (dateEndCandidatAuditionnable == null || datePosteAuditionnable.compareTo(dateEndCandidatAuditionnable) > 0 )) {
-		        			dateEndCandidatAuditionnable = datePosteAuditionnable;
-		        		}
-		        	}
-		        	if(dateEndCandidatAuditionnable == null || currentTime.compareTo(dateEndCandidatAuditionnable) > 0) {
-			        	logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			        	logger.warn("User " + username + " tried to access to his candidat account but all the dateEndCandidatAuditionnable for this account is < current time");
-			        	throw new BadCredentialsException("La date de clôture des dépôts pour les candidatures est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
-		        	}
-		        }
-	        }
-	        if(targetUser.getIsMembre() && currentTime.compareTo(AppliConfig.getCacheDateEndMembre()) > 0) {
-				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-				logger.warn("User " + username + " tried to access to his membre account but the dateEndMembre is < current time");
-				throw new BadCredentialsException("La date de clôture des consultations est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
-			}         
-	        
+			boolean isCurrentTimeOk4ThisCandidat = dateClotureChecker.isCurrentTimeOk4ThisCandidat(targetUser);
+			boolean isCurrentTimeOk4ThisMembre = dateClotureChecker.isCurrentTimeOk4ThisMembre(targetUser);
+			if(!isCurrentTimeOk4ThisCandidat && !isCurrentTimeOk4ThisMembre) {
+				if(targetUser.getIsCandidat() && !isCurrentTimeOk4ThisCandidat) {
+			        logger.warn("User " + username + " tried to access to his candidat account but the dateEndCandidat is < current time");
+			    }    	        
+		        if(targetUser.getIsMembre() && !isCurrentTimeOk4ThisMembre) {
+					logger.warn("User " + username + " tried to access to his membre account but the dateEndMembre is < current time");
+				}     
+		        logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
+		        throw new BadCredentialsException("La date de clôture des dépôts est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
+			}
 	        
 	        userDetails = databaseUserDetailsService.loadUserByUser(targetUser);
 

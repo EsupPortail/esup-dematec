@@ -71,6 +71,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 			authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
 		}
 		if (targetUser.getIsCandidat()) {
+			// TODO : check date
 			authorities.add(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
 		}
 		if (targetUser.getIsManager()) {
@@ -81,6 +82,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 			authorities.add(new GrantedAuthorityImpl("ROLE_SUPER_MANAGER"));
 		}
 		if (targetUser.getIsMembre()) {
+			// TODO : check date
 			authorities.add(new GrantedAuthorityImpl("ROLE_MEMBRE"));
 		}
 
