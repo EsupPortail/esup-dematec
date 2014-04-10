@@ -67,18 +67,22 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 		Boolean enabled;
 		
 		// Roles
-		if (targetUser.getIsAdmin())
+		if (targetUser.getIsAdmin()) {
 			authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
-		if (targetUser.getIsCandidat())
+		}
+		if (targetUser.getIsCandidat()) {
 			authorities.add(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
-		if (targetUser.getIsManager())
+		}
+		if (targetUser.getIsManager()) {
 			authorities.add(new GrantedAuthorityImpl("ROLE_MANAGER"));
+		}
 		if (targetUser.getIsSuperManager()) {
 			authorities.add(new GrantedAuthorityImpl("ROLE_MANAGER"));
 			authorities.add(new GrantedAuthorityImpl("ROLE_SUPER_MANAGER"));
 		}
-		if (targetUser.getIsMembre())
+		if (targetUser.getIsMembre()) {
 			authorities.add(new GrantedAuthorityImpl("ROLE_MEMBRE"));
+		}
 
 		// Enabled
 		enabled = targetUser.getEnabled();
