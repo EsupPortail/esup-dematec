@@ -29,7 +29,7 @@ public class CheckProfilSpringSecurityFilter extends GenericFilterBean {
 		if(!"/profilChoice".equals(request.getServletPath())
 			&& auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT")) 
 			&& auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"))) {
-				logger.warn(auth.getName() + " est authentifié et est à la fois membre et candidat, il faut qu'il choisisse un profil.");
+				logger.info(auth.getName() + " est authentifié et est à la fois membre et candidat, il faut qu'il choisisse un profil.");
 		        HttpServletResponse response = (HttpServletResponse) res;      
 	        response.sendRedirect(request.getContextPath() + "/profilChoice");
 		} else {

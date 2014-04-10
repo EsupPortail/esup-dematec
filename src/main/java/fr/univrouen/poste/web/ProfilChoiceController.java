@@ -20,6 +20,7 @@ package fr.univrouen.poste.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ProfilChoiceController {
 
+	private final Logger logger = Logger.getLogger(getClass());
+
     @RequestMapping
     public String profilChoice(@RequestParam(required=false) String profil) {
     	
@@ -40,6 +43,7 @@ public class ProfilChoiceController {
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(auth.getAuthorities());
     	
     	if(profil!=null) {
+			logger.info(auth.getName() + " a sélectionné le profil " + profil);
     		if("membre".equals(profil)) {
     			authorities.remove(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
     		}
