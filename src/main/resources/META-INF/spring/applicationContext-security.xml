@@ -41,6 +41,7 @@
         </session-management>
         <access-denied-handler error-page="/denied"/>
         <custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
+        <custom-filter ref="checkProfilFilter" after="SWITCH_USER_FILTER"/>
     </http>
 
     <!-- Configure Authentication mechanism -->
@@ -69,5 +70,7 @@
 		<beans:property name="exitUserUrl" value="/j_spring_security_exit_user" />
 		<beans:property name="targetUrl" value="/" />
 	</beans:bean>
+
+	<beans:bean id="checkProfilFilter" class="fr.univrouen.poste.provider.CheckProfilSpringSecurityFilter"/>
 
 </beans:beans>

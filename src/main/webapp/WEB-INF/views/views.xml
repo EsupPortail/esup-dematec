@@ -40,6 +40,10 @@
 	<definition extends="default" name="accessDeniedException">
 		<put-attribute name="body" value="/WEB-INF/views/accessDeniedException.jspx" />
 	</definition>
+	
+	<definition extends="public" name="profilChoice">
+		<put-attribute name="body" value="/WEB-INF/views/profil-choice.jspx" />
+	</definition>
 
 
 	<definition extends="public" name="login">
