@@ -41,6 +41,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -500,12 +502,19 @@ public class MyPosteCandidatureController {
 
 		List<PosteCandidature> postecandidatures = null;
 
-		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
-
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		String emailAddress = auth.getName();
 		User user = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		
+		boolean isAdmin = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_ADMIN"));
+		boolean isManager = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MANAGER"));
+		boolean isSuperManager = isManager || auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_SUPER_MANAGER"));
+		boolean isMembre = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"));
+		boolean isCandidat = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
 
 		// pagination only for admin / manager users ...
-		if (user.getIsAdmin() || user.getIsSuperManager() || user.getIsManager()) {
+		if (isAdmin || isManager) {
 
     		if(sortFieldName == null) 
             	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
@@ -527,7 +536,7 @@ public class MyPosteCandidatureController {
 			}
 		}
 
-		else if (user.getIsCandidat()) {
+		else if (isCandidat) {
 			postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList());
 			
 			// restrictions si phase auditionnable
@@ -542,7 +551,7 @@ public class MyPosteCandidatureController {
 			}
 		}
 
-		else if (user.getIsMembre()) {
+		else if (isMembre) {
 			Set<PosteAPourvoir> membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			if(postes != null && !postes.isEmpty()) {
 				membresPostes.retainAll(postes);
