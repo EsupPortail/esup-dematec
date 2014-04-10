@@ -26,7 +26,7 @@ public class CheckProfilSpringSecurityFilter extends GenericFilterBean {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		if(!"/profilChoice".equals(request.getServletPath())
+		if(!request.getServletPath().startsWith("/resources/") && !"/profilChoice".equals(request.getServletPath())
 			&& auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT")) 
 			&& auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"))) {
 				logger.info(auth.getName() + " est authentifié et est à la fois membre et candidat, il faut qu'il choisisse un profil.");
