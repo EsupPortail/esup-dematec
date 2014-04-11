@@ -41,6 +41,8 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 				auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MANAGER")))
 			return true;
 		
+		boolean isMembre = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"));
+		boolean isCandidat = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
 		
 		String permissionKey = (String) permission;
 
@@ -90,7 +92,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         		return user.getIsAdmin() || user.getIsManager() || user.getIsMembre() && poste.getMembres().contains(user) && pc.getRecevable();
 	        }
 	        
-	        if(user.getIsCandidat()) {
+	        if(isCandidat) {
 	        	if(pc.getCandidat().equals(user)) {
 	        		// restrictions si phase auditionnable
 	        		Date currentTime = new Date();     
@@ -103,7 +105,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        	}
 	        }  
 	        
-	        if("view".equals(permissionKey) && user.getIsMembre()) {
+	        if("view".equals(permissionKey) && isMembre) {
 	        		PosteAPourvoir poste = pc.getPoste();
 	        		return poste.getMembres().contains(user) && pc.getRecevable();
 	        }
