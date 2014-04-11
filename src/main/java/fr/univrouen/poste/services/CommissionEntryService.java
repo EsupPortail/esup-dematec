@@ -56,11 +56,7 @@ public class CommissionEntryService {
 			} else {
 				membre = query.getSingleResult();
 			}
-			if(membre.getIsCandidat()) {
-				throw new EsupDematEcException("L'utilisateur " + membre.getEmailAddress() + " est déjà candidat, il ne peut également être membre dans l'application (avec ce même email).");
-			} else {
-				commissionEntry.setMembre(membre);
-			}    	
+			commissionEntry.setMembre(membre); 	
 			commissionEntryModified = true;
 		}
 		
