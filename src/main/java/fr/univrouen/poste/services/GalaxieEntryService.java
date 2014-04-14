@@ -27,12 +27,13 @@ public class GalaxieEntryService {
 	@Autowired 
     private LogService logService;
 	
+	
 	/**
 	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
 		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
 	 */
 	@Transactional
-	public void generateCandidatPoste(GalaxieEntry galaxieEntry) {
+	public void generateCandidat(GalaxieEntry galaxieEntry) {
 
 		boolean galaxieEntryModified = false;
 		
@@ -83,6 +84,22 @@ public class GalaxieEntryService {
 			
 			galaxieEntryModified = true;
 		}
+			
+		if(galaxieEntryModified) {
+			galaxieEntry.merge();
+		}
+		
+	}
+	
+	
+	/**
+	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
+		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
+	 */
+	@Transactional
+	public void generatePoste(GalaxieEntry galaxieEntry) {
+
+		boolean galaxieEntryModified = false;
 		
 		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() == null) {
 			PosteAPourvoir poste = null;
@@ -105,6 +122,21 @@ public class GalaxieEntryService {
 			
 			galaxieEntryModified = true;
 		}
+		
+		if(galaxieEntryModified) {
+			galaxieEntry.merge();
+		}
+		
+	}
+	
+	/**
+	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
+		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
+	 */
+	@Transactional
+	public void generateCandidature(GalaxieEntry galaxieEntry) {
+
+		boolean galaxieEntryModified = false;
 		
 		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
 			

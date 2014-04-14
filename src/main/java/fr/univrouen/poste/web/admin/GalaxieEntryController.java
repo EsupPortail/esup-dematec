@@ -95,15 +95,35 @@ public class GalaxieEntryController {
     @RequestMapping("/generatecandidatspostes")
     public String generateCandidatsPostes (Model uiModel) {
     	
-    	List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findAllGalaxieEntrys();
+    	List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatIsNull().getResultList();
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
         	try{
-        		galaxieEntryService.generateCandidatPoste(galaxieEntry);
+        		galaxieEntryService.generateCandidat(galaxieEntry);
         	} catch(Exception e) {
 				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
 				logger.error("Import of " + galaxieEntry + " failed", e);
         	}
         }      
+        
+    	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByPosteIsNull().getResultList();
+        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
+        	try{
+        		galaxieEntryService.generatePoste(galaxieEntry);
+        	} catch(Exception e) {
+				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
+				logger.error("Import of " + galaxieEntry + " failed", e);
+        	}
+        }  
+        
+    	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatureIsNull().getResultList();
+        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
+        	try{
+        		galaxieEntryService.generateCandidature(galaxieEntry);
+        	} catch(Exception e) {
+				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
+				logger.error("Import of " + galaxieEntry + " failed", e);
+        	}
+        }  
 
         return "redirect:/admin/logimportgalaxies?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
     }

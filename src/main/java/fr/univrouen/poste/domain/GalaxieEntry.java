@@ -25,7 +25,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString(excludeFields = "candidat,poste,candidature")
-@RooJpaActiveRecord(finders = { "findGalaxieEntrysByNumEmploiAndNumCandidat", "findGalaxieEntrysByCandidat" })
+@RooJpaActiveRecord(finders = { "findGalaxieEntrysByNumEmploiAndNumCandidat", "findGalaxieEntrysByCandidat", "findGalaxieEntrysByCandidatIsNull", "findGalaxieEntrysByPosteIsNull", "findGalaxieEntrysByCandidatureIsNull" })
 public class GalaxieEntry {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "localisation", "profil", "candidat", "poste", "candidature", "numEmploi,numCandidat");
