@@ -17,9 +17,12 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
+import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.GalaxieEntryService;
 import fr.univrouen.poste.services.LogService;
 
@@ -116,12 +120,17 @@ public class GalaxieEntryController {
         }  
         
     	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatureIsNull().getResultList();
+    	Set<User> candidatureUsers = new HashSet<User>();
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
+        	candidatureUsers.add(galaxieEntry.getCandidat());
+        }
+        for(User user: candidatureUsers) {
+        	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidat(user).getResultList();
         	try{
-        		galaxieEntryService.generateCandidature(galaxieEntry);
+        		galaxieEntryService.generateCandidatures(galaxieEntrys);
         	} catch(Exception e) {
 				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + galaxieEntry + " failed", e);
+				logger.error("Import of " + galaxieEntrys + " failed", e);
         	}
         }  
 

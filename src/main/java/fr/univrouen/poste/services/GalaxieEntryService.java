@@ -34,8 +34,6 @@ public class GalaxieEntryService {
 	 */
 	@Transactional
 	public void generateCandidat(GalaxieEntry galaxieEntry) {
-
-		boolean galaxieEntryModified = false;
 		
 		if(galaxieEntry.getCandidat() == null) {
 			User candidat = null;
@@ -82,10 +80,6 @@ public class GalaxieEntryService {
 				galaxieEntry.setCandidat(candidat);
 			}
 			
-			galaxieEntryModified = true;
-		}
-			
-		if(galaxieEntryModified) {
 			galaxieEntry.merge();
 		}
 		
@@ -98,8 +92,6 @@ public class GalaxieEntryService {
 	 */
 	@Transactional
 	public void generatePoste(GalaxieEntry galaxieEntry) {
-
-		boolean galaxieEntryModified = false;
 		
 		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() == null) {
 			PosteAPourvoir poste = null;
@@ -120,10 +112,6 @@ public class GalaxieEntryService {
 			}
 			galaxieEntry.setPoste(poste);
 			
-			galaxieEntryModified = true;
-		}
-		
-		if(galaxieEntryModified) {
 			galaxieEntry.merge();
 		}
 		
@@ -134,34 +122,31 @@ public class GalaxieEntryService {
 		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
 	 */
 	@Transactional
-	public void generateCandidature(GalaxieEntry galaxieEntry) {
+	public void generateCandidatures(List<GalaxieEntry> galaxieEntries) {
 
-		boolean galaxieEntryModified = false;
-		
-		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
+		for(GalaxieEntry galaxieEntry : galaxieEntries) {
 			
-			// new Candidature
-			PosteCandidature candidature = new PosteCandidature();
-			candidature.setCandidat(galaxieEntry.getCandidat());
-			candidature.setPoste(galaxieEntry.getPoste());
-			
-		    Calendar cal = Calendar.getInstance();
-		    Date currentTime = cal.getTime();
-		    candidature.setCreation(currentTime);
-		    
-		    Boolean recevable = AppliConfig.getCacheCandidatureRecevableDefault();
-		    candidature.setRecevable(recevable);
-		    
-			candidature.persist();
-			galaxieEntry.setCandidature(candidature);   
-			
-			logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
-			
-			galaxieEntryModified = true;
-		}
-		
-		if(galaxieEntryModified) {
-			galaxieEntry.merge();
+			if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
+				
+				// new Candidature
+				PosteCandidature candidature = new PosteCandidature();
+				candidature.setCandidat(galaxieEntry.getCandidat());
+				candidature.setPoste(galaxieEntry.getPoste());
+				
+			    Calendar cal = Calendar.getInstance();
+			    Date currentTime = cal.getTime();
+			    candidature.setCreation(currentTime);
+			    
+			    Boolean recevable = AppliConfig.getCacheCandidatureRecevableDefault();
+			    candidature.setRecevable(recevable);
+			    
+				candidature.persist();
+				galaxieEntry.setCandidature(candidature);   
+				
+				logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
+				
+				galaxieEntry.merge();
+			}
 		}
 		
 	}
