@@ -1,11 +1,13 @@
 package fr.univrouen.poste.services;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +29,11 @@ public class GalaxieEntryService {
 	@Autowired 
     private LogService logService;
 	
+	@Autowired
+	EmailService emailService;
 	
 	/**
 	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
-		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
 	 */
 	@Transactional
 	public void generateCandidat(GalaxieEntry galaxieEntry) {
@@ -88,7 +91,6 @@ public class GalaxieEntryService {
 	
 	/**
 	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
-		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
 	 */
 	@Transactional
 	public void generatePoste(GalaxieEntry galaxieEntry) {
@@ -119,11 +121,14 @@ public class GalaxieEntryService {
 	
 	/**
 	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
-		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
 	 */
 	@Transactional
-	public void generateCandidatures(List<GalaxieEntry> galaxieEntries) {
+	public void generateCandidatures(User candidat) {
 
+		List<String> postes = new ArrayList<String>();
+		
+		List<GalaxieEntry> galaxieEntries = GalaxieEntry.findGalaxieEntrysByCandidat(candidat).getResultList();
+		
 		for(GalaxieEntry galaxieEntry : galaxieEntries) {
 			
 			if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
@@ -146,8 +151,20 @@ public class GalaxieEntryService {
 				logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
 				
 				galaxieEntry.merge();
+				
+				postes.add(candidature.getPoste().getNumEmploi());
 			}
 		}
+		
+		// send email notification    
+	    String mailTo = candidat.getEmailAddress();
+	    String mailFrom = AppliConfig.getCacheMailFrom();
+	    String mailSubject = AppliConfig.getCacheMailSubject();	    
+	    String mailMessage = AppliConfig.getCacheTexteMailNewCandidatures();
+
+	    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
+	    
+	    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 		
 	}
 }

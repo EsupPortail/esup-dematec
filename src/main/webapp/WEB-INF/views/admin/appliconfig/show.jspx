@@ -17,12 +17,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---><div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" >
+--><div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_AppliConfig" object="${appliconfig}" path="/admin/appliconfig" z="eUkHo/5guyBr9nNn9VYhU46+MVg=">
         <field:display field="titre" id="s_fr_univrouen_poste_domain_AppliConfig_titre" object="${appliconfig}" z="RWI+QSf/+G2hTYf864KxeNuIGjA="/>
         <field:display field="texteMailActivation" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailActivation" object="${appliconfig}" z="YP12Yig3xnrtcCp7Z33cwcdnZ9I="/>
+        <field:display field="texteMailNewCandidatures" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailNewCandidatures" object="${appliconfig}" z="u5by4F5tfoWRuiLkpEZ+xgRCOmA="/>
         <field:display field="texteMailPasswordOublie" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie" object="${appliconfig}" z="kQ7o8JqKOplUx4CpMDp1YIYoDAY="/>
         <field:display field="textePremierePageAnonyme" id="s_fr_univrouen_poste_domain_AppliConfig_textePremierePageAnonyme" object="${appliconfig}" z="u+HqPo+k7qXNkRr7qxxfocYGOP8="/>
         <field:display field="texteMembreAideCandidatures" id="s_fr_univrouen_poste_domain_AppliConfig_texteMembreAideCandidatures" object="${appliconfig}" z="dUG+saT1i//ppmJc0B2pK0MBlUQ="/>

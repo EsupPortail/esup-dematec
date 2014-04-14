@@ -88,6 +88,14 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.mailReturnReceiptModeType;
     }
     
+    public String AppliConfig.getTexteMailNewCandidatures() {
+        return this.texteMailNewCandidatures;
+    }
+    
+    public void AppliConfig.setTexteMailNewCandidatures(String texteMailNewCandidatures) {
+        this.texteMailNewCandidatures = texteMailNewCandidatures;
+    }
+    
     public String AppliConfig.getTexteMailCandidatReturnReceipt() {
         return this.texteMailCandidatReturnReceipt;
     }

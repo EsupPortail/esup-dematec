@@ -51,6 +51,8 @@ public class AppliConfig {
 	
 	private static String cacheTexteMailActivation;
 	
+	private static String cacheTexteMailNewCandidatures;
+	
 	private static String cacheMailSubjectMembre;
 	
 	private static String cacheTexteMailActivationMembre;
@@ -179,6 +181,9 @@ public class AppliConfig {
     @Enumerated(EnumType.STRING)
     private MailReturnReceiptModeTypes mailReturnReceiptModeType;
     
+    @Column(columnDefinition="TEXT")
+	private String texteMailNewCandidatures;
+	
     @Column(columnDefinition="TEXT")
     private String texteMailCandidatReturnReceipt;
     
@@ -458,6 +463,19 @@ public class AppliConfig {
 			}
 		}
 		return cacheTexteMailActivation;
+	}
+	
+	public static String getCacheTexteMailNewCandidatures() {
+		if(cacheTexteMailNewCandidatures == null) {
+			List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+			if(!configs.isEmpty()) {
+				cacheTexteMailNewCandidatures = configs.get(0).getTexteMailNewCandidatures();	
+			}
+			if(cacheTexteMailNewCandidatures == null) {
+				cacheTexteMailNewCandidatures = "";
+			}
+		}
+		return cacheTexteMailNewCandidatures;
 	}
 
 	public static String getCacheMailSubjectMembre() {

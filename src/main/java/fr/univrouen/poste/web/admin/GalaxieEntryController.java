@@ -122,15 +122,16 @@ public class GalaxieEntryController {
     	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatureIsNull().getResultList();
     	Set<User> candidatureUsers = new HashSet<User>();
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
-        	candidatureUsers.add(galaxieEntry.getCandidat());
+        	if(galaxieEntry.getCandidat() != null) {
+        		candidatureUsers.add(galaxieEntry.getCandidat());
+        	}
         }
         for(User user: candidatureUsers) {
-        	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidat(user).getResultList();
         	try{
-        		galaxieEntryService.generateCandidatures(galaxieEntrys);
+        		galaxieEntryService.generateCandidatures(user);
         	} catch(Exception e) {
 				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + galaxieEntrys + " failed", e);
+				logger.error("Import of " + user.getEmailAddress() + " candidatures failed", e);
         	}
         }  
 

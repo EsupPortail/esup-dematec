@@ -44,6 +44,7 @@ texte_candidat_aide_candidatures,
 mail_from, 
 mail_subject, 
 texte_mail_activation, 
+texte_mail_new_candidatures text,
 texte_mail_password_oublie, 
 texte_membre_aide_candidatures, 
 texte_premiere_page_anonyme, 
@@ -89,6 +90,12 @@ Nous venons de vous créer un compte sur l''application de l''Université ESUP.\
 Merci d''activer celui-ci via ce lien :\n
 http://localhost:8080/EsupDematEC/signup/activate/@@mailAddress@@/@@activationKey@@\n
 --\nUniversité ESUP - Direction des Ressources Humaines',  
+
+E'Bonjour.\n
+Une ou plusieurs candidatures ont été créées sur votre compte dans l''application de l''Université ESUP.\n
+Celle(s)-ci correspond(ent) au(x) poste(s) @@postes@@.\n
+http://localhost:8080/EsupDematEC/\n
+--\nUniversité ESUP - Direction des Ressources Humaines',
 
 E'Bonjour,\n\nVous avez demandé à récupérer un nouveau password. \n\nVotre nouveau password est:\n\n @@newPassword@@ \n
 http://localhost:8080/EsupDematEC/changepassword/index \n
