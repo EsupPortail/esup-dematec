@@ -49,6 +49,8 @@
                                                 </c:otherwise>
                                     </c:choose>
                                 </c:forTokens>
+                                <input type="hidden" name="sortFieldName" value="actionDate"/>
+                                <input type="hidden" name="sortOrder" value="desc"/>
                             </form:find>
                         </div>
                     </div>
