@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.AppliVersion;
+import fr.univrouen.poste.domain.PosteCandidatureFile;
+import fr.univrouen.poste.utils.TxPdfService;
 
 @Service
 public class DbToolService {
@@ -23,6 +25,9 @@ public class DbToolService {
 	
 	@Resource
 	DataSource dataSource;
+	
+	@Resource 
+	TxPdfService txPdfService;
 	
 	@Transactional
 	public void upgrade() {
@@ -56,6 +61,18 @@ public class DbToolService {
 	    		logger.warn("\n\n#####\n\t" +
 	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
 	    				"\n#####\n");
+	    		
+			} else if("1.1.x".equals(esupDematEcVersion)) {
+				
+				List<PosteCandidatureFile> pcFiles = PosteCandidatureFile.findAllPosteCandidatureFiles();
+				for(PosteCandidatureFile pcFile: pcFiles) {
+					txPdfService.updateNbPages(pcFile.getId());
+				}
+				
+	    		logger.warn("\n\n#####\n\t" +
+	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
+	    				"\n#####\n");
+	    		
 			} else {
 				logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +
