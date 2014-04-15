@@ -12,8 +12,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <roo.version>1.2.5.RELEASE</roo.version>
         <slf4j.version>1.6.2</slf4j.version>
-        <spring.version>3.1.0.RELEASE</spring.version>
-    <spring-security.version>3.1.0.RELEASE</spring-security.version>
+        <spring.version>3.2.3.RELEASE</spring.version>
+    <spring-security.version>3.1.4.RELEASE</spring-security.version>
     </properties>
     <repositories>
         <repository>
@@ -509,6 +509,11 @@
                         <contextPath>/${project.name}</contextPath>
                     </webAppConfig>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.0</version>
             </plugin>
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
