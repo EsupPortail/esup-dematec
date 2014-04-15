@@ -24,7 +24,7 @@
 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
 	<!-- The controllers are autodetected POJOs labeled with the @Controller annotation. -->
-	<context:component-scan base-package="fr.univrouen.poste" use-default-filters="false">
+	<context:component-scan base-package="fr.univrouen.poste.web" use-default-filters="false">
 		<context:include-filter expression="org.springframework.stereotype.Controller" type="annotation" />
 	</context:component-scan>
 
