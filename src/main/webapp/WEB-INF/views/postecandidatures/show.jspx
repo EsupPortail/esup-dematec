@@ -178,7 +178,7 @@
 							<p>Si vous confirmez, ce candidat sera considéré comme <b>retenu pour audition</b>.</p>
 							<p>
 							Il recevra de fait un mail (que vous pouvez 'modifier' ci-dessous en y insérant du texte supplémentaire) et il pourra compléter sa candidature dans l'application ; c'est à dire
-							qu'il pourra ajouter de nouveaux éléments dans l'applciation (sans toutefois supprimer les fichiers déposés lors de la première phase).</p>
+							qu'il pourra ajouter de nouveaux éléments dans l'application (sans toutefois supprimer les fichiers déposés lors de la première phase).</p>
 							<p>
 							<h4>Mail :</h4>
 								<i><pre>${mailAuditionnableEntete}</pre></i>
