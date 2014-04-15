@@ -12,12 +12,19 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 @Service
 public class TxPdfService {
 
-	private final Logger log = Logger.getLogger(getClass());
+	private final Logger log = Logger.getLogger(TxPdfService.class);
 	
 	@Transactional
-	public void updateNbPages(Long pcFileId) throws IOException {
+	public void updateNbPages(Long pcFileId) throws IOException, InterruptedException {
 		
 		PosteCandidatureFile pcFile = PosteCandidatureFile.findPosteCandidatureFile(pcFileId);
+		
+		long sleepTime = 0;
+		while(pcFile == null && sleepTime<60000) {
+			sleepTime += 5000;
+			Thread.sleep(sleepTime);
+			pcFile = PosteCandidatureFile.findPosteCandidatureFile(pcFileId);
+		}
 		
 		PDDocument doc = null;
 		try {
