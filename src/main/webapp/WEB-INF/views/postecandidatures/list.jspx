@@ -121,7 +121,7 @@
         </table:table>
     </page:list>
     
-    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
       <div id="demat-legende">
        	<hr/>
        	<i>Légende :</i>
@@ -147,10 +147,12 @@
 			    return $(this).text() === "true";
 			}).css("font-weight", "bold").css("color", "green").css("text-align", "center").html(html_img_true);
 			
-			/* pour colonne recevable uniquement (colonne 5) */
-			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td").filter(function() {
-			    return $(this).text() === "false";
-			}).css("font-weight", "bold").css("color", "red").css("text-align", "center").html(html_img_false);
+			<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">			
+				/* pour colonne recevable uniquement (colonne 5) */
+				$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td").filter(function() {
+				    return $(this).text() === "false";
+				}).css("font-weight", "bold").css("color", "red").css("text-align", "center").html(html_img_false);		
+			</sec:authorize>
 			
 			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
 			    return $(this).text() === "false";
