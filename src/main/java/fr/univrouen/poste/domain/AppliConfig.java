@@ -56,7 +56,9 @@ public class AppliConfig {
 	private static String cacheMailSubjectMembre;
 	
 	private static String cacheTexteMailActivationMembre;
-
+	
+	private static String cacheTexteMailNewCommissions;
+	
 	private static String cacheTexteMailPasswordOublie;
 
 	private static String cacheTextePremierePageAnonyme;
@@ -159,6 +161,9 @@ public class AppliConfig {
 
     @Column(columnDefinition="TEXT")
     private String texteMailActivationMembre;
+    
+    @Column(columnDefinition="TEXT")
+    private String texteMailNewCommissions;
     
     @Column
     private Boolean membreSupprReviewFile;
@@ -503,6 +508,20 @@ public class AppliConfig {
     	}
     	return cacheTexteMailActivationMembre;
     }
+	
+	public static String getCacheTexteMailNewCommissions() {
+    	if(cacheTexteMailNewCommissions == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheTexteMailNewCommissions = configs.get(0).getTexteMailNewCommissions();	
+    		} 
+    		if(cacheTexteMailNewCommissions == null) {
+    			cacheTexteMailNewCommissions = "";
+    		}
+    	}
+    	return cacheTexteMailNewCommissions;
+    }
+	
 
 	public static String getCacheTexteMailPasswordOublie() {
     	if(cacheTexteMailPasswordOublie == null) {

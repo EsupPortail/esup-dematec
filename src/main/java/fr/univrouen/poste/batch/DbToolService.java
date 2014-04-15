@@ -19,7 +19,7 @@ public class DbToolService {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.1.x";
+	final static String currentEsupDematEcVersion = "1.2.x";
 	
 	@Resource
 	DataSource dataSource;
@@ -30,7 +30,7 @@ public class DbToolService {
 		List<AppliVersion> appliVersions = AppliVersion.findAllAppliVersions();
 		if(appliVersions.isEmpty()) {
 			appliVersion = new AppliVersion();
-			appliVersion.setEsupDematEcVersion("1.0.x");
+			appliVersion.setEsupDematEcVersion("1.1.x");
 			appliVersion.persist();
 		} else {
 			appliVersion = appliVersions.get(0);

@@ -40,6 +40,7 @@
         <field:display date="true" dateTimePattern="${appliConfig_dateendcandidatactif_date_format}" field="dateEndCandidatActif" id="s_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif" object="${appliconfig}" z="W+VNcP1aQ1Km4uQmH6oElm3GBi0="/>
         <field:display field="mailSubjectMembre" id="s_fr_univrouen_poste_domain_AppliConfig_mailSubjectMembre" object="${appliconfig}" z="PH+4MmcUBazrtY3ICd9uhzJCR2E="/>
         <field:display field="texteMailActivationMembre" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailActivationMembre" object="${appliconfig}" z="6GRbkrhfeSEIghtAui2xBB72Sjw="/>
+        <field:display field="texteMailNewCommissions" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailNewCommissions" object="${appliconfig}" z="LB/++uG+XwhrpCDyg22kG3VXYkA="/>
         <field:display field="mailReturnReceiptModeType" id="s_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType" object="${appliconfig}" z="dyhgj7SSRyAkcspkdx+OMT/NMQE="/>
         <field:display field="texteMailCandidatReturnReceipt" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" object="${appliconfig}" z="Fbimmw9mmTVFlJqk08c6yvdAruA="/>
         <field:display field="texteEnteteMailCandidatAuditionnable" id="s_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" object="${appliconfig}" z="WiXs0MD0YZIn02lboehBlStfis8="/>

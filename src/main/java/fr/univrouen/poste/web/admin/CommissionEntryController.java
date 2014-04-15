@@ -18,8 +18,10 @@
 package fr.univrouen.poste.web.admin;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.CommissionEntry;
+import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.CommissionEntryService;
 import fr.univrouen.poste.services.LogService;
 
@@ -65,7 +68,7 @@ public class CommissionEntryController {
         Map<String, String> unknowPostes = new HashMap<String, String>();
         Map<List<String>, String> unknowCommission = new HashMap<List<String>, String>();
         
-        List<CommissionEntry> commissionEntrysWithMembreNull = CommissionEntry.findAllCommissionEntrysWithMembreNull();
+        List<CommissionEntry> commissionEntrysWithMembreNull = CommissionEntry.findCommissionEntrysByMembreIsNull().getResultList();
         for(CommissionEntry  commissionEntry : commissionEntrysWithMembreNull) {
         	unknowMembres.put(commissionEntry.getEmail(), "dummy");
        		List<String> candidatureKey = new Vector<String>();
@@ -75,7 +78,7 @@ public class CommissionEntryController {
        		unknowCommission.put(candidatureKey, "dummy");
         }
         
-        List<CommissionEntry> commissionEntrysWithPosteNull = CommissionEntry.findAllCommissionEntrysWithPosteNull();
+        List<CommissionEntry> commissionEntrysWithPosteNull = CommissionEntry.findCommissionEntrysByPosteIsNull().getResultList();
         for(CommissionEntry  commissionEntry : commissionEntrysWithPosteNull) {
         	unknowPostes.put(commissionEntry.getNumPoste(), "dummy");
        		List<String> candidatureKey = new Vector<String>();
@@ -96,15 +99,40 @@ public class CommissionEntryController {
     @RequestMapping("/generatecommissions")
     public String generateCommissions() {
  
-    	List<CommissionEntry> commissionEntrys = CommissionEntry.findAllCommissionEntrys();
+    	List<CommissionEntry> commissionEntrys = CommissionEntry.findCommissionEntrysByMembreIsNull().getResultList();
         for(CommissionEntry  commissionEntry : commissionEntrys) {     	
         	try{
-        		commissionEntryService.generateCommission(commissionEntry);
+        		commissionEntryService.generateMembre(commissionEntry);
         	} catch(Exception e) {
         		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
 				logger.error("Import of " + commissionEntry + " failed", e);
         	}
         }
+        
+    	commissionEntrys = CommissionEntry.findCommissionEntrysByPosteIsNull().getResultList();
+        for(CommissionEntry  commissionEntry : commissionEntrys) {     	
+        	try{
+        		commissionEntryService.generatePoste(commissionEntry);
+        	} catch(Exception e) {
+        		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
+				logger.error("Import of " + commissionEntry + " failed", e);
+        	}
+        }
+        
+    	commissionEntrys = CommissionEntry.findAllCommissionEntrys();
+    	Set<User> membres = new HashSet<User>();
+        for(CommissionEntry  commissionEntry : commissionEntrys) {  
+        	membres.add(commissionEntry.getMembre());
+        }
+        for(User membre: membres) {
+        	try{
+        		commissionEntryService.generateCommission(membre);
+        	} catch(Exception e) {
+        		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
+				logger.error("Import of " + membre.getEmailAddress() + " commissions  failed", e);
+        	}
+        }
+        
         
         return "redirect:/admin/logimportcommissions?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
     }

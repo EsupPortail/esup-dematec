@@ -24,7 +24,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString(excludeFields = "membre,poste")
-@RooJpaActiveRecord(finders = { "findCommissionEntrysByNumPosteAndEmail", "findCommissionEntrysByMembre" })
+@RooJpaActiveRecord(finders = { "findCommissionEntrysByNumPosteAndEmail", "findCommissionEntrysByMembre", "findCommissionEntrysByMembreIsNull", "findCommissionEntrysByPosteIsNull" })
 public class CommissionEntry {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numPoste", "email", "nom", "prenom", "membre", "poste", "numPoste,email");
@@ -52,11 +52,4 @@ public class CommissionEntry {
         return membre == null && poste == null;
     }
 
-    public static List<CommissionEntry> findAllCommissionEntrysWithMembreNull() {
-        return entityManager().createQuery("SELECT o FROM CommissionEntry o WHERE o.membre is NULL", CommissionEntry.class).getResultList();
-    }
-
-    public static List<CommissionEntry> findAllCommissionEntrysWithPosteNull() {
-        return entityManager().createQuery("SELECT o FROM CommissionEntry o WHERE o.poste is NULL", CommissionEntry.class).getResultList();
-    }
 }

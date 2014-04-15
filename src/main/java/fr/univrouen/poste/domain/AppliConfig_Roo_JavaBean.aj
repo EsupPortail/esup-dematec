@@ -64,6 +64,14 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.texteMailActivationMembre;
     }
     
+    public String AppliConfig.getTexteMailNewCommissions() {
+        return this.texteMailNewCommissions;
+    }
+    
+    public void AppliConfig.setTexteMailNewCommissions(String texteMailNewCommissions) {
+        this.texteMailNewCommissions = texteMailNewCommissions;
+    }
+    
     public Boolean AppliConfig.getMembreSupprReviewFile() {
         return this.membreSupprReviewFile;
     }

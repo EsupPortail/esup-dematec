@@ -1,13 +1,17 @@
 package fr.univrouen.poste.services;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
@@ -23,15 +27,15 @@ public class CommissionEntryService {
 	@Autowired 
     private LogService logService;
 	
+	@Autowired
+	EmailService emailService;
+	
 	/**
 	 * 	IMPORTANT : le commissionEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (commissionEntry.merge())
-		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
 	 */
 	@Transactional
-	public void generateCommission(CommissionEntry commissionEntry) {
+	public void generateMembre(CommissionEntry commissionEntry) {
 
-		boolean commissionEntryModified = false;
-		
 		if(commissionEntry.getMembre()==null) {
 			User membre = null;
 			TypedQuery<User> query = User.findUsersByEmailAddress(commissionEntry.getEmail(), null, null);
@@ -57,8 +61,18 @@ public class CommissionEntryService {
 				membre = query.getSingleResult();
 			}
 			commissionEntry.setMembre(membre); 	
-			commissionEntryModified = true;
+			commissionEntry.merge();
 		}
+
+	}
+	
+	
+	
+	/**
+	 * 	IMPORTANT : le commissionEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (commissionEntry.merge())
+	 */
+	@Transactional
+	public void generatePoste(CommissionEntry commissionEntry) {
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() == null) {
 			PosteAPourvoir poste = null;
@@ -77,24 +91,47 @@ public class CommissionEntryService {
 			}
 			commissionEntry.setPoste(poste);
 			
-			commissionEntryModified = true;
-		}
-		
-		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() != null) {
-		   	if(commissionEntry.getPoste().getMembres() == null || !commissionEntry.getPoste().getMembres().contains(commissionEntry.getMembre())) {           		
-		   		PosteAPourvoir poste = commissionEntry.getPoste();
-		   		if(poste.getMembres() == null) 
-		   			poste.setMembres(new HashSet<User>());       			
-		   			
-		   		poste.getMembres().add(commissionEntry.getMembre());
-		   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS);   		
-		   	}
-		   	commissionEntryModified = true;
-		}
-		
-		if(commissionEntryModified) {
 			commissionEntry.merge();
 		}
 
+	}
+	
+	
+	/**
+	 * 	IMPORTANT : le commissionEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (commissionEntry.merge())
+		on le fait qu'en cas de modification cependant, pour des raisons de perf (update sql).
+	 */
+	@Transactional
+	public void generateCommission(User membre) {
+
+		List<String> postes = new ArrayList<String>();
+		
+		List<CommissionEntry> commissionEntries = CommissionEntry.findCommissionEntrysByMembre(membre).getResultList();
+		
+		for(CommissionEntry commissionEntry: commissionEntries) {
+			if(commissionEntry.getMembre() != null && commissionEntry.getPoste() != null) {
+			   	if(commissionEntry.getPoste().getMembres() == null || !commissionEntry.getPoste().getMembres().contains(commissionEntry.getMembre())) {           		
+			   		PosteAPourvoir poste = commissionEntry.getPoste();
+			   		if(poste.getMembres() == null) {
+			   			poste.setMembres(new HashSet<User>());
+			   		}
+			   			
+			   		poste.getMembres().add(commissionEntry.getMembre());
+			   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS);  
+			   		postes.add(poste.getNumEmploi());
+			   	}
+			}
+		}
+
+		// send email notification    
+	    String mailTo = membre.getEmailAddress();
+	    String mailFrom = AppliConfig.getCacheMailFrom();
+	    String mailSubject = AppliConfig.getCacheMailSubject();	    
+	    String mailMessage = AppliConfig.getCacheTexteMailNewCommissions();
+
+	    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
+	    
+	    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
+	    
 	}
 }

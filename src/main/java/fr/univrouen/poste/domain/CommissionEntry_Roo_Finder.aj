@@ -18,6 +18,12 @@ privileged aspect CommissionEntry_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static Long CommissionEntry.countFindCommissionEntrysByMembreIsNull() {
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM CommissionEntry AS o WHERE o.membre IS NULL", Long.class);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long CommissionEntry.countFindCommissionEntrysByNumPosteAndEmail(String numPoste, String email) {
         if (numPoste == null || numPoste.length() == 0) throw new IllegalArgumentException("The numPoste argument is required");
         if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
@@ -25,6 +31,12 @@ privileged aspect CommissionEntry_Roo_Finder {
         TypedQuery q = em.createQuery("SELECT COUNT(o) FROM CommissionEntry AS o WHERE o.numPoste = :numPoste AND o.email = :email", Long.class);
         q.setParameter("numPoste", numPoste);
         q.setParameter("email", email);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long CommissionEntry.countFindCommissionEntrysByPosteIsNull() {
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM CommissionEntry AS o WHERE o.poste IS NULL", Long.class);
         return ((Long) q.getSingleResult());
     }
     
@@ -48,6 +60,25 @@ privileged aspect CommissionEntry_Roo_Finder {
         }
         TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
         q.setParameter("membre", membre);
+        return q;
+    }
+    
+    public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByMembreIsNull() {
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery<CommissionEntry> q = em.createQuery("SELECT o FROM CommissionEntry AS o WHERE o.membre IS NULL", CommissionEntry.class);
+        return q;
+    }
+    
+    public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByMembreIsNull(String sortFieldName, String sortOrder) {
+        EntityManager em = CommissionEntry.entityManager();
+        String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.membre IS NULL";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
         return q;
     }
     
@@ -75,6 +106,25 @@ privileged aspect CommissionEntry_Roo_Finder {
         TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
         q.setParameter("numPoste", numPoste);
         q.setParameter("email", email);
+        return q;
+    }
+    
+    public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByPosteIsNull() {
+        EntityManager em = CommissionEntry.entityManager();
+        TypedQuery<CommissionEntry> q = em.createQuery("SELECT o FROM CommissionEntry AS o WHERE o.poste IS NULL", CommissionEntry.class);
+        return q;
+    }
+    
+    public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByPosteIsNull(String sortFieldName, String sortOrder) {
+        EntityManager em = CommissionEntry.entityManager();
+        String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.poste IS NULL";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
         return q;
     }
     
