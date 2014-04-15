@@ -35,6 +35,7 @@
 insert into c_user (id, activation_date, activation_key, email_address, enabled, is_admin, is_manager, is_super_manager, password, version, login_failed_nb, login_failed_time) 
 values (1, NULL, NULL, 'admin', TRUE, TRUE, FALSE, FALSE, '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, 0, 0);
 
+insert into appli_version values (1, '1.2.x', 1);
 
 --  appli_config
 INSERT INTO appli_config (
@@ -44,7 +45,7 @@ texte_candidat_aide_candidatures,
 mail_from, 
 mail_subject, 
 texte_mail_activation, 
-texte_mail_new_candidatures text,
+texte_mail_new_candidatures,
 texte_mail_password_oublie, 
 texte_membre_aide_candidatures, 
 texte_premiere_page_anonyme, 
@@ -56,6 +57,7 @@ pied_page,
 image_url,
 mail_subject_membre, 
 texte_mail_activation_membre,
+texte_mail_new_commissions,
 mail_return_receipt_mode_type,
 texte_mail_candidat_return_receipt,
 texte_entete_mail_candidat_auditionnable,
@@ -138,6 +140,11 @@ Merci d''activer ce lien en le copiant dans la barre d''adresse de votre navigat
 http://localhost:8080/EsupDematEC/signup/activate/@@mailAddress@@/@@activationKey@@\n
 Il vous sera demandé de saisir le mot de passe de votre choix.\n
 Cordialement.\n\n--\nUniversité ESUP\nDirection des Ressources Humaines\nBureau des Personnels Enseignants\n',
+
+E'Bonjour.\n\n
+Vous êtes maintenant enregistré en tant que membre de commission sur les postes suivants : @@postes@@.\n\n
+http://localhost:8080/EsupDematEC/\n\n
+--\nUniversité ESUP - Direction des Ressources Humaines',
 
 'NEVER',
 
