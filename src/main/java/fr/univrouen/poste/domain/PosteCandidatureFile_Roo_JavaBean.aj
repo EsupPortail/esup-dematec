@@ -42,6 +42,14 @@ privileged aspect PosteCandidatureFile_Roo_JavaBean {
         this.fileSize = fileSize;
     }
     
+    public Long PosteCandidatureFile.getNbPages() {
+        return this.nbPages;
+    }
+    
+    public void PosteCandidatureFile.setNbPages(Long nbPages) {
+        this.nbPages = nbPages;
+    }
+    
     public Boolean PosteCandidatureFile.getWriteable() {
         return this.writeable;
     }

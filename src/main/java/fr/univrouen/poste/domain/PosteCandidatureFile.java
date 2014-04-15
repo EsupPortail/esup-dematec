@@ -50,6 +50,8 @@ public class PosteCandidatureFile implements DematFile {
 
     private Long fileSize;
     
+    private Long nbPages;
+    
     private Boolean writeable = true;
 
     private String contentType;

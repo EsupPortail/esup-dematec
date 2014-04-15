@@ -14,7 +14,7 @@ privileged aspect PosteCandidatureFile_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager PosteCandidatureFile.entityManager;
     
-    public static final List<String> PosteCandidatureFile.fieldNames4OrderClauseFilter = java.util.Arrays.asList("filename", "file", "sendTime", "fileSize", "writeable", "contentType", "bigFile");
+    public static final List<String> PosteCandidatureFile.fieldNames4OrderClauseFilter = java.util.Arrays.asList("filename", "file", "sendTime", "fileSize", "nbPages", "writeable", "contentType", "bigFile");
     
     public static final EntityManager PosteCandidatureFile.entityManager() {
         EntityManager em = new PosteCandidatureFile().entityManager;

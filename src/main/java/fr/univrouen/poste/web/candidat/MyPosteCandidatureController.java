@@ -70,6 +70,7 @@ import fr.univrouen.poste.services.EmailService;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.services.ReturnReceiptService;
 import fr.univrouen.poste.services.ZipService;
+import fr.univrouen.poste.utils.PdfService;
 
 @RequestMapping("postecandidatures")
 @Controller
@@ -93,6 +94,9 @@ public class MyPosteCandidatureController {
 	
     @Resource
     EmailService emailService;
+    
+    @Resource
+    PdfService pdfService;
 	
 	@ModelAttribute("posteapourvoirs")
 	public List<PosteAPourvoir> getPosteAPourvoirs() {
@@ -271,6 +275,8 @@ public class MyPosteCandidatureController {
 				
 						logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
 						returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+						
+						pdfService.updateNbPages(posteCandidatureFile.getId());
 					}
 				}
 			}
