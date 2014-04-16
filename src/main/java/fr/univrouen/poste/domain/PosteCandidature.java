@@ -16,13 +16,12 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
+import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -31,17 +30,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
-
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 
 @RooJavaBean
 @RooToString(excludeFields = "candidatureFiles")
-@RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat", "findPosteCandidaturesByPoste", "findPosteCandidaturesByRecevable", "findPosteCandidaturesByAuditionnable" })
+@RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat", "findPosteCandidaturesByPoste", "findPosteCandidaturesByRecevable", "findPosteCandidaturesByAuditionnable", "findPosteCandidaturesByPosteAndCandidatAndRecevableAndAuditionnable" })
 public class PosteCandidature {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate");
@@ -61,23 +58,23 @@ public class PosteCandidature {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sendTime DESC")
     private Set<PosteCandidatureFile> candidatureFiles = new HashSet<PosteCandidatureFile>();
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sendTime DESC")
     private Set<MemberReviewFile> memberReviewFiles = new HashSet<MemberReviewFile>();
-    
+
     @NotNull
     @ManyToOne
     private User candidat;
 
     private Boolean recevable = true;
-    
+
     private Boolean auditionnable = false;
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private ManagerReview managerReview = new ManagerReview();
-    
+
     public String getNom() {
         return this.candidat.getNom();
     }
@@ -89,74 +86,143 @@ public class PosteCandidature {
     public String getEmail() {
         return this.candidat.getEmailAddress();
     }
-    
+
     public String getManagerReviewState() {
-    	return managerReview.getReviewStatus().toString();
+        return managerReview.getReviewStatus().toString();
     }
-    
+
     public String getManagerReviewStateColor() {
-    	return ManagerReviewLegendColor.getColor(managerReview.getReviewStatus());
+        return ManagerReviewLegendColor.getColor(managerReview.getReviewStatus());
     }
 
     public void setModification(Date modification) {
-    	if(ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
-    		managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
-    	} else if(ReviewStatusTypes.Vue_incomplet.equals(managerReview.getReviewStatus())) {
-    		managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis);
-    	}
-    	this.modification = modification;
-	}
-
-	public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<fr.univrouen.poste.domain.PosteAPourvoir> postes) {
-        if (postes == null) throw new IllegalArgumentException("The postes argument is required");
-        TypedQuery<PosteCandidature> q = entityManager().createQuery("SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes AND o.recevable = TRUE ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class);
-        q.setParameter("postes", postes);
-        return q;
+        if (ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
+            managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
+        } else if (ReviewStatusTypes.Vue_incomplet.equals(managerReview.getReviewStatus())) {
+            managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet_mais_modifie_depuis);
+        }
+        this.modification = modification;
     }
 
     public static Long countPosteActifCandidatures() {
         return entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidature o WHERE o.modification is not NULL", Long.class).getSingleResult();
     }
 
-    public static Long countFindPosteCandidaturesByPostes(List<fr.univrouen.poste.domain.PosteAPourvoir> postes) {
-    	TypedQuery<Long> q = entityManager().createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.poste IN :postes", Long.class);
-    	q.setParameter("postes", postes);
-    	return q.getSingleResult();
+    public static TypedQuery<PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<PosteAPourvoir> postes) {
+        if (postes == null) throw new IllegalArgumentException("The postes argument is required");
+        TypedQuery<PosteCandidature> q = entityManager().createQuery("SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes AND o.recevable = TRUE ORDER BY o.poste.numEmploi, o.candidat.nom", PosteCandidature.class);
+        q.setParameter("postes", postes);
+        return q;
     }
-    
-    public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesByPostes(List<fr.univrouen.poste.domain.PosteAPourvoir> postes, String sortFieldName, String sortOrder) {
-    	String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes";
+
+    public static Long countFindPosteCandidaturesByPostes(List<PosteAPourvoir> postes) {
+        TypedQuery<Long> q = entityManager().createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.poste IN :postes", Long.class);
+        q.setParameter("postes", postes);
+        return q.getSingleResult();
+    }
+
+    public static TypedQuery<PosteCandidature> findPosteCandidaturesByPostes(List<PosteAPourvoir> postes, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
-        }   
+        }
         TypedQuery<PosteCandidature> q = entityManager().createQuery(jpaQuery, PosteCandidature.class);
         q.setParameter("postes", postes);
         return q;
     }
-    
-    public static Long countFindPosteCandidaturesByCandidats(List<fr.univrouen.poste.domain.User> candidats) {
-    	TypedQuery<Long> q = entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.candidat IN :candidats", Long.class);
-    	q.setParameter("candidats", candidats);
-    	return q.getSingleResult();
+
+    public static Long countFindPosteCandidaturesByCandidats(List<User> candidats) {
+        TypedQuery<Long> q = entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.candidat IN :candidats", Long.class);
+        q.setParameter("candidats", candidats);
+        return q.getSingleResult();
     }
-    
-    public static TypedQuery<fr.univrouen.poste.domain.PosteCandidature> findPosteCandidaturesByCandidats(List<fr.univrouen.poste.domain.User> candidats, String sortFieldName, String sortOrder) {       
+
+    public static TypedQuery<PosteCandidature> findPosteCandidaturesByCandidats(List<User> candidats, String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat IN :candidats";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
-        }   
+        }
         TypedQuery<PosteCandidature> q = entityManager().createQuery(jpaQuery, PosteCandidature.class);
         q.setParameter("candidats", candidats);
         return q;
     }
     
     
-
-
+    
+    public static Long countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable) {
+        EntityManager em = entityManager();
+        String jpaQuery = "SELECT COUNT(o) FROM PosteCandidature AS o WHERE";
+        if (postes != null) {
+        	jpaQuery = jpaQuery + " o.poste IN :postes AND";
+        }
+        if (candidats != null) {
+        	jpaQuery = jpaQuery + " o.candidat IN :candidats AND";
+        }
+        if (recevable != null) {
+        	jpaQuery = jpaQuery + " o.recevable = :recevable AND";
+        }
+        if (auditionnable != null) {
+        	jpaQuery = jpaQuery + " o.auditionnable = :auditionnable AND";
+        }
+        jpaQuery = jpaQuery + " 1=1";
+        TypedQuery q = em.createQuery(jpaQuery, Long.class);
+        if (postes != null) {
+        q.setParameter("postes", postes);
+        }
+        if (candidats != null) {
+        q.setParameter("candidats", candidats);
+        }
+        if (recevable != null) {
+        q.setParameter("recevable", recevable);
+        }
+        if (auditionnable != null) {
+        q.setParameter("auditionnable", auditionnable);
+        }
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<PosteCandidature> findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable, String sortFieldName, String sortOrder) {
+        EntityManager em = entityManager();
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE";
+        if (postes != null) {
+        	jpaQuery = jpaQuery + " o.poste IN :postes AND";
+        }
+        if (candidats != null) {
+        	jpaQuery = jpaQuery + " o.candidat IN :candidats AND";
+        }
+        if (recevable != null) {
+        	jpaQuery = jpaQuery + " o.recevable = :recevable AND";
+        }
+        if (auditionnable != null) {
+        	jpaQuery = jpaQuery + " o.auditionnable = :auditionnable AND";
+        }
+        jpaQuery = jpaQuery + " 1=1";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
+        if (postes != null) {
+        q.setParameter("postes", postes);
+        }
+        if (candidats != null) {
+        q.setParameter("candidats", candidats);
+        }
+        if (recevable != null) {
+        q.setParameter("recevable", recevable);
+        }
+        if (auditionnable != null) {
+        q.setParameter("auditionnable", auditionnable);
+        }
+        return q;
+    }
+    
 }

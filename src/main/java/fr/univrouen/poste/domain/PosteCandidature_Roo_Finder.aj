@@ -35,6 +35,20 @@ privileged aspect PosteCandidature_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static Long PosteCandidature.countFindPosteCandidaturesByPosteAndCandidatAndRecevableAndAuditionnable(PosteAPourvoir poste, User candidat, Boolean recevable, Boolean auditionnable) {
+        if (poste == null) throw new IllegalArgumentException("The poste argument is required");
+        if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
+        if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
+        if (auditionnable == null) throw new IllegalArgumentException("The auditionnable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.poste = :poste AND o.candidat = :candidat AND o.recevable = :recevable AND o.auditionnable = :auditionnable", Long.class);
+        q.setParameter("poste", poste);
+        q.setParameter("candidat", candidat);
+        q.setParameter("recevable", recevable);
+        q.setParameter("auditionnable", auditionnable);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long PosteCandidature.countFindPosteCandidaturesByRecevable(Boolean recevable) {
         if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
         EntityManager em = PosteCandidature.entityManager();
@@ -109,6 +123,41 @@ privileged aspect PosteCandidature_Roo_Finder {
         }
         TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
         q.setParameter("poste", poste);
+        return q;
+    }
+    
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByPosteAndCandidatAndRecevableAndAuditionnable(PosteAPourvoir poste, User candidat, Boolean recevable, Boolean auditionnable) {
+        if (poste == null) throw new IllegalArgumentException("The poste argument is required");
+        if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
+        if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
+        if (auditionnable == null) throw new IllegalArgumentException("The auditionnable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        TypedQuery<PosteCandidature> q = em.createQuery("SELECT o FROM PosteCandidature AS o WHERE o.poste = :poste AND o.candidat = :candidat AND o.recevable = :recevable AND o.auditionnable = :auditionnable", PosteCandidature.class);
+        q.setParameter("poste", poste);
+        q.setParameter("candidat", candidat);
+        q.setParameter("recevable", recevable);
+        q.setParameter("auditionnable", auditionnable);
+        return q;
+    }
+    
+    public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByPosteAndCandidatAndRecevableAndAuditionnable(PosteAPourvoir poste, User candidat, Boolean recevable, Boolean auditionnable, String sortFieldName, String sortOrder) {
+        if (poste == null) throw new IllegalArgumentException("The poste argument is required");
+        if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
+        if (recevable == null) throw new IllegalArgumentException("The recevable argument is required");
+        if (auditionnable == null) throw new IllegalArgumentException("The auditionnable argument is required");
+        EntityManager em = PosteCandidature.entityManager();
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste = :poste AND o.candidat = :candidat AND o.recevable = :recevable AND o.auditionnable = :auditionnable";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
+        q.setParameter("poste", poste);
+        q.setParameter("candidat", candidat);
+        q.setParameter("recevable", recevable);
+        q.setParameter("auditionnable", auditionnable);
         return q;
     }
     

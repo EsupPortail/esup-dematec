@@ -36,27 +36,35 @@
                         <div class="accordion-body collapse" id="collapseFilter">
                             <div class="accordion-inner">
                                 <div class="row-fluid">
-                                    <div class="span4 demat-filter">
-                                        <form:find finderName="ByPostes" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
-                                            <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
-                                            <field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip (recevable uniquement)"/>
-                                        </form:find>
-                                    </div>
-                                    <div class="span5 demat-filter">
-                                        <form:find finderName="ByCandidats" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+                                	<form:find finderName="ByMultiParams" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+                                    	<div class="span4 demat-filter">
+	                                    	<div class="demat-filter">
+	                                            <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+	                                        </div>
+	                                    </div>
+	                                    <div class="span5 demat-filter">
                                             <field:select disableFormBinding="true" field="candidat" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
-                                        </form:find>
-                                    </div>
-                                    <div class="span3 demat-filter">
-                                        <form:find finderName="ByRecevable" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
-                                            <field:checkbox disableFormBinding="true" field="recevable" id="f_fr_univrouen_poste_domain_PosteCandidature_recevable"/>
-                                        </form:find>
-                                    </div>
-                                    <div class="span3 demat-filter">
-                                        <form:find finderName="ByAuditionnable" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
-                                            <field:checkbox disableFormBinding="true" field="auditionnable" id="f_fr_univrouen_poste_domain_PosteCandidature_auditionnable"/>
-                                        </form:find>
-                                    </div>
+	                                    </div>
+	                                    <div class="span3 demat-filter">
+	                                    	<label for="recevable">Recevable</label>
+	                                    	<select id="recevable" name="recevable">
+	                                    		<option value="">--</option>
+	                                    		<option value="true">Recevable</option>
+	                                    		<option value="false">Non recevable</option>
+	                                    	</select>
+	                                    </div>
+	                                    <div class="span3 demat-filter">
+	                                    	<label for="auditionnable">Auditionnable</label>
+	                                    	<select id="auditionnable" name="auditionnable">
+	                                    		<option value="">--</option>
+	                                    		<option value="true">Auditionnable</option>
+	                                    		<option value="false">Non Auditionnable</option>
+	                                    	</select>
+                                    	</div>
+                                    	<div class="span3 demat-filter">
+	                                       <field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
+		                                </div>
+                                    </form:find>
                                 </div>
                             </div>
                         </div>
