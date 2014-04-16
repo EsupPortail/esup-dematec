@@ -62,7 +62,10 @@ public class DbToolService {
 	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
 	    				"\n#####\n");
 	    		
-			} else if("1.1.x".equals(esupDematEcVersion)) {
+	    		esupDematEcVersion = "1.1.x";
+			} 
+			
+			if("1.1.x".equals(esupDematEcVersion)) {
 				
 				List<PosteCandidatureFile> pcFiles = PosteCandidatureFile.findAllPosteCandidatureFiles();
 				for(PosteCandidatureFile pcFile: pcFiles) {
@@ -72,6 +75,8 @@ public class DbToolService {
 	    		logger.warn("\n\n#####\n\t" +
 	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
 	    				"\n#####\n");
+	    		
+	    		esupDematEcVersion = "1.2.x";
 	    		
 			} else {
 				logger.warn("\n\n#####\n\t" +
