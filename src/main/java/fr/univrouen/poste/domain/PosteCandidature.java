@@ -38,7 +38,7 @@ import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 
 @RooJavaBean
 @RooToString(excludeFields = "candidatureFiles")
-@RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat", "findPosteCandidaturesByPoste", "findPosteCandidaturesByRecevable", "findPosteCandidaturesByAuditionnable", "findPosteCandidaturesByPosteAndCandidatAndRecevableAndAuditionnable" })
+@RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat"})
 public class PosteCandidature {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate");
@@ -115,45 +115,6 @@ public class PosteCandidature {
         return q;
     }
 
-    public static Long countFindPosteCandidaturesByPostes(List<PosteAPourvoir> postes) {
-        TypedQuery<Long> q = entityManager().createQuery("SELECT count(o) FROM PosteCandidature AS o WHERE o.poste IN :postes", Long.class);
-        q.setParameter("postes", postes);
-        return q.getSingleResult();
-    }
-
-    public static TypedQuery<PosteCandidature> findPosteCandidaturesByPostes(List<PosteAPourvoir> postes, String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes";
-        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
-            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
-            }
-        }
-        TypedQuery<PosteCandidature> q = entityManager().createQuery(jpaQuery, PosteCandidature.class);
-        q.setParameter("postes", postes);
-        return q;
-    }
-
-    public static Long countFindPosteCandidaturesByCandidats(List<User> candidats) {
-        TypedQuery<Long> q = entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidature AS o WHERE o.candidat IN :candidats", Long.class);
-        q.setParameter("candidats", candidats);
-        return q.getSingleResult();
-    }
-
-    public static TypedQuery<PosteCandidature> findPosteCandidaturesByCandidats(List<User> candidats, String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat IN :candidats";
-        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
-            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
-            }
-        }
-        TypedQuery<PosteCandidature> q = entityManager().createQuery(jpaQuery, PosteCandidature.class);
-        q.setParameter("candidats", candidats);
-        return q;
-    }
-    
-    
     
     public static Long countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable) {
         EntityManager em = entityManager();
