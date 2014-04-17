@@ -51,7 +51,7 @@ public class DbToolService {
 						"WITH manager_review_id AS (" +
 						"UPDATE poste_candidature SET manager_review=nextval('hibernate_sequence') RETURNING manager_review" +
 						")" +
-						"INSERT INTO manager_review (id, review_status) SELECT manager_review,'Non_vue' FROM manager_review_id;";
+						"INSERT INTO manager_review (id, review_status, version) SELECT manager_review,'Non_vue',0 FROM manager_review_id;";
 				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
 				Connection connection = dataSource.getConnection();
 				CallableStatement statement = connection.prepareCall(sqlUpdate);
