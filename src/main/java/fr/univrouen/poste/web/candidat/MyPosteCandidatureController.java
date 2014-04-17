@@ -632,13 +632,15 @@ public class MyPosteCandidatureController {
     		
     		return null;    		
     	} else {
-    		
+
     		if(sortFieldName == null) 
             	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
     		if("nom".equals(sortFieldName))
     			sortFieldName = "candidat.nom";
     		if("email".equals(sortFieldName))
     			sortFieldName = "candidat.emailAddress";
+    		if("managerReviewState".equals(sortFieldName))
+    			sortFieldName = "managerReview.reviewStatus";
     		
     		if (page != null || size != null) {
                 int sizeNo = size == null ? 10 : size.intValue();
