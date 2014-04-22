@@ -17,7 +17,6 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.exceptions.EsupDematEcWarnException;
 import fr.univrouen.poste.services.GalaxieEntryService;
 import fr.univrouen.poste.services.LogService;
 
@@ -129,6 +129,9 @@ public class GalaxieEntryController {
         for(User user: candidatureUsers) {
         	try{
         		galaxieEntryService.generateCandidatures(user);
+        	} catch(EsupDematEcWarnException ew) {
+				logService.logImportGalaxie(ew.getMessage(), LogService.IMPORT_FAILED);
+				logger.warn("Import of " + user.getEmailAddress() + " candidatures failed", ew);
         	} catch(Exception e) {
 				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
 				logger.error("Import of " + user.getEmailAddress() + " candidatures failed", e);

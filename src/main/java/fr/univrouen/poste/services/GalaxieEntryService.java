@@ -18,6 +18,7 @@ import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.exceptions.EsupDematEcException;
+import fr.univrouen.poste.exceptions.EsupDematEcWarnException;
 import fr.univrouen.poste.web.UserRegistrationForm;
 
 @Service
@@ -44,7 +45,7 @@ public class GalaxieEntryService {
 			if(query.getResultList().isEmpty()) {
 				if(galaxieEntry.getEmail() == null || galaxieEntry.getEmail().isEmpty()) {
 					String message = "Le candidat " + galaxieEntry.getNumCandidat() + " n'a pas de mail de renseigné";
-					throw new EsupDematEcException(message);
+					throw new EsupDematEcWarnException(message);
 				} else {
 					List<User> usersSameEmail = User.findUsersByEmailAddress(galaxieEntry.getEmail(), null, null).getResultList();
 					if(!usersSameEmail.isEmpty()) {
