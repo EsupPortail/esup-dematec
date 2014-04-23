@@ -103,6 +103,9 @@ public class GalaxieEntryController {
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
         	try{
         		galaxieEntryService.generateCandidat(galaxieEntry);
+        	} catch(EsupDematEcWarnException ew) {
+				logService.logImportGalaxie(ew.getMessage(), LogService.IMPORT_FAILED);
+				logger.warn("Import of " + galaxieEntry + " failed", ew);
         	} catch(Exception e) {
 				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
 				logger.error("Import of " + galaxieEntry + " failed", e);
@@ -129,9 +132,6 @@ public class GalaxieEntryController {
         for(User user: candidatureUsers) {
         	try{
         		galaxieEntryService.generateCandidatures(user);
-        	} catch(EsupDematEcWarnException ew) {
-				logService.logImportGalaxie(ew.getMessage(), LogService.IMPORT_FAILED);
-				logger.warn("Import of " + user.getEmailAddress() + " candidatures failed", ew);
         	} catch(Exception e) {
 				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
 				logger.error("Import of " + user.getEmailAddress() + " candidatures failed", e);
