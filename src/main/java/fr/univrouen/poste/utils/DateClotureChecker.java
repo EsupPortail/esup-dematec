@@ -44,7 +44,7 @@ public class DateClotureChecker {
 	
 	public boolean isCurrentTimeOk4ThisMembre(User targetUser) {
 		Date currentTime = new Date();     	        
-		if(targetUser.getIsMembre() && currentTime.compareTo(AppliConfig.getCacheDateEndMembre()) > 0) {
+		if(!targetUser.getIsMembre() || currentTime.compareTo(AppliConfig.getCacheDateEndMembre()) > 0) {
 			return false;
 		}    
 		return true;

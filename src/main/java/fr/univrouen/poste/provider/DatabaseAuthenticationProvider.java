@@ -158,15 +158,15 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 			// restriction dates accés pour candidats et membres 
 			boolean isCurrentTimeOk4ThisCandidat = dateClotureChecker.isCurrentTimeOk4ThisCandidat(targetUser);
 			boolean isCurrentTimeOk4ThisMembre = dateClotureChecker.isCurrentTimeOk4ThisMembre(targetUser);
-			if(!isCurrentTimeOk4ThisCandidat && !isCurrentTimeOk4ThisMembre) {
-				if(targetUser.getIsCandidat() && !isCurrentTimeOk4ThisCandidat) {
+			if((targetUser.getIsCandidat() || targetUser.getIsMembre()) && !isCurrentTimeOk4ThisCandidat && !isCurrentTimeOk4ThisMembre) {
+			    if(targetUser.getIsCandidat() && !isCurrentTimeOk4ThisCandidat) {
 			        logger.warn("User " + username + " tried to access to his candidat account but the dateEndCandidat is < current time");
 			    }    	        
-		        if(targetUser.getIsMembre() && !isCurrentTimeOk4ThisMembre) {
-					logger.warn("User " + username + " tried to access to his membre account but the dateEndMembre is < current time");
-				}     
-		        logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-		        throw new BadCredentialsException("La date de clôture des dépôts est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
+			    if(targetUser.getIsMembre() && !isCurrentTimeOk4ThisMembre) {
+				logger.warn("User " + username + " tried to access to his membre account but the dateEndMembre is < current time");
+			    }     
+			    logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
+			    throw new BadCredentialsException("La date de clôture des dépôts est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
 			}
 	        
 	        userDetails = databaseUserDetailsService.loadUserByUser(targetUser);
