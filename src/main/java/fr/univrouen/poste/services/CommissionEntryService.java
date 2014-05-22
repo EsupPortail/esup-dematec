@@ -123,15 +123,17 @@ public class CommissionEntryService {
 			}
 		}
 
-		// send email notification    
-	    String mailTo = membre.getEmailAddress();
-	    String mailFrom = AppliConfig.getCacheMailFrom();
-	    String mailSubject = AppliConfig.getCacheMailSubject();	    
-	    String mailMessage = AppliConfig.getCacheTexteMailNewCommissions();
-
-	    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
-	    
-	    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
+		if(!postes.isEmpty()) {
+			// send email notification    
+		    String mailTo = membre.getEmailAddress();
+		    String mailFrom = AppliConfig.getCacheMailFrom();
+		    String mailSubject = AppliConfig.getCacheMailSubject();	    
+		    String mailMessage = AppliConfig.getCacheTexteMailNewCommissions();
+	
+		    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
+		    
+		    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
+		}
 	    
 	}
 }
