@@ -112,7 +112,7 @@ public class DbToolService {
 				"delete from posteapourvoir_membres;" +
 				"delete from posteapourvoir;" +
 				"delete from c_user where is_admin=false and is_manager=false and is_super_manager=false;" +
-				"-- na pas faire de truncate sur big_file pour appel du trigger et suppression effective du blob" +
+				"-- ne pas faire de truncate sur big_file pour appel du trigger et suppression effective du blob\n" +
 				"delete from big_file;" +
 				"VACUUM FULL;";
 		logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
