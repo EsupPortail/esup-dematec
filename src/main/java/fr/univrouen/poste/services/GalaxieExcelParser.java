@@ -87,17 +87,16 @@ public class GalaxieExcelParser {
 				galaxieEntry.persist();
 				dbGalaxyEntries.put(new NumEmploiCandidatId(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()), galaxieEntry);
 			} else {
-				// This GalaxyEntry exists already, we merge it ...
-				GalaxieEntry galaxyEntryOld = dbGalaxyEntrie;
-				//galaxyEntryOld.setNumEmploi(galaxieEntry.getNumEmploi());
-				//galaxyEntryOld.setNumCandidat(galaxieEntry.getNumCandidat());
-				galaxyEntryOld.setCivilite(galaxieEntry.getCivilite());
-				galaxyEntryOld.setNom(galaxieEntry.getNom());
-				galaxyEntryOld.setPrenom(galaxieEntry.getPrenom());
-				galaxyEntryOld.setEmail(galaxieEntry.getEmail());
-				galaxyEntryOld.setLocalisation(galaxieEntry.getLocalisation());
-				galaxyEntryOld.setProfil(galaxieEntry.getProfil());
-				galaxyEntryOld.merge();
+				// This GalaxyEntry exists already, we merge it if needed ...
+				if(!fieldsEquals(dbGalaxyEntrie, galaxieEntry)) {
+					dbGalaxyEntrie.setCivilite(galaxieEntry.getCivilite());
+					dbGalaxyEntrie.setNom(galaxieEntry.getNom());
+					dbGalaxyEntrie.setPrenom(galaxieEntry.getPrenom());
+					dbGalaxyEntrie.setEmail(galaxieEntry.getEmail());
+					dbGalaxyEntrie.setLocalisation(galaxieEntry.getLocalisation());
+					dbGalaxyEntrie.setProfil(galaxieEntry.getProfil());
+					dbGalaxyEntrie.merge();
+				}
 			}
 		}
 		
@@ -106,6 +105,17 @@ public class GalaxieExcelParser {
 
 	}
 	
+	private boolean fieldsEquals(GalaxieEntry dbGalaxyEntrie,
+			GalaxieEntry galaxieEntry) {
+		return dbGalaxyEntrie.getCivilite().equals(galaxieEntry.getCivilite())
+				&& dbGalaxyEntrie.getNom().equals(galaxieEntry.getNom())
+				&& dbGalaxyEntrie.getPrenom().equals(galaxieEntry.getPrenom())
+				&& dbGalaxyEntrie.getEmail().equals(galaxieEntry.getEmail())
+				&& dbGalaxyEntrie.getLocalisation().equals(galaxieEntry.getLocalisation())
+				&& dbGalaxyEntrie.getProfil().equals(galaxieEntry.getProfil())
+				;
+	}
+
 	class NumEmploiCandidatId {
 		
 		String numEploi;
