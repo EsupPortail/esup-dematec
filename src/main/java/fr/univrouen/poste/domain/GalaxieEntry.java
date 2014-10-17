@@ -21,6 +21,8 @@ import java.util.List;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.Index;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -32,8 +34,10 @@ public class GalaxieEntry {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "localisation", "profil", "candidat", "poste", "candidature", "numEmploi,numCandidat");
 
+    @Index(name="num_emploi_index")
     private String numEmploi;
 
+    @Index(name="num_candidat_index")
     private String numCandidat;
 
     private String civilite;
