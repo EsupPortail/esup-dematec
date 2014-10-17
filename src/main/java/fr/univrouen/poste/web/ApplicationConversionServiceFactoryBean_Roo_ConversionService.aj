@@ -6,7 +6,6 @@ package fr.univrouen.poste.web;
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.CommissionExcel;
-import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
 import fr.univrouen.poste.domain.LogAuth;
 import fr.univrouen.poste.domain.LogFile;
@@ -93,30 +92,6 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.CommissionExcel>() {
             public fr.univrouen.poste.domain.CommissionExcel convert(String id) {
                 return getObject().convert(getObject().convert(id, Long.class), CommissionExcel.class);
-            }
-        };
-    }
-    
-    public Converter<GalaxieEntry, String> ApplicationConversionServiceFactoryBean.getGalaxieEntryToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.GalaxieEntry, java.lang.String>() {
-            public String convert(GalaxieEntry galaxieEntry) {
-                return new StringBuilder().append(galaxieEntry.getNumEmploi()).append(' ').append(galaxieEntry.getNumCandidat()).append(' ').append(galaxieEntry.getCivilite()).append(' ').append(galaxieEntry.getNom()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, GalaxieEntry> ApplicationConversionServiceFactoryBean.getIdToGalaxieEntryConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.GalaxieEntry>() {
-            public fr.univrouen.poste.domain.GalaxieEntry convert(java.lang.Long id) {
-                return GalaxieEntry.findGalaxieEntry(id);
-            }
-        };
-    }
-    
-    public Converter<String, GalaxieEntry> ApplicationConversionServiceFactoryBean.getStringToGalaxieEntryConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.GalaxieEntry>() {
-            public fr.univrouen.poste.domain.GalaxieEntry convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), GalaxieEntry.class);
             }
         };
     }
@@ -323,9 +298,6 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getCommissionExcelToStringConverter());
         registry.addConverter(getIdToCommissionExcelConverter());
         registry.addConverter(getStringToCommissionExcelConverter());
-        registry.addConverter(getGalaxieEntryToStringConverter());
-        registry.addConverter(getIdToGalaxieEntryConverter());
-        registry.addConverter(getStringToGalaxieEntryConverter());
         registry.addConverter(getGalaxieExcelToStringConverter());
         registry.addConverter(getIdToGalaxieExcelConverter());
         registry.addConverter(getStringToGalaxieExcelConverter());

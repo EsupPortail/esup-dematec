@@ -17,103 +17,100 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
-<div xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" >
+--><div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                <util:help>
-                    <p>En tant que gestionnaire (ou administrateur) de l'application, vous avez la liste complète des candidatures donnée ici.</p>
-                    <p>Pour chacune d'entre elles, vous pouvez visualiser, ajouter ou supprimer des fichiers</p>
-                    <p>Vous avez également la possibilité de filtrer (trouver) les candidatures par poste ou recevable/non-recevable.</p>
-                </util:help>
-            <div class="demat-finder-candidatures">
-                <div class="accordion help" id="accordionfilter">
-                    <div class="accordion-group">
-                        <div class="accordion-heading">
-                            <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
-                        </div>
-                        <div class="accordion-body collapse" id="collapseFilter">
-                            <div class="accordion-inner">
-                                <div class="row-fluid">
-                                	<form:find finderName="ByMultiParams" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
-                                    	<div class="span4 demat-filter">
-	                                    	<div class="demat-filter">
-	                                            <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
-	                                        </div>
-	                                    </div>
-	                                    <div class="span5 demat-filter">
-                                            <field:select disableFormBinding="true" field="candidat" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
-	                                    </div>
-	                                    <div class="span3 demat-filter">
-	                                    	<label for="recevable">Recevable</label>
-	                                    	<select id="recevable" name="recevable">
-	                                    		<option value="">--</option>
-	                                    		<option value="true">Recevable</option>
-	                                    		<option value="false">Non recevable</option>
-	                                    	</select>
-	                                    </div>
-	                                    <div class="span3 demat-filter">
-	                                    	<label for="auditionnable">Auditionnable</label>
-	                                    	<select id="auditionnable" name="auditionnable">
-	                                    		<option value="">--</option>
-	                                    		<option value="true">Auditionnable</option>
-	                                    		<option value="false">Non Auditionnable</option>
-	                                    	</select>
-                                    	</div>
-                                    	<div class="span3 demat-filter">
-	                                       <field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
-		                                </div>
-                                    </form:find>
-                                </div>
+        <util:help>
+            <p>En tant que gestionnaire (ou administrateur) de l'application, vous avez la liste complète des candidatures donnée ici.</p>
+            <p>Pour chacune d'entre elles, vous pouvez visualiser, ajouter ou supprimer des fichiers</p>
+            <p>Vous avez également la possibilité de filtrer (trouver) les candidatures par poste ou recevable/non-recevable.</p>
+        </util:help>
+        <div class="demat-finder-candidatures">
+            <div class="accordion help" id="accordionfilter">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
+                    </div>
+                    <div class="accordion-body collapse" id="collapseFilter">
+                        <div class="accordion-inner">
+                            <div class="row-fluid">
+                                <form:find finderName="ByMultiParams" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
+                                    <div class="span4 demat-filter">
+                                        <div class="demat-filter">
+                                            <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+                                        </div>
+                                    </div>
+                                    <div class="span5 demat-filter">
+                                        <field:select disableFormBinding="true" field="candidat" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
+                                    </div>
+                                    <div class="span3 demat-filter">
+                                        <label for="recevable">Recevable</label>
+                                        <select id="recevable" name="recevable">
+                                            <option value="">--</option>
+                                            <option value="true">Recevable</option>
+                                            <option value="false">Non recevable</option>
+                                        </select>
+                                    </div>
+                                    <div class="span3 demat-filter">
+                                        <label for="auditionnable">Auditionnable</label>
+                                        <select id="auditionnable" name="auditionnable">
+                                            <option value="">--</option>
+                                            <option value="true">Auditionnable</option>
+                                            <option value="false">Non Auditionnable</option>
+                                        </select>
+                                    </div>
+                                    <div class="span3 demat-filter">
+                                        <field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
+                                    </div>
+                                </form:find>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_MEMBRE')">
         ${texteMembreAideCandidatures}
-        <c:if test="${fn:length(membresPostes) > 0}">
-                <div class="accordion help" id="accordionfilter">
-                    <div class="accordion-group">
-                        <div class="accordion-heading">
-                            <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
-                        </div>
-                        <div class="accordion-body collapse" id="collapseFilter">
-                            <div class="accordion-inner">
-                                <div class="row-fluid">
-                                    <div class="span4">
+        <c:if test="${fn:length(membresPostes) &gt; 0}">
+            <div class="accordion help" id="accordionfilter">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
+                    </div>
+                    <div class="accordion-body collapse" id="collapseFilter">
+                        <div class="accordion-inner">
+                            <div class="row-fluid">
+                                <div class="span4">
                                     <spring:url value="/postecandidatures" var="finder4MembreByPostesUrl"/>
-                                        <form action="${finder4MembreByPostesUrl }" method="get">
-                                            <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${membresPostes}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
-                                          	<input class="btn btn-success" value="Trouver" type="submit" id="proceed"/>  
-                                        </form>
-                                    </div>
+                                    <form action="${finder4MembreByPostesUrl }" method="get">
+                                        <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${membresPostes}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+                                        <input class="btn btn-success" id="proceed" type="submit" value="Trouver"/>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-       </c:if>
+            </div>
+        </c:if>
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_CANDIDAT')">
         ${texteCandidatAideCandidatures}
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
         <c:set value="true" var="canManage"/>
-        
-   		<style type="text/css">
-        	.table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {background-color: rgba(249, 249, 249, 0.2);}
+        <style type="text/css">
+        	.table-striped tbody &gt; tr:nth-child(odd) &gt; td, .table-striped tbody &gt; tr:nth-child(odd) &gt; th {background-color: rgba(249, 249, 249, 0.2);}
         	<c:set value="managerReviewStateColor" var="tableColorField"/>
-  		</style>
-
+        </style>
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
         <c:set value="true" var="seeAuditionnable"/>
     </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
-        <table:table create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed" color="${tableColorField}">
+        <table:table color="${tableColorField}" create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canManage}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom" sort="${canManage}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
@@ -121,32 +118,29 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${seeAuditionnable}" z="user-managed"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewState" property="managerReviewState" render="${canManage}" label="Vue" z="user-managed" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewState" label="Vue" property="managerReviewState" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" render="${canManage}" sort="true" z="user-managed"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReview" property="managerReview.manager" render="${canManage}" label="Gestionnaire" z="user-managed" sort="true"/> 
-            <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewDate" property="managerReview.reviewDate" render="${canManage}" label="Date gestion" z="user-managed" sort="true"/>        
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReview" label="Gestionnaire" property="managerReview.manager" render="${canManage}" sort="true" z="user-managed"/>
+            <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewDate" label="Date gestion" property="managerReview.reviewDate" render="${canManage}" sort="true" z="user-managed"/>
         </table:table>
     </page:list>
-    
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
-      <div id="demat-legende">
-       	<hr/>
-       	<i>Légende :</i>
-  		<div id="legendColor">
-  			<table class="table table-striped table-bordered">
-  				<tr>
-	  				<c:forEach items="${legendColors}" var="legendColor">
-	  			 		<td style="background-color:${legendColor.color}">${legendColor.reviewStatus}</td>
-	  				 </c:forEach>
-  			 	</tr>
-  			 </table>
-  		</div>
-  		
-  	    <spring:url value="/images/accept.png" var="img_true_url"/>
-  	    <spring:url value="/images/cross.png" var="img_false_url"/>
-  		
-  		<script>
+        <div id="demat-legende">
+            <hr/>
+            <i>Légende :</i>
+            <div id="legendColor">
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <c:forEach items="${legendColors}" var="legendColor">
+                            <td style="background-color:${legendColor.color}">${legendColor.reviewStatus}</td>
+                        </c:forEach>
+                    </tr>
+                </table>
+            </div>
+            <spring:url value="/images/accept.png" var="img_true_url"/>
+            <spring:url value="/images/cross.png" var="img_false_url"/>
+            <script>
 		$(document).ready(function(){
 			var html_img_true= '<img src="${img_true_url}"/>';
 			var html_img_false= '<img src="${img_false_url}"/>';
@@ -167,6 +161,6 @@
 			}).text("");
 		});
 		</script>
-       </div>
+        </div>
     </sec:authorize>
 </div>

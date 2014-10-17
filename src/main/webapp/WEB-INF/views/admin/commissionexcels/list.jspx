@@ -17,12 +17,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
-<div xmlns:spring="http://www.springframework.org/tags" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" >
+--><div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
-    <spring:url var="commissionXlsExemple" value="/resources/doc/COMMISSION.xls" />
-     <util:help>
+    <spring:url value="/resources/doc/COMMISSION.xls" var="commissionXlsExemple"/>
+    <util:help>
         <p>Afin de pouvoir faciliter l'affectation des membres à une commission (poste), vous pouvez ajouter ici de nouveaux fichiers Excel (avec format particulier : exemple <a href="${commissionXlsExemple}">ici</a>).</p>
         <p>Une fois un nouveau fichier ajouté, vous pourrez effectivement importer et génerer les différents éléments depuis le menu <a href="commissionentrys">Importation Commission</a>.</p>
     </util:help>

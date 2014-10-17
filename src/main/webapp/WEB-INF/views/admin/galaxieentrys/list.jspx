@@ -17,7 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---><div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" >
+--><div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <util:help>
@@ -35,23 +35,23 @@
     </util:help>
     <c:if test="${not empty unknowCandidats or not empty unknowPostes or not empty unknowCandidatures}">
         <div class="well">
-                <c:if test="${not empty unknowCandidatures}">
-                    <div>
-                        <strong>Les éléments correspondants à ces candidatures sont manquants : </strong>
-                        <c:forEach items="${unknowCandidatures}" var="candidature">
-                            <spring:url value="/admin/galaxieentrys/${candidature[2]}" var="candidatureUrl"/>
-                            <a href="${candidatureUrl}">[${candidature[0]}, ${candidature[1]}]</a>, 
-	                    </c:forEach>
-                    </div>
-                </c:if>
+            <c:if test="${not empty unknowCandidatures}">
                 <div>
-                    <spring:url value="/admin/galaxieentrys/generatecandidatspostes" var="createCandidatPosteUrl"/>
-                    <a class="btn btn-large btn-danger" href="${createCandidatPosteUrl}">
-                        <i class="icon-play-circle">
-                            <!--  -->
-                        </i>Générer
-					</a>
+                    <strong>Les éléments correspondants à ces candidatures sont manquants : </strong>
+                    <c:forEach items="${unknowCandidatures}" var="candidature">
+                        <spring:url value="/admin/galaxieentrys/${candidature[2]}" var="candidatureUrl"/>
+                        <a href="${candidatureUrl}">[${candidature[0]}, ${candidature[1]}]</a>, 
+	                    </c:forEach>
                 </div>
+            </c:if>
+            <div>
+                <spring:url value="/admin/galaxieentrys/generatecandidatspostes" var="createCandidatPosteUrl"/>
+                <a class="btn btn-large btn-danger" href="${createCandidatPosteUrl}">
+                    <i class="icon-play-circle">
+                        <!--  -->
+                    </i>Générer
+					</a>
+            </div>
         </div>
     </c:if>
     <sec:authorize access="hasRole('ROLE_ADMIN')">

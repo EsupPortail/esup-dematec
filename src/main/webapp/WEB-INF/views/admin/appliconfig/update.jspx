@@ -77,7 +77,7 @@
         <field:textarea field="texteMailNewCandidatures" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCandidatures" z="user-managed"/>
         <field:input field="mailSubjectMembre" id="c_fr_univrouen_poste_domain_AppliConfig_mailSubjectMembre" z="h1LpAsl6JiJ1SXDt6Ydz65K6woE="/>
         <field:textarea field="texteMailActivationMembre" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailActivationMembre" z="user-managed"/>
-        <field:textarea field="texteMailNewCommissions" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCommissions" z="wyFo843j3Gm7DfA2Wh94IuKjpHM="/>    
+        <field:textarea field="texteMailNewCommissions" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCommissions" z="user-managed"/>
         <field:textarea field="texteMailPasswordOublie" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie" z="user-managed"/>
         <field:select field="mailReturnReceiptModeType" id="c_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType" items="${receiptModeTypes}" path="mailReturnReceiptModeType" required="true" z="user-managed"/>
         <field:textarea field="texteMailCandidatReturnReceipt" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" z="user-managed"/>
