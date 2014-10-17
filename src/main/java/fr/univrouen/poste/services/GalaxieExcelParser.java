@@ -27,6 +27,7 @@ import javax.persistence.TypedQuery;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
@@ -43,7 +44,10 @@ public class GalaxieExcelParser {
 	GalaxieMappingService galaxieMappingService;
 
 	public void process(GalaxieExcel galaxieExcel) throws SQLException {
-
+		
+		StopWatch chrono = new StopWatch();
+        chrono.start();
+        
 		List<List<String>> cells = excelParser.getCells(galaxieExcel.getBigFile().getBinaryFile().getBinaryStream());
 
 		Map<String, Long> cellsPosition = new HashMap<String, Long>();
@@ -56,7 +60,7 @@ public class GalaxieExcelParser {
 		galaxieMappingService.checkCellsHead(cellsPosition);
 
 		for (List<String> row : cells) {
-
+			
 			// create a new galaxyEntry
 			GalaxieEntry galaxieEntry = new GalaxieEntry();
 			for (String cellName : cellsPosition.keySet()) {
@@ -86,6 +90,9 @@ public class GalaxieExcelParser {
 				galaxyEntryOld.merge();
 			}
 		}
+		
+		chrono.stop();
+		logger.info("Le traitement du fichier Excel Galaxie a été effectué en " + chrono.getTotalTimeMillis()/1000.0 + " sec.");
 
 	}
 
