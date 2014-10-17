@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.TypedQuery;
 
@@ -58,7 +59,12 @@ public class GalaxieExcelParser {
 			cellsPosition.put(cellName, new Long(p++));
 		}
 		galaxieMappingService.checkCellsHead(cellsPosition);
-
+        
+		Map<NumEmploiCandidatId, GalaxieEntry>  dbGalaxyEntries = new HashMap<>();
+		for(GalaxieEntry galaxieEntry : GalaxieEntry.findAllGalaxieEntrys()) {
+			dbGalaxyEntries.put(new NumEmploiCandidatId(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()), galaxieEntry);
+		}
+        
 		for (List<String> row : cells) {
 			
 			// create a new galaxyEntry
@@ -73,14 +79,18 @@ public class GalaxieExcelParser {
 				}
 			}
 			
-			TypedQuery<GalaxieEntry> query = GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat(), null, null);
-			if (query.getResultList().isEmpty()) {
+			// Récupération d'un GalaxieEntry à chaque fois trop gourmand, même avec l'index ...
+			//TypedQuery<GalaxieEntry> query = GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat(), null, null);
+			GalaxieEntry dbGalaxyEntrie = dbGalaxyEntries.get(new NumEmploiCandidatId(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()));
+			
+			if (dbGalaxyEntrie == null) {
 				galaxieEntry.persist();
+				dbGalaxyEntries.put(new NumEmploiCandidatId(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()), galaxieEntry);
 			} else {
 				// This GalaxyEntry exists already, we merge it ...
-				GalaxieEntry galaxyEntryOld = query.getSingleResult();
-				galaxyEntryOld.setNumEmploi(galaxieEntry.getNumEmploi());
-				galaxyEntryOld.setNumCandidat(galaxieEntry.getNumCandidat());
+				GalaxieEntry galaxyEntryOld = dbGalaxyEntrie;
+				//galaxyEntryOld.setNumEmploi(galaxieEntry.getNumEmploi());
+				//galaxyEntryOld.setNumCandidat(galaxieEntry.getNumCandidat());
 				galaxyEntryOld.setCivilite(galaxieEntry.getCivilite());
 				galaxyEntryOld.setNom(galaxieEntry.getNom());
 				galaxyEntryOld.setPrenom(galaxieEntry.getPrenom());
@@ -94,6 +104,61 @@ public class GalaxieExcelParser {
 		chrono.stop();
 		logger.info("Le traitement du fichier Excel Galaxie a été effectué en " + chrono.getTotalTimeMillis()/1000.0 + " sec.");
 
+	}
+	
+	class NumEmploiCandidatId {
+		
+		String numEploi;
+		
+		String numCandidat;
+
+		public NumEmploiCandidatId(String numEploi, String numCandidat) {
+			super();
+			this.numEploi = numEploi;
+			this.numCandidat = numCandidat;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result
+					+ ((numCandidat == null) ? 0 : numCandidat.hashCode());
+			result = prime * result
+					+ ((numEploi == null) ? 0 : numEploi.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			NumEmploiCandidatId other = (NumEmploiCandidatId) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (numCandidat == null) {
+				if (other.numCandidat != null)
+					return false;
+			} else if (!numCandidat.equals(other.numCandidat))
+				return false;
+			if (numEploi == null) {
+				if (other.numEploi != null)
+					return false;
+			} else if (!numEploi.equals(other.numEploi))
+				return false;
+			return true;
+		}
+
+		private GalaxieExcelParser getOuterType() {
+			return GalaxieExcelParser.this;
+		}
+		
+		
 	}
 
 }
