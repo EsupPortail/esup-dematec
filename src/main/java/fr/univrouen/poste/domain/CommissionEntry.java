@@ -17,7 +17,11 @@
  */
 package fr.univrouen.poste.domain;
 import java.util.List;
+
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Index;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -29,18 +33,20 @@ public class CommissionEntry {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numPoste", "email", "nom", "prenom", "membre", "poste", "numPoste,email");
 
+    @Index(name="num_postel_index")
     private String numPoste;
 
+    @Index(name="email_index")
     private String email;
 
     private String nom;
 
     private String prenom;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     private User membre;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     private PosteAPourvoir poste;
 
     // don't care of upper/lower case for authentication with email ...

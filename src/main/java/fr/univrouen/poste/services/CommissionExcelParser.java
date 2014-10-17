@@ -18,11 +18,10 @@
 package fr.univrouen.poste.services;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.TypedQuery;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +53,12 @@ public class CommissionExcelParser {
 			cellsPosition.put(cellName, new Long(p++));
 		}
 
+		Map<List<String>, CommissionEntry>  dbcommissionEntries = new HashMap<List<String>, CommissionEntry>();
+		for(CommissionEntry commissionEntry : CommissionEntry.findAllCommissionEntrys()) {
+			dbcommissionEntries.put(getList4Id(commissionEntry), commissionEntry);
+		}
+        
+		
 		for (List<String> row : cells) {
 
 			// create a new commissionEntry
@@ -70,22 +75,36 @@ public class CommissionExcelParser {
 
 			if(commissionEntry.getNumPoste() != null && !commissionEntry.getNumPoste().isEmpty()
 					&& commissionEntry.getEmail() != null && !commissionEntry.getEmail().isEmpty()) {
-				TypedQuery<CommissionEntry> query = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail(), null, null);
-				if (query.getResultList().isEmpty()) {
+				
+				// Récupération d'un CommissionEntry à chaque fois trop gourmand, même avec l'index ...
+				//TypedQuery<CommissionEntry> query = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail(), null, null);
+				CommissionEntry dbCommissionEntry = dbcommissionEntries.get(getList4Id(commissionEntry));
+				
+				if (dbCommissionEntry == null) {
 					commissionEntry.persist();
 				} else {
-					// This GalaxyEntry exists already, we merge it ...
-					CommissionEntry commissionEntryOld = query.getSingleResult();
-					commissionEntryOld.setNumPoste(commissionEntry.getNumPoste());
-					commissionEntryOld.setNom(commissionEntry.getNom());
-					commissionEntryOld.setPrenom(commissionEntry.getPrenom());
-					commissionEntryOld.setEmail(commissionEntry.getEmail());
-	
+					// This GalaxyEntry exists already, we merge it if needed
+					if(!fieldsEquals(dbCommissionEntry, commissionEntry)) {
+						dbCommissionEntry.setNom(commissionEntry.getNom());
+						dbCommissionEntry.setPrenom(commissionEntry.getPrenom());
+						dbCommissionEntry.merge();
+					}
 				}
 			}
 
 		}
 
 	}
+	
+	private boolean fieldsEquals(CommissionEntry dbCommissionEntry,
+			CommissionEntry commissionEntry) {
+		return dbCommissionEntry.getNom().equals(commissionEntry.getNom()) 
+				&& dbCommissionEntry.getPrenom().equals(commissionEntry.getPrenom());
+	}
+
+	private List<String> getList4Id(CommissionEntry commissionEntry) {
+		return Arrays.asList(new String [] {commissionEntry.getNumPoste(), commissionEntry.getEmail()});
+	}
+
 
 }
