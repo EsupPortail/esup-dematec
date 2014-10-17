@@ -18,6 +18,7 @@
 package fr.univrouen.poste.services;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +61,9 @@ public class GalaxieExcelParser {
 		}
 		galaxieMappingService.checkCellsHead(cellsPosition);
         
-		Map<NumEmploiCandidatId, GalaxieEntry>  dbGalaxyEntries = new HashMap<>();
+		Map<List<String>, GalaxieEntry>  dbGalaxyEntries = new HashMap<List<String>, GalaxieEntry>();
 		for(GalaxieEntry galaxieEntry : GalaxieEntry.findAllGalaxieEntrys()) {
-			dbGalaxyEntries.put(new NumEmploiCandidatId(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()), galaxieEntry);
+			dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
 		}
         
 		for (List<String> row : cells) {
@@ -81,13 +82,13 @@ public class GalaxieExcelParser {
 			
 			// Récupération d'un GalaxieEntry à chaque fois trop gourmand, même avec l'index ...
 			//TypedQuery<GalaxieEntry> query = GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat(), null, null);
-			GalaxieEntry dbGalaxyEntrie = dbGalaxyEntries.get(new NumEmploiCandidatId(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()));
+			GalaxieEntry dbGalaxyEntrie = dbGalaxyEntries.get(getList4Id(galaxieEntry));
 			
 			if (dbGalaxyEntrie == null) {
 				galaxieEntry.persist();
-				dbGalaxyEntries.put(new NumEmploiCandidatId(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()), galaxieEntry);
+				dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
 			} else {
-				// This GalaxyEntry exists already, we merge it if needed ...
+				// This GalaxyEntry exists already, we merge it if needed
 				if(!fieldsEquals(dbGalaxyEntrie, galaxieEntry)) {
 					dbGalaxyEntrie.setCivilite(galaxieEntry.getCivilite());
 					dbGalaxyEntrie.setNom(galaxieEntry.getNom());
@@ -115,60 +116,9 @@ public class GalaxieExcelParser {
 				&& dbGalaxyEntrie.getProfil().equals(galaxieEntry.getProfil())
 				;
 	}
-
-	class NumEmploiCandidatId {
-		
-		String numEploi;
-		
-		String numCandidat;
-
-		public NumEmploiCandidatId(String numEploi, String numCandidat) {
-			super();
-			this.numEploi = numEploi;
-			this.numCandidat = numCandidat;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result
-					+ ((numCandidat == null) ? 0 : numCandidat.hashCode());
-			result = prime * result
-					+ ((numEploi == null) ? 0 : numEploi.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			NumEmploiCandidatId other = (NumEmploiCandidatId) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (numCandidat == null) {
-				if (other.numCandidat != null)
-					return false;
-			} else if (!numCandidat.equals(other.numCandidat))
-				return false;
-			if (numEploi == null) {
-				if (other.numEploi != null)
-					return false;
-			} else if (!numEploi.equals(other.numEploi))
-				return false;
-			return true;
-		}
-
-		private GalaxieExcelParser getOuterType() {
-			return GalaxieExcelParser.this;
-		}
-		
-		
+	
+	private List<String> getList4Id(GalaxieEntry galaxieEntry) {
+		return Arrays.asList(new String [] {galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()});
 	}
 
 }
