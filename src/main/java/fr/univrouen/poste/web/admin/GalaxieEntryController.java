@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -99,6 +100,9 @@ public class GalaxieEntryController {
     @RequestMapping("/generatecandidatspostes")
     public String generateCandidatsPostes (Model uiModel) {
     	
+		StopWatch chrono = new StopWatch();
+        chrono.start();
+        
     	List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatIsNull().getResultList();
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
         	try{
@@ -138,6 +142,9 @@ public class GalaxieEntryController {
         	}
         }  
 
+        chrono.stop();
+		logger.info("La génération des candidats/postes/candidature a été effectuée en " + chrono.getTotalTimeMillis()/1000.0 + " sec.");
+		
         return "redirect:/admin/logimportgalaxies?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
     }
     
