@@ -17,6 +17,8 @@
  */
 package fr.univrouen.poste.domain;
 import java.util.List;
+
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -46,13 +48,13 @@ public class GalaxieEntry {
 
     private String profil;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     private User candidat;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     private PosteAPourvoir poste;
 
-    @OneToOne
+    @OneToOne(fetch=FetchType.LAZY)
     private PosteCandidature candidature;
 
     // don't care of upper/lower case for authentication with email ...
