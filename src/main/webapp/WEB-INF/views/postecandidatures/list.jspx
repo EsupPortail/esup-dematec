@@ -17,9 +17,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---><div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
+--><div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:spring-form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:sec="http://www.springframework.org/security/tags" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
+
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
         <util:help>
             <p>En tant que gestionnaire (ou administrateur) de l'application, vous avez la liste complète des candidatures donnée ici.</p>
@@ -38,27 +39,27 @@
                                 <form:find finderName="ByMultiParams" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
                                     <div class="span4 demat-filter">
                                         <div class="demat-filter">
-                                            <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+                                            <field:select  disableFormBinding="false" field="postes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
                                         </div>
                                     </div>
                                     <div class="span5 demat-filter">
-                                        <field:select disableFormBinding="true" field="candidat" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
+                                        <field:select disableFormBinding="false" field="candidats" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" itemValue="id" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
                                     </div>
                                     <div class="span3 demat-filter">
                                         <label for="recevable">Recevable</label>
-                                        <select id="recevable" name="recevable">
-                                            <option value="">--</option>
-                                            <option value="true">Recevable</option>
-                                            <option value="false">Non recevable</option>
-                                        </select>
+                                        <spring-form:select id="recevable" path="recevable">
+                                            <spring-form:option value="">--</spring-form:option>
+                                            <spring-form:option value="true">Recevable</spring-form:option>
+                                            <spring-form:option value="false">Non recevable</spring-form:option>
+                                        </spring-form:select>
                                     </div>
                                     <div class="span3 demat-filter">
                                         <label for="auditionnable">Auditionnable</label>
-                                        <select id="auditionnable" name="auditionnable">
-                                            <option value="">--</option>
-                                            <option value="true">Auditionnable</option>
-                                            <option value="false">Non Auditionnable</option>
-                                        </select>
+                                        <spring-form:select id="auditionnable" path="auditionnable">
+                                            <spring-form:option value="">--</spring-form:option>
+                                            <spring-form:option value="true">Auditionnable</spring-form:option>
+                                            <spring-form:option value="false">Non Auditionnable</spring-form:option>
+                                        </spring-form:select>
                                     </div>
                                     <div class="span3 demat-filter">
                                         <field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>

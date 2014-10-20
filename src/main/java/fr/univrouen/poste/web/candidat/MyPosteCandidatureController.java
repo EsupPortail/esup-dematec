@@ -48,6 +48,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -505,7 +507,7 @@ public class MyPosteCandidatureController {
 
 		// uiModel.addAttribute("users", User.findUserEntries(firstResult,
 		// sizeNo));
-
+		
 		List<PosteCandidature> postecandidatures = null;
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -576,14 +578,17 @@ public class MyPosteCandidatureController {
 			
 			uiModel.addAttribute("membresPostes", membresPostes2Display);
 		}
-
+		
 		uiModel.addAttribute("postecandidatures", postecandidatures);
+
 		uiModel.addAttribute("zip", new Boolean(false));
 		
 		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
 		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
 		
 		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
+		
+		uiModel.addAttribute("command", new SearchCriteria());
 		
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";
@@ -593,29 +598,17 @@ public class MyPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String findPosteCandidatures(HttpServletRequest request, 
     		HttpServletResponse response, 
-    		@RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, 
-    		@RequestParam(required=false, value="candidat") List<User> candidats, 
-    		@RequestParam(required = false, value="recevable") String recevableStr,
-    		@RequestParam(required = false, value="auditionnable") String auditionnableStr,
+    		@ModelAttribute("command") SearchCriteria searchCriteria, BindingResult bindResult,
     		@RequestParam(defaultValue="off", required=false) Boolean zip, 
     		@RequestParam(required = false) Integer page, 
     		@RequestParam(required = false) Integer size, 
     		@RequestParam(required = false) String sortFieldName, 
-    		@RequestParam(required = false) String sortOrder, 
+    		@RequestParam(required = false) String sortOrder,
     		Model uiModel) throws IOException, SQLException {
-    	
-    	Boolean recevable = null;
-    	if(recevableStr != null && !"".equals(recevableStr)) {
-    		recevable = new Boolean(recevableStr);
-    	}
-    	Boolean auditionnable = null;
-    	if(auditionnableStr != null && !"".equals(auditionnableStr)) {
-    		auditionnable = new Boolean(auditionnableStr);
-    	}
-    	
+
     	if(zip) {
 
-    		File tmpFile = zipService.getZip(PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(postes, candidats, recevable, auditionnable, null, null).getResultList());
+    		File tmpFile = zipService.getZip(PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), null, null).getResultList());
 
     		String contentType = "application/zip";
     		int zipSize = (int) tmpFile.length();
@@ -645,17 +638,19 @@ public class MyPosteCandidatureController {
     		if (page != null || size != null) {
                 int sizeNo = size == null ? 10 : size.intValue();
                 final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(postes, candidats, recevable, auditionnable, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-                float nrOfPages = (float) PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(postes, candidats, recevable, auditionnable) / sizeNo;
+                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+                float nrOfPages = (float) PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable()) / sizeNo;
                 uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
             } else {
-                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(postes, candidats, recevable, auditionnable, sortFieldName, sortOrder).getResultList());
+                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), sortFieldName, sortOrder).getResultList());
             }
     		
     		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
     		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
     		
     		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
+    		
+    		uiModel.addAttribute("command", searchCriteria);
     		
             addDateTimeFormatPatterns(uiModel);       
             return "postecandidatures/list";           
