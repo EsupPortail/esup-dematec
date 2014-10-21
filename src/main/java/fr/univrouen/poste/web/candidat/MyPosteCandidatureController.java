@@ -118,6 +118,11 @@ public class MyPosteCandidatureController {
 		return currentUser;
 	}
 
+	@ModelAttribute("command")
+	public PosteCandidatureSearchCriteria getSearchCriteria() {
+		return new PosteCandidatureSearchCriteria();
+	}
+	
 	@RequestMapping(value = "/{id}/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'view')")
 	public void downloadCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
@@ -504,7 +509,10 @@ public class MyPosteCandidatureController {
     }
 
 	@RequestMapping(produces = "text/html")
-	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, @RequestParam(required=false, value="poste") List<PosteAPourvoir> postes, Model uiModel) {
+	public String list(@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
+			@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  
+			@RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, 
+			Model uiModel) {
 
 		// uiModel.addAttribute("users", User.findUserEntries(firstResult,
 		// sizeNo));
@@ -562,9 +570,12 @@ public class MyPosteCandidatureController {
 
 		else if (isMembre) {
 			Set<PosteAPourvoir> membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
+			List<PosteAPourvoir> postes = searchCriteria.getPostes();
 			if(postes != null && !postes.isEmpty()) {
 				membresPostes.retainAll(postes);
-			}
+	    		uiModel.addAttribute("finderview", true);
+	    		uiModel.addAttribute("command", searchCriteria);
+			} 
 			if(membresPostes.isEmpty()) {
 				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			}
@@ -588,8 +599,6 @@ public class MyPosteCandidatureController {
 		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
 		
 		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
-		
-		uiModel.addAttribute("command", new PosteCandidatureSearchCriteria());
 		
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";

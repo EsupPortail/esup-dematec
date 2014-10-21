@@ -80,15 +80,15 @@
                     <div class="accordion-heading">
                         <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
                     </div>
-                    <div class="accordion-body collapse" id="collapseFilter">
+                    <div class="accordion-body collapse ${finderview ? 'in' : ''}" id="collapseFilter">
                         <div class="accordion-inner">
                             <div class="row-fluid">
                                 <div class="span4">
                                     <spring:url value="/postecandidatures" var="finder4MembreByPostesUrl"/>
-                                    <form action="${finder4MembreByPostesUrl }" method="get">
-                                        <field:select disableFormBinding="true" field="poste" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${membresPostes}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+                                    <spring-form:form action="${finder4MembreByPostesUrl }" method="get">
+                                        <field:select disableFormBinding="false" field="postes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${membresPostes}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
                                         <input class="btn btn-success" id="proceed" type="submit" value="Trouver"/>
-                                    </form>
+                                    </spring-form:form>
                                 </div>
                             </div>
                         </div>
