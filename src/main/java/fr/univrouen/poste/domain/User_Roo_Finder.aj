@@ -27,6 +27,14 @@ privileged aspect User_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static Long User.countFindUsersByEmailAddressAndActivationDateIsNotNull(String emailAddress) {
+        if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
+        EntityManager em = User.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM User AS o WHERE o.emailAddress = :emailAddress AND o.activationDate IS NOT NULL", Long.class);
+        q.setParameter("emailAddress", emailAddress);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long User.countFindUsersByIsAdmin(Boolean isAdmin) {
         if (isAdmin == null) throw new IllegalArgumentException("The isAdmin argument is required");
         EntityManager em = User.entityManager();
@@ -98,6 +106,29 @@ privileged aspect User_Roo_Finder {
         if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
         EntityManager em = User.entityManager();
         String jpaQuery = "SELECT o FROM User AS o WHERE o.emailAddress = :emailAddress";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        q.setParameter("emailAddress", emailAddress);
+        return q;
+    }
+    
+    public static TypedQuery<User> User.findUsersByEmailAddressAndActivationDateIsNotNull(String emailAddress) {
+        if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
+        EntityManager em = User.entityManager();
+        TypedQuery<User> q = em.createQuery("SELECT o FROM User AS o WHERE o.emailAddress = :emailAddress AND o.activationDate IS NOT NULL", User.class);
+        q.setParameter("emailAddress", emailAddress);
+        return q;
+    }
+    
+    public static TypedQuery<User> User.findUsersByEmailAddressAndActivationDateIsNotNull(String emailAddress, String sortFieldName, String sortOrder) {
+        if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
+        EntityManager em = User.entityManager();
+        String jpaQuery = "SELECT o FROM User AS o WHERE o.emailAddress = :emailAddress AND o.activationDate IS NOT NULL";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {

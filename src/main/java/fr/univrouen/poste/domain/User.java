@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RooJavaBean
 @RooToString(excludeFields = "postes")
-@RooJpaActiveRecord(finders = { "findUsersByEmailAddress", "findUsersByActivationKeyAndEmailAddress", "findUsersByNumCandidat",  "findUsersByIsAdmin", "findUsersByIsSuperManager", "findUsersByIsManager"}, table="cUser")
+@RooJpaActiveRecord(finders = { "findUsersByEmailAddress", "findUsersByEmailAddressAndActivationDateIsNotNull", "findUsersByActivationKeyAndEmailAddress", "findUsersByNumCandidat",  "findUsersByIsAdmin", "findUsersByIsSuperManager", "findUsersByIsManager"}, table="cUser")
 public class User {
 
 	private static final int MAX_LOGIN_ATTEMPTS_BEFORE_LOCK = 3;

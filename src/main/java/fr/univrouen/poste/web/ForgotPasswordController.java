@@ -64,7 +64,7 @@ public class ForgotPasswordController {
         if (result.hasErrors()) {
         	return "forgotpassword/index";
         } else {
-        	TypedQuery<User> userQuery=User.findUsersByEmailAddress(form.getEmailAddress(), null, null);
+        	TypedQuery<User> userQuery=User.findUsersByEmailAddressAndActivationDateIsNotNull(form.getEmailAddress(), null, null);
         	if(null!=userQuery && !userQuery.getResultList().isEmpty()){
         		User User = userQuery.getSingleResult();
         		Random random = new Random(System.currentTimeMillis());
