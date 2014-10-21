@@ -41,7 +41,7 @@
                     <div class="accordion-body collapse ${finderview ? 'in' : ''}" id="collapseFilter">
                         <div class="accordion-inner">
                             <form:find finderName="ByStatusEquals" id="ff_fr_univrouen_poste_domain_LogImportCommission" path="/admin/logimportcommissions">
-                                <spring-form:select id="status" path="status">
+                                <spring-form:select id="status" path="status" size="3">
                             		<spring-form:option value="">--</spring-form:option>
                                 	<spring-form:option value="IMPORT FAILED">IMPORT FAILED</spring-form:option>
                                 	<spring-form:option value="IMPORT SUCCESS">IMPORT SUCCESS</spring-form:option>

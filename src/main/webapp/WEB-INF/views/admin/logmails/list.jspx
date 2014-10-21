@@ -38,7 +38,7 @@
                     <div class="accordion-body collapse ${finderview ? 'in' : ''}" id="collapseFilter">
                         <div class="accordion-inner">
                             <form:find finderName="ByStatusEquals" id="ff_fr_univrouen_poste_domain_LogMail" path="/admin/logmails">
-	                             <spring-form:select id="status" path="status">
+	                             <spring-form:select id="status" path="status" size="3">
 	                           		<spring-form:option value="">--</spring-form:option>
 	                           		<spring-form:option value="MAIL FAILED">MAIL FAILED</spring-form:option>
 	                           		<spring-form:option value="MAIL SENT">MAIL SENT</spring-form:option>

@@ -31,7 +31,7 @@
                         <form:find finderName="ByActionEqualsAndUserIdEquals" id="ff_fr_univrouen_poste_domain_LogAuth" path="/admin/logauths">
                         	<div class="span3 demat-filter">
                         		<h4>Action :</h4>
-	                            <spring-form:select id="status" path="status">
+	                            <spring-form:select id="status" path="status" size="6">
 	                           		<spring-form:option value="">--</spring-form:option>
 	                           		<spring-form:option value="AUTH SUCCESS">AUTH SUCCESS</spring-form:option>
 	                           		<spring-form:option value="AUTH FAILED">AUTH FAILED</spring-form:option>

@@ -29,7 +29,7 @@
                 <div class="accordion-inner">
                     <div class="row-fluid">
                         <form:find finderName="ByActionEquals" id="ff_fr_univrouen_poste_domain_LogFile" path="/admin/logfiles">
-                        	<spring-form:select id="status" path="status">
+                        	<spring-form:select id="status" path="status" size="7">
                            		<spring-form:option value="">--</spring-form:option>
                             	<spring-form:option value="UPLOAD">UPLOAD</spring-form:option>
                             	<spring-form:option value="DELETE">DELETE</spring-form:option>
