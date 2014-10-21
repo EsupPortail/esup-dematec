@@ -651,6 +651,7 @@ public class MyPosteCandidatureController {
     		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
     		
     		uiModel.addAttribute("command", searchCriteria);
+    		uiModel.addAttribute("finderview", true);
     		
             addDateTimeFormatPatterns(uiModel);       
             return "postecandidatures/list";           
