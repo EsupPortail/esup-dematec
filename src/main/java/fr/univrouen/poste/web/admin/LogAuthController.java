@@ -43,7 +43,9 @@ public class LogAuthController {
 
 	@ModelAttribute("users")
 	public List<String> getUserIds() {
-		return User.findAllUserIds().getResultList();
+		List<String> userIds = User.findAllUserIds().getResultList();
+		userIds.add(0, "");
+		return userIds;
 	}
     
     @RequestMapping(params = "find=ByActionEqualsAndUserIdEquals", method = RequestMethod.GET)
