@@ -33,7 +33,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findLogFilesByNumEmploi", "findLogFilesByNumCandidat", "findLogFilesByActionEquals" })
+@RooJpaActiveRecord(finders = { "findLogFilesByNumEmploi", "findLogFilesByNumCandidat", "findLogFilesByActionEquals", "findLogFilesByActionEqualsAndEmailEquals", "findLogFilesByEmailEquals"})
 public class LogFile {
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -65,4 +65,25 @@ public class LogFile {
     @Column(length=512)
     private String userAgent;
 
+	public static TypedQuery<LogFile>  findLogFiles(String action2, String userId2,
+			String sortFieldName, String sortOrder) {
+		if("".equals(userId2)) {
+			return findLogFilesByActionEquals(action2, sortFieldName, sortOrder);
+		}
+		if("".equals(action2)) {
+			return findLogFilesByEmailEquals(userId2, sortFieldName, sortOrder);
+		}
+		return findLogFilesByActionEqualsAndEmailEquals(action2, userId2, sortFieldName, sortOrder);	
+	}
+
+	public static Long countFindLogFiles(String action2, String userId2) {
+		if("".equals(userId2)) {
+			return countFindLogFilesByActionEquals(action2);
+		}
+		if("".equals(action2)) {
+			return countFindLogFilesByEmailEquals(userId2);
+		}
+		return countFindLogFilesByActionEqualsAndEmailEquals(action2, userId2);	
+	}
+	
 }

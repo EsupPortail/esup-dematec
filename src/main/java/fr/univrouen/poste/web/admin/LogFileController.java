@@ -17,6 +17,8 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import java.util.List;
+
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.LogFile;
+import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 
 @RequestMapping("/admin/logfiles")
@@ -38,19 +41,26 @@ public class LogFileController {
     	return new LogSearchCriteria();
     }
     
+	@ModelAttribute("users")
+	public List<String> getUserIds() {
+		List<String> userIds = User.findAllUserIds().getResultList();
+		userIds.add(0, "");
+		return userIds;
+	}
+	
     @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
     public String findLogFilesByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-    	if("".equals(searchCriteria.getStatus())) {
+    	if("".equals(searchCriteria.getStatus()) && "".equals(searchCriteria.getUserId())) {
     		return this.list(page, size, sortFieldName, sortOrder, uiModel);
     	}
     	if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(searchCriteria.getStatus(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) LogFile.countFindLogFilesByActionEquals(searchCriteria.getStatus()) / sizeNo;
+            uiModel.addAttribute("logfiles", LogFile.findLogFiles(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) LogFile.countFindLogFiles(searchCriteria.getStatus(), searchCriteria.getUserId()) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("logfiles", LogFile.findLogFilesByActionEquals(searchCriteria.getStatus(), sortFieldName, sortOrder).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFiles(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).getResultList());
         }
     	
         uiModel.addAttribute("command", searchCriteria);

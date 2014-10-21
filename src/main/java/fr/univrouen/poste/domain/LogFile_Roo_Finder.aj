@@ -17,6 +17,24 @@ privileged aspect LogFile_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static Long LogFile.countFindLogFilesByActionEqualsAndEmailEquals(String action, String email) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogFile AS o WHERE o.action = :action  AND o.email = :email", Long.class);
+        q.setParameter("action", action);
+        q.setParameter("email", email);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long LogFile.countFindLogFilesByEmailEquals(String email) {
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogFile AS o WHERE o.email = :email", Long.class);
+        q.setParameter("email", email);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long LogFile.countFindLogFilesByNumCandidat(String numCandidat) {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = LogFile.entityManager();
@@ -53,6 +71,56 @@ privileged aspect LogFile_Roo_Finder {
         }
         TypedQuery<LogFile> q = em.createQuery(jpaQuery, LogFile.class);
         q.setParameter("action", action);
+        return q;
+    }
+    
+    public static TypedQuery<LogFile> LogFile.findLogFilesByActionEqualsAndEmailEquals(String action, String email) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.action = :action  AND o.email = :email", LogFile.class);
+        q.setParameter("action", action);
+        q.setParameter("email", email);
+        return q;
+    }
+    
+    public static TypedQuery<LogFile> LogFile.findLogFilesByActionEqualsAndEmailEquals(String action, String email, String sortFieldName, String sortOrder) {
+        if (action == null || action.length() == 0) throw new IllegalArgumentException("The action argument is required");
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = LogFile.entityManager();
+        String jpaQuery = "SELECT o FROM LogFile AS o WHERE o.action = :action  AND o.email = :email";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogFile> q = em.createQuery(jpaQuery, LogFile.class);
+        q.setParameter("action", action);
+        q.setParameter("email", email);
+        return q;
+    }
+    
+    public static TypedQuery<LogFile> LogFile.findLogFilesByEmailEquals(String email) {
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = LogFile.entityManager();
+        TypedQuery<LogFile> q = em.createQuery("SELECT o FROM LogFile AS o WHERE o.email = :email", LogFile.class);
+        q.setParameter("email", email);
+        return q;
+    }
+    
+    public static TypedQuery<LogFile> LogFile.findLogFilesByEmailEquals(String email, String sortFieldName, String sortOrder) {
+        if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
+        EntityManager em = LogFile.entityManager();
+        String jpaQuery = "SELECT o FROM LogFile AS o WHERE o.email = :email";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogFile> q = em.createQuery(jpaQuery, LogFile.class);
+        q.setParameter("email", email);
         return q;
     }
     
