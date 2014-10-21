@@ -1,4 +1,4 @@
-package fr.univrouen.poste.web.candidat;
+package fr.univrouen.poste.web.searchcriteria;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
 
 @RooJavaBean
-public class SearchCriteria {
+public class PosteCandidatureSearchCriteria {
 
 	Boolean recevable;
 	

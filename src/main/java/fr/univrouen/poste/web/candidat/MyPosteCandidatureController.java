@@ -73,6 +73,7 @@ import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.services.ReturnReceiptService;
 import fr.univrouen.poste.services.ZipService;
 import fr.univrouen.poste.utils.PdfService;
+import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 
 @RequestMapping("postecandidatures")
 @Controller
@@ -588,7 +589,7 @@ public class MyPosteCandidatureController {
 		
 		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
 		
-		uiModel.addAttribute("command", new SearchCriteria());
+		uiModel.addAttribute("command", new PosteCandidatureSearchCriteria());
 		
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";
@@ -598,7 +599,7 @@ public class MyPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String findPosteCandidatures(HttpServletRequest request, 
     		HttpServletResponse response, 
-    		@ModelAttribute("command") SearchCriteria searchCriteria, BindingResult bindResult,
+    		@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
     		@RequestParam(defaultValue="off", required=false) Boolean zip, 
     		@RequestParam(required = false) Integer page, 
     		@RequestParam(required = false) Integer size, 
