@@ -18,7 +18,6 @@
     limitations under the License.
 
 --><!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
-
 <tiles-definitions>
     <definition extends="default" name="admin/logauths/list">
         <put-attribute name="body" value="/WEB-INF/views/admin/logauths/list.jspx"/>
@@ -28,5 +27,8 @@
     </definition>
 <definition extends="default" name="admin/logauths/findLogAuthsByActionEquals">
         <put-attribute name="body" value="/WEB-INF/views/admin/logauths/findLogAuthsByActionEquals.jspx"/>
+    </definition>
+<definition extends="default" name="admin/logauths/findLogAuthsByActionEqualsAndUserIdEquals">
+        <put-attribute name="body" value="/WEB-INF/views/admin/logauths/findLogAuthsByActionEqualsAndUserIdEquals.jspx"/>
     </definition>
 </tiles-definitions>

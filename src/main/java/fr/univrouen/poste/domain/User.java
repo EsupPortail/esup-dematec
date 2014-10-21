@@ -250,6 +250,11 @@ public class User {
 		
 		entityManager.remove(user);
 	}
+
+	public static TypedQuery<String> findAllUserIds() {
+    	String jpaQuery = "SELECT o.emailAddress FROM User AS o ORDER BY emailAddress";
+        return entityManager().createQuery(jpaQuery, String.class);
+	}
     
 }
 

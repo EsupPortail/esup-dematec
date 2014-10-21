@@ -16,11 +16,8 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -32,7 +29,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findLogAuthsByActionEquals" })
+@RooJpaActiveRecord(finders = { "findLogAuthsByActionEquals", "findLogAuthsByActionEqualsAndUserIdEquals", "findLogAuthsByUserIdEquals"})
 public class LogAuth {
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -45,4 +42,26 @@ public class LogAuth {
 
     private String action;
 
+	public static TypedQuery<LogAuth>  findLogAuths(String action2, String userId2,
+			String sortFieldName, String sortOrder) {
+		if("".equals(userId2)) {
+			return findLogAuthsByActionEquals(action2, sortFieldName, sortOrder);
+		}
+		if("".equals(action2)) {
+			return findLogAuthsByUserIdEquals(userId2, sortFieldName, sortOrder);
+		}
+		return findLogAuthsByActionEqualsAndUserIdEquals(action2, userId2, sortFieldName, sortOrder);	
+	}
+
+	public static Long countFindLogAuths(String action2, String userId2) {
+		if("".equals(userId2)) {
+			return countFindLogAuthsByActionEquals(action2);
+		}
+		if("".equals(action2)) {
+			return countFindLogAuthsByUserIdEquals(userId2);
+		}
+		return countFindLogAuthsByActionEqualsAndUserIdEquals(action2, userId2);	
+	}
+    
+    
 }

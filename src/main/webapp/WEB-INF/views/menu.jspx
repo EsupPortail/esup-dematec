@@ -76,9 +76,7 @@
         </menu:category>
         <menu:category id="c_galaxieexcel" render="false" z="user-managed"/>
         <menu:category id="c_posteapourvoir" render="false" z="user-managed"/>
-        <menu:category id="c_logauth" render="false" z="user-managed">
-            <menu:item id="fi_logauth_actionequals" messageCode="global_menu_find" url="/admin/logauths?find=ByActionEquals&amp;form&amp;page=1&amp;size=${empty param.size ? 10 : param.size}" z="Y+XK0aKVMqbSsfliH4WzO5pO98c="/>
-        </menu:category>
+        <menu:category id="c_logauth" render="false" z="user-managed"/>
         <menu:category id="c_appliconfig" render="false" z="user-managed">
             <menu:item id="i_appliconfig_new" messageCode="global_menu_new" render="false" url="/admin/appliconfig?form" z="user-managed"/>
         </menu:category>

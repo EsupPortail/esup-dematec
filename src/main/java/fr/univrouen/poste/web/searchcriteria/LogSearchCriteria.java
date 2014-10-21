@@ -5,6 +5,8 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 @RooJavaBean
 public class LogSearchCriteria {
 
-	String status;
+	String status = "";
+	
+	String userId = "";
 	
 }

@@ -15,4 +15,12 @@ privileged aspect LogSearchCriteria_Roo_JavaBean {
         this.status = status;
     }
     
+    public String LogSearchCriteria.getUserId() {
+        return this.userId;
+    }
+    
+    public void LogSearchCriteria.setUserId(String userId) {
+        this.userId = userId;
+    }
+    
 }
