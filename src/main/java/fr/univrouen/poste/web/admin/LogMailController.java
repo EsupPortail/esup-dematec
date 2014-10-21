@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.LogMail;
 import fr.univrouen.poste.services.EmailService;
-import fr.univrouen.poste.web.searchcriteria.LogImportGalaxieSearchCriteria;
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 
 @RequestMapping("/admin/logmails")
 @Controller
@@ -44,12 +44,12 @@ public class LogMailController {
 	EmailService emailService;
 	
     @ModelAttribute("command") 
-    public LogImportGalaxieSearchCriteria getLogSearchCriteria() {
-    	return new LogImportGalaxieSearchCriteria();
+    public LogSearchCriteria getLogSearchCriteria() {
+    	return new LogSearchCriteria();
     }
     
     @RequestMapping(params = "find=ByStatusEquals", method = RequestMethod.GET)
-    public String findLogMailsByStatusEquals(@ModelAttribute("command") LogImportGalaxieSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String findLogMailsByStatusEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
     	if("".equals(searchCriteria.getStatus())) {
     		return this.list(page, size, sortFieldName, sortOrder, uiModel);
     	}

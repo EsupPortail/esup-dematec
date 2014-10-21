@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.LogAuth;
-import fr.univrouen.poste.web.searchcriteria.LogImportGalaxieSearchCriteria;
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 
 @RequestMapping("/admin/logauths")
 @Controller
@@ -34,12 +34,12 @@ import fr.univrouen.poste.web.searchcriteria.LogImportGalaxieSearchCriteria;
 public class LogAuthController {
 	
     @ModelAttribute("command") 
-    public LogImportGalaxieSearchCriteria getLogSearchCriteria() {
-    	return new LogImportGalaxieSearchCriteria();
+    public LogSearchCriteria getLogSearchCriteria() {
+    	return new LogSearchCriteria();
     }
     
     @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
-    public String findLogAuthsByActionEquals(@ModelAttribute("command") LogImportGalaxieSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String findLogAuthsByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
     	if("".equals(searchCriteria.getStatus())) {
     		return this.list(page, size, sortFieldName, sortOrder, uiModel);
     	}

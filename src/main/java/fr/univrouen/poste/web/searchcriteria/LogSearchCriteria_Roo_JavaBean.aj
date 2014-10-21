@@ -3,15 +3,15 @@
 
 package fr.univrouen.poste.web.searchcriteria;
 
-import fr.univrouen.poste.web.searchcriteria.LogImportGalaxieSearchCriteria;
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 
-privileged aspect LogImportGalaxieSearchCriteria_Roo_JavaBean {
+privileged aspect LogSearchCriteria_Roo_JavaBean {
     
-    public String LogImportGalaxieSearchCriteria.getStatus() {
+    public String LogSearchCriteria.getStatus() {
         return this.status;
     }
     
-    public void LogImportGalaxieSearchCriteria.setStatus(String status) {
+    public void LogSearchCriteria.setStatus(String status) {
         this.status = status;
     }
     
