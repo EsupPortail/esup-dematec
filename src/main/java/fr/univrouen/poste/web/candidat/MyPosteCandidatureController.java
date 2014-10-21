@@ -536,6 +536,8 @@ public class MyPosteCandidatureController {
     		sortFieldName = "candidat.nom";
     	if("email".equals(sortFieldName))
     		sortFieldName = "candidat.emailAddress";
+		if("numCandidat".equals(sortFieldName))
+			sortFieldName = "candidat.numCandidat";
     	if("managerReviewState".equals(sortFieldName))
     		sortFieldName = "managerReview.reviewStatus";
     		
@@ -642,6 +644,8 @@ public class MyPosteCandidatureController {
     			sortFieldName = "candidat.nom";
     		if("email".equals(sortFieldName))
     			sortFieldName = "candidat.emailAddress";
+    		if("numCandidat".equals(sortFieldName))
+    			sortFieldName = "candidat.numCandidat";
     		if("managerReviewState".equals(sortFieldName))
     			sortFieldName = "managerReview.reviewStatus";
     		

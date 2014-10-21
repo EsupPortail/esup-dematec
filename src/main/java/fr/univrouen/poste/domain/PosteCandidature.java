@@ -41,7 +41,7 @@ import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 @RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat"})
 public class PosteCandidature {
 
-    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate");
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate", "candidat.numCandidat");
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
@@ -85,6 +85,10 @@ public class PosteCandidature {
 
     public String getEmail() {
         return this.candidat.getEmailAddress();
+    }
+    
+    public String getNumCandidat() {
+        return this.candidat.getNumCandidat();
     }
 
     public String getManagerReviewState() {

@@ -115,9 +115,10 @@
         <table:table color="${tableColorField}" create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canSort}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom" sort="${canSort}"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email" sort="${canSort}"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_numcandidat" label="N°Galaxie" property="numCandidat" render="${canManage}" sort="true"/>           
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${seeAuditionnable}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewState" label="Vue" property="managerReviewState" render="${canManage}" sort="true" z="user-managed"/>
