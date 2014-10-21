@@ -17,6 +17,7 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,9 +61,15 @@ public class UserController {
             User savedUser = User.findUser(user.getId());
             if (!savedUser.getPassword().equals(user.getPassword())) {
                 user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+                if(user.getActivationDate() == null) {
+                	user.setActivationDate(new Date());
+                }
             }
         } else {
             user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+            if(user.getActivationDate() == null) {
+            	user.setActivationDate(new Date());
+            }
         }
         user.persist();
         return "redirect:/admin/users/" + user.getId().toString();
@@ -80,9 +87,15 @@ public class UserController {
             User savedUser = User.findUser(user.getId());
             if (!user.getPassword().equals(savedUser.getPassword())) {
                 user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+                if(user.getActivationDate() == null) {
+                	user.setActivationDate(new Date());
+                }
             }
         } else {
             user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+            if(user.getActivationDate() == null) {
+            	user.setActivationDate(new Date());
+            }
         }
         user.merge();
         return "redirect:/admin/users/" + encodeUrlPathSegment(user.getId().toString(), httpServletRequest);

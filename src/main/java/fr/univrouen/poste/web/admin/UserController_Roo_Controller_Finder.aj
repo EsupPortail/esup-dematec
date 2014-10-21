@@ -52,6 +52,26 @@ privileged aspect UserController_Roo_Controller_Finder {
         return "admin/users/list";
     }
     
+    @RequestMapping(params = { "find=ByEmailAddressAndActivationDateIsNotNull", "form" }, method = RequestMethod.GET)
+    public String UserController.findUsersByEmailAddressAndActivationDateIsNotNullForm(Model uiModel) {
+        return "admin/users/findUsersByEmailAddressAndActivationDateIsNotNull";
+    }
+    
+    @RequestMapping(params = "find=ByEmailAddressAndActivationDateIsNotNull", method = RequestMethod.GET)
+    public String UserController.findUsersByEmailAddressAndActivationDateIsNotNull(@RequestParam("emailAddress") String emailAddress, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("users", User.findUsersByEmailAddressAndActivationDateIsNotNull(emailAddress, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) User.countFindUsersByEmailAddressAndActivationDateIsNotNull(emailAddress) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("users", User.findUsersByEmailAddressAndActivationDateIsNotNull(emailAddress, sortFieldName, sortOrder).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/users/list";
+    }
+    
     @RequestMapping(params = { "find=ByIsAdmin", "form" }, method = RequestMethod.GET)
     public String UserController.findUsersByIsAdminForm(Model uiModel) {
         return "admin/users/findUsersByIsAdmin";
