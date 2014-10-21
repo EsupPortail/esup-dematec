@@ -109,13 +109,14 @@
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
         <c:set value="true" var="seeAuditionnable"/>
+        <c:set value="true" var="canSort"/>
     </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
         <table:table color="${tableColorField}" create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed">
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canManage}" z="user-managed"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom" sort="${canManage}"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canSort}" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom" sort="${canSort}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email" sort="${canManage}"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email" sort="${canSort}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${seeAuditionnable}" z="user-managed"/>

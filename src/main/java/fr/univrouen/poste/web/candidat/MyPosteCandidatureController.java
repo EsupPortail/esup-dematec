@@ -530,17 +530,17 @@ public class MyPosteCandidatureController {
 		boolean isMembre = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"));
 		boolean isCandidat = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
 
-		// pagination only for admin / manager users ...
-		if (isAdmin || isManager) {
-
-    		if(sortFieldName == null) 
-            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
-    		if("nom".equals(sortFieldName))
-    			sortFieldName = "candidat.nom";
-    		if("email".equals(sortFieldName))
-    			sortFieldName = "candidat.emailAddress";
-    		if("managerReviewState".equals(sortFieldName))
-    			sortFieldName = "managerReview.reviewStatus";
+    	if(sortFieldName == null) 
+            sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+    	if("nom".equals(sortFieldName))
+    		sortFieldName = "candidat.nom";
+    	if("email".equals(sortFieldName))
+    		sortFieldName = "candidat.emailAddress";
+    	if("managerReviewState".equals(sortFieldName))
+    		sortFieldName = "managerReview.reviewStatus";
+    		
+    	// pagination only for admin / manager users ...
+    	if (isAdmin || isManager) {
     		
 			if (page != null || size != null) {
 				int sizeNo = size == null ? 10 : size.intValue();
@@ -579,7 +579,7 @@ public class MyPosteCandidatureController {
 			if(membresPostes.isEmpty()) {
 				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			}
-			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes).getResultList();			
+			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes, sortFieldName, sortOrder).getResultList();			
 			List<PosteAPourvoir> membresPostes2Display = new ArrayList<PosteAPourvoir>(user.getPostes());
 			
 			Collections.sort(membresPostes2Display, new Comparator<PosteAPourvoir>(){
