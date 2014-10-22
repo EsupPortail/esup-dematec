@@ -37,7 +37,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 public class AppliConfig {
 	
-	public static enum MailReturnReceiptModeTypes {NEVER, EACH_UPLOAD};
+	public static enum MailReturnReceiptModeTypes {NEVER, EACH_UPLOAD, EACH_SESSION};
 
 	private static String cacheTitre;
 	

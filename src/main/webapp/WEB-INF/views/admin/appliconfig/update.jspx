@@ -80,6 +80,21 @@
         <field:textarea field="texteMailNewCommissions" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCommissions" z="user-managed"/>
         <field:textarea field="texteMailPasswordOublie" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie" z="user-managed"/>
         <field:select field="mailReturnReceiptModeType" id="c_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType" items="${receiptModeTypes}" path="mailReturnReceiptModeType" required="true" z="user-managed"/>
+        <util:help>
+            <p>Avec l'option précédente positionnée à <i>Each_UPLOAD</i>, vous avez la possibilité d'utiliser dans le texte du mail les variables <b>@@numEmploi@@</b> et <b>@@filename@@</b> ; votre texte pourra ainsi être du type: </p>
+            <pre>Bonjour.
+Votre fichier @@fileName@@ a bien été chargé dans l'application de l'Université ESUP pour le poste @@numEmploi@@.
+--\nUniversité ESUP - Direction des Ressources Humaines
+</pre>
+            <p>Avec l'option précédente positionnée à <i>Each_SESSION</i>, vous avez la possibilité d'utiliser la variable <b>@@messageBody@@</b> simplement, EsupDematEC se chargeant d'un formattage texte pour énumérer tous les postes et tous les fichiers s'y rattachant : </p>
+            <pre>Bonjour.
+Merci d'avoir utilisé l'application de l'Université ESUP pour le dépôt de vos candidatures.
+Voici l'état actuel de vos dépôts : 
+@@messageBody@@
+--
+Université ESUP - Direction des Ressources Humaines
+</pre>
+        </util:help>
         <field:textarea field="texteMailCandidatReturnReceipt" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt" z="user-managed"/>
         <field:textarea field="texteEnteteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" z="user-managed"/>
         <field:textarea field="textePiedpageMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable" z="user-managed"/>

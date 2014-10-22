@@ -17,15 +17,15 @@
  */
 package fr.univrouen.poste.services;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +33,10 @@ import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.AppliConfig.MailReturnReceiptModeTypes;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
+import fr.univrouen.poste.domain.User;
 
 @Service
-@Scope(value = "session", proxyMode=ScopedProxyMode.TARGET_CLASS)
-public class ReturnReceiptService implements Serializable {
+public class ReturnReceiptService {
 
 	private static final long serialVersionUID = 1L;
 
@@ -52,15 +52,15 @@ public class ReturnReceiptService implements Serializable {
 		synchronized (this) {
 
 			switch(mailReturnReceiptMode) {
-			case EACH_UPLOAD:
-				if(LogService.UPLOAD_ACTION.equals(action)) {
-					sendEmail(postecandidatureFile.getFilename(), postecandidature.getPoste().getNumEmploi());
-				}
-				break;
-			case NEVER:
-				break;
-			default:
-				break;
+				case EACH_UPLOAD:
+					if(LogService.UPLOAD_ACTION.equals(action)) {
+						sendEmail(postecandidatureFile.getFilename(), postecandidature.getPoste().getNumEmploi());
+					}
+					break;
+				case NEVER:
+					break;
+				default:
+					break;
 			}
 
 		}
@@ -78,4 +78,36 @@ public class ReturnReceiptService implements Serializable {
 		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 	}
 
+	
+	public final void sendDepotStatusIfRequired(Authentication auth) {
+		
+		String emailAddress = auth.getName();
+		
+		boolean isCandidat = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
+		
+		if(isCandidat) {
+			MailReturnReceiptModeTypes mailReturnReceiptMode = AppliConfig.getCacheMailReturnReceiptModeType();
+			if(MailReturnReceiptModeTypes.EACH_SESSION.equals(mailReturnReceiptMode)) {
+				String messageBody = "";
+				User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+				List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(candidat).getResultList();
+				for(PosteCandidature candidature: candidatures) {
+					messageBody = messageBody + "\n*Poste n°" + candidature.getPoste().getNumEmploi() + "*";
+					for(PosteCandidatureFile candidatureFile : candidature.getCandidatureFiles()) {
+						messageBody = messageBody + "\n - " + candidatureFile.getFilename() + " - " + candidatureFile.getFileSizeFormatted();
+					}
+				}
+				String mailFrom = AppliConfig.getCacheMailFrom();
+				String mailSubject = AppliConfig.getCacheMailSubject();
+
+				String mailMessage = AppliConfig.getCacheTexteMailCandidatReturnReceipt();
+				mailMessage = mailMessage.replaceAll("@@messageBody@@", messageBody);           
+				emailService.sendMessage(mailFrom, emailAddress, mailSubject, mailMessage);
+			}
+		}
+		
+		
+	}
+
+	
 }
