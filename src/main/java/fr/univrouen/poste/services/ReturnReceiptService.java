@@ -19,11 +19,13 @@ package fr.univrouen.poste.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,11 +46,14 @@ public class ReturnReceiptService {
 
 	@Autowired
 	EmailService emailService;
+	
+
+	DateFormatter dateFormatter = new DateFormatter("dd/MM/yyyy HH:mm");
 
 	public void logActionFile(String action, PosteCandidature postecandidature, PosteCandidatureFile postecandidatureFile, HttpServletRequest request, Date currentTime) {
 
 		MailReturnReceiptModeTypes mailReturnReceiptMode = AppliConfig.getCacheMailReturnReceiptModeType();
-
+		
 		synchronized (this) {
 
 			switch(mailReturnReceiptMode) {
@@ -94,7 +99,10 @@ public class ReturnReceiptService {
 				for(PosteCandidature candidature: candidatures) {
 					messageBody = messageBody + "\n*Poste n°" + candidature.getPoste().getNumEmploi() + "*";
 					for(PosteCandidatureFile candidatureFile : candidature.getCandidatureFiles()) {
-						messageBody = messageBody + "\n - " + candidatureFile.getFilename() + " - " + candidatureFile.getFileSizeFormatted();
+						String filename = candidatureFile.getFilename();
+						String fileSize =  candidatureFile.getFileSizeFormatted();
+						String sentDate =  dateFormatter.print(candidatureFile.getSendTime(), Locale.getDefault());
+						messageBody = messageBody + "\n - " + filename + " - " + fileSize + " [" + sentDate + "]";
 					}
 				}
 				String mailFrom = AppliConfig.getCacheMailFrom();
