@@ -112,7 +112,7 @@
         <c:set value="true" var="canSort"/>
     </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
-        <table:table color="${tableColorField}" create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed">
+        <table:table color="${tableColorField}" create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed" multiselect="candidatureId">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canSort}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_nom" label="Nom" property="nom" sort="${canSort}"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_email" label="Email" property="email" sort="${canSort}"/>
