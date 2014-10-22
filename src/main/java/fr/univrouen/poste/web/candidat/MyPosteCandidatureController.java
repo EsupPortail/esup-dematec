@@ -100,16 +100,7 @@ public class MyPosteCandidatureController {
     
     @Resource
     PdfService pdfService;
-	
-	@ModelAttribute("posteapourvoirs")
-	public List<PosteAPourvoir> getPosteAPourvoirs() {
-		return PosteAPourvoir.findAllPosteAPourvoirs();
-	}
 
-	@ModelAttribute("candidats")
-	public List<User> getCandidats() {
-		return User.findAllCandidats(null, null).getResultList();
-	}
 
 	@ModelAttribute("currentUser")
 	public User getCurrentUser() {
@@ -553,6 +544,10 @@ public class MyPosteCandidatureController {
 			} else {
 				postecandidatures = PosteCandidature.findAllPosteCandidatures(sortFieldName, sortOrder);
 			}
+			
+			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirs());
+			uiModel.addAttribute("candidats", User.findAllCandidats(null, null).getResultList());
+
 		}
 
 		else if (isCandidat) {
@@ -664,6 +659,9 @@ public class MyPosteCandidatureController {
     		
     		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
     		
+			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirs());
+			uiModel.addAttribute("candidats", User.findAllCandidats(null, null).getResultList());
+			
     		uiModel.addAttribute("command", searchCriteria);
     		uiModel.addAttribute("finderview", true);
     		
