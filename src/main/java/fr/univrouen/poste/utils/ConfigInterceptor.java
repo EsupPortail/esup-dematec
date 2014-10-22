@@ -104,6 +104,13 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 				modelAndView.addObject("activeMenu", activeMenu);
 			}
 		}
+		
+		if(request.getParameter("size")!=null) {
+			Integer size = Integer.valueOf(request.getParameter("size"));
+			request.getSession().setAttribute("size_in_session", size);
+		} else if(request.getSession().getAttribute("size_in_session") == null) {
+			request.getSession().setAttribute("size_in_session", new Integer(40));
+		}
 	}
 
 }
