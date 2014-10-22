@@ -86,7 +86,7 @@
                                 <div class="span4">
                                     <spring:url value="/postecandidatures" var="finder4MembreByPostesUrl"/>
                                     <spring-form:form action="${finder4MembreByPostesUrl }" method="get">
-                                        <field:select disableFormBinding="false" field="postes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="id" items="${membresPostes}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+                                        <field:select disableFormBinding="false" field="numEmploiPostes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="numEmploi" items="${membresPostes}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
                                         <input class="btn btn-success" id="proceed" type="submit" value="Trouver"/>
                                     </spring-form:form>
                                 </div>
