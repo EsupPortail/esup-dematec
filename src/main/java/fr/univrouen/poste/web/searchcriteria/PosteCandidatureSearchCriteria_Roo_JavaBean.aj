@@ -3,8 +3,6 @@
 
 package fr.univrouen.poste.web.searchcriteria;
 
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 import java.util.List;
 
@@ -26,20 +24,20 @@ privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
         this.auditionnable = auditionnable;
     }
     
-    public List<PosteAPourvoir> PosteCandidatureSearchCriteria.getPostes() {
-        return this.postes;
+    public List<String> PosteCandidatureSearchCriteria.getNumEmploiPostes() {
+        return this.numEmploiPostes;
     }
     
-    public void PosteCandidatureSearchCriteria.setPostes(List<PosteAPourvoir> postes) {
-        this.postes = postes;
+    public void PosteCandidatureSearchCriteria.setNumEmploiPostes(List<String> numEmploiPostes) {
+        this.numEmploiPostes = numEmploiPostes;
     }
     
-    public List<User> PosteCandidatureSearchCriteria.getCandidats() {
-        return this.candidats;
+    public List<String> PosteCandidatureSearchCriteria.getEmailCandidats() {
+        return this.emailCandidats;
     }
     
-    public void PosteCandidatureSearchCriteria.setCandidats(List<User> candidats) {
-        this.candidats = candidats;
+    public void PosteCandidatureSearchCriteria.setEmailCandidats(List<String> emailCandidats) {
+        this.emailCandidats = emailCandidats;
     }
     
 }

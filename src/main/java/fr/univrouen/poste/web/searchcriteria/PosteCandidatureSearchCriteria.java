@@ -1,5 +1,6 @@
 package fr.univrouen.poste.web.searchcriteria;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -14,7 +15,24 @@ public class PosteCandidatureSearchCriteria {
 	
 	Boolean auditionnable;
 	
-	List<PosteAPourvoir> postes;
+	List<String> numEmploiPostes;
 	
-	List<User> candidats;
+	List<String> emailCandidats;
+
+	public List<PosteAPourvoir> getPostes() {
+		List<PosteAPourvoir> postes = null;
+		if(numEmploiPostes!=null) {
+			postes = PosteAPourvoir.findPosteAPourvoirsByNumEmplois(numEmploiPostes);
+		}
+		return postes;
+	}
+
+	public List<User> getCandidats() {
+		List<User> candidats = null;
+		if(emailCandidats!=null) {
+			candidats = User.findUsersByEmailAddresses(emailCandidats);
+		}
+		return candidats;
+	}
+
 }

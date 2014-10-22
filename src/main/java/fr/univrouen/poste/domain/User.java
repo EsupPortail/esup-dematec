@@ -255,6 +255,18 @@ public class User {
     	String jpaQuery = "SELECT o.emailAddress FROM User AS o ORDER BY emailAddress";
         return entityManager().createQuery(jpaQuery, String.class);
 	}
+	
+	public static List<String> findAllCandidatsIds() {
+    	String jpaQuery = "SELECT o.emailAddress FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' ORDER BY emailAddress";
+        return entityManager().createQuery(jpaQuery, String.class).getResultList();
+	}
+
+	public static List<User> findUsersByEmailAddresses(List<String> emails) {
+		if (emails == null) throw new IllegalArgumentException("The emails argument is required");
+		TypedQuery<User> q = entityManager().createQuery("SELECT o FROM User o WHERE o.emailAddress IN :emails ORDER BY o.emailAddress asc", User.class);
+		q.setParameter("emails", emails);
+		return q.getResultList();
+	}
     
 }
 

@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -53,8 +54,19 @@ public class PosteAPourvoir {
         return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).getResultList();
     }
     
+    public static List<String> findAllPosteAPourvoirNumEplois() {
+        return entityManager().createQuery("SELECT o.numEmploi FROM PosteAPourvoir o order by o.numEmploi asc", String.class).getResultList();
+    }
+    
     public static List<PosteAPourvoir> findPosteAPourvoirEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+
+	public static List<PosteAPourvoir> findPosteAPourvoirsByNumEmplois(List<String> numEmplois) {
+		if (numEmplois == null) throw new IllegalArgumentException("The numEmplois argument is required");
+		TypedQuery<PosteAPourvoir> q = entityManager().createQuery("SELECT o FROM PosteAPourvoir o WHERE o.numEmploi IN :numEmplois ORDER BY o.numEmploi asc", PosteAPourvoir.class);
+		q.setParameter("numEmplois", numEmplois);
+		return q.getResultList();
+	}
     
 }

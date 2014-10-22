@@ -545,8 +545,8 @@ public class MyPosteCandidatureController {
 				postecandidatures = PosteCandidature.findAllPosteCandidatures(sortFieldName, sortOrder);
 			}
 			
-			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirs());
-			uiModel.addAttribute("candidats", User.findAllCandidats(null, null).getResultList());
+			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
+			uiModel.addAttribute("candidats", User.findAllCandidatsIds());
 
 		}
 
@@ -659,8 +659,8 @@ public class MyPosteCandidatureController {
     		
     		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
     		
-			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirs());
-			uiModel.addAttribute("candidats", User.findAllCandidats(null, null).getResultList());
+			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
+			uiModel.addAttribute("candidats", User.findAllCandidatsIds());
 			
     		uiModel.addAttribute("command", searchCriteria);
     		uiModel.addAttribute("finderview", true);
