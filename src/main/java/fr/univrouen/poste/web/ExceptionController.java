@@ -17,10 +17,13 @@
  */
 package fr.univrouen.poste.web;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,9 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.services.LogService;
+
 
 @Service
 @Controller
@@ -36,6 +42,10 @@ public class ExceptionController implements HandlerExceptionResolver {
 	
 	private final Logger log = Logger.getLogger(getClass());
 
+	@Autowired
+	LogService logService;
+
+	
 	@Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 		
@@ -48,6 +58,13 @@ public class ExceptionController implements HandlerExceptionResolver {
 			log.warn("MultipartException with this client " + ip + ". We can assume that the client has canceled his request (because of a double-click / double-submit of the form for example).", ex);
 		} else {	
 			log.error("Uncaught exception  with this client " + ip, ex);
+		}
+		
+		// hack for logging uploads failed 
+		if(request.getServletPath().matches("/postecandidatures/[0-9]*/addFile")) {
+			String posteCandidatureId = request.getServletPath().replaceAll("/postecandidatures/([0-9]*)/addFile", "$1");
+			PosteCandidature posteCandidature = PosteCandidature.findPosteCandidature(Long.valueOf(posteCandidatureId));
+			logService.logActionFile(LogService.UPLOAD_FAILED_ACTION, posteCandidature, null, request, new Date());
 		}
 		
     	//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -97,8 +97,10 @@ public class LogService {
 	    logFile.setAction(action);
 	    logFile.setActionDate(currentTime);
 	    
-	    logFile.setFilename(dematFile.getFilename());
-	    logFile.setFileSize(dematFile.getFileSizeFormatted());
+	    if(dematFile != null) {
+		    logFile.setFilename(dematFile.getFilename());
+		    logFile.setFileSize(dematFile.getFileSizeFormatted());
+	    }
 	    
 	    logFile.setCivilite(candidat.getCivilite());
 	    logFile.setEmail(candidat.getEmailAddress());
