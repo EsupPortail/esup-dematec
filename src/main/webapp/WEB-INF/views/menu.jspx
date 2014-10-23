@@ -67,12 +67,12 @@
         </menu:category>
         <menu:category id="c_galaxieentry" render="false" z="user-managed"/>
         <menu:category id="c_user" render="false" z="user-managed">
-            <menu:item id="fi_user_activationkeyandemailaddress" messageCode="global_menu_find" url="/admin/users?find=ByActivationKeyAndEmailAddress&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="zKE4wQPtJ3XXN7MLa+xj9/YMcXA="/>
-            <menu:item id="fi_user_emailaddress" messageCode="global_menu_find" url="/admin/users?find=ByEmailAddress&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="5k46TstRYnggLgnPl7Xs0n2VIfw="/>
-            <menu:item id="fi_user_isadmin" messageCode="global_menu_find" url="/admin/users?find=ByIsAdmin&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="VyTNjYX36JwslIX1GHkd2zqyOl8="/>
-            <menu:item id="fi_user_ismanager" messageCode="global_menu_find" url="/admin/users?find=ByIsManager&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="rwmB/RKATd9l8e3PZ/J2hQDj8ds="/>
-            <menu:item id="fi_user_issupermanager" messageCode="global_menu_find" url="/admin/users?find=ByIsSuperManager&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="/dZDCYHfdCRFlGuEOBcCvgGbE/k="/>
-            <menu:item id="fi_user_numcandidat" messageCode="global_menu_find" url="/admin/users?find=ByNumCandidat&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="JS9JBJZC/GgwKdUWefRE/7QAH4E="/>
+            <menu:item id="fi_user_activationkeyandemailaddress" messageCode="global_menu_find" url="/admin/users?find=ByActivationKeyAndEmailAddress&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
+            <menu:item id="fi_user_emailaddress" messageCode="global_menu_find" url="/admin/users?find=ByEmailAddress&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
+            <menu:item id="fi_user_isadmin" messageCode="global_menu_find" url="/admin/users?find=ByIsAdmin&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
+            <menu:item id="fi_user_ismanager" messageCode="global_menu_find" url="/admin/users?find=ByIsManager&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
+            <menu:item id="fi_user_issupermanager" messageCode="global_menu_find" url="/admin/users?find=ByIsSuperManager&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
+            <menu:item id="fi_user_numcandidat" messageCode="global_menu_find" url="/admin/users?find=ByNumCandidat&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
         </menu:category>
         <menu:category id="c_galaxieexcel" render="false" z="user-managed"/>
         <menu:category id="c_posteapourvoir" render="false" z="user-managed"/>
@@ -82,7 +82,7 @@
         </menu:category>
         <menu:category id="c_candidat" render="false" z="user-managed"/>
         <menu:category id="c_logmail" render="false" z="user-managed">
-            <menu:item id="fi_logmail_statusequals" messageCode="global_menu_find" url="/admin/logmails?find=ByStatusEquals&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="pHaqwRdX+StHHGUz+NxoRlMfex8="/>
+            <menu:item id="fi_logmail_statusequals" messageCode="global_menu_find" url="/admin/logmails?find=ByStatusEquals&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
         </menu:category>
         <menu:category id="c_commissionexcel" render="false" z="user-managed"/>
         <menu:category id="c_commissionentry" render="false" z="user-managed">
@@ -90,11 +90,11 @@
         </menu:category>
         <menu:category id="c_logimportgalaxie" render="false" z="user-managed">
             <menu:item id="i_logimportgalaxie_new" messageCode="global_menu_new" render="false" url="/admin/logimportgalaxies?form" z="user-managed"/>
-            <menu:item id="fi_logimportgalaxie_statusequals" messageCode="global_menu_find" url="/admin/logimportgalaxies?find=ByStatusEquals&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="IO/qElbyy8y1OjDGD+BNciNqgqA="/>
+            <menu:item id="fi_logimportgalaxie_statusequals" messageCode="global_menu_find" url="/admin/logimportgalaxies?find=ByStatusEquals&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
         </menu:category>
         <menu:category id="c_logimportcommission" render="false" z="user-managed">
             <menu:item id="i_logimportcommission_new" messageCode="global_menu_new" render="false" url="/admin/logimportcommissions?form" z="user-managed"/>
-            <menu:item id="fi_logimportcommission_statusequals" messageCode="global_menu_find" url="/admin/logimportcommissions?find=ByStatusEquals&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="PT9UF+FRcVDPvBlVkqPCL4odyV8="/>
+            <menu:item id="fi_logimportcommission_statusequals" messageCode="global_menu_find" url="/admin/logimportcommissions?find=ByStatusEquals&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
         </menu:category>
     </menu:menu>
 </div>

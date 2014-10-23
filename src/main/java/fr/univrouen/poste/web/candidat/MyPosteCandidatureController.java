@@ -362,7 +362,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/modify")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyRecevableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean recevable) {
+	public String modifyRecevableCandidature(@PathVariable("id") Long id, @RequestParam(required=true) Boolean recevable) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
 		postecandidature.setRecevable(recevable);
@@ -404,7 +404,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/review")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyReviewCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) String reviewStatus) {
+	public String modifyReviewCandidature(@PathVariable("id") Long id, @RequestParam(required=true) String reviewStatus) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
 		User currentUser = getCurrentUser();
