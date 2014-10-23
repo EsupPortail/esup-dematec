@@ -547,7 +547,11 @@ public class MyPosteCandidatureController {
 			
 			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
 			uiModel.addAttribute("candidats", User.findAllCandidatsIds());
-
+			
+		    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
+		    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
+		    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
+		    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
 		}
 
 		else if (isCandidat) {
@@ -664,6 +668,11 @@ public class MyPosteCandidatureController {
 			
     		uiModel.addAttribute("command", searchCriteria);
     		uiModel.addAttribute("finderview", true);
+    		
+		    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
+		    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
+		    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
+		    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
     		
             addDateTimeFormatPatterns(uiModel);       
             return "postecandidatures/list";           
