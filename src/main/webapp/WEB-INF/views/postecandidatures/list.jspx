@@ -209,7 +209,7 @@
     </form>
     
     
-    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
+    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
         <div id="demat-legende">
             <hr/>
             <i>Légende :</i>
