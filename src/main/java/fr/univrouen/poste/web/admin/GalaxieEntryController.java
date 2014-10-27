@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.exceptions.EsupDematEcWarnException;
+import fr.univrouen.poste.services.GalaxieEntriesService;
 import fr.univrouen.poste.services.GalaxieEntryService;
 import fr.univrouen.poste.services.LogService;
 
@@ -44,14 +45,12 @@ import fr.univrouen.poste.services.LogService;
 @RooWebScaffold(path = "admin/galaxieentrys", formBackingObject = GalaxieEntry.class)
 public class GalaxieEntryController {
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	@Autowired 
+	GalaxieEntriesService galaxieEntriesService;
 	
 	@Autowired 
 	GalaxieEntryService galaxieEntryService;
-	
-	@Autowired 
-    private LogService logService;
-	
+
     @RequestMapping(produces = "text/html")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
     	if(sortFieldName==null)
@@ -98,53 +97,10 @@ public class GalaxieEntryController {
     }
     
     @RequestMapping("/generatecandidatspostes")
-    public String generateCandidatsPostes (Model uiModel) {
+    public String generateCandidatsPostes () {
     	
-		StopWatch chrono = new StopWatch();
-        chrono.start();
-        
-    	List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatIsNull().getResultList();
-        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
-        	try{
-        		galaxieEntryService.generateCandidat(galaxieEntry);
-        	} catch(EsupDematEcWarnException ew) {
-				logService.logImportGalaxie(ew.getMessage(), LogService.IMPORT_FAILED);
-				logger.warn("Import of " + galaxieEntry + " failed", ew);
-        	} catch(Exception e) {
-				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + galaxieEntry + " failed", e);
-        	}
-        }      
-        
-    	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByPosteIsNull().getResultList();
-        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
-        	try{
-        		galaxieEntryService.generatePoste(galaxieEntry);
-        	} catch(Exception e) {
-				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + galaxieEntry + " failed", e);
-        	}
-        }  
-        
-    	galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatureIsNull().getResultList();
-    	Set<User> candidatureUsers = new HashSet<User>();
-        for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
-        	if(galaxieEntry.getCandidat() != null) {
-        		candidatureUsers.add(galaxieEntry.getCandidat());
-        	}
-        }
-        for(User user: candidatureUsers) {
-        	try{
-        		galaxieEntryService.generateCandidatures(user);
-        	} catch(Exception e) {
-				logService.logImportGalaxie(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + user.getEmailAddress() + " candidatures failed", e);
-        	}
-        }  
-
-        chrono.stop();
-		logger.info("La génération des candidats/postes/candidature a été effectuée en " + chrono.getTotalTimeMillis()/1000.0 + " sec.");
-		
+    	galaxieEntriesService.generateCandidatsPostes();
+    	
         return "redirect:/admin/logimportgalaxies?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
     }
     
