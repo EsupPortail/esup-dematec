@@ -105,6 +105,8 @@ public class AppliConfig {
 	
 	private static String cacheCandidatureContentTypeRestrictionRegexp; 
 	
+	private static String cacheCandidatureFilenameRestrictionRegexp; 
+	
 	private static Boolean cacheCandidatureRecevableDefault;
 	
     @Temporal(TemporalType.TIMESTAMP)
@@ -221,6 +223,9 @@ public class AppliConfig {
 	
     @Column(columnDefinition="TEXT")
 	private String candidatureContentTypeRestrictionRegexp; 
+    
+    @Column(columnDefinition="TEXT")
+	private String candidatureFilenameRestrictionRegexp; 
     
     @Column
     private Boolean candidatureRecevableDefault;
@@ -385,6 +390,12 @@ public class AppliConfig {
 			String candidatureContentTypeRestrictionRegexp) {
 		this.candidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
 		cacheCandidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
+	}
+
+	public void setCandidatureFilenameRestrictionRegexp(
+			String candidatureFilenameRestrictionRegexp) {
+		this.candidatureFilenameRestrictionRegexp = candidatureFilenameRestrictionRegexp;
+		cacheCandidatureFilenameRestrictionRegexp = candidatureFilenameRestrictionRegexp;
 	}
 
 	public void setCandidatureRecevableDefault(Boolean candidatureRecevableDefault) {
@@ -834,6 +845,19 @@ public class AppliConfig {
     		}
     	}
     	return cacheCandidatureContentTypeRestrictionRegexp;
+    }
+	
+	public static String getCacheCandidatureFilenameRestrictionRegexp() {
+    	if(cacheCandidatureFilenameRestrictionRegexp == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheCandidatureFilenameRestrictionRegexp = configs.get(0).getCandidatureFilenameRestrictionRegexp();		
+    		} 
+    		if(cacheCandidatureFilenameRestrictionRegexp == null || cacheCandidatureFilenameRestrictionRegexp.isEmpty()) {
+    			cacheCandidatureFilenameRestrictionRegexp = ".*";
+    		}
+    	}
+    	return cacheCandidatureFilenameRestrictionRegexp;
     }
 
 	public static Boolean getCacheCandidatureRecevableDefault() {

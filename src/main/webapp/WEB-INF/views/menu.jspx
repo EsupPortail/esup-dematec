@@ -73,6 +73,7 @@
             <menu:item id="fi_user_ismanager" messageCode="global_menu_find" url="/admin/users?find=ByIsManager&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
             <menu:item id="fi_user_issupermanager" messageCode="global_menu_find" url="/admin/users?find=ByIsSuperManager&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
             <menu:item id="fi_user_numcandidat" messageCode="global_menu_find" url="/admin/users?find=ByNumCandidat&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
+            <menu:item id="fi_user_emailaddressandactivationdateisnotnull" messageCode="global_menu_find" url="/admin/users?find=ByEmailAddressAndActivationDateIsNotNull&amp;form&amp;page=1&amp;size=${empty param.size ? 10 : param.size}" z="dQMDgSICdNccqUrbYgrlqsutc3I="/>
         </menu:category>
         <menu:category id="c_galaxieexcel" render="false" z="user-managed"/>
         <menu:category id="c_posteapourvoir" render="false" z="user-managed"/>

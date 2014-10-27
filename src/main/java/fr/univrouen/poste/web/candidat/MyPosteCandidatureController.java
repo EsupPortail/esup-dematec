@@ -241,14 +241,15 @@ public class MyPosteCandidatureController {
 					Long maxFileMoSize = AppliConfig.getCacheCandidatureFileMoSizeMax();
 					Long maxFileSize = maxFileMoSize*1024*1024;
 					String mimeTypeRegexp = AppliConfig.getCacheCandidatureContentTypeRestrictionRegexp();
+					String filenameRegexp = AppliConfig.getCacheCandidatureFilenameRestrictionRegexp();
 					
 					boolean sizeRestriction = fileSize > maxFileSize;
 					boolean contentTypeRestriction = !contentType.matches(mimeTypeRegexp);
+					boolean filenameRestriction = !filename.matches(filenameRegexp);
 					
-					
-					if(sizeRestriction || contentTypeRestriction) {
+					if(sizeRestriction || contentTypeRestriction || filenameRestriction) {
 						String restriction = sizeRestriction ? "SizeRestriction" : "";
-						restriction = contentTypeRestriction ? restriction + "ContentTypeRestriction" : restriction;
+						restriction = contentTypeRestriction || filenameRestriction ? restriction + "ContentTypeRestriction" : restriction;
 						uiModel.addAttribute("upload_restricion_size_contentype", restriction);
 						logger.info("addFile - upload restriction sur " + filename + "' avec taille=" + fileSize + " et contentType=" + contentType + " pour une candidature de " + posteCandidature.getCandidat().getEmailAddress());
 					} else {			
