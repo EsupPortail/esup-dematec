@@ -68,10 +68,6 @@ color_candidature_vue_incomplet,
 color_candidature_vue_incomplet_modifie_depuis,
 color_candidature_vue_modifie_depuis,
 membre_suppr_review_file,
-candidature_content_type_restriction_regexp,
-candidature_filename_restriction_regexp,
-candidature_file_mo_size_max,
-candidature_nb_file_max,
 candidature_recevable_default
 ) 
 
@@ -163,6 +159,7 @@ true
 
 );
 
+insert into appli_config_file_type (id, type_title, candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, version) 
+values (1, 'Defaut', -1, -1, '.*', '.*', 1);
 
--- todo appliconfigfiletype '.*', '.*', 1024, -1,
 
