@@ -3,6 +3,7 @@
 
 package fr.univrouen.poste.domain;
 
+import fr.univrouen.poste.domain.AppliConfigFileType;
 import fr.univrouen.poste.domain.BigFile;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import java.util.Date;
@@ -72,6 +73,14 @@ privileged aspect PosteCandidatureFile_Roo_JavaBean {
     
     public void PosteCandidatureFile.setBigFile(BigFile bigFile) {
         this.bigFile = bigFile;
+    }
+    
+    public AppliConfigFileType PosteCandidatureFile.getFileType() {
+        return this.fileType;
+    }
+    
+    public void PosteCandidatureFile.setFileType(AppliConfigFileType fileType) {
+        this.fileType = fileType;
     }
     
 }

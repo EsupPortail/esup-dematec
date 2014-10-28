@@ -136,22 +136,6 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.colorCandidatureVueIncompletModifieDepuis;
     }
     
-    public Long AppliConfig.getCandidatureFileMoSizeMax() {
-        return this.candidatureFileMoSizeMax;
-    }
-    
-    public Long AppliConfig.getCandidatureNbFileMax() {
-        return this.candidatureNbFileMax;
-    }
-    
-    public String AppliConfig.getCandidatureContentTypeRestrictionRegexp() {
-        return this.candidatureContentTypeRestrictionRegexp;
-    }
-    
-    public String AppliConfig.getCandidatureFilenameRestrictionRegexp() {
-        return this.candidatureFilenameRestrictionRegexp;
-    }
-    
     public Boolean AppliConfig.getCandidatureRecevableDefault() {
         return this.candidatureRecevableDefault;
     }

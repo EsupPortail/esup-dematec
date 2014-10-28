@@ -159,10 +159,10 @@ E'Merci de compléter le dossier de cette candidature via l''application de l''U
 
 false, 
 
-'.*', '.*', 1024, -1,
-
 true
 
 );
 
+
+-- todo appliconfigfiletype '.*', '.*', 1024, -1,
 

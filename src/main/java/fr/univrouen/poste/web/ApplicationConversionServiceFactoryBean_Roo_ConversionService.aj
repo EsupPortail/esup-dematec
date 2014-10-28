@@ -4,6 +4,7 @@
 package fr.univrouen.poste.web;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.AppliConfigFileType;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.CommissionExcel;
 import fr.univrouen.poste.domain.GalaxieEntry;
@@ -45,6 +46,30 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.AppliConfig>() {
             public fr.univrouen.poste.domain.AppliConfig convert(String id) {
                 return getObject().convert(getObject().convert(id, Long.class), AppliConfig.class);
+            }
+        };
+    }
+    
+    public Converter<AppliConfigFileType, String> ApplicationConversionServiceFactoryBean.getAppliConfigFileTypeToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.AppliConfigFileType, java.lang.String>() {
+            public String convert(AppliConfigFileType appliConfigFileType) {
+                return new StringBuilder().append(appliConfigFileType.getTypeTitle()).append(' ').append(appliConfigFileType.getCandidatureFileMoSizeMax()).append(' ').append(appliConfigFileType.getCandidatureNbFileMax()).append(' ').append(appliConfigFileType.getCandidatureContentTypeRestrictionRegexp()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, AppliConfigFileType> ApplicationConversionServiceFactoryBean.getIdToAppliConfigFileTypeConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.AppliConfigFileType>() {
+            public fr.univrouen.poste.domain.AppliConfigFileType convert(java.lang.Long id) {
+                return AppliConfigFileType.findAppliConfigFileType(id);
+            }
+        };
+    }
+    
+    public Converter<String, AppliConfigFileType> ApplicationConversionServiceFactoryBean.getStringToAppliConfigFileTypeConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.AppliConfigFileType>() {
+            public fr.univrouen.poste.domain.AppliConfigFileType convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), AppliConfigFileType.class);
             }
         };
     }
@@ -317,6 +342,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getAppliConfigToStringConverter());
         registry.addConverter(getIdToAppliConfigConverter());
         registry.addConverter(getStringToAppliConfigConverter());
+        registry.addConverter(getAppliConfigFileTypeToStringConverter());
+        registry.addConverter(getIdToAppliConfigFileTypeConverter());
+        registry.addConverter(getStringToAppliConfigFileTypeConverter());
         registry.addConverter(getCommissionEntryToStringConverter());
         registry.addConverter(getIdToCommissionEntryConverter());
         registry.addConverter(getStringToCommissionEntryConverter());

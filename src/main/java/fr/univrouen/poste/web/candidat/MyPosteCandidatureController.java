@@ -59,6 +59,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.AppliConfigFileType;
 import fr.univrouen.poste.domain.ManagerReview;
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.domain.ManagerReviewLegendColor;
@@ -238,12 +239,12 @@ public class MyPosteCandidatureController {
 					
 					logger.info("Try to upload file '" + filename + "' with size=" + fileSize + " and contentType=" + contentType);
 					
-					Long maxFileMoSize = AppliConfig.getCacheCandidatureFileMoSizeMax();
+					Long maxFileMoSize = posteCandidatureFile.getFileType().getCandidatureFileMoSizeMax();
 					Long maxFileSize = maxFileMoSize*1024*1024;
-					String mimeTypeRegexp = AppliConfig.getCacheCandidatureContentTypeRestrictionRegexp();
-					String filenameRegexp = AppliConfig.getCacheCandidatureFilenameRestrictionRegexp();
+					String mimeTypeRegexp = posteCandidatureFile.getFileType().getCandidatureContentTypeRestrictionRegexp();
+					String filenameRegexp = posteCandidatureFile.getFileType().getCandidatureFilenameRestrictionRegexp();
 					
-					boolean sizeRestriction = fileSize > maxFileSize;
+					boolean sizeRestriction = maxFileSize>0 && fileSize > maxFileSize;
 					boolean contentTypeRestriction = !contentType.matches(mimeTypeRegexp);
 					boolean filenameRestriction = !filename.matches(filenameRegexp);
 					
@@ -461,7 +462,10 @@ public class MyPosteCandidatureController {
 	public String show(@PathVariable("id") Long id, Model uiModel) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		uiModel.addAttribute("postecandidature", postecandidature);
-		uiModel.addAttribute("posteCandidatureFile", new PosteCandidatureFile());
+		PosteCandidatureFile posteCandidatureFile = new PosteCandidatureFile();
+		posteCandidatureFile.setFileType(AppliConfigFileType.getDefaultFileType());
+		uiModel.addAttribute("posteCandidatureFile", posteCandidatureFile);
+		uiModel.addAttribute("fileTypes", AppliConfigFileType.findAllAppliConfigFileTypes());
 		uiModel.addAttribute("texteCandidatAideCandidatureDepot", AppliConfig.getCacheTexteCandidatAideCandidatureDepot());
 		
 		
@@ -482,7 +486,7 @@ public class MyPosteCandidatureController {
 				nbFiles++;
 			}
 		}
-		Long nbFileMax = AppliConfig.getCacheCandidatureNbFileMax();
+		Long nbFileMax = posteCandidatureFile.getFileType().getCandidatureNbFileMax();
 		Boolean restrictionNbFileMax = nbFileMax > -1 && nbFileMax <= nbFiles;
 		uiModel.addAttribute("restrictionNbFileMax", restrictionNbFileMax);
 		

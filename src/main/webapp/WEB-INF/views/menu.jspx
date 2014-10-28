@@ -24,6 +24,7 @@
     <menu:menu appName="${app_name}" id="_menu" z="user-managed">
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
             <menu:item activeMenu="${activeMenu == 'adminappliconfig'}" id="i_appliconfig_list" label="Configuration" url="/admin/appliconfig?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
+            <menu:item id="i_appliconfigfiletype_list" messageCode="global_menu_list" url="/admin/appliconfigfiletype?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="WpQK63QYl2SG8z7knpAFTa6F9Dk="/>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
             <menu:item activeMenu="${activeMenu == 'adminusers'}" id="i_user_list" messageCode="global_menu_list" url="/admin/users?sortFieldName=emailAddress&amp;sortOrder=asc&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>

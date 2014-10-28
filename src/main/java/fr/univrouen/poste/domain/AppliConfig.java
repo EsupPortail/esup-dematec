@@ -99,14 +99,6 @@ public class AppliConfig {
 	
 	private static Boolean cacheMembreSupprReviewFile;
 	
-	private static Long cacheCandidatureFileMoSizeMax; 
-	
-	private static Long cacheCandidatureNbFileMax; 
-	
-	private static String cacheCandidatureContentTypeRestrictionRegexp; 
-	
-	private static String cacheCandidatureFilenameRestrictionRegexp; 
-	
 	private static Boolean cacheCandidatureRecevableDefault;
 	
     @Temporal(TemporalType.TIMESTAMP)
@@ -214,19 +206,7 @@ public class AppliConfig {
     
     @Column(columnDefinition="TEXT")
     private String colorCandidatureVueIncompletModifieDepuis;
-    
-    @Column
-	private Long candidatureFileMoSizeMax; 
-	
-    @Column
-	private Long candidatureNbFileMax; 
-	
-    @Column(columnDefinition="TEXT")
-	private String candidatureContentTypeRestrictionRegexp; 
-    
-    @Column(columnDefinition="TEXT")
-	private String candidatureFilenameRestrictionRegexp; 
-    
+
     @Column
     private Boolean candidatureRecevableDefault;
     
@@ -374,29 +354,6 @@ public class AppliConfig {
 		cacheMembreSupprReviewFile = membreSupprReviewFile;
 	}
 	
-	
-
-	public void setCandidatureFileMoSizeMax(Long candidatureFileMoSizeMax) {
-		this.candidatureFileMoSizeMax = candidatureFileMoSizeMax;
-		cacheCandidatureFileMoSizeMax = candidatureFileMoSizeMax;
-	}
-
-	public void setCandidatureNbFileMax(Long candidatureNbFileMax) {
-		this.candidatureNbFileMax = candidatureNbFileMax;
-		cacheCandidatureNbFileMax = candidatureNbFileMax;
-	}
-
-	public void setCandidatureContentTypeRestrictionRegexp(
-			String candidatureContentTypeRestrictionRegexp) {
-		this.candidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
-		cacheCandidatureContentTypeRestrictionRegexp = candidatureContentTypeRestrictionRegexp;
-	}
-
-	public void setCandidatureFilenameRestrictionRegexp(
-			String candidatureFilenameRestrictionRegexp) {
-		this.candidatureFilenameRestrictionRegexp = candidatureFilenameRestrictionRegexp;
-		cacheCandidatureFilenameRestrictionRegexp = candidatureFilenameRestrictionRegexp;
-	}
 
 	public void setCandidatureRecevableDefault(Boolean candidatureRecevableDefault) {
 		this.candidatureRecevableDefault = candidatureRecevableDefault;
@@ -805,60 +762,6 @@ public class AppliConfig {
     	}
     	return cacheMembreSupprReviewFile;
 	}
-
-	
-	public static Long getCacheCandidatureFileMoSizeMax() {
-    	if(cacheCandidatureFileMoSizeMax == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheCandidatureFileMoSizeMax = configs.get(0).getCandidatureFileMoSizeMax();		
-    		} 
-    		if(cacheCandidatureFileMoSizeMax == null) {
-    			cacheCandidatureFileMoSizeMax = new Long(-1);
-    		}
-    	}
-    	return cacheCandidatureFileMoSizeMax;
-    }
-	
-	
-	public static Long getCacheCandidatureNbFileMax() {
-    	if(cacheCandidatureNbFileMax == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheCandidatureNbFileMax = configs.get(0).getCandidatureNbFileMax();		
-    		} 
-    		if(cacheCandidatureNbFileMax == null) {
-    			cacheCandidatureNbFileMax = new Long(-1);
-    		}
-    	}
-    	return cacheCandidatureNbFileMax;
-    }
-	
-	public static String getCacheCandidatureContentTypeRestrictionRegexp() {
-    	if(cacheCandidatureContentTypeRestrictionRegexp == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheCandidatureContentTypeRestrictionRegexp = configs.get(0).getCandidatureContentTypeRestrictionRegexp();		
-    		} 
-    		if(cacheCandidatureContentTypeRestrictionRegexp == null || cacheCandidatureContentTypeRestrictionRegexp.isEmpty()) {
-    			cacheCandidatureContentTypeRestrictionRegexp = ".*";
-    		}
-    	}
-    	return cacheCandidatureContentTypeRestrictionRegexp;
-    }
-	
-	public static String getCacheCandidatureFilenameRestrictionRegexp() {
-    	if(cacheCandidatureFilenameRestrictionRegexp == null) {
-    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
-    		if(!configs.isEmpty()) {
-    			cacheCandidatureFilenameRestrictionRegexp = configs.get(0).getCandidatureFilenameRestrictionRegexp();		
-    		} 
-    		if(cacheCandidatureFilenameRestrictionRegexp == null || cacheCandidatureFilenameRestrictionRegexp.isEmpty()) {
-    			cacheCandidatureFilenameRestrictionRegexp = ".*";
-    		}
-    	}
-    	return cacheCandidatureFilenameRestrictionRegexp;
-    }
 
 	public static Boolean getCacheCandidatureRecevableDefault() {
 		if(cacheCandidatureRecevableDefault == null) {

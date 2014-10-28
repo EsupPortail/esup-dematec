@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_fr_univrouen_poste_domain_AppliConfigFileType" object="${appliconfigfiletype}" path="/admin/appliconfigfiletype" z="2liqn9x0cHyz/yS7tRUbRVTHtAw=">
+        <field:display field="typeTitle" id="s_fr_univrouen_poste_domain_AppliConfigFileType_typeTitle" object="${appliconfigfiletype}" z="ybYZuvlQDoSSCJkenAdpqe1DRdo="/>
+        <field:display field="candidatureFileMoSizeMax" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFileMoSizeMax" object="${appliconfigfiletype}" z="ObX+MzBvtnyk0LgE99Tp9g8RoN4="/>
+        <field:display field="candidatureNbFileMax" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureNbFileMax" object="${appliconfigfiletype}" z="JtsBH2wfFtZlX8fqH/39f6cf7W4="/>
+        <field:display field="candidatureContentTypeRestrictionRegexp" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp" object="${appliconfigfiletype}" z="/nq5iWjpaNy09OZ2iaPwQP18uIY="/>
+        <field:display field="candidatureFilenameRestrictionRegexp" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp" object="${appliconfigfiletype}" z="KxdYsNDCcGdMr32MJhjBIRk8/A0="/>
+    </page:show>
+</div>

@@ -113,29 +113,6 @@ Université ESUP - Direction des Ressources Humaines
             <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
         </util:help>
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
-        <util:help>
-            <p>Les configurations suivantes vous permettent de contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain type, d'un certain nom et avec une taille ne dépassant pas un certain seuil.</p>
-            <ul>
-                <li>
-	            		La taille correspond à des Mo, <b>-1</b> correspond à ne fixer aucune limite.
-	            	</li>
-                <li>
-		            	Le mime-type peut être une expression régulière. <b>.*</b> revient à accepter tous les types de fichiers, 
-		            	<b>application/pdf</b> uniquement les pdf, <b>application/pdf|application/zip</b> les pdf ou zip, <b>application/pdf|image/.*</b> les pdf et tous types d'images, etc. 
-		            	<b>Attention</b> cependant, le mime-type est une information communiquée par le navigateur du client, et ce dernier ne le détectera pas forcément correctement. 
-		            	Aussi un pdf peut avoir un mime-type générique renseigné par le navigateur, comme <i>application/download</i> ou encore <i>application/binary</i> ...
-	            	</li>
-                <li>
-		            	Le nom du fichier suit la même règle. <b>.*</b> revient à accepter tous les noms de fichiers, 
-		            	<b>.*\.pdf</b> uniquement les noms de fichiers se terminant par <i>.pdf</i>, etc.
-	            	</li>
-            </ul>
-            <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature. <b>-1</b> correspond à ne fixer aucune limite.</p>
-        </util:help>
-        <field:input field="candidatureFileMoSizeMax" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureFileMoSizeMax" validationMessageCode="field_invalid_integer" z="obNA2mVcAlrReK+gt98geVJwNCA="/>
-        <field:input field="candidatureContentTypeRestrictionRegexp" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureContentTypeRestrictionRegexp" z="/lG/RmEVlzwC+7pICDUn/XTQ7QQ="/>
-        <field:input field="candidatureFilenameRestrictionRegexp" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureFilenameRestrictionRegexp" z="T/GXewhX7o4+oT2WsSdnr9UDAs8="/>
-        <field:input field="candidatureNbFileMax" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureNbFileMax" validationMessageCode="field_invalid_integer" z="QleraQ1nTzc27QspMjkMdorhTxE="/>
         <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>

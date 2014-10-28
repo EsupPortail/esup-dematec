@@ -124,6 +124,7 @@
                 <c:otherwise>
                     <form:create id="fc_fr_univrouen_poste_domain_PosteCandidatureFile" modelAttribute="posteCandidatureFile" multipart="true" path="${postecandidature.id}/addFile" save_button="Valider">
                         <input id="c_fr_univrouen_poste_domain_PosteCandidatureFile_file" name="file" required="required" type="file"/>
+                        <input type="hidden" name="fileType" value="${posteCandidatureFile.fileType.id}"/>
                     </form:create>
                 </c:otherwise>
             </c:choose>
