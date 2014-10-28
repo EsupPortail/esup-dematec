@@ -2,29 +2,27 @@
 <div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
-    
     <div class="well help">
-    	<p>Vous pouvez si vous le souhaiter typer les fichiers demandés aux candidats.</p> 
-    	<p>Par défaut, on propose un simple type générique, sans restriction. Vous pouvez cependant modifier celà pour demander explicitement un fichier pdf pour le CV, une image JPEG pour le scan d'une pièce d'identité, etc.</p>
-		<p>Pour chaque type défini on peut ainsi contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain mime-type, d'un certain nom et avec une taille ne dépassant pas un certain seuil.</p>
-            <ul>
-                <li>
+        <p>Vous pouvez si vous le souhaiter typer les fichiers demandés aux candidats.</p>
+        <p>Par défaut, on propose un simple type générique, sans restriction. Vous pouvez cependant modifier celà pour demander explicitement un fichier pdf pour le CV, une image JPEG pour le scan d'une pièce d'identité, etc.</p>
+        <p>Pour chaque type défini on peut ainsi contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain mime-type, d'un certain nom et avec une taille ne dépassant pas un certain seuil.</p>
+        <ul>
+            <li>
 	            		La taille correspond à des Mo, <b>-1</b> correspond à ne fixer aucune limite.
 	            	</li>
-                <li>
+            <li>
 		            	Le mime-type peut être une expression régulière. <b>.*</b> revient à accepter tous les types de fichiers, 
 		            	<b>application/pdf</b> uniquement les pdf, <b>application/pdf|application/zip</b> les pdf ou zip, <b>application/pdf|image/.*</b> les pdf et tous types d'images, etc. 
 		            	<b>Attention</b> cependant, le mime-type est une information communiquée par le navigateur du client, et ce dernier ne le détectera pas forcément correctement. 
 		            	Aussi un pdf peut avoir un mime-type générique renseigné par le navigateur, comme <i>application/download</i> ou encore <i>application/binary</i> ...
 	            	</li>
-                <li>
+            <li>
 		            	Le nom du fichier suit la même règle. <b>.*</b> revient à accepter tous les noms de fichiers, 
 		            	<b>.*\.pdf</b> uniquement les noms de fichiers se terminant par <i>.pdf</i>, etc.
 	            	</li>
-            </ul>
+        </ul>
         <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature. <b>-1</b> correspond à ne fixer aucune limite.</p>
-	</div>
-    
+    </div>
     <page:list id="pl_fr_univrouen_poste_domain_AppliConfigFileType" items="${appliconfigfiletypes}" z="kHU8OIobrJaESrJlg5ZCzgKNnPw=">
         <table:table data="${appliconfigfiletypes}" id="l_fr_univrouen_poste_domain_AppliConfigFileType" path="/admin/appliconfigfiletype" z="PvFC+ZrzZ83nCJHajPLIsrCBXvY=">
             <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_typeTitle" property="typeTitle" z="lnbtEeGaLIE95bnlYmhR2/weUQs="/>
@@ -32,6 +30,7 @@
             <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureNbFileMax" property="candidatureNbFileMax" z="xZDtwncvyFcjwC696X59ZAsUlG8="/>
             <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp" property="candidatureContentTypeRestrictionRegexp" z="b/ofnOEtpJy+mAwEml8z3/zNufs="/>
             <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp" property="candidatureFilenameRestrictionRegexp" z="ceoPH+3wtPt3pf+DUo5cD42HWVI="/>
+            <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription" property="typeDescription" z="um7CE0A58F+k/edoQg7+B0Shl7s="/>
         </table:table>
     </page:list>
 </div>

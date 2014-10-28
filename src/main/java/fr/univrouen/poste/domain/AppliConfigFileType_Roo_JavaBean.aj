@@ -15,6 +15,14 @@ privileged aspect AppliConfigFileType_Roo_JavaBean {
         this.typeTitle = typeTitle;
     }
     
+    public String AppliConfigFileType.getTypeDescription() {
+        return this.typeDescription;
+    }
+    
+    public void AppliConfigFileType.setTypeDescription(String typeDescription) {
+        this.typeDescription = typeDescription;
+    }
+    
     public Long AppliConfigFileType.getCandidatureFileMoSizeMax() {
         return this.candidatureFileMoSizeMax;
     }

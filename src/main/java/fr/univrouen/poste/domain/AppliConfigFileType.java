@@ -14,6 +14,9 @@ public class AppliConfigFileType {
 	@Column(columnDefinition="TEXT")
 	private String typeTitle;
 	
+	@Column(columnDefinition="TEXT")
+	private String typeDescription;
+	
     @Column
 	private Long candidatureFileMoSizeMax = new Long(-1); 
 	
@@ -29,5 +32,5 @@ public class AppliConfigFileType {
 	public static AppliConfigFileType getDefaultFileType() {
 		return AppliConfigFileType.findAllAppliConfigFileTypes().get(0);
 	} 
-
+	
 }

@@ -14,7 +14,7 @@ privileged aspect AppliConfigFileType_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager AppliConfigFileType.entityManager;
     
-    public static final List<String> AppliConfigFileType.fieldNames4OrderClauseFilter = java.util.Arrays.asList("typeTitle", "candidatureFileMoSizeMax", "candidatureNbFileMax", "candidatureContentTypeRestrictionRegexp", "candidatureFilenameRestrictionRegexp");
+    public static final List<String> AppliConfigFileType.fieldNames4OrderClauseFilter = java.util.Arrays.asList("typeTitle", "typeDescription", "candidatureFileMoSizeMax", "candidatureNbFileMax", "candidatureContentTypeRestrictionRegexp", "candidatureFilenameRestrictionRegexp");
     
     public static final EntityManager AppliConfigFileType.entityManager() {
         EntityManager em = new AppliConfigFileType().entityManager;

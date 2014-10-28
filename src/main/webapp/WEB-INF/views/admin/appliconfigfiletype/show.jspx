@@ -8,5 +8,6 @@
         <field:display field="candidatureNbFileMax" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureNbFileMax" object="${appliconfigfiletype}" z="JtsBH2wfFtZlX8fqH/39f6cf7W4="/>
         <field:display field="candidatureContentTypeRestrictionRegexp" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp" object="${appliconfigfiletype}" z="/nq5iWjpaNy09OZ2iaPwQP18uIY="/>
         <field:display field="candidatureFilenameRestrictionRegexp" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp" object="${appliconfigfiletype}" z="KxdYsNDCcGdMr32MJhjBIRk8/A0="/>
+        <field:display field="typeDescription" id="s_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription" object="${appliconfigfiletype}" z="/8IPsdLDs1f2yWPxThWIl9e9bjI="/>
     </page:show>
 </div>

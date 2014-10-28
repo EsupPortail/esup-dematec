@@ -486,9 +486,26 @@ public class MyPosteCandidatureController {
 				nbFiles++;
 			}
 		}
-		Long nbFileMax = posteCandidatureFile.getFileType().getCandidatureNbFileMax();
-		Boolean restrictionNbFileMax = nbFileMax > -1 && nbFileMax <= nbFiles;
-		uiModel.addAttribute("restrictionNbFileMax", restrictionNbFileMax);
+		
+		List<AppliConfigFileType> fileTypes = AppliConfigFileType.findAllAppliConfigFileTypes();
+		List<AppliConfigFileType> fileTypesAvailable = new ArrayList<AppliConfigFileType>(); 
+		for(AppliConfigFileType fileType: fileTypes) {
+			if(fileType.getCandidatureNbFileMax()<0) {
+				fileTypesAvailable.add(fileType);
+			} else {
+				// le nbre max de fichiers permis pour ce type de pièce est dépassé ?
+				int nbFile4Type = 0;
+				for(PosteCandidatureFile pcFile: postecandidature.getCandidatureFiles()) {
+					if(fileType.equals(pcFile.getFileType())) {
+						nbFile4Type++;
+					}
+				}
+				if(nbFile4Type<fileType.getCandidatureNbFileMax()) {
+					fileTypesAvailable.add(fileType);
+				}
+			}
+		}
+		uiModel.addAttribute("fileTypes", fileTypesAvailable);
 		
 		return "postecandidatures/show";
 	}

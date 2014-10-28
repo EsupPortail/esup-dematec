@@ -53,7 +53,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<AppliConfigFileType, String> ApplicationConversionServiceFactoryBean.getAppliConfigFileTypeToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.AppliConfigFileType, java.lang.String>() {
             public String convert(AppliConfigFileType appliConfigFileType) {
-                return new StringBuilder().append(appliConfigFileType.getTypeTitle()).append(' ').append(appliConfigFileType.getCandidatureFileMoSizeMax()).append(' ').append(appliConfigFileType.getCandidatureNbFileMax()).append(' ').append(appliConfigFileType.getCandidatureContentTypeRestrictionRegexp()).toString();
+                return new StringBuilder().append(appliConfigFileType.getTypeTitle()).append(' ').append(appliConfigFileType.getTypeDescription()).append(' ').append(appliConfigFileType.getCandidatureFileMoSizeMax()).append(' ').append(appliConfigFileType.getCandidatureNbFileMax()).toString();
             }
         };
     }

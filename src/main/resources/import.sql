@@ -75,7 +75,7 @@ VALUES (
 
 2, 
 
-'<div class="well help"><p>Merci de sélectionner un fichier puis de valider votre sélection pour l''envoi effectif.</p></div>', 
+'', 
 
 '<div class="well help">  <p>Voici ci-dessous la liste de vos différentes candidatures.</p>  
 <p>Merci de cliquer sur les boutons "voir" des différentes candidatures afin de les compléter (dépôt de fichiers).</p></div>', 
@@ -159,7 +159,7 @@ true
 
 );
 
-insert into appli_config_file_type (id, type_title, candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, version) 
-values (1, 'Defaut', -1, -1, '.*', '.*', 1);
+insert into appli_config_file_type (id, type_title, type_description, candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, version) 
+values (1, 'Fichier de candidature', 'Merci de sélectionner un fichier puis de valider votre sélection pour l''envoi effectif.', -1, -1, '.*', '.*', 1);
 
 

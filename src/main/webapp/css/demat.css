@@ -24,6 +24,11 @@ label {
 font-weight: bold;
 }
 
+fieldset {
+padding: 15px;
+border: 2px groove threedface;
+}
+
 .row-fluid, .row-fluid:before, .row-fluid:after {
 display: initial;
 }
