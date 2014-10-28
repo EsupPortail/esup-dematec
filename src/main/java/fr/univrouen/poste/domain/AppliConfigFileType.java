@@ -15,16 +15,16 @@ public class AppliConfigFileType {
 	private String typeTitle;
 	
     @Column
-	private Long candidatureFileMoSizeMax; 
+	private Long candidatureFileMoSizeMax = new Long(-1); 
 	
     @Column
-	private Long candidatureNbFileMax; 
+	private Long candidatureNbFileMax = new Long(-1); 
 	
     @Column(columnDefinition="TEXT")
-	private String candidatureContentTypeRestrictionRegexp; 
+	private String candidatureContentTypeRestrictionRegexp = ".*"; 
     
     @Column(columnDefinition="TEXT")
-	private String candidatureFilenameRestrictionRegexp;
+	private String candidatureFilenameRestrictionRegexp = ".*";
 
 	public static AppliConfigFileType getDefaultFileType() {
 		return AppliConfigFileType.findAllAppliConfigFileTypes().get(0);
