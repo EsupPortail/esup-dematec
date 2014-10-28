@@ -547,7 +547,7 @@ public class MyPosteCandidatureController {
 			
 			// restrictions si phase auditionnable
 	        Date currentTime = new Date();     
-			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 || 
+			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 && 
 				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) { 
 				for(PosteCandidature postecandidature: PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList()) {
 					if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) > 0) {
