@@ -73,7 +73,7 @@ public class GalaxieMappingService {
 		if(!columnsNotFound.isEmpty()) {
 			String errorMsg = "La (les) colonne(s) " + StringUtils.join(columnsNotFound, ", ") + 
 					" est (sont) manquante(s) dans le fichier Excel fourni. Les colonnes " + StringUtils.join(columnNamesRequired, ", ") + 
-					" sont obligatoires ; ces libellés étant à configurer pour chaque campagne dans applicationContext-galaxie.xml" +
+					" sont obligatoires ; ces libellés étant à configurer pour chaque campagne via l'IHM - menu 'Mapping Galaxie' " +
 					" , ce en fonction de la structure des fichiers Excel Galaxie.";
 			logger.error(errorMsg);
 			throw new RuntimeException(errorMsg);
