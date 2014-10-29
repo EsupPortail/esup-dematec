@@ -17,45 +17,57 @@
  */
 package fr.univrouen.poste.services;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Node;
 
 @Service
 public class WordParser {
 
 	private final Logger log = Logger.getLogger(getClass());
-	
+
 	public void  modifyWord(InputStream docx, Map<String, String> textMap, OutputStream out) {
 		try {
 			XWPFDocument doc = new XWPFDocument(OPCPackage.open(docx));
+
+			// tentative avec les noms {{}}
 			for (XWPFParagraph p : doc.getParagraphs()) {
-			   for (XWPFRun r : p.getRuns()) {
-				  log.info("######### NEW RUN #########");
-			      String text = r.getText(0);
-			      log.info(text);
-			      for(String key : textMap.keySet()) {
-				      if (text!=null && text.contains("{{" + key + "}}")) {
-				         text = text.replace("{{" + key + "}}", textMap.get(key));
-				         r.setText(text, 0);
-				      }
-			      }
-			   }
+
+				for(CTBookmark bookmark: p.getCTP().getBookmarkStartList()) {
+					log.trace(bookmark.getName());
+					for(String key : textMap.keySet()) {
+						String cleanKey = StringUtils.stripAccents(key);
+						cleanKey = cleanKey.replaceAll(" ", "_");
+						cleanKey = cleanKey.replaceAll( "\\W", "");
+						if(bookmark.getName().equalsIgnoreCase(cleanKey)) {
+							Node nextNode = bookmark.getDomNode().getNextSibling();
+			                while(nextNode != null &&  nextNode.getNodeName() != null &&  !(nextNode.getNodeName().contains("bookmarkEnd"))) { 
+			                    p.getCTP().getDomNode().removeChild(nextNode); 
+			                    nextNode = bookmark.getDomNode().getNextSibling(); 
+			                } 
+							XWPFRun run = p.createRun();
+							run.setText(textMap.get(key));
+							p.getCTP().getDomNode().insertBefore(run.getCTR().getDomNode(), nextNode); 
+						}
+					}
+				}
 			}
-			
+
 			doc.write(out);
 		} catch(Exception e) {
 			log.error("Pb durant la modification du document word", e);
 		}
-		
+
 	}
 
 }
