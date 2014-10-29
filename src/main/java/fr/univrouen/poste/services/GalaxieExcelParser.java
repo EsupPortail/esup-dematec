@@ -19,6 +19,7 @@ package fr.univrouen.poste.services;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,6 +120,41 @@ public class GalaxieExcelParser {
 	
 	private List<String> getList4Id(GalaxieEntry galaxieEntry) {
 		return Arrays.asList(new String [] {galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()});
+	}
+	
+	public Map<String, String> getCells4GalaxieEntry(GalaxieExcel galaxieExcel, GalaxieEntry galaxieEntry) throws SQLException {
+		
+		Map<String, String> cellsMap = new HashMap<String, String>();
+		List<List<String>> cells = excelParser.getCells(galaxieExcel.getBigFile().getBinaryFile().getBinaryStream());
+
+		List<String> cellsHead = cells.remove(0);
+		
+		// dans le doute EsupDematEC considère la dernière ligne comme la plus à jour
+		Collections.reverse(cells);
+		
+		for (List<String> row : cells) {		
+			// create a new galaxyEntry
+			GalaxieEntry ge = new GalaxieEntry();
+			int position = 0;
+			for (String cellName : cellsHead) {
+				position++;
+				String cellValue = row.get(position);
+				galaxieMappingService.setAttrFromCell(ge, cellName, cellValue);
+			}
+			
+			if(getList4Id(galaxieEntry).equals(getList4Id(ge))) {			
+				position = 0;
+				for (String cellName : cellsHead) {
+					position++;
+					String cellValue = row.get(position);
+					cellsMap.put(cellName, cellValue);
+				}
+				break;
+			}
+		}
+
+		return cellsMap;
+		
 	}
 
 }
