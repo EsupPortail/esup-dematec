@@ -3,7 +3,6 @@
 
 package fr.univrouen.poste.web.admin;
 
-import fr.univrouen.poste.domain.BigFile;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.web.admin.TemplateFileController;
 import java.io.UnsupportedEncodingException;
@@ -89,12 +88,6 @@ privileged aspect TemplateFileController_Roo_Controller {
     
     void TemplateFileController.addDateTimeFormatPatterns(Model uiModel) {
         uiModel.addAttribute("templateFile_sendtime_date_format", "dd/MM/yyyy HH:mm");
-    }
-    
-    void TemplateFileController.populateEditForm(Model uiModel, TemplateFile templateFile) {
-        uiModel.addAttribute("templateFile", templateFile);
-        addDateTimeFormatPatterns(uiModel);
-        uiModel.addAttribute("bigfiles", BigFile.findAllBigFiles());
     }
     
     String TemplateFileController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

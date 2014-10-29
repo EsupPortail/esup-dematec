@@ -17,11 +17,11 @@
         <p>Un exemple d'un tel document est donné <a href="${templateExemple}">ici</a>.</p>
     </div>
     <page:list id="pl_fr_univrouen_poste_domain_TemplateFile" items="${templatefiles}" z="wh83C3xzc7udAXdyAvDyUAQL2Ek=">
-        <table:table data="${templatefiles}" id="l_fr_univrouen_poste_domain_TemplateFile" path="/admin/templatefiles" z="pKcjfqQoU3Tga/IdSdJm5DZiWhw=">
+        <table:table data="${templatefiles}" id="l_fr_univrouen_poste_domain_TemplateFile" path="/admin/templatefiles" z="pKcjfqQoU3Tga/IdSdJm5DZiWhw=" update="false" view="false">
             <table:column id="c_fr_univrouen_poste_domain_TemplateFile_filename" property="filename" z="r9a373QLK58Tr+t06nt6ag+sD84="/>
-            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_file" property="file" z="9gjwuFJqlc33BXq22FC88P9b3J8="/>
+            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_file" property="file" z="9gjwuFJqlc33BXq22FC88P9b3J8=" render="false"/>
             <table:column date="true" dateTimePattern="${templateFile_sendtime_date_format}" id="c_fr_univrouen_poste_domain_TemplateFile_sendTime" property="sendTime" z="0wpbA+l2fBD2qmBZOkx/HhK+Jcc="/>
-            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_bigFile" property="bigFile" z="1mG191jV4RQNHDwzZvdPMXcgf5c="/>
+            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_bigFile" property="bigFile" z="1mG191jV4RQNHDwzZvdPMXcgf5c=" render="false"/>
         </table:table>
     </page:list>
 </div>
