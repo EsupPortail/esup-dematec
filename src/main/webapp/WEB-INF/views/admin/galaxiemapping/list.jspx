@@ -9,7 +9,7 @@
      <p>Les éléments id_email, id_numemploi et id_numCandidat soivent impérativement être bien renseignés pour qu'EsupDematEC puisse intégrer correctement les fichiers Excel d'export de Galaxie.</p>
     </div> 
     <page:list id="pl_fr_univrouen_poste_domain_GalaxieMapping" items="${galaxiemappings}" z="WUcHzN35aglbTaR9PpFLn5SbuTM=">
-        <table:table data="${galaxiemappings}" delete="false" id="l_fr_univrouen_poste_domain_GalaxieMapping" path="/admin/galaxiemapping" z="UBvCOydyTHwaoXcy5EaCtrUSIUw=">
+        <table:table data="${galaxiemappings}" delete="false" create="false" id="l_fr_univrouen_poste_domain_GalaxieMapping" path="/admin/galaxiemapping" z="UBvCOydyTHwaoXcy5EaCtrUSIUw=">
             <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_email" property="id_email" z="xHOdRECy829Ye/Z6rNCthy4fbU4="/>
             <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_numemploi" property="id_numemploi" z="3J+AyIFZGAxPgQVEPYYBdwyXEoA="/>
             <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_numCandidat" property="id_numCandidat" z="nrRAvi7vnM9/oqVi2AZ4CbFevh8="/>
