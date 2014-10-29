@@ -70,8 +70,11 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
 import fr.univrouen.poste.services.EmailService;
+import fr.univrouen.poste.services.GalaxieExcelParser;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.services.ReturnReceiptService;
+import fr.univrouen.poste.services.TemplateService;
+import fr.univrouen.poste.services.WordParser;
 import fr.univrouen.poste.services.ZipService;
 import fr.univrouen.poste.utils.PdfService;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
@@ -101,6 +104,9 @@ public class MyPosteCandidatureController {
     
     @Resource
     PdfService pdfService;
+    
+    @Resource
+    TemplateService templateService;
 
 
 	@ModelAttribute("currentUser")
@@ -163,6 +169,30 @@ public class MyPosteCandidatureController {
 			//postecandidature.setModification(currentTime);
 	
 			logService.logActionFile(LogService.DOWNLOAD_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
+		} catch(IOException ioe) {
+	        String ip = request.getRemoteAddr();	
+			logger.warn("Download IOException, that can be just because the client [" + ip +
+					"] canceled the download process : " + ioe.getCause());
+		}
+	}
+	
+	@RequestMapping(value = "/{id}/templateReviewFile/{idFile}")
+	@PreAuthorize("hasPermission(#id, 'review') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+	public void downloadTemplateReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+		try {
+			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+			// TemplateFile templateFile = TemplateFile.findTemplateFile(idFile);
+			// InputStream templateDocx = templateFile.getBigFile().getBinaryFile().getBinaryStream();
+			// String filename = postecandidature.getPoste().getNumEmploi() + "-" + postecandidature.getNumCandidat() + templateFile.getFilename();
+			
+			InputStream templateDocx = new FileInputStream(new File("/tmp/out.docx"));	
+			String filename = postecandidature.getPoste().getNumEmploi() + "-" + postecandidature.getNumCandidat() + ".docx";
+
+			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+			
+			templateService.generateTemplateFile(templateDocx, postecandidature, response.getOutputStream());
+			
 		} catch(IOException ioe) {
 	        String ip = request.getRemoteAddr();	
 			logger.warn("Download IOException, that can be just because the client [" + ip +

@@ -124,7 +124,7 @@ public class GalaxieExcelParser {
 	
 	public Map<String, String> getCells4GalaxieEntry(GalaxieExcel galaxieExcel, GalaxieEntry galaxieEntry) throws SQLException {
 		
-		Map<String, String> cellsMap = new HashMap<String, String>();
+		Map<String, String> cellsMap = null;
 		List<List<String>> cells = excelParser.getCells(galaxieExcel.getBigFile().getBinaryFile().getBinaryStream());
 
 		List<String> cellsHead = cells.remove(0);
@@ -137,17 +137,22 @@ public class GalaxieExcelParser {
 			GalaxieEntry ge = new GalaxieEntry();
 			int position = 0;
 			for (String cellName : cellsHead) {
+				if(position<row.size()) {
+					String cellValue = row.get(position);
+					galaxieMappingService.setAttrFromCell(ge, cellName, cellValue);
+				}
 				position++;
-				String cellValue = row.get(position);
-				galaxieMappingService.setAttrFromCell(ge, cellName, cellValue);
 			}
 			
-			if(getList4Id(galaxieEntry).equals(getList4Id(ge))) {			
+			if(getList4Id(galaxieEntry).equals(getList4Id(ge))) {		
+				cellsMap = new HashMap<String, String>();
 				position = 0;
 				for (String cellName : cellsHead) {
+					if(position<row.size()) {
+						String cellValue = row.get(position);
+						cellsMap.put(cellName, cellValue);
+					}
 					position++;
-					String cellValue = row.get(position);
-					cellsMap.put(cellName, cellValue);
 				}
 				break;
 			}

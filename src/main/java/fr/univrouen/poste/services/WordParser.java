@@ -39,7 +39,9 @@ public class WordParser {
 			XWPFDocument doc = new XWPFDocument(OPCPackage.open(docx));
 			for (XWPFParagraph p : doc.getParagraphs()) {
 			   for (XWPFRun r : p.getRuns()) {
+				  log.info("######### NEW RUN #########");
 			      String text = r.getText(0);
+			      log.info(text);
 			      for(String key : textMap.keySet()) {
 				      if (text!=null && text.contains("{{" + key + "}}")) {
 				         text = text.replace("{{" + key + "}}", textMap.get(key));

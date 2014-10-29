@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
+import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -21,6 +22,14 @@ privileged aspect GalaxieEntry_Roo_Finder {
     public static Long GalaxieEntry.countFindGalaxieEntrysByCandidatIsNull() {
         EntityManager em = GalaxieEntry.entityManager();
         TypedQuery q = em.createQuery("SELECT COUNT(o) FROM GalaxieEntry AS o WHERE o.candidat IS NULL", Long.class);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static Long GalaxieEntry.countFindGalaxieEntrysByCandidature(PosteCandidature candidature) {
+        if (candidature == null) throw new IllegalArgumentException("The candidature argument is required");
+        EntityManager em = GalaxieEntry.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM GalaxieEntry AS o WHERE o.candidature = :candidature", Long.class);
+        q.setParameter("candidature", candidature);
         return ((Long) q.getSingleResult());
     }
     
@@ -85,6 +94,29 @@ privileged aspect GalaxieEntry_Roo_Finder {
             }
         }
         TypedQuery<GalaxieEntry> q = em.createQuery(jpaQuery, GalaxieEntry.class);
+        return q;
+    }
+    
+    public static TypedQuery<GalaxieEntry> GalaxieEntry.findGalaxieEntrysByCandidature(PosteCandidature candidature) {
+        if (candidature == null) throw new IllegalArgumentException("The candidature argument is required");
+        EntityManager em = GalaxieEntry.entityManager();
+        TypedQuery<GalaxieEntry> q = em.createQuery("SELECT o FROM GalaxieEntry AS o WHERE o.candidature = :candidature", GalaxieEntry.class);
+        q.setParameter("candidature", candidature);
+        return q;
+    }
+    
+    public static TypedQuery<GalaxieEntry> GalaxieEntry.findGalaxieEntrysByCandidature(PosteCandidature candidature, String sortFieldName, String sortOrder) {
+        if (candidature == null) throw new IllegalArgumentException("The candidature argument is required");
+        EntityManager em = GalaxieEntry.entityManager();
+        String jpaQuery = "SELECT o FROM GalaxieEntry AS o WHERE o.candidature = :candidature";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<GalaxieEntry> q = em.createQuery(jpaQuery, GalaxieEntry.class);
+        q.setParameter("candidature", candidature);
         return q;
     }
     
