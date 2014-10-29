@@ -67,6 +67,7 @@ import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
+import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
 import fr.univrouen.poste.services.EmailService;
@@ -181,12 +182,15 @@ public class MyPosteCandidatureController {
 	public void downloadTemplateReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-			// TemplateFile templateFile = TemplateFile.findTemplateFile(idFile);
-			// InputStream templateDocx = templateFile.getBigFile().getBinaryFile().getBinaryStream();
-			// String filename = postecandidature.getPoste().getNumEmploi() + "-" + postecandidature.getNumCandidat() + templateFile.getFilename();
 			
-			InputStream templateDocx = new FileInputStream(new File("/tmp/out.docx"));	
-			String filename = postecandidature.getPoste().getNumEmploi() + "-" + postecandidature.getNumCandidat() + ".docx";
+			TemplateFile templateFile = TemplateFile.findTemplateFile(idFile);
+			InputStream templateDocx = templateFile.getBigFile().getBinaryFile().getBinaryStream();
+			
+			String filename = postecandidature.getPoste().getNumEmploi() + 
+					"-" + 
+					postecandidature.getNumCandidat() + 
+					"-" +
+					templateFile.getFilename();
 
 			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
@@ -536,6 +540,9 @@ public class MyPosteCandidatureController {
 			}
 		}
 		uiModel.addAttribute("fileTypes", fileTypesAvailable);
+		
+		List<TemplateFile> templateFiles = TemplateFile.findAllTemplateFiles();
+		uiModel.addAttribute("templateFiles", templateFiles);
 		
 		return "postecandidatures/show";
 	}

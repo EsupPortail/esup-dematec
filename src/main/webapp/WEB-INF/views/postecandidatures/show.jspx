@@ -254,6 +254,15 @@
                 		Attention, une fois chargé, <b>vous ne pouvez pas supprimer un rapport de commission</b> via l'application. 
                 	</c:otherwise>
                 </c:choose>
+	            <c:if test="${not empty templateFiles}">
+	            	<p> Modèle(s) de rapport de commission :</p>
+		            <ul>
+		            	<c:forEach var="templateFile" items="${templateFiles}">
+		            		<spring:url value="/postecandidatures/${postecandidature.id}/templateReviewFile/${templateFile.id}" var="templateFileUrl"/>
+		            		<li><a href="${templateFileUrl}">${templateFile.filename}</a></li>
+		            	</c:forEach>
+		            </ul>
+	            </c:if>
             </util:help>
             <c:if test="${not empty postecandidature.memberReviewFiles}">
                 <table class="table  table-bordered table-striped">
