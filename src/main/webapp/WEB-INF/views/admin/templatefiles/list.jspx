@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:spring="http://www.springframework.org/tags" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <spring:url value="/resources/doc/template.docx" var="templateExemple"/>
+    <div class="well help">
+        <p>Vous pouvez si vous le souhaiter proposer ici des modèles de rapports de commission.</p>
+        <p>Ces modèles de rapports seront proposés aux membres de commission sur chaque candidature.</p>
+        <p>Ces modèles peuvent utiliser les signets disponibles dans Microsoft Word (version docx) afin que ceux-ci soient informés automatiquement via les informations renseignées dans les fichiers Excel Galaxie.</p>
+        <p>Pour afficher les signets dans Microsoft Word : 
+	        <ul> 
+	        	<li>Dans le menu Outils, cliquez sur Options, puis sur l'onglet Affichage.</li>
+	        	<li>Activez la case à cocher Indicateurs de signets.</li>
+	        </ul>
+        </p> 
+        <p>Les noms des signets doivent correspondre aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ...</p>
+        <p>Un exemple d'un tel document est donné <a href="${templateExemple}">ici</a>.</p>
+    </div>
+    <page:list id="pl_fr_univrouen_poste_domain_TemplateFile" items="${templatefiles}" z="wh83C3xzc7udAXdyAvDyUAQL2Ek=">
+        <table:table data="${templatefiles}" id="l_fr_univrouen_poste_domain_TemplateFile" path="/admin/templatefiles" z="pKcjfqQoU3Tga/IdSdJm5DZiWhw=">
+            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_filename" property="filename" z="r9a373QLK58Tr+t06nt6ag+sD84="/>
+            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_file" property="file" z="9gjwuFJqlc33BXq22FC88P9b3J8="/>
+            <table:column date="true" dateTimePattern="${templateFile_sendtime_date_format}" id="c_fr_univrouen_poste_domain_TemplateFile_sendTime" property="sendTime" z="0wpbA+l2fBD2qmBZOkx/HhK+Jcc="/>
+            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_bigFile" property="bigFile" z="1mG191jV4RQNHDwzZvdPMXcgf5c="/>
+        </table:table>
+    </page:list>
+</div>

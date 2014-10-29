@@ -16,6 +16,7 @@ import fr.univrouen.poste.domain.LogImportGalaxie;
 import fr.univrouen.poste.domain.LogMail;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.web.ApplicationConversionServiceFactoryBean;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -322,6 +323,30 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<TemplateFile, String> ApplicationConversionServiceFactoryBean.getTemplateFileToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.TemplateFile, java.lang.String>() {
+            public String convert(TemplateFile templateFile) {
+                return new StringBuilder().append(templateFile.getFilename()).append(' ').append(templateFile.getFile()).append(' ').append(templateFile.getSendTime()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, TemplateFile> ApplicationConversionServiceFactoryBean.getIdToTemplateFileConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.TemplateFile>() {
+            public fr.univrouen.poste.domain.TemplateFile convert(java.lang.Long id) {
+                return TemplateFile.findTemplateFile(id);
+            }
+        };
+    }
+    
+    public Converter<String, TemplateFile> ApplicationConversionServiceFactoryBean.getStringToTemplateFileConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.TemplateFile>() {
+            public fr.univrouen.poste.domain.TemplateFile convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), TemplateFile.class);
+            }
+        };
+    }
+    
     public Converter<Long, User> ApplicationConversionServiceFactoryBean.getIdToUserConverter() {
         return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.User>() {
             public fr.univrouen.poste.domain.User convert(java.lang.Long id) {
@@ -378,6 +403,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getPosteCandidatureToStringConverter());
         registry.addConverter(getIdToPosteCandidatureConverter());
         registry.addConverter(getStringToPosteCandidatureConverter());
+        registry.addConverter(getTemplateFileToStringConverter());
+        registry.addConverter(getIdToTemplateFileConverter());
+        registry.addConverter(getStringToTemplateFileConverter());
         registry.addConverter(getUserToStringConverter());
         registry.addConverter(getIdToUserConverter());
         registry.addConverter(getStringToUserConverter());

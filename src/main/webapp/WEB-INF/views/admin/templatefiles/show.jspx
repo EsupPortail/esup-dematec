@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_fr_univrouen_poste_domain_TemplateFile" object="${templatefile}" path="/admin/templatefiles" z="4juFuoswmb6bAjgOODTkJEaZEcY=">
+        <field:display field="filename" id="s_fr_univrouen_poste_domain_TemplateFile_filename" object="${templatefile}" z="D/13wq+TxbczGOLapy/bOOTEWMg="/>
+        <field:display field="file" id="s_fr_univrouen_poste_domain_TemplateFile_file" object="${templatefile}" z="F7Y72jAxDWG2nFwYAxPNeCZgvgE="/>
+        <field:display date="true" dateTimePattern="${templateFile_sendtime_date_format}" field="sendTime" id="s_fr_univrouen_poste_domain_TemplateFile_sendTime" object="${templatefile}" z="PzndvMSues/QSji8keG7HNCfIrc="/>
+        <field:display field="bigFile" id="s_fr_univrouen_poste_domain_TemplateFile_bigFile" object="${templatefile}" z="9bdvlqQTZndpQToACStznUbqS+A="/>
+    </page:show>
+</div>

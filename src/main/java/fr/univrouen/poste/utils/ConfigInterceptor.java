@@ -38,6 +38,7 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	final static SortedMap<String, String> subTitles = new TreeMap<String, String>() {{
 	    put("/admin/appliconfig", "Configuration");
 	    put("/admin/appliconfigfiletype", "Configuration des types de fichier");
+	    put("/admin/templatefiles", "Configuration des templates pour les rapports de commission");
 	    put("/admin/users", "Utilisateurs");
 	    put("/admin/galaxieexcels",   "Fichiers Excel Galaxie");
 	    put("/admin/galaxieentrys",   "Importation depuis Galaxie");
