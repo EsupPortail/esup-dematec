@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <div class="well help">
+     <p>Cette page vous permet de configurer le mapping Excel Galaxie -> EsupDematEC.</p>
+     <p>Ainsi si les exports Galaxie Excel ne sont pas formattés à chaque campagne de la même façon, nous pouvons reconfigurer notre mapping simplement ici.</p>
+     <p>Les exports Galaxie n'ont par exemple pas le même formattage entre les campagnes EC et celles ATER.</p>
+     <p>Les éléments id_email, id_numemploi et id_numCandidat soivent impérativement être bien renseignés pour qu'EsupDematEC puisse intégrer correctement les fichiers Excel d'export de Galaxie.</p>
+    </div> 
+    <page:list id="pl_fr_univrouen_poste_domain_GalaxieMapping" items="${galaxiemappings}" z="WUcHzN35aglbTaR9PpFLn5SbuTM=">
+        <table:table data="${galaxiemappings}" delete="false" id="l_fr_univrouen_poste_domain_GalaxieMapping" path="/admin/galaxiemapping" z="UBvCOydyTHwaoXcy5EaCtrUSIUw=">
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_email" property="id_email" z="xHOdRECy829Ye/Z6rNCthy4fbU4="/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_numemploi" property="id_numemploi" z="3J+AyIFZGAxPgQVEPYYBdwyXEoA="/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_numCandidat" property="id_numCandidat" z="nrRAvi7vnM9/oqVi2AZ4CbFevh8="/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_civilite" property="id_civilite" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_nom" property="id_nom" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_GalaxieMapping_id_prenom" property="id_prenom" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>

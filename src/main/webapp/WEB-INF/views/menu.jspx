@@ -23,6 +23,7 @@
     <spring:message code="application_name" htmlEscape="false" var="app_name"/>
     <menu:menu appName="${app_name}" id="_menu" z="user-managed">
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+            <menu:item activeMenu="${activeMenu == 'admingalaxiemapping'}" id="i_galaxiemapping_list" label="Mapping Galaxie" messageCode="global_menu_list" url="/admin/galaxiemapping?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
             <menu:item activeMenu="${activeMenu == 'adminappliconfig'}" id="i_appliconfig_list" label="Configuration" url="/admin/appliconfig?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
             <menu:item activeMenu="${activeMenu == 'adminappliconfigfiletype'}" id="i_appliconfigfiletype_list" label="Types de fichiers" messageCode="global_menu_list" url="/admin/appliconfigfiletype?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
             <menu:item activeMenu="${activeMenu == 'admintemplatefiles'}" id="i_templatefile_list" label="Templates" messageCode="global_menu_list" url="/admin/templatefiles?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
@@ -105,5 +106,6 @@
         <menu:category id="c_templatefile" render="false" z="user-managed">
             <menu:item id="i_templatefile_new" messageCode="global_menu_new" url="/admin/templatefiles?form" z="U7pqq4I4Cszr9DVKjQPF1NnrVDI="/>
         </menu:category>
+        <menu:category id="c_galaxiemapping" render="false" z="user-managed"/>
     </menu:menu>
 </div>

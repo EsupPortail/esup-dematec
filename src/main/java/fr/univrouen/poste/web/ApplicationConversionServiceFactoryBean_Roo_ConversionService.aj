@@ -9,6 +9,7 @@ import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.CommissionExcel;
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
+import fr.univrouen.poste.domain.GalaxieMapping;
 import fr.univrouen.poste.domain.LogAuth;
 import fr.univrouen.poste.domain.LogFile;
 import fr.univrouen.poste.domain.LogImportCommission;
@@ -167,6 +168,30 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.GalaxieExcel>() {
             public fr.univrouen.poste.domain.GalaxieExcel convert(String id) {
                 return getObject().convert(getObject().convert(id, Long.class), GalaxieExcel.class);
+            }
+        };
+    }
+    
+    public Converter<GalaxieMapping, String> ApplicationConversionServiceFactoryBean.getGalaxieMappingToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.GalaxieMapping, java.lang.String>() {
+            public String convert(GalaxieMapping galaxieMapping) {
+                return new StringBuilder().append(galaxieMapping.getCache_id_numemploi()).append(' ').append(galaxieMapping.getCache_id_numCandidat()).append(' ').append(galaxieMapping.getCache_id_civilite()).append(' ').append(galaxieMapping.getCache_id_nom()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, GalaxieMapping> ApplicationConversionServiceFactoryBean.getIdToGalaxieMappingConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.GalaxieMapping>() {
+            public fr.univrouen.poste.domain.GalaxieMapping convert(java.lang.Long id) {
+                return GalaxieMapping.findGalaxieMapping(id);
+            }
+        };
+    }
+    
+    public Converter<String, GalaxieMapping> ApplicationConversionServiceFactoryBean.getStringToGalaxieMappingConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.GalaxieMapping>() {
+            public fr.univrouen.poste.domain.GalaxieMapping convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), GalaxieMapping.class);
             }
         };
     }
@@ -382,6 +407,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getGalaxieExcelToStringConverter());
         registry.addConverter(getIdToGalaxieExcelConverter());
         registry.addConverter(getStringToGalaxieExcelConverter());
+        registry.addConverter(getGalaxieMappingToStringConverter());
+        registry.addConverter(getIdToGalaxieMappingConverter());
+        registry.addConverter(getStringToGalaxieMappingConverter());
         registry.addConverter(getLogAuthToStringConverter());
         registry.addConverter(getIdToLogAuthConverter());
         registry.addConverter(getStringToLogAuthConverter());

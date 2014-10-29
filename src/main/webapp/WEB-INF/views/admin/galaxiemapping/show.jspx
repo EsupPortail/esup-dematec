@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_GalaxieMapping" object="${galaxiemapping}" path="/admin/galaxiemapping" z="OdeSRbQlg2/fsXh1Rb/6VTX0+zY=">
+        <field:display field="id_numemploi" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_numemploi" object="${galaxiemapping}" z="g+OwITDGuCU9AHNDX/kGmIHpcJ4="/>
+        <field:display field="id_numCandidat" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_numCandidat" object="${galaxiemapping}" z="fvlOUG7KPi6XEGGgtBeR4MCAzUI="/>
+        <field:display field="id_civilite" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_civilite" object="${galaxiemapping}" z="/fpnmkYjmtR2Tavt+OwlezodH2Y="/>
+        <field:display field="id_nom" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_nom" object="${galaxiemapping}" z="5JpQPeCYTVsMUrgLXYMnZQCxUZE="/>
+        <field:display field="id_prenom" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_prenom" object="${galaxiemapping}" z="cMQQHq5YV5xI9L7z8hNm38oYh1g="/>
+        <field:display field="id_email" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_email" object="${galaxiemapping}" z="h3MkQ7C70wuXU9C2R7JzY6oEsQ4="/>
+        <field:display field="id_localisation" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_localisation" object="${galaxiemapping}" z="sYZaZrXQfLyHSKUtJy3LFq/xu00="/>
+        <field:display field="id_profil" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_profil" object="${galaxiemapping}" z="FHkaAC4joyYzBoh202rap8qroeA="/>
+    </page:show>
+</div>

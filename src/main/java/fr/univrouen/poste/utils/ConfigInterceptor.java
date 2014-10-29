@@ -36,6 +36,7 @@ import fr.univrouen.poste.domain.AppliConfig;
 public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	
 	final static SortedMap<String, String> subTitles = new TreeMap<String, String>() {{
+	    put("/admin/galaxiemapping", "Mapping Excel Galaxie");
 	    put("/admin/appliconfig", "Configuration");
 	    put("/admin/appliconfigfiletype", "Configuration des types de fichier");
 	    put("/admin/templatefiles", "Configuration des templates pour les rapports de commission");
