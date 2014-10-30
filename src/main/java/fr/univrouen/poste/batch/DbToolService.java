@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.AppliConfigFileType;
 import fr.univrouen.poste.domain.AppliVersion;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.utils.TxPdfService;
@@ -21,7 +22,7 @@ public class DbToolService {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.2.x";
+	final static String currentEsupDematEcVersion = "1.3.x";
 	
 	@Resource
 	DataSource dataSource;
@@ -77,6 +78,34 @@ public class DbToolService {
 	    				"\n#####\n");
 	    		
 	    		esupDematEcVersion = "1.2.x";
+	    		
+			} 
+			
+			
+			if("1.2.x".equals(esupDematEcVersion)) {
+				
+				String sqlUpdate = "insert into appli_config_file_type (id, type_title, type_description, " +
+						"candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, version) " +
+						"values (1, 'Fichier de candidature', 'Merci de sélectionner un fichier puis de valider votre sélection pour l''envoi effectif.', -1, -1, '.*', '.*', 1); " +
+						"insert into galaxie_mapping(id, id_email, id_num_candidat, id_numemploi, id_civilite, id_localisation, id_nom, id_prenom, id_profil, version) " +
+						"values (1, 'Email', 'N° candidat', 'N° emploi', 'Civilité', 'Localisation', 'Nom', 'Prénom', 'Profil J.o', 0);";
+
+				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
+				Connection connection = dataSource.getConnection();
+				CallableStatement statement = connection.prepareCall(sqlUpdate);
+				statement.execute();
+				connection.close();
+				
+				List<PosteCandidatureFile> pcFiles = PosteCandidatureFile.findAllPosteCandidatureFiles();
+				for(PosteCandidatureFile pcFile: pcFiles) {
+					pcFile.setFileType(AppliConfigFileType.getDefaultFileType());
+				}
+				
+	    		logger.warn("\n\n#####\n\t" +
+	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menus 'Mapping Galaxie', 'Configuration' et 'Types de fichiers' !" +
+	    				"\n#####\n");
+	    		
+	    		esupDematEcVersion = "1.3.x";
 	    		
 			} else {
 				logger.warn("\n\n#####\n\t" +
