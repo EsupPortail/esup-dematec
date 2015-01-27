@@ -28,16 +28,14 @@ Base de données :
 Mails : 
 * src/main/resources/META-INF/spring/email.properties
 
-Galaxie : 
-* src/main/resources/META-INF/spring/applicationContext-galaxie.xml pour le mapping Excel Galaxie -> EsupDematEC
-
 Sécurité : 
 * src/main/resources/META-INF/spring/security.properties pour limiter éventuellement l'accès à l'application depuis certaines IP uniquement pour les utilisateurs admin, super-manager et manager
 
 
 ### Configurations via l'interface graphique de l'application
 
-Les admin et super-manager peuvent configurer certains éléments de l'application via le menu 'Configuration' :
+Les admin et super-manager peuvent configurer certains éléments de l'application via les menus 'Mapping Galaxie', 'Configuration', 'Type de fichiers', 'Templates' :
+* mapping Galaxie pour prendre en compte la structure des fichiers Excel exportés depuis Galaxie
 * dates de clôture pour les candidats, les candidats actifs, les membres (3 dates dstinctes)
 * Titre de l'application visible sur chaque page
 * Logo de l'application visible sur chaque page
@@ -51,15 +49,15 @@ Les admin et super-manager peuvent configurer certains éléments de l'applicati
 * Texte d'aide sur la page de dépôt (consultation) pour une candidature pour le membre (HTML)
 * Texte des mails (from, subject et corps) envoyés aux candidats et membres après génération de leurs comptes.
 * Texte du mail "password oublié"
-
+* ...
 
 ## Installation 
 
 ### Pré-requis
-* Java (JDK - JAVA SE 6 OK):  http://www.oracle.com/technetwork/java/javase/downloads/index.html
+* Java (JDK - JAVA SE 7 OK):  http://www.oracle.com/technetwork/java/javase/downloads/index.html
 * Maven (dernière version 3.0.x ok) : http://maven.apache.org/download.cgi
 * Postgresql (8 ou 9 OK) : le mieux est de l'installer via le système de paquets de votre linux.
-* Tomcat (Tomcat 6 OK) - ne pas prendre la version 6.0.41 (prendre une version inférieure ou supérieure si disponible) qui contient un [bug rédhibitoire pour EsupDematEC](https://issues.apache.org/bugzilla/show_bug.cgi?id=56561).
+* Tomcat (Tomcat 7 OK)
 
 ### PostgreSQL
 * pg_hba.conf : ajout de 
