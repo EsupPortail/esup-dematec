@@ -67,6 +67,7 @@
             </div>
         </div>
     </div>
+    <c:set value="false" var="canManage"/>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
         <c:set value="true" var="canManage"/>
     </sec:authorize>

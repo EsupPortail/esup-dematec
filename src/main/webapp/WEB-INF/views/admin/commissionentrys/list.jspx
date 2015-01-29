@@ -54,6 +54,7 @@
             </div>
         </div>
     </c:if>
+    <c:set value="false" var="canCreate"/>
     <sec:authorize access="hasRole('ROLE_ADMIN')">
         <c:set value="true" var="canCreate"/>
     </sec:authorize>

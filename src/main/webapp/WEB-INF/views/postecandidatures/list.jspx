@@ -104,6 +104,9 @@
     <spring:url value="/admin/multipostecandidatures/manage" var="manageCandidaturesUrl"/>
     <form action="${manageCandidaturesUrl}" method="post">
     
+    <c:set value="false" var="canManage"/>
+    <c:set value="false" var="seeAuditionnable"/>
+    <c:set value="false" var="canSort"/>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
         <c:set value="true" var="canManage"/>
         <style type="text/css">
