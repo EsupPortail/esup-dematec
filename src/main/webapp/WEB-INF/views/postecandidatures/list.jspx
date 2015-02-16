@@ -237,8 +237,8 @@
 			}).css("font-weight", "bold").css("color", "green").css("text-align", "center").html(html_img_true);
 			
 			<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">			
-				/* pour colonne recevable uniquement (colonne 5) */
-				$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td").filter(function() {
+				/* pour colonne recevable uniquement (colonne 7) */
+				$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td + td + td").filter(function() {
 				    return $(this).text() === "false";
 				}).css("font-weight", "bold").css("color", "red").css("text-align", "center").html(html_img_false);		
 			</sec:authorize>
