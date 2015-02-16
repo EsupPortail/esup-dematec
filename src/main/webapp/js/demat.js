@@ -6,14 +6,16 @@
 			var newPasswd = $('#_changepassword_newpassword');
 			if (newPasswd.val().length < 6) {
 				alert('Merci de saisir un password contenant au moins 6 caractères.');
-				 event.preventDefault();
+				$('form').off("submit", preventDoubleSubmission);
+				event.preventDefault();
 			} 
     	});
     	$(".password-container #User").submit(function( event ) {  	
 			var newPasswd = $('#_password_id');
 			if (newPasswd.val().length < 6) {
 				alert('Merci de saisir un password contenant au moins 6 caractères.');
-				 event.preventDefault();
+				$('form').off("submit", preventDoubleSubmission);
+				event.preventDefault();
 			} 
     	});
     	
@@ -51,12 +53,10 @@
 
     	if(sessionStorage.getItem("dematSidebar") === "left") {
     		toogleSidebarLeft();
-    	}
-    	
+    	}	
     	
     	// jQuery plugin to prevent double submission of forms
-    	jQuery.fn.preventDoubleSubmission = function() {
-    	  $(this).on('submit',function(e){
+    	function preventDoubleSubmission(e) {
     	    var $form = $(this);
 
     	    if ($form.data('submitted') === true) {
@@ -67,13 +67,9 @@
     	      // Mark it so that the next submit can be ignored
     	      $form.data('submitted', true);
     	    }
-    	  });
-
-    	  // Keep chainability
-    	  return this;
-    	};
+    	 }
     	
-    	$('form').preventDoubleSubmission();
+    	$('form').on('submit', preventDoubleSubmission);
     	
     });  
     
