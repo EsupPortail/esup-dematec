@@ -244,9 +244,11 @@ public class User {
 			commissionEntry.remove();
 		}   
 		Set<PosteAPourvoir> postes = user.getPostes();
-		for(PosteAPourvoir poste: postes) {
-			poste.getMembres().remove(user);
-		}   
+		if(postes!=null) {
+			for(PosteAPourvoir poste: postes) {
+				poste.getMembres().remove(user);
+			}   
+		}
 		
 		entityManager.remove(user);
 	}
