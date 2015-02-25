@@ -22,6 +22,7 @@ import java.util.Random;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
@@ -60,7 +61,7 @@ public class ForgotPasswordController {
     }
 
     @RequestMapping(value = "/forgotpassword/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute("forgotpasswordForm") ForgotPasswordForm form, BindingResult result, HttpServletRequest request) {
+    public String update(@ModelAttribute("forgotpasswordForm") @Valid ForgotPasswordForm form, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors()) {
         	return "forgotpassword/index";
         } else {
