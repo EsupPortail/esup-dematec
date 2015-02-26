@@ -44,21 +44,6 @@ privileged aspect TemplateFileController_Roo_Controller {
         return "admin/templatefiles/show";
     }
     
-    @RequestMapping(produces = "text/html")
-    public String TemplateFileController.list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-        if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("templatefiles", TemplateFile.findTemplateFileEntries(firstResult, sizeNo, sortFieldName, sortOrder));
-            float nrOfPages = (float) TemplateFile.countTemplateFiles() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            uiModel.addAttribute("templatefiles", TemplateFile.findAllTemplateFiles(sortFieldName, sortOrder));
-        }
-        addDateTimeFormatPatterns(uiModel);
-        return "admin/templatefiles/list";
-    }
-    
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String TemplateFileController.update(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {

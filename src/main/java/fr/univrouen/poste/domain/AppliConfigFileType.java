@@ -1,5 +1,8 @@
 package fr.univrouen.poste.domain;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.persistence.Column;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -10,6 +13,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord
 public class AppliConfigFileType {
+	
+	public static final List<String> fieldNames4OrderClauseFilter = Arrays.asList("typeTitle", "typeDescription", "candidatureFileMoSizeMax", "candidatureNbFileMax", "candidatureContentTypeRestrictionRegexp", "candidatureFilenameRestrictionRegexp", "id");
 	
 	@Column(columnDefinition="TEXT")
 	private String typeTitle;

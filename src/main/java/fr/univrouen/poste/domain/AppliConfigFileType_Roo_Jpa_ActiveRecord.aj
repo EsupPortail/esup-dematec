@@ -14,8 +14,6 @@ privileged aspect AppliConfigFileType_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager AppliConfigFileType.entityManager;
     
-    public static final List<String> AppliConfigFileType.fieldNames4OrderClauseFilter = java.util.Arrays.asList("typeTitle", "typeDescription", "candidatureFileMoSizeMax", "candidatureNbFileMax", "candidatureContentTypeRestrictionRegexp", "candidatureFilenameRestrictionRegexp");
-    
     public static final EntityManager AppliConfigFileType.entityManager() {
         EntityManager em = new AppliConfigFileType().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");

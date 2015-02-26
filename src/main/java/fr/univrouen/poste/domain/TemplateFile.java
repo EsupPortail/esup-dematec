@@ -17,7 +17,9 @@
  */
 package fr.univrouen.poste.domain;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
@@ -36,6 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RooToString(excludeFields = "bigFile,file")
 @RooJpaActiveRecord
 public class TemplateFile {
+
+    public static final List<String> fieldNames4OrderClauseFilter = Arrays.asList("filename", "file", "sendTime", "bigFile", "id");
 
     private String filename;
 

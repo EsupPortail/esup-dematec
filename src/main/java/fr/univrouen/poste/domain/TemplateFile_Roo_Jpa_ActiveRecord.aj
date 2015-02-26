@@ -14,8 +14,6 @@ privileged aspect TemplateFile_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager TemplateFile.entityManager;
     
-    public static final List<String> TemplateFile.fieldNames4OrderClauseFilter = java.util.Arrays.asList("filename", "file", "sendTime", "bigFile");
-    
     public static final EntityManager TemplateFile.entityManager() {
         EntityManager em = new TemplateFile().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
