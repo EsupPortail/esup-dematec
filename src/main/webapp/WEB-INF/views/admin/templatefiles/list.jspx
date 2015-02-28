@@ -4,7 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <spring:url value="/resources/doc/template.docx" var="templateExemple"/>
     <div class="well help">
-        <p>Vous pouvez si vous le souhaiter proposer ici des modèles de rapports de commission.</p>
+        <p>Vous pouvez si vous le souhaitez proposer ici des modèles de rapports de commission.</p>
         <p>Ces modèles de rapports seront proposés aux membres de commission sur chaque candidature.</p>
         <p>Ces modèles peuvent utiliser les signets disponibles dans Microsoft Word (version docx) afin que ceux-ci soient informés automatiquement via les informations renseignées dans les fichiers Excel Galaxie.</p>
         <p>Pour afficher les signets dans Microsoft Word : 
