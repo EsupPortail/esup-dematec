@@ -3,6 +3,7 @@
 
 package fr.univrouen.poste.domain;
 
+import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.ManagerReview;
 import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
@@ -80,6 +81,14 @@ privileged aspect PosteCandidature_Roo_JavaBean {
     
     public void PosteCandidature.setManagerReview(ManagerReview managerReview) {
         this.managerReview = managerReview;
+    }
+    
+    public GalaxieEntry PosteCandidature.getGalaxieEntry() {
+        return this.galaxieEntry;
+    }
+    
+    public void PosteCandidature.setGalaxieEntry(GalaxieEntry galaxieEntry) {
+        this.galaxieEntry = galaxieEntry;
     }
     
 }

@@ -44,6 +44,8 @@ public class GalaxieMappingService {
 		String id_prenom = GalaxieMapping.getCache_id_prenom();
 		String id_localisation = GalaxieMapping.getCache_id_localisation();
 		String id_profil = GalaxieMapping.getCache_id_profil();
+		String id_etat_dossier = GalaxieMapping.getCache_id_etat_dossier();
+		
 		
         if (id_numemploi.equals(cellName)) galaxieEntry.setNumEmploi(cellValue.trim());
         if (id_numCandidat.equals(cellName)) galaxieEntry.setNumCandidat(cellValue.trim());
@@ -53,6 +55,7 @@ public class GalaxieMappingService {
         if (id_email.equals(cellName)) galaxieEntry.setEmail(cellValue.trim());
         if (id_localisation.equals(cellName)) galaxieEntry.setLocalisation(cellValue.trim());
         if (id_profil.equals(cellName)) galaxieEntry.setProfil(cellValue.trim());
+        if (id_etat_dossier.equals(cellName)) galaxieEntry.setEtatDossier(cellValue.trim());
 	}
 
 	public void checkCellsHead(Map<String, Long> cellsPosition) {

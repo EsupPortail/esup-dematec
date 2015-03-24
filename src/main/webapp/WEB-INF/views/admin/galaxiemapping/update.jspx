@@ -11,5 +11,6 @@
         <field:input field="id_prenom" id="c_fr_univrouen_poste_domain_GalaxieMapping_id_prenom" z="GaK4R1YBiaFwaTckO+tCNVRdH90="/>
         <field:input field="id_localisation" id="c_fr_univrouen_poste_domain_GalaxieMapping_id_localisation" z="JyROucufpICy0Hr3qiyoJfet4ZI="/>
         <field:input field="id_profil" id="c_fr_univrouen_poste_domain_GalaxieMapping_id_profil" z="+XE8NGEZQ7il5Niwy84pW03UFYs="/>
+        <field:input field="id_etat_dossier" id="c_fr_univrouen_poste_domain_GalaxieMapping_id_etat_dossier" z="sxlMAtRQ7yL9dT7BjhSIdf8R1Oo="/>
     </form:update>
 </div>

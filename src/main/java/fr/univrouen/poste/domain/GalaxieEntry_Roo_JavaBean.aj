@@ -70,6 +70,14 @@ privileged aspect GalaxieEntry_Roo_JavaBean {
         this.profil = profil;
     }
     
+    public String GalaxieEntry.getEtatDossier() {
+        return this.etatDossier;
+    }
+    
+    public void GalaxieEntry.setEtatDossier(String etatDossier) {
+        this.etatDossier = etatDossier;
+    }
+    
     public User GalaxieEntry.getCandidat() {
         return this.candidat;
     }

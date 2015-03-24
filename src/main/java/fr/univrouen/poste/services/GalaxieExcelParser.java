@@ -97,6 +97,7 @@ public class GalaxieExcelParser {
 					dbGalaxyEntrie.setEmail(galaxieEntry.getEmail());
 					dbGalaxyEntrie.setLocalisation(galaxieEntry.getLocalisation());
 					dbGalaxyEntrie.setProfil(galaxieEntry.getProfil());
+					dbGalaxyEntrie.setEtatDossier(galaxieEntry.getEtatDossier());
 					dbGalaxyEntrie.merge();
 				}
 			}
@@ -115,6 +116,7 @@ public class GalaxieExcelParser {
 				&& dbGalaxyEntrie.getEmail().equals(galaxieEntry.getEmail())
 				&& dbGalaxyEntrie.getLocalisation().equals(galaxieEntry.getLocalisation())
 				&& dbGalaxyEntrie.getProfil().equals(galaxieEntry.getProfil())
+				&& dbGalaxyEntrie.getEtatDossier().equals(galaxieEntry.getEtatDossier())
 				;
 	}
 	

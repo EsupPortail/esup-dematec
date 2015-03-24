@@ -14,7 +14,7 @@ privileged aspect GalaxieMapping_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager GalaxieMapping.entityManager;
     
-    public static final List<String> GalaxieMapping.fieldNames4OrderClauseFilter = java.util.Arrays.asList("id_numemploi", "id_numCandidat", "id_civilite", "id_nom", "id_prenom", "id_email", "id_localisation", "id_profil", "cache_id_numemploi", "cache_id_numCandidat", "cache_id_civilite", "cache_id_nom", "cache_id_prenom", "cache_id_email", "cache_id_localisation", "cache_id_profil");
+    public static final List<String> GalaxieMapping.fieldNames4OrderClauseFilter = java.util.Arrays.asList("id_numemploi", "id_numCandidat", "id_civilite", "id_nom", "id_prenom", "id_email", "id_localisation", "id_profil", "id_etat_dossier", "cache_id_numemploi", "cache_id_numCandidat", "cache_id_civilite", "cache_id_nom", "cache_id_prenom", "cache_id_email", "cache_id_localisation", "cache_id_profil", "cache_id_etat_dossier");
     
     public static final EntityManager GalaxieMapping.entityManager() {
         EntityManager em = new GalaxieMapping().entityManager;

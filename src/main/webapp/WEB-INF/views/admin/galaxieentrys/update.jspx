@@ -32,5 +32,6 @@
         <field:input field="localisation" id="c_fr_univrouen_poste_domain_GalaxieEntry_localisation" z="xtJCMrUhv7v79aOktGxoMNaHVI8="/>
         <field:input field="profil" id="c_fr_univrouen_poste_domain_GalaxieEntry_profil" z="Yd/TID5t2agN9FDutGcPEy6Za4I="/>
         <field:select field="candidature" id="c_fr_univrouen_poste_domain_GalaxieEntry_candidature" itemValue="id" items="${postecandidatures}" path="/postecandidatures" z="Y2xRG4DBVfwdK0HyPheTToEghJk="/>
+        <field:input field="etatDossier" id="c_fr_univrouen_poste_domain_GalaxieEntry_etatDossier" z="js17Pc1NXhBuIYsLbApMEX8SFFU="/>
     </form:update>
 </div>

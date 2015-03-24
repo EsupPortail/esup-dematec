@@ -39,4 +39,8 @@ privileged aspect GalaxieMapping_Roo_JavaBean {
         return this.id_profil;
     }
     
+    public String GalaxieMapping.getId_etat_dossier() {
+        return this.id_etat_dossier;
+    }
+    
 }

@@ -11,5 +11,6 @@
         <field:display field="id_email" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_email" object="${galaxiemapping}" z="h3MkQ7C70wuXU9C2R7JzY6oEsQ4="/>
         <field:display field="id_localisation" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_localisation" object="${galaxiemapping}" z="sYZaZrXQfLyHSKUtJy3LFq/xu00="/>
         <field:display field="id_profil" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_profil" object="${galaxiemapping}" z="FHkaAC4joyYzBoh202rap8qroeA="/>
+        <field:display field="id_etat_dossier" id="s_fr_univrouen_poste_domain_GalaxieMapping_id_etat_dossier" object="${galaxiemapping}" z="JYqyFGagvwlMQtmrVWDDAAmJUGQ="/>
     </page:show>
 </div>

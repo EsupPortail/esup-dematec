@@ -23,6 +23,8 @@ public class GalaxieMapping {
     
     private String id_profil;
     
+    private String id_etat_dossier;
+    
 
     private static String cache_id_numemploi;
     
@@ -39,6 +41,8 @@ public class GalaxieMapping {
     private static String cache_id_localisation;
     
     private static String cache_id_profil;
+    
+    private static String cache_id_etat_dossier;
 
     
 	public void setId_numemploi(String id_numemploi) {
@@ -81,7 +85,11 @@ public class GalaxieMapping {
 		this.cache_id_profil = id_profil;
 	}
 
-	
+	public void setId_etat_dossier(String id_etat_dossier) {
+		this.id_etat_dossier = id_etat_dossier;
+		this.cache_id_etat_dossier = id_etat_dossier;
+	}
+
 	
 	public static String getCache_id_numemploi() {
 		if(cache_id_numemploi == null) {
@@ -138,8 +146,13 @@ public class GalaxieMapping {
 		}
 		return cache_id_profil;
 	}
-    
-    
-    
+
+	public static String getCache_id_etat_dossier() {
+		if(cache_id_etat_dossier == null) {
+			cache_id_etat_dossier = GalaxieMapping.findAllGalaxieMappings().get(0).getId_etat_dossier();
+		}
+		return cache_id_etat_dossier;
+	}
+
     
 }

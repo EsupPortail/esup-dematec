@@ -52,6 +52,8 @@ public class GalaxieEntry {
 
     private String profil = "";
 
+    private String etatDossier = "";
+
     @ManyToOne(fetch=FetchType.LAZY)
     private User candidat;
 
