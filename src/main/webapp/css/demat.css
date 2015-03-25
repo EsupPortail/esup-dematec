@@ -201,6 +201,11 @@ padding: 10px;
 margin: 5px;
 }
 
+#demat-legende {
+float: left;
+width: 100%;
+}
+
 @media (min-width: 1200px) {
 	
 #main .bs-docs-sidenav {
