@@ -270,6 +270,8 @@ public class MyPosteCandidatureController {
 				
 				if(fileSize != 0) {
 					String contentType = file.getContentType();
+					// cf https://github.com/EsupPortail/esup-dematec/issues/8 - workaround pour éviter mimetype erroné comme application/text-plain:formatted
+					contentType = contentType.replaceAll(":.*", "");
 					
 					logger.info("Try to upload file '" + filename + "' with size=" + fileSize + " and contentType=" + contentType);
 					
@@ -360,6 +362,9 @@ public class MyPosteCandidatureController {
 			
 				if(fileSize != 0) {
 					String contentType = file.getContentType();
+					// cf https://github.com/EsupPortail/esup-dematec/issues/8 - workaround pour éviter mimetype erroné comme application/text-plain:formatted
+					contentType = contentType.replaceAll(":.*", "");
+					
 					InputStream inputStream = file.getInputStream();
 					//byte[] bytes = IOUtils.toByteArray(inputStream);
 			
