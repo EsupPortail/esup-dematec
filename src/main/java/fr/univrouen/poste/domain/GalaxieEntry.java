@@ -40,17 +40,17 @@ public class GalaxieEntry {
     @Index(name="num_candidat_index")
     private String numCandidat;
 
-    private String civilite;
+    private String civilite = "";
 
-    private String nom;
+    private String nom = "";
 
-    private String prenom;
+    private String prenom = "";
 
     private String email;
 
-    private String localisation;
+    private String localisation = "";
 
-    private String profil;
+    private String profil = "";
 
     @ManyToOne(fetch=FetchType.LAZY)
     private User candidat;
