@@ -26,7 +26,7 @@ public class GalaxieEntriesService {
 	@Autowired 
     private LogService logService;
 
-    public void generateCandidatsPostes() {
+    public synchronized void generateCandidatsPostes() {
     	
 		StopWatch chrono = new StopWatch();
         chrono.start();
