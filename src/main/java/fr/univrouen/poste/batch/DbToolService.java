@@ -22,7 +22,7 @@ public class DbToolService {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.3.x";
+	final static String currentEsupDematEcVersion = "1.4.x";
 	
 	@Resource
 	DataSource dataSource;
@@ -107,6 +107,10 @@ public class DbToolService {
 	    		
 	    		esupDematEcVersion = "1.3.x";
 	    		
+			} 
+			
+			if("1.3.x".equals(esupDematEcVersion)) { 
+				
 			} else {
 				logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +
