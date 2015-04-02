@@ -129,7 +129,7 @@ public class CommissionEntryController {
         		commissionEntryService.generateCommission(membre);
         	} catch(Exception e) {
         		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + membre.getEmailAddress() + " commissions  failed", e);
+				logger.error("Import of " + membre + " commissions  failed", e);
         	}
         }
         
