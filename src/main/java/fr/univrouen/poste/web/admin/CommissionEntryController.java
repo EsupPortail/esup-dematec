@@ -100,22 +100,24 @@ public class CommissionEntryController {
     public String generateCommissions() {
  
     	List<CommissionEntry> commissionEntrys = CommissionEntry.findCommissionEntrysByMembreIsNull().getResultList();
-        for(CommissionEntry  commissionEntry : commissionEntrys) {     	
+        for(CommissionEntry  commissionEntry : commissionEntrys) {
+        	String commissionEntryStr = commissionEntry.toString();
         	try{
         		commissionEntryService.generateMembre(commissionEntry);
         	} catch(Exception e) {
         		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + commissionEntry + " failed", e);
+				logger.error("Import of " + commissionEntryStr + " failed", e);
         	}
         }
         
     	commissionEntrys = CommissionEntry.findCommissionEntrysByPosteIsNull().getResultList();
         for(CommissionEntry  commissionEntry : commissionEntrys) {     	
+        	String commissionEntryStr = commissionEntry.toString();
         	try{
         		commissionEntryService.generatePoste(commissionEntry);
         	} catch(Exception e) {
         		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + commissionEntry + " failed", e);
+				logger.error("Import of " + commissionEntryStr + " failed", e);
         	}
         }
         
@@ -125,11 +127,14 @@ public class CommissionEntryController {
         	membres.add(commissionEntry.getMembre());
         }
         for(User membre: membres) {
-        	try{
-        		commissionEntryService.generateCommission(membre);
-        	} catch(Exception e) {
-        		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
-				logger.error("Import of " + membre + " commissions  failed", e);
+        	if(membre!=null) {
+	        	String membreStr = membre.toString();
+	        	try{
+	        		commissionEntryService.generateCommission(membre);
+	        	} catch(Exception e) {
+	        		logService.logImportCommission(e.getMessage(), LogService.IMPORT_FAILED);
+					logger.error("Import of commission for " + membreStr + " failed", e);
+	        	}
         	}
         }
         
