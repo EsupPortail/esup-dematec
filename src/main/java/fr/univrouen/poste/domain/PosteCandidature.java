@@ -41,7 +41,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 
 @RooJavaBean
-@RooToString(excludeFields = "candidatureFiles")
+@RooToString(excludeFields = {"candidatureFiles", "memberReviewFiles"})
 @RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat"})
 public class PosteCandidature {
 
