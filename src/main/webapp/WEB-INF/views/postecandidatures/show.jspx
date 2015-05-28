@@ -138,7 +138,7 @@
         <field:display field="recevable" id="s_fr_univrouen_poste_domain_PosteCandidature_recevable" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="auditionnable" id="s_fr_univrouen_poste_domain_PosteCandidature_auditionnable" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="managerReview" id="s_fr_univrouen_poste_domain_PosteCandidature_managerReview" object="${postecandidature}" render="false" z="user-managed"/>
-        <field:display field="galaxieEntry" id="s_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry" object="${postecandidature}" z="rrtIIs5qurg4N1NxgDK9TkGrsMw=" render="false"/>
+        <field:display field="galaxieEntry" id="s_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry" object="${postecandidature}" render="false" z="user-managed"/>
     </page:show>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
         <div class="demat-fluid">

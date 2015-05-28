@@ -54,4 +54,7 @@
 <definition extends="default" name="admin/users/findUsersByEmailAddressAndActivationDateIsNotNull">
         <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByEmailAddressAndActivationDateIsNotNull.jspx"/>
     </definition>
+<definition extends="default" name="admin/users/findUsersByActivationKey">
+        <put-attribute name="body" value="/WEB-INF/views/admin/users/findUsersByActivationKey.jspx"/>
+    </definition>
 </tiles-definitions>

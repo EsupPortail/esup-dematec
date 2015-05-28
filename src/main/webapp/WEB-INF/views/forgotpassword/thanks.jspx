@@ -23,6 +23,6 @@
     xmlns:spring="http://www.springframework.org/tags" >
   <jsp:output omit-xml-declaration="yes"/>
   <div id="_title_div">
-    <h4>Si votre adresse est bien correcte et connue de l'application, un nouveau password vous a &amp;eacute;t&amp;eacute; envoy&amp;eacute; par mail.</h4>
+    <h4>Si votre adresse est bien correcte et connue de l'application, un lien vous permettant de saisir un nouveau password vous a &amp;eacute;t&amp;eacute; envoy&amp;eacute; par mail.</h4>
   </div>
 </div>

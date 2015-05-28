@@ -12,6 +12,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 privileged aspect UserController_Roo_Controller_Finder {
     
+    @RequestMapping(params = { "find=ByActivationKey", "form" }, method = RequestMethod.GET)
+    public String UserController.findUsersByActivationKeyForm(Model uiModel) {
+        return "admin/users/findUsersByActivationKey";
+    }
+    
+    @RequestMapping(params = "find=ByActivationKey", method = RequestMethod.GET)
+    public String UserController.findUsersByActivationKey(@RequestParam("activationKey") String activationKey, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+        if (page != null || size != null) {
+            int sizeNo = size == null ? 10 : size.intValue();
+            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+            uiModel.addAttribute("users", User.findUsersByActivationKey(activationKey, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) User.countFindUsersByActivationKey(activationKey) / sizeNo;
+            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        } else {
+            uiModel.addAttribute("users", User.findUsersByActivationKey(activationKey, sortFieldName, sortOrder).getResultList());
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/users/list";
+    }
+    
     @RequestMapping(params = { "find=ByActivationKeyAndEmailAddress", "form" }, method = RequestMethod.GET)
     public String UserController.findUsersByActivationKeyAndEmailAddressForm(Model uiModel) {
         return "admin/users/findUsersByActivationKeyAndEmailAddress";

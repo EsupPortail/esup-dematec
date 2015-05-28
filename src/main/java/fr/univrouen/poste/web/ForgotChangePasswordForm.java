@@ -20,9 +20,9 @@ package fr.univrouen.poste.web;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 @RooJavaBean
-public class ChangePasswordForm {
+public class ForgotChangePasswordForm {
 
-	private String oldPassword;
+	private String activationKey;
 	
 	private String newPassword;
 	

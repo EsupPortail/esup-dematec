@@ -28,5 +28,8 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/forgotpassword/thanks.jspx" />
 	</definition>
-
+	<definition extends="public" name="forgotpassword/formChange">
+		<put-attribute name="body"
+			value="/WEB-INF/views/forgotpassword/formChange.jspx" />
+	</definition>
 </tiles-definitions>

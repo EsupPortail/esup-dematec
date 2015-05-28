@@ -9,6 +9,14 @@ import javax.persistence.TypedQuery;
 
 privileged aspect User_Roo_Finder {
     
+    public static Long User.countFindUsersByActivationKey(String activationKey) {
+        if (activationKey == null || activationKey.length() == 0) throw new IllegalArgumentException("The activationKey argument is required");
+        EntityManager em = User.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM User AS o WHERE o.activationKey = :activationKey", Long.class);
+        q.setParameter("activationKey", activationKey);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long User.countFindUsersByActivationKeyAndEmailAddress(String activationKey, String emailAddress) {
         if (activationKey == null || activationKey.length() == 0) throw new IllegalArgumentException("The activationKey argument is required");
         if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
@@ -65,6 +73,29 @@ privileged aspect User_Roo_Finder {
         TypedQuery q = em.createQuery("SELECT COUNT(o) FROM User AS o WHERE o.numCandidat = :numCandidat", Long.class);
         q.setParameter("numCandidat", numCandidat);
         return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<User> User.findUsersByActivationKey(String activationKey) {
+        if (activationKey == null || activationKey.length() == 0) throw new IllegalArgumentException("The activationKey argument is required");
+        EntityManager em = User.entityManager();
+        TypedQuery<User> q = em.createQuery("SELECT o FROM User AS o WHERE o.activationKey = :activationKey", User.class);
+        q.setParameter("activationKey", activationKey);
+        return q;
+    }
+    
+    public static TypedQuery<User> User.findUsersByActivationKey(String activationKey, String sortFieldName, String sortOrder) {
+        if (activationKey == null || activationKey.length() == 0) throw new IllegalArgumentException("The activationKey argument is required");
+        EntityManager em = User.entityManager();
+        String jpaQuery = "SELECT o FROM User AS o WHERE o.activationKey = :activationKey";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        q.setParameter("activationKey", activationKey);
+        return q;
     }
     
     public static TypedQuery<User> User.findUsersByActivationKeyAndEmailAddress(String activationKey, String emailAddress) {
