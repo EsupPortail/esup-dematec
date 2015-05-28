@@ -35,7 +35,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.web.multipart.MultipartFile;
 
 @RooJavaBean
-@RooToString(excludeFields = "bigFile,file")
+@RooToString(excludeFields = {"bigFile","file"})
 @RooJpaActiveRecord
 public class TemplateFile {
 

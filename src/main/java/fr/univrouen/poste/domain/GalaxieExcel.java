@@ -34,7 +34,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.web.multipart.MultipartFile;
 
 @RooJavaBean
-@RooToString(excludeFields="bigFile,file,cells")
+@RooToString(excludeFields={"bigFile","file","cells"})
 @RooJpaActiveRecord
 public class GalaxieExcel {
 	

@@ -27,7 +27,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
-@RooToString(excludeFields = "membre,poste")
+@RooToString(excludeFields = {"membre","poste"})
 @RooJpaActiveRecord(finders = { "findCommissionEntrysByNumPosteAndEmail", "findCommissionEntrysByMembre", "findCommissionEntrysByMembreIsNull", "findCommissionEntrysByPosteIsNull" })
 public class CommissionEntry {
 
