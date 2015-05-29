@@ -21,7 +21,13 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_PosteCandidature" list="false" object="${postecandidature}" path="/postecandidatures" update="false" z="user-managed">
-        <h4>Candidat ${postecandidature.candidat.numCandidat} (${postecandidature.candidat.emailAddress}) / Poste ${postecandidature.poste.numEmploi}</h4>
+        <h4>
+        	Candidat ${postecandidature.candidat.numCandidat} (${postecandidature.candidat.emailAddress} 
+        	<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+        		<a href="mailto:${postecandidature.candidat.emailAddress}"><i class="icon-envelope"> <!--  --></i></a>
+        	</sec:authorize>
+        	) / Poste ${postecandidature.poste.numEmploi}
+        </h4>
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_CANDIDAT')">
             ${texteCandidatAideCandidatureDepot}
         </sec:authorize>
