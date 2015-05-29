@@ -26,6 +26,7 @@
             <p>En tant que gestionnaire (ou administrateur) de l'application, vous avez la liste complète des candidatures donnée ici.</p>
             <p>Pour chacune d'entre elles, vous pouvez visualiser, ajouter ou supprimer des fichiers</p>
             <p>Vous avez également la possibilité de filtrer (trouver) les candidatures par poste ou recevable/non-recevable.</p>
+            <p><i>Pour sélectionner/déselectionner plusieurs postes/candidats dans le formulaire "Filtrer", vous pouvez utiliser la combinaison Ctrl-Clique</i>.</p>
         </util:help>
         <div class="demat-finder-candidatures">
             <div class="accordion help" id="accordionfilter">
@@ -118,6 +119,9 @@
         <c:set value="true" var="seeAuditionnable"/>
         <c:set value="true" var="canSort"/>
     </sec:authorize>
+    <c:if test="${not empty nbResultsTotal}">
+    	<i>${nbResultsTotal} candidature${nbResultsTotal>1 ? 's' : ''}</i>
+    </c:if>
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidature" items="${postecandidatures}" z="JY3gfzfxpIuNQNgiboLwOyIwBUM=">
         <table:table color="${tableColorField}" create="false" data="${postecandidatures}" delete="false" id="l_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures" update="false" z="user-managed" multiselect="${canManage ? 'candidatureId' : ''}">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_poste" property="poste" sort="${canSort}" z="user-managed"/>

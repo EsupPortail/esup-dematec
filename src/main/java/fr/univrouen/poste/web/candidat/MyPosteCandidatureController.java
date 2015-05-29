@@ -602,11 +602,14 @@ public class MyPosteCandidatureController {
 			if (page != null || size != null) {
 				int sizeNo = size == null ? 10 : size.intValue();
 				int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-				float nrOfPages = (float) PosteCandidature.countPosteCandidatures() / sizeNo;
+				long nbResultsTotal = PosteCandidature.countPosteCandidatures();
+				uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
+				float nrOfPages = (float) nbResultsTotal / sizeNo;
 				uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo, sortFieldName, sortOrder);
 			} else {
 				postecandidatures = PosteCandidature.findAllPosteCandidatures(sortFieldName, sortOrder);
+				uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
 			}
 			
 			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
@@ -644,7 +647,8 @@ public class MyPosteCandidatureController {
 			if(membresPostes.isEmpty()) {
 				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			}
-			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes, sortFieldName, sortOrder).getResultList();			
+			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes, sortFieldName, sortOrder).getResultList();		
+			uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
 			List<PosteAPourvoir> membresPostes2Display = new ArrayList<PosteAPourvoir>(user.getPostes());
 			
 			Collections.sort(membresPostes2Display, new Comparator<PosteAPourvoir>(){
@@ -716,10 +720,14 @@ public class MyPosteCandidatureController {
                 int sizeNo = size == null ? 10 : size.intValue();
                 final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
                 uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-                float nrOfPages = (float) PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable()) / sizeNo;
+                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable());
+                uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
+                float nrOfPages = (float) nbResultsTotal / sizeNo;
                 uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
             } else {
-                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), sortFieldName, sortOrder).getResultList());
+            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), sortFieldName, sortOrder).getResultList();
+                uiModel.addAttribute("postecandidatures", postecandidatures);
+                uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
             }
     		
     		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
