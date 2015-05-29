@@ -68,7 +68,7 @@
 						<input id="reset" type="reset" value="${fn:escapeXml(reset_label)}" class="btn btn-info" /> &amp;nbsp;
 						<spring:url value="/forgotpassword/index" var="forgotpassword_url" />
 						<spring:url value="/signup?form" var="signup_url" />
-						<a href="${forgotpassword_url}" class="btn btn-warning">Password oublié</a>
+						<a href="${forgotpassword_url}" class="btn btn-warning">Mot de passe oublié</a>
 					</div>
 					<div></div>
 				</form>

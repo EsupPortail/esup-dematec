@@ -28,14 +28,14 @@
 
 	<jsp:output omit-xml-declaration="yes" />
 	<div id="_title_div">
-		<h4>Modification du password</h4>
+		<h4>Modification du mot de passe</h4>
 		<spring:url value="/changepassword" var="form_url" />
 		<form:form action="update" method="POST"
 			commandName="changePasswordForm">
 			<div class="password-container">
 				<br />
 				<div id="changepassword_oldpassword">
-					<label for="_oldpassword_id">Password actuel:</label>
+					<label for="_oldpassword_id">Mot de passe actuel:</label>
 					<form:password cssStyle="width:250px"
 						id="_changepassword_oldpassword" maxlength="30" path="oldPassword" />
 					<br />
@@ -43,7 +43,7 @@
 				</div>
 				<br />
 				<div id="changepassword_newpassword">
-					<label for="_newpassword_id">Nouveau Password:</label>
+					<label for="_newpassword_id">Nouveau mot de passe:</label>
 					<form:password cssStyle="width:250px"
 						id="_changepassword_newpassword" maxlength="30" path="newPassword"
 						cssClass="strong-password" />
@@ -52,7 +52,7 @@
 				</div>
 				<br />
 				<div id="changepassword_newpasswordagain">
-					<label for="_newpasswordagain_id">Nouveau Password
+					<label for="_newpasswordagain_id">Nouveau mot de passe
 						(répéter):</label>
 					<form:password cssStyle="width:250px"
 						id="_changepassword_newpasswordagain" maxlength="30"
@@ -70,9 +70,9 @@
 				<br />
 				<form:errors cssClass="errors text-error" delimiter="&lt;p/&gt;" />
 				<div class="strength-indicator">
-					<span id="password-robust">Robustesse du password</span>
+					<span id="password-robust">Robustesse du mot de passe</span>
 					<div class="meter"><!--  --></div>
-					Un password robuste doit contenir entre 8 et 16 caractères et proposer des majuscules, minuscules, chiffres et caractères spéciaux.
+					Un mot de passe robuste doit contenir entre 8 et 16 caractères et proposer des majuscules, minuscules, chiffres et caractères spéciaux.
 				</div>
 			</div>
 		</form:form>

@@ -96,7 +96,7 @@ Celle(s)-ci correspond(ent) au(x) poste(s) @@postes@@.\n
 http://localhost:8080/EsupDematEC/\n
 --\nUniversité ESUP - Direction des Ressources Humaines',
 
-E'Bonjour,\n\nVous avez demandé à récupérer un nouveau password. \n\nVotre nouveau password est:\n\n @@newPassword@@ \n
+E'Bonjour,\n\nVous avez demandé à récupérer un nouveau mot de passe. \n\nVotre nouveau mot de passe est:\n\n @@newPassword@@ \n
 http://localhost:8080/EsupDematEC/changepassword/index \n
 --\nUniversité ESUP - Direction des Ressources Humaines',
 
