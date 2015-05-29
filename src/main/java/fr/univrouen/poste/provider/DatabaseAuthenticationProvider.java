@@ -121,7 +121,7 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 		String password = (String) authentication.getCredentials();
 		if (!StringUtils.hasText(password) || !StringUtils.hasText(username)) {
 			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			throw new BadCredentialsException("Merci de saisir votre email et password");
+			throw new BadCredentialsException("Merci de saisir votre email et mot de passe");
 		}
 		String encryptedPassword = messageDigestPasswordEncoder.encodePassword(password, null);
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
@@ -140,12 +140,12 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 			String expectedPassword = targetUser.getPassword();
 			if (!StringUtils.hasText(expectedPassword)) {
 				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-				throw new BadCredentialsException("Aucun password pour " + username
+				throw new BadCredentialsException("Aucun mot de passe pour " + username
 				        + " n'est enregistré dans la base, merci d'activer votre compte via le lien d'activation envoyé par email. Contactez un administrateur si problème.");
 			}
 			if (!encryptedPassword.equals(expectedPassword)) {
 				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-				throw new BadCredentialsException("Utilisateur/Password invalide.");
+				throw new BadCredentialsException("Email utilisateur ou mot de passe invalide.");
 			}
 			
 			// restriction accés réseau
@@ -173,10 +173,10 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 
 		} catch (EmptyResultDataAccessException e) {
 			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			throw new BadCredentialsException("Utilisateur/Password invalide");
+			throw new BadCredentialsException("Compte utilisateur et/ou mot de passe invalide");
 		} catch (EntityNotFoundException e) {
 			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			throw new BadCredentialsException("Utilisateur/Password invalide");
+			throw new BadCredentialsException("Compte utilisateur et/ou mot de passe invalide");
 		} catch (NonUniqueResultException e) {
 			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
 			throw new BadCredentialsException("Utilisateur non unique, contactez l'administrateur.");
