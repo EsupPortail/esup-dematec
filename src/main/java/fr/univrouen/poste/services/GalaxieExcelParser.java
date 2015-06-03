@@ -34,6 +34,7 @@ import org.springframework.util.StopWatch;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
+import fr.univrouen.poste.domain.User;
 
 @Service
 public class GalaxieExcelParser {
@@ -94,13 +95,28 @@ public class GalaxieExcelParser {
 					dbGalaxyEntrie.setCivilite(galaxieEntry.getCivilite());
 					dbGalaxyEntrie.setNom(galaxieEntry.getNom());
 					dbGalaxyEntrie.setPrenom(galaxieEntry.getPrenom());
-					dbGalaxyEntrie.setEmail(galaxieEntry.getEmail());
+					// si email différent et si le candidat n'a pas activé son compte - on réinitialise le compte == on le supprime et on le récréé avec cette nvelle adresse mail
+					if(!dbGalaxyEntrie.getEmail().equals(galaxieEntry.getEmail())) {
+						try {
+							User user = User.findUsersByEmailAddress(dbGalaxyEntrie.getEmail()).getSingleResult();
+							if(user.getActivationDate() == null && !user.isCandidatActif()) {
+								logger.info("Le canndidat " + dbGalaxyEntrie.getNumCandidat() + " a changé d'email alors qu'il n'avait pas encore activé son compte - on relance la procédure de création de son compte/candidature.");
+								user.remove();
+								galaxieEntry.persist();
+								dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
+								continue;
+							}
+							dbGalaxyEntrie.setEmail(galaxieEntry.getEmail());
+						} catch(Exception e) {
+							logger.warn("Pb avec le candidat " + dbGalaxyEntrie.getNumCandidat() + " qui a changé d'email ...", e);
+						}
+					}
 					dbGalaxyEntrie.setLocalisation(galaxieEntry.getLocalisation());
 					dbGalaxyEntrie.setProfil(galaxieEntry.getProfil());
 					dbGalaxyEntrie.setEtatDossier(galaxieEntry.getEtatDossier());
 					dbGalaxyEntrie.merge();
 				}
-			}
+			}		
 		}
 		
 		chrono.stop();
