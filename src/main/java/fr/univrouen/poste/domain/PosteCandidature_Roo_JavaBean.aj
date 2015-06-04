@@ -75,6 +75,14 @@ privileged aspect PosteCandidature_Roo_JavaBean {
         this.auditionnable = auditionnable;
     }
     
+    public String PosteCandidature.getManagerComment4Members() {
+        return this.managerComment4Members;
+    }
+    
+    public void PosteCandidature.setManagerComment4Members(String managerComment4Members) {
+        this.managerComment4Members = managerComment4Members;
+    }
+    
     public ManagerReview PosteCandidature.getManagerReview() {
         return this.managerReview;
     }

@@ -687,7 +687,7 @@ public class MyPosteCandidatureController {
 
     	if(zip) {
 
-    		File tmpFile = zipService.getZip(PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), null, null).getResultList());
+    		File tmpFile = zipService.getZip(PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList());
 
     		String contentType = "application/zip";
     		int zipSize = (int) tmpFile.length();
@@ -719,13 +719,13 @@ public class MyPosteCandidatureController {
     		if (page != null || size != null) {
                 int sizeNo = size == null ? 10 : size.intValue();
                 final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable());
+                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification());
                 uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
                 float nrOfPages = (float) nbResultsTotal / sizeNo;
                 uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
             } else {
-            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), sortFieldName, sortOrder).getResultList();
+            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).getResultList();
                 uiModel.addAttribute("postecandidatures", postecandidatures);
                 uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
             }
@@ -749,5 +749,16 @@ public class MyPosteCandidatureController {
             addDateTimeFormatPatterns(uiModel);       
             return "postecandidatures/list";           
     	}
+    }    
+	
+    @RequestMapping(value = "/{id}/updateManagerComment", method = RequestMethod.POST, produces = "text/html")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+    public String updateManagerCommen(@PathVariable("id") Long id, @RequestParam String comment, Model uiModel) {
+    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+    	postecandidature.setManagerComment4Members(comment);
+    	postecandidature.merge();
+        uiModel.asMap().clear();
+        return "redirect:/postecandidatures/" + id;
     }
+    
 }

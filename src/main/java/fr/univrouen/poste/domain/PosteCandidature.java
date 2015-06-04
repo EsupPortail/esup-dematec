@@ -33,6 +33,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -74,6 +75,9 @@ public class PosteCandidature {
     private Boolean recevable = true;
 
     private Boolean auditionnable = false;
+    
+    @Type(type="org.hibernate.type.StringClobType")
+    private String managerComment4Members = "";
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -135,7 +139,7 @@ public class PosteCandidature {
     }
 
     
-    public static Long countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnable(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable) {
+    public static Long countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable, Boolean modification) {
         EntityManager em = entityManager();
         String jpaQuery = "SELECT COUNT(o) FROM PosteCandidature AS o WHERE";
         if (postes != null) {
@@ -149,6 +153,13 @@ public class PosteCandidature {
         }
         if (auditionnable != null) {
         	jpaQuery = jpaQuery + " o.auditionnable = :auditionnable AND";
+        }
+        if (modification != null) {
+        	if(modification) {
+        		jpaQuery = jpaQuery + " o.modification IS NOT NULL AND";
+        	} else {
+        		jpaQuery = jpaQuery + " o.modification IS NULL AND";
+        	}
         }
         jpaQuery = jpaQuery + " 1=1";
         TypedQuery q = em.createQuery(jpaQuery, Long.class);
@@ -167,7 +178,7 @@ public class PosteCandidature {
         return ((Long) q.getSingleResult());
     }
     
-    public static TypedQuery<PosteCandidature> findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnable(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable, String sortFieldName, String sortOrder) {
+    public static TypedQuery<PosteCandidature> findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable, Boolean modification, String sortFieldName, String sortOrder) {
         EntityManager em = entityManager();
         String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE";
         if (postes != null) {
@@ -181,6 +192,13 @@ public class PosteCandidature {
         }
         if (auditionnable != null) {
         	jpaQuery = jpaQuery + " o.auditionnable = :auditionnable AND";
+        }
+        if (modification != null) {
+        	if(modification) {
+        		jpaQuery = jpaQuery + " o.modification IS NOT NULL AND";
+        	} else {
+        		jpaQuery = jpaQuery + " o.modification IS NULL AND";
+        	}
         }
         jpaQuery = jpaQuery + " 1=1";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {

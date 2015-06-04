@@ -15,6 +15,8 @@ public class PosteCandidatureSearchCriteria {
 	
 	Boolean auditionnable;
 	
+	Boolean modification;
+	
 	List<String> numEmploiPostes;
 	
 	List<String> emailCandidats;

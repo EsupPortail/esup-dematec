@@ -24,6 +24,14 @@ privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
         this.auditionnable = auditionnable;
     }
     
+    public Boolean PosteCandidatureSearchCriteria.getModification() {
+        return this.modification;
+    }
+    
+    public void PosteCandidatureSearchCriteria.setModification(Boolean modification) {
+        this.modification = modification;
+    }
+    
     public List<String> PosteCandidatureSearchCriteria.getNumEmploiPostes() {
         return this.numEmploiPostes;
     }
