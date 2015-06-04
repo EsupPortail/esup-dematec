@@ -17,10 +17,12 @@
  */
 package fr.univrouen.poste.web.candidat;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -678,7 +680,8 @@ public class MyPosteCandidatureController {
     public String findPosteCandidatures(HttpServletRequest request, 
     		HttpServletResponse response, 
     		@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
-    		@RequestParam(defaultValue="off", required=false) Boolean zip, 
+    		@RequestParam(defaultValue="off", required=false) Boolean zip,
+    		@RequestParam(defaultValue="off", required=false) Boolean mails, 
     		@RequestParam(required = false) Integer page, 
     		@RequestParam(required = false) Integer size, 
     		@RequestParam(required = false) String sortFieldName, 
@@ -704,50 +707,79 @@ public class MyPosteCandidatureController {
     		
     		return null;    		
     	} else {
+    		
+    		if(mails) {
+    			
+    			List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
+    			Set<String> mailAdresses = new HashSet<String>();
+    			for(PosteCandidature pc: postecandidatures) {
+    				mailAdresses.add(pc.getEmail());
+    			}
+    			
+    			List<String> mailAdressesSorted = new ArrayList<String>(mailAdresses);
+    			Collections.sort(mailAdressesSorted);
+    			StringBuffer mailAdressesString = new StringBuffer();
+    			for(String email: mailAdressesSorted) {
+    				mailAdressesString.append(email).append(System.lineSeparator());
+    			}
 
-    		if(sortFieldName == null) 
-            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
-    		if("nom".equals(sortFieldName))
-    			sortFieldName = "candidat.nom";
-    		if("email".equals(sortFieldName))
-    			sortFieldName = "candidat.emailAddress";
-    		if("numCandidat".equals(sortFieldName))
-    			sortFieldName = "candidat.numCandidat";
-    		if("managerReviewState".equals(sortFieldName))
-    			sortFieldName = "managerReview.reviewStatus";
-    		
-    		if (page != null || size != null) {
-                int sizeNo = size == null ? 10 : size.intValue();
-                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification());
-                uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
-                float nrOfPages = (float) nbResultsTotal / sizeNo;
-                uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-            } else {
-            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).getResultList();
-                uiModel.addAttribute("postecandidatures", postecandidatures);
-                uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
-            }
-    		
-    		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
-    		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
-    		
-    		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
-    		
-			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
-			uiModel.addAttribute("candidats", User.findAllCandidatsIds());
-			
-    		uiModel.addAttribute("command", searchCriteria);
-    		uiModel.addAttribute("finderview", true);
-    		
-		    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
-		    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
-		    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
-		    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
-    		
-            addDateTimeFormatPatterns(uiModel);       
-            return "postecandidatures/list";           
+        		String contentType = "text/plain";
+        		String baseName = "emails.txt";
+        		InputStream inputStream = new ByteArrayInputStream(mailAdressesString.toString().getBytes(StandardCharsets.UTF_8));
+
+        		response.setContentType(contentType);
+        		response.setCharacterEncoding("utf-8");
+        		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+        		FileCopyUtils.copy(inputStream, response.getOutputStream());
+        		
+        		return null; 
+    			
+    		} else {
+
+	    		if(sortFieldName == null) 
+	            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+	    		if("nom".equals(sortFieldName))
+	    			sortFieldName = "candidat.nom";
+	    		if("email".equals(sortFieldName))
+	    			sortFieldName = "candidat.emailAddress";
+	    		if("numCandidat".equals(sortFieldName))
+	    			sortFieldName = "candidat.numCandidat";
+	    		if("managerReviewState".equals(sortFieldName))
+	    			sortFieldName = "managerReview.reviewStatus";
+	    		
+	    		if (page != null || size != null) {
+	                int sizeNo = size == null ? 10 : size.intValue();
+	                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+	                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+	                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification());
+	                uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
+	                float nrOfPages = (float) nbResultsTotal / sizeNo;
+	                uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+	            } else {
+	            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).getResultList();
+	                uiModel.addAttribute("postecandidatures", postecandidatures);
+	                uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
+	            }
+	    		
+	    		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
+	    		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
+	    		
+	    		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
+	    		
+				uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
+				uiModel.addAttribute("candidats", User.findAllCandidatsIds());
+				
+	    		uiModel.addAttribute("command", searchCriteria);
+	    		uiModel.addAttribute("finderview", true);
+	    		
+			    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
+			    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
+			    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
+			    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
+	    		
+	            addDateTimeFormatPatterns(uiModel);       
+	            return "postecandidatures/list";           
+    		}
     	}
     }    
 	

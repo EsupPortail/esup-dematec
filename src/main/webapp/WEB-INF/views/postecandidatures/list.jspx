@@ -71,8 +71,13 @@
 	                                            <spring-form:option value="false">Aucune modification</spring-form:option>
 	                                        </spring-form:select>
 	                                    </div>
-	                                    <div>
-	                                        <field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
+	                                    <div class="row-fluid">
+	                                   		<div class="span3">
+	                                        	<field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
+	                                        </div>
+	                                        <div class="span3">
+	                                        	<field:checkbox disableFormBinding="true" field="mails" id="mails" label="Liste mails"/>
+	                                        </div>
 	                                    </div>
 	                                </div>
                                 </form:find>
