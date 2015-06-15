@@ -45,6 +45,7 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	    put("/admin/galaxieentrys",   "Importation depuis Galaxie");
 	    put("/admin/posteapourvoirs",   "Liste des postes");
 	    put("/admin/candidats",   "Liste des candidats");
+	    put("/addpostecandidatures",   "Ajout de candidatures");
 	    put("/postecandidatures",   "Candidatures");
 	    put("/admin/logfiles",   "Statistiques sur les fichiers");
 	    put("/admin/logauths",   "Statistiques authentification"); 
@@ -105,6 +106,8 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 
 				modelAndView.addObject("subTitle", subTitle);
 				modelAndView.addObject("activeMenu", activeMenu);
+				
+				modelAndView.addObject("candidatCanSignup", AppliConfig.getCacheCandidatCanSignup());
 			}
 		
 			if(request.getParameter("size")!=null) {
