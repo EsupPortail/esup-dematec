@@ -38,19 +38,23 @@ public class CreateUserService {
 	
 	@Autowired
 	EmailService emailService;
-	
+
 	public User createCandidatUser(UserRegistrationForm userRegistration) {
-	    String mailSubject = AppliConfig.getCacheMailSubject();	    
+	    String mailSubject = AppliConfig.getCacheMailSubject();
 	    String mailMessage = AppliConfig.getCacheTexteMailActivation();
-	    return this.createUser(userRegistration, mailSubject, mailMessage);
+	    User user = this.createUser(userRegistration, mailSubject, mailMessage);
+	    // default numCandidat == email
+	    user.setNumCandidat(user.getEmailAddress());
+	    user.merge();
+	    return user;
     }
-	
+
 	public User createMembreUser(UserRegistrationForm userRegistration) {
-	    String mailSubject = AppliConfig.getCacheMailSubjectMembre();	    
+	    String mailSubject = AppliConfig.getCacheMailSubjectMembre();
 	    String mailMessage = AppliConfig.getCacheTexteMailActivationMembre();
 	    return this.createUser(userRegistration, mailSubject, mailMessage);
     }
-	
+
 	private User createUser(UserRegistrationForm userRegistration, String mailSubject, String mailMessage) {
 	    Random random = new Random(System.currentTimeMillis());
 	    String activationKey = "activationKey" + Math.abs(random.nextInt());

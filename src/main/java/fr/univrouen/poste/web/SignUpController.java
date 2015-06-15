@@ -18,6 +18,7 @@
 package fr.univrouen.poste.web;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletRequest;
@@ -36,8 +37,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.CreateUserService;
+import fr.univrouen.poste.services.PosteAPourvoirService;
 
 @RequestMapping("/signup")
 @Controller
@@ -50,6 +53,9 @@ public class SignUpController {
 	
 	@Autowired 
 	private CreateUserService createUserService;
+	
+	@Autowired 
+	private PosteAPourvoirService posteAPourvoirService;
 
 	@Autowired
 	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
