@@ -68,7 +68,8 @@ color_candidature_vue_incomplet,
 color_candidature_vue_incomplet_modifie_depuis,
 color_candidature_vue_modifie_depuis,
 membre_suppr_review_file,
-candidature_recevable_default
+candidature_recevable_default,
+candidat_can_signup
 ) 
 
 VALUES (
@@ -155,7 +156,9 @@ E'Merci de compléter le dossier de cette candidature via l''application de l''U
 
 false, 
 
-true
+true,
+
+false
 
 );
 

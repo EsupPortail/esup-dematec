@@ -140,4 +140,8 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.candidatureRecevableDefault;
     }
     
+    public Boolean AppliConfig.getCandidatCanSignup() {
+        return this.candidatCanSignup;
+    }
+    
 }

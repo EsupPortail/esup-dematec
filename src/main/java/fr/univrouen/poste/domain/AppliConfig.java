@@ -101,6 +101,9 @@ public class AppliConfig {
 	
 	private static Boolean cacheCandidatureRecevableDefault;
 	
+	private static Boolean cacheCandidatCanSignup;
+	
+	
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateEndCandidat;
@@ -209,6 +212,9 @@ public class AppliConfig {
 
     @Column
     private Boolean candidatureRecevableDefault;
+    
+    @Column
+    private Boolean candidatCanSignup;
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -358,6 +364,11 @@ public class AppliConfig {
 	public void setCandidatureRecevableDefault(Boolean candidatureRecevableDefault) {
 		this.candidatureRecevableDefault = candidatureRecevableDefault;
 		cacheCandidatureRecevableDefault = candidatureRecevableDefault;
+	}
+
+	public void setCandidatCanSignup(Boolean candidatCanSignup) {
+		this.candidatCanSignup = candidatCanSignup;
+		cacheCandidatCanSignup = candidatCanSignup;
 	}
 
 	public static String getCacheTitre() {
@@ -774,6 +785,19 @@ public class AppliConfig {
     		}
     	}
     	return cacheCandidatureRecevableDefault;
+	}
+	
+	public static Boolean getCacheCandidatCanSignup() {
+		if(cacheCandidatCanSignup == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheCandidatCanSignup = configs.get(0).getCandidatCanSignup();		
+    		}
+    		if(cacheCandidatCanSignup == null) {
+    			cacheCandidatCanSignup = false;
+    		}
+    	}
+    	return cacheCandidatCanSignup;
 	}
 	
 }

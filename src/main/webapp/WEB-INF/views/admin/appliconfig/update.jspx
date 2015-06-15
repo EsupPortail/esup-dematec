@@ -114,6 +114,7 @@ Université ESUP - Direction des Ressources Humaines
         </util:help>
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
         <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>
+        <field:checkbox field="candidatCanSignup" id="c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" z="IwRWslqM6yWRiTK6CKY/0iQT6Gk="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>
