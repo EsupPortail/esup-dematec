@@ -31,6 +31,8 @@ public class LoginController {
     public String login(Model model) {
     	String textePremierePageAnonyme = AppliConfig.getCacheTextePremierePageAnonyme();
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
+    	Boolean candidatCanSignup = AppliConfig.getCacheCandidatCanSignup();
+    	model.addAttribute("candidatCanSignup", candidatCanSignup);
         return "login";
     }
    

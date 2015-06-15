@@ -80,8 +80,11 @@
 						<spring:message code="button_reset" htmlEscape="false" var="reset_label" />
 						<input id="reset" type="reset" value="${fn:escapeXml(reset_label)}" class="btn btn-info" /> &amp;nbsp;
 						<spring:url value="/forgotpassword/index" var="forgotpassword_url" />
-						<spring:url value="/signup?form" var="signup_url" />
-						<a href="${forgotpassword_url}" class="btn btn-warning">Mot de passe oublié</a>
+						<a href="${forgotpassword_url}" class="btn btn-warning">Mot de passe oublié</a> &amp;nbsp;
+						<c:if test="${candidatCanSignup}">
+							<spring:url value="/signup" var="signup_url" />
+							<a href="${signup_url}" class="btn">Créer un compte</a>
+						</c:if>
 					</div>
 					<div></div>
 				</form>

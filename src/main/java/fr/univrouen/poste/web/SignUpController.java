@@ -62,9 +62,13 @@ public class SignUpController {
     
     @RequestMapping(method = RequestMethod.GET)
     public String createForm(Model model) {
-    	UserRegistrationForm form = new UserRegistrationForm();
-        model.addAttribute("User", form);
-        return "signup/index";
+    	if(AppliConfig.getCacheCandidatCanSignup()) {
+	    	UserRegistrationForm form = new UserRegistrationForm();
+	        model.addAttribute("User", form);
+	        return "signup/index";
+    	} else {
+    		return "redirect:/";
+    	}
     }
     
     
@@ -126,20 +130,24 @@ public class SignUpController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String create(UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
-    	// be sure that there is no password sent by the web form
-    	userRegistration.setPassword(null);
-        if (result.hasErrors()) {
-        	log.error(result.toString());
-            return createForm(model);
-        } else {
-        	if(User.countFindUsersByEmailAddress(userRegistration.getEmailAddress())>0) {
-        		model.addAttribute("errorMessage", "Un compte avec cette même adresse mail est déjà présent dans cette application !");
-        		return createForm(model);
-        	} else {
-        		createUserService.createCandidatUser(userRegistration);
-        		return "signup/thanks";
-        	}
-        }
+    	if(AppliConfig.getCacheCandidatCanSignup()) {
+	    	// be sure that there is no password sent by the web form
+	    	userRegistration.setPassword(null);
+	        if (result.hasErrors()) {
+	        	log.error(result.toString());
+	            return createForm(model);
+	        } else {
+	        	if(User.countFindUsersByEmailAddress(userRegistration.getEmailAddress())>0) {
+	        		model.addAttribute("errorMessage", "Un compte avec cette même adresse mail est déjà présent dans cette application !");
+	        		return createForm(model);
+	        	} else {
+	        		createUserService.createCandidatUser(userRegistration);
+	        		return "signup/thanks";
+	        	}
+	        }
+    	} else {
+    		return "redirect:/";
+    	}
     }
 
 }
