@@ -58,8 +58,15 @@ public class CreateUserService {
 	    User user = new User();
 	    user.setActivationDate(null);
 	    user.setEmailAddress(userRegistration.getEmailAddress());
-	    if(userRegistration.getPassword() != null)
+	    if(userRegistration.getPassword() != null) {
 	    	user.setPassword(messageDigestPasswordEncoder.encodePassword(userRegistration.getPassword(), null));
+	    }
+	    if(userRegistration.getLastName() != null) {
+	    	user.setNom(userRegistration.getLastName());
+	    }
+		if(userRegistration.getFirstName() != null) {
+		    user.setPrenom(userRegistration.getFirstName());
+		}
 	    user.setActivationKey(activationKey);
 	    user.setEnabled(true);
 	    user.persist();
