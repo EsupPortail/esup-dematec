@@ -23,8 +23,8 @@ import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +43,8 @@ import fr.univrouen.poste.services.CreateUserService;
 @Controller
 public class SignUpController {
 
+	private final Logger log = Logger.getLogger(getClass());
+
     @Autowired
     private SignUpValidator validator;
 	
@@ -57,14 +59,14 @@ public class SignUpController {
         return new UserRegistrationForm();
     }
 
-    /*
-    @RequestMapping(params = "form", method = RequestMethod.GET)
+    
+    @RequestMapping(method = RequestMethod.GET)
     public String createForm(Model model) {
     	UserRegistrationForm form = new UserRegistrationForm();
         model.addAttribute("User", form);
         return "signup/index";
     }
-    */
+    
     
     @RequestMapping(params = "activate", method = RequestMethod.GET)
     public String activateUserComplexUrl(@RequestParam(value = "activate", required = true) String activationKey,@RequestParam(value = "emailAddress", required = true) String emailAddress,Model model) {
@@ -121,17 +123,23 @@ public class SignUpController {
         }
 
     }
-/*
+
     @RequestMapping(method = RequestMethod.POST)
-    public String create(@Valid UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
-        validator.validate(userRegistration, result);
+    public String create(UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
+    	// be sure that there is no password sent by the web form
+    	userRegistration.setPassword(null);
         if (result.hasErrors()) {
-        	
+        	log.error(result.toString());
             return createForm(model);
         } else {
-            createUserService.createUser(userRegistration);
-            return "signup/thanks";
+        	if(User.countFindUsersByEmailAddress(userRegistration.getEmailAddress())>0) {
+        		model.addAttribute("errorMessage", "Un compte avec cette même adresse mail est déjà présent dans cette application !");
+        		return createForm(model);
+        	} else {
+        		createUserService.createCandidatUser(userRegistration);
+        		return "signup/thanks";
+        	}
         }
     }
-*/
+
 }

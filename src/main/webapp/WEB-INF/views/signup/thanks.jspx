@@ -22,9 +22,9 @@
     xmlns:jsp="http://java.sun.com/JSP/Page" 
     xmlns:spring="http://www.springframework.org/tags" >
   <jsp:output omit-xml-declaration="yes"/>
+  <jsp:directive.page contentType="text/html;charset=UTF-8" />
   <div id="_title_div">
-    <spring:url value="/signup" var="form_url"/>
-    SignUp Successful
-    <h3>Your signup is successful. You should receive an activation email from us shortly. Incase you do not get the email, please check the junk folder.</h3>
+    <h3>Création de compte réussi.</h3>
+    <p>Nous avons bien enregistré votre nouveau compte. Vous devriez recevoir très prochainement un email d'activation vous permettant d'activer effectivement ce compte. Si vous ne le voyez pas, merci de vérifier qu'il n'a pas été noté comme indésirable.</p>
   </div>
 </div>
