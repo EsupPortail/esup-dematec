@@ -50,6 +50,17 @@ public class PosteAPourvoir {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateEndCandidatAuditionnable;
     
+	
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date dateEndCandidat;
+    
+	
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date dateEndCandidatActif;
+
+    
     public static List<PosteAPourvoir> findAllPosteAPourvoirs() {
         return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).getResultList();
     }
