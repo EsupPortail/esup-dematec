@@ -222,5 +222,15 @@ public class PosteCandidature {
         }
         return q;
     }
+
+    public static TypedQuery<PosteCandidature> findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThan(
+    		User candidat, Date dateEndCandidat) {
+    	EntityManager em = entityManager();
+    	String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat and o.poste.dateEndCandidat > :dateEndCandidat";
+    	TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);			
+    	q.setParameter("candidat", candidat);
+    	q.setParameter("dateEndCandidat", dateEndCandidat);
+    	return q;
+    }
     
 }

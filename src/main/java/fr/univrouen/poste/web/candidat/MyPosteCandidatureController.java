@@ -624,7 +624,12 @@ public class MyPosteCandidatureController {
 		}
 
 		else if (isCandidat) {
-			postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList());
+			
+			if(!AppliConfig.getCacheCandidatCanSignup()) {
+				postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList());
+			} else {
+				postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThan(user, new Date()).getResultList());
+			}
 			
 			// restrictions si phase auditionnable
 	        Date currentTime = new Date();     
