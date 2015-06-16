@@ -64,10 +64,17 @@ public class CandidatAddPosteCandidatureController {
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
-    public String addCandidature(@RequestParam List<String> posteIds, Model uiModel) {   	
-		
-    	// TODO
-    	log.info("Candidatures sur les postes : " + posteIds);
+    public String addCandidature(@RequestParam(required=false) List<Long> posteIds, Model uiModel) {   	
+    	
+    	if(posteIds != null) {
+    	
+	    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    	String emailAddress = auth.getName();
+			User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+			
+	    	log.info("Candidatures sur les postes : " + posteIds + " pour le candidat " + candidat);
+	    	posteAPourvoirService.updateCandidatures(candidat, posteIds);
+    	}
     	
     	return "redirect:/addpostecandidatures";
     }

@@ -59,7 +59,7 @@
 						<td>${posteAvailable.poste.localisation}</td>
 						<c:choose>
 							<c:when test="${posteAvailable.candidat}">
-								<td><input name="posteIds" type="checkbox" checked="checked" value="${posteAvailable.poste.id}"/></td>
+								<td><input name="posteIds" type="checkbox" checked="checked" value="${posteAvailable.poste.id}" disabled="disabled"/></td>
 							</c:when>
 							<c:otherwise>
 								<td><input name="posteIds" type="checkbox" value="${posteAvailable.poste.id}"/></td>
