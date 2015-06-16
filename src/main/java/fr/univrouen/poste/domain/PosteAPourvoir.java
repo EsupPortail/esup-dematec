@@ -16,16 +16,13 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -33,51 +30,46 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString(excludeFields = "membres")
-@RooJpaActiveRecord(finders = { "findPosteAPourvoirsByNumEmploi"})
+@RooJpaActiveRecord(finders = { "findPosteAPourvoirsByNumEmploi", "findPosteAPourvoirsByDateEndCandidatGreaterThan" })
 public class PosteAPourvoir {
 
     private String numEmploi;
 
     private String profil;
-    
+
     private String localisation;
-    
+
     @ManyToMany
     private Set<User> membres;
-    
-	
+
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateEndCandidatAuditionnable;
-    
-	
+
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateEndCandidat;
-    
-	
+
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateEndCandidatActif;
 
-    
     public static List<PosteAPourvoir> findAllPosteAPourvoirs() {
         return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).getResultList();
     }
-    
+
     public static List<String> findAllPosteAPourvoirNumEplois() {
         return entityManager().createQuery("SELECT o.numEmploi FROM PosteAPourvoir o order by o.numEmploi asc", String.class).getResultList();
     }
-    
+
     public static List<PosteAPourvoir> findPosteAPourvoirEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
-	public static List<PosteAPourvoir> findPosteAPourvoirsByNumEmplois(List<String> numEmplois) {
-		if (numEmplois == null) throw new IllegalArgumentException("The numEmplois argument is required");
-		TypedQuery<PosteAPourvoir> q = entityManager().createQuery("SELECT o FROM PosteAPourvoir o WHERE o.numEmploi IN :numEmplois ORDER BY o.numEmploi asc", PosteAPourvoir.class);
-		q.setParameter("numEmplois", numEmplois);
-		return q.getResultList();
-	}
-    
+    public static List<PosteAPourvoir> findPosteAPourvoirsByNumEmplois(List<String> numEmplois) {
+        if (numEmplois == null) throw new IllegalArgumentException("The numEmplois argument is required");
+        TypedQuery<PosteAPourvoir> q = entityManager().createQuery("SELECT o FROM PosteAPourvoir o WHERE o.numEmploi IN :numEmplois ORDER BY o.numEmploi asc", PosteAPourvoir.class);
+        q.setParameter("numEmplois", numEmplois);
+        return q.getResultList();
+    }
 }

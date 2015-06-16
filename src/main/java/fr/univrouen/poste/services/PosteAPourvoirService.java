@@ -20,8 +20,8 @@ import fr.univrouen.poste.domain.User;
 public class PosteAPourvoirService {
 
 	public List<PosteAPourvoirAvailableBean>  getPosteAPourvoirAvailables(User candidat) {
-		// TODO dates début et fin de postes à pourvoir
-		List<PosteAPourvoir> postes = PosteAPourvoir.findAllPosteAPourvoirs();
+		
+		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndCandidatGreaterThan(new Date()).getResultList();
 
 		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(candidat).getResultList();
 		Set<PosteAPourvoir> postesAlreadyCandidated = new HashSet<PosteAPourvoir>();
@@ -30,7 +30,7 @@ public class PosteAPourvoirService {
 		}
 
 		List<PosteAPourvoirAvailableBean> posteAvailables = new ArrayList<PosteAPourvoirAvailableBean>();
-		for(PosteAPourvoir poste : postes) {
+		for(PosteAPourvoir poste : postesAPourvoir) {
 			PosteAPourvoirAvailableBean posteAvailable = new PosteAPourvoirAvailableBean();
 			posteAvailable.setPoste(poste);
 			posteAvailable.setCandidat(postesAlreadyCandidated.contains(poste));
@@ -48,13 +48,12 @@ public class PosteAPourvoirService {
 			postesAlreadyCandidated.add(candidature.getPoste());
 		}
 
+		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndCandidatGreaterThan(new Date()).getResultList();
+		
 		for(Long posteId: posteIds) {
 			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(posteId);
-			if(!postesAlreadyCandidated.contains(poste)) {
-				// TODO dates début et fin de postes à pourvoir
-
-
-
+			if(!postesAlreadyCandidated.contains(poste) && postesAPourvoir.contains(poste)) {
+				
 				// new Candidature
 				PosteCandidature candidature = new PosteCandidature();
 				candidature.setCandidat(candidat);
