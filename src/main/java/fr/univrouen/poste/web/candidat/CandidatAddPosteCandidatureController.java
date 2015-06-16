@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.services.PosteAPourvoirAvailableBean;
@@ -53,6 +54,10 @@ public class CandidatAddPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
     public String postesForm(Model uiModel) {   	
 		
+    	if(!AppliConfig.getCacheCandidatCanSignup()) {
+    		return "redirect:/postecandidatures";
+    	}
+    	
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     	String emailAddress = auth.getName();
 		User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
@@ -65,6 +70,10 @@ public class CandidatAddPosteCandidatureController {
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
     public String addCandidature(@RequestParam(required=false) List<Long> posteIds, Model uiModel) {   	
+    			
+    	if(!AppliConfig.getCacheCandidatCanSignup()) {
+    		return "redirect:/postecandidatures";
+    	}
     	
     	if(posteIds != null) {
     	
