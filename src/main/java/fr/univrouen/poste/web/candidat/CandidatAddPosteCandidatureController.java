@@ -22,14 +22,18 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.PosteAPourvoirAvailableBean;
 import fr.univrouen.poste.services.PosteAPourvoirService;
 
 @RequestMapping("addpostecandidatures")
@@ -37,7 +41,7 @@ import fr.univrouen.poste.services.PosteAPourvoirService;
 @Transactional
 public class CandidatAddPosteCandidatureController {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger log = Logger.getLogger(getClass());
 
 	@Autowired
 	LogService logService;
@@ -48,9 +52,25 @@ public class CandidatAddPosteCandidatureController {
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
     public String postesForm(Model uiModel) {   	
-    	List<PosteAPourvoir> posteapourvoirs = posteAPourvoirService.getCurrentPosteAPourvoirs();
+		
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    	String emailAddress = auth.getName();
+		User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		
+    	List<PosteAPourvoirAvailableBean> posteapourvoirs = posteAPourvoirService.getPosteAPourvoirAvailables(candidat);
     	uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
         return "addpostecandidatures/index";
     }
+    
+    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
+	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
+    public String addCandidature(@RequestParam List<String> posteIds, Model uiModel) {   	
+		
+    	// TODO
+    	log.info("Candidatures sur les postes : " + posteIds);
+    	
+    	return "redirect:/addpostecandidatures";
+    }
+    
     
 }
