@@ -69,9 +69,6 @@
     <script src="${jquery_ui_datepicker_fr_js_url}">
         <!-- required for FF3 and Opera -->
     </script>
-    <spring:url value="/resources/css/bootstrap.min.css" var="bootstrap_css_url"/>
-    <spring:url value="/resources/css/docs.css" var="docs_css_url"/>
-    <spring:url value="/resources/css/demat.css" var="demat_css_url"/>
     <script>
 $(document).ready(function(){
 	

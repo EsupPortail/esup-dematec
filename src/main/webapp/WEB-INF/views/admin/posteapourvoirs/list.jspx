@@ -31,7 +31,7 @@
         <c:set value="true" var="canManage"/>
     </sec:authorize>
     <page:list id="pl_fr_univrouen_poste_domain_PosteAPourvoir" items="${posteapourvoirs}" z="TpEp2H0KRxIQuHz9g7sGU0BzTcg=">
-        <table:table create="false" data="${posteapourvoirs}" delete="false" id="l_fr_univrouen_poste_domain_PosteAPourvoir" path="/admin/posteapourvoirs" update="${canManage}" view="true" z="user-managed">
+        <table:table create="${candidatCanSignup}" data="${posteapourvoirs}" delete="false" id="l_fr_univrouen_poste_domain_PosteAPourvoir" path="/admin/posteapourvoirs" update="${canManage}" view="true" z="user-managed">
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" property="numEmploi" sort="true" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" property="profil" z="GbIqGAwYsYdwDUxFMNg1+/TlaEo="/>
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" property="localisation" sort="true" z="user-managed"/>

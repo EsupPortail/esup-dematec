@@ -17,8 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
--->
-<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+--><!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 <tiles-definitions>
     <definition extends="default" name="admin/posteapourvoirs/list">
         <put-attribute name="body" value="/WEB-INF/views/admin/posteapourvoirs/list.jspx"/>
@@ -30,5 +29,8 @@
 
 <definition extends="default" name="admin/posteapourvoirs/update">
         <put-attribute name="body" value="/WEB-INF/views/admin/posteapourvoirs/update.jspx"/>
+    </definition>
+<definition extends="default" name="admin/posteapourvoirs/create">
+        <put-attribute name="body" value="/WEB-INF/views/admin/posteapourvoirs/create.jspx"/>
     </definition>
 </tiles-definitions>

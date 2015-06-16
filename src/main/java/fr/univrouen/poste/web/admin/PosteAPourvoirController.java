@@ -27,7 +27,7 @@ import fr.univrouen.poste.domain.User;
 
 @RequestMapping("/admin/posteapourvoirs")
 @Controller
-@RooWebScaffold(path = "admin/posteapourvoirs", formBackingObject = PosteAPourvoir.class, create=false, update=true, delete=false)
+@RooWebScaffold(path = "admin/posteapourvoirs", formBackingObject = PosteAPourvoir.class, create=true, update=true, delete=false)
 public class PosteAPourvoirController {
 	
     void populateEditForm(Model uiModel, PosteAPourvoir posteAPourvoir) {

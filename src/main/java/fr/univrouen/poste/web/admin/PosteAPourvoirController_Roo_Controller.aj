@@ -19,6 +19,23 @@ import org.springframework.web.util.WebUtils;
 
 privileged aspect PosteAPourvoirController_Roo_Controller {
     
+    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String PosteAPourvoirController.create(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, posteAPourvoir);
+            return "admin/posteapourvoirs/create";
+        }
+        uiModel.asMap().clear();
+        posteAPourvoir.persist();
+        return "redirect:/admin/posteapourvoirs/" + encodeUrlPathSegment(posteAPourvoir.getId().toString(), httpServletRequest);
+    }
+    
+    @RequestMapping(params = "form", produces = "text/html")
+    public String PosteAPourvoirController.createForm(Model uiModel) {
+        populateEditForm(uiModel, new PosteAPourvoir());
+        return "admin/posteapourvoirs/create";
+    }
+    
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String PosteAPourvoirController.show(@PathVariable("id") Long id, Model uiModel) {
         addDateTimeFormatPatterns(uiModel);
