@@ -38,6 +38,16 @@
         </p>
     </div>
     <form:update id="fu_fr_univrouen_poste_domain_AppliConfig" modelAttribute="appliConfig" path="/admin/appliconfig" versionField="Version" z="+3ji0WJNMOrr2O0BUHNLY5BxIZ4=">
+    	<div class="well">
+	    	<field:checkbox field="candidatCanSignup" id="c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" z="IwRWslqM6yWRiTK6CKY/0iQT6Gk="/>
+	        <div class="alert">En permettant aux candidats de s'inscrire directement dans EsupDematEC, vous changez le comportement de l'application : 
+	        	<ul>
+	        		<li>Les imports des fichiers Galaxie ne sont plus nécessaires.</li>
+	        		<li>La création de postes se fait via l'interface par formulaire web et vous devez positionner pour chaque poste une date de fin de déclaration de candidature (qui remplace 'Date fin candidat' et 'Date fin candidat actif').</li>
+	        		<li>Les anonymes ont donc la possibilité de se créer un compte dans l'application pour candidater sur les postes ouverts (avec des dates de fin de déclaration de candidature strictement plus petites que la date du jour).</li>
+	        	</ul>
+	        </div>
+	    </div>
         <util:help>
             <p>Les différentes dates à paramétrer ci-dessous permettent d'interdire l'accès aux candidats et membres à partir d'une date donnée (incluse).
 		        <ul>
@@ -113,8 +123,7 @@ Université ESUP - Direction des Ressources Humaines
             <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
         </util:help>
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
-        <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>
-        <field:checkbox field="candidatCanSignup" id="c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" z="IwRWslqM6yWRiTK6CKY/0iQT6Gk="/>
+        <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>       
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>
