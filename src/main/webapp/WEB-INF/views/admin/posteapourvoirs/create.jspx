@@ -26,12 +26,10 @@
         <field:input field="localisation" id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" z="dxIvZ9reHBlYddpEAy0LTG8L7yg="/>
         <field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" z="HHkyVQKY39PlyI1KAqWaKph2xZA="/>
         <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" z="OhtSmGEIPIKb6obN/VzokqX8X5w="/>
-        <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidat_date_format}" field="dateEndCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidat" z="JTyqvgB7A27EeM/z2om9FAKA8wo="/>
-        <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatactif_date_format}" field="dateEndCandidatActif" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatActif" z="UBmcOm43kFWyjE6k3VCc16WfIbM="/>
+        <field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_fr_univrouen_poste_domain_PosteAPourvoir" render="${not empty dependencies}" z="1nTHE8b9dKBDasZUbFQXnrlrCgQ="/>
-    
-        <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
+    <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>
     <spring:url value="/resources/js/bootstrap-wysihtml5.js" var="bootstrap_wysihtml5_js_url"/>
     <spring:url value="/resources/js/bootstrap-wysihtml5.fr-FR.js" var="bootstrap_wysihtml5_fr_js_url"/>

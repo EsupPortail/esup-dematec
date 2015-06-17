@@ -10,11 +10,11 @@ import javax.persistence.TypedQuery;
 
 privileged aspect PosteAPourvoir_Roo_Finder {
     
-    public static Long PosteAPourvoir.countFindPosteAPourvoirsByDateEndCandidatGreaterThan(Date dateEndCandidat) {
-        if (dateEndCandidat == null) throw new IllegalArgumentException("The dateEndCandidat argument is required");
+    public static Long PosteAPourvoir.countFindPosteAPourvoirsByDateEndSignupCandidatGreaterThan(Date dateEndSignupCandidat) {
+        if (dateEndSignupCandidat == null) throw new IllegalArgumentException("The dateEndSignupCandidat argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
-        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteAPourvoir AS o WHERE o.dateEndCandidat > :dateEndCandidat", Long.class);
-        q.setParameter("dateEndCandidat", dateEndCandidat);
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteAPourvoir AS o WHERE o.dateEndSignupCandidat > :dateEndSignupCandidat", Long.class);
+        q.setParameter("dateEndSignupCandidat", dateEndSignupCandidat);
         return ((Long) q.getSingleResult());
     }
     
@@ -26,18 +26,18 @@ privileged aspect PosteAPourvoir_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
-    public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByDateEndCandidatGreaterThan(Date dateEndCandidat) {
-        if (dateEndCandidat == null) throw new IllegalArgumentException("The dateEndCandidat argument is required");
+    public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(Date dateEndSignupCandidat) {
+        if (dateEndSignupCandidat == null) throw new IllegalArgumentException("The dateEndSignupCandidat argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
-        TypedQuery<PosteAPourvoir> q = em.createQuery("SELECT o FROM PosteAPourvoir AS o WHERE o.dateEndCandidat > :dateEndCandidat", PosteAPourvoir.class);
-        q.setParameter("dateEndCandidat", dateEndCandidat);
+        TypedQuery<PosteAPourvoir> q = em.createQuery("SELECT o FROM PosteAPourvoir AS o WHERE o.dateEndSignupCandidat > :dateEndSignupCandidat", PosteAPourvoir.class);
+        q.setParameter("dateEndSignupCandidat", dateEndSignupCandidat);
         return q;
     }
     
-    public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByDateEndCandidatGreaterThan(Date dateEndCandidat, String sortFieldName, String sortOrder) {
-        if (dateEndCandidat == null) throw new IllegalArgumentException("The dateEndCandidat argument is required");
+    public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(Date dateEndSignupCandidat, String sortFieldName, String sortOrder) {
+        if (dateEndSignupCandidat == null) throw new IllegalArgumentException("The dateEndSignupCandidat argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
-        String jpaQuery = "SELECT o FROM PosteAPourvoir AS o WHERE o.dateEndCandidat > :dateEndCandidat";
+        String jpaQuery = "SELECT o FROM PosteAPourvoir AS o WHERE o.dateEndSignupCandidat > :dateEndSignupCandidat";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
@@ -45,7 +45,7 @@ privileged aspect PosteAPourvoir_Roo_Finder {
             }
         }
         TypedQuery<PosteAPourvoir> q = em.createQuery(jpaQuery, PosteAPourvoir.class);
-        q.setParameter("dateEndCandidat", dateEndCandidat);
+        q.setParameter("dateEndSignupCandidat", dateEndSignupCandidat);
         return q;
     }
     

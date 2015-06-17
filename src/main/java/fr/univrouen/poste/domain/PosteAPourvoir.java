@@ -30,7 +30,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString(excludeFields = "membres")
-@RooJpaActiveRecord(finders = { "findPosteAPourvoirsByNumEmploi", "findPosteAPourvoirsByDateEndCandidatGreaterThan" })
+@RooJpaActiveRecord(finders = { "findPosteAPourvoirsByNumEmploi", "findPosteAPourvoirsByDateEndSignupCandidatGreaterThan" })
 public class PosteAPourvoir {
 
     private String numEmploi;
@@ -48,11 +48,7 @@ public class PosteAPourvoir {
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date dateEndCandidat;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date dateEndCandidatActif;
+    private Date dateEndSignupCandidat;
 
     public static List<PosteAPourvoir> findAllPosteAPourvoirs() {
         return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).getResultList();

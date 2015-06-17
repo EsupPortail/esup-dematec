@@ -26,7 +26,8 @@
         <field:display field="localisation" id="s_fr_univrouen_poste_domain_PosteAPourvoir_localisation" object="${posteapourvoir}" z="EVKhrRCWMnOipqXdkpoJiOPY7sM="/>
         <field:display field="membres" id="s_fr_univrouen_poste_domain_PosteAPourvoir_membres" object="${posteapourvoir}" z="1kOjOg6dZs98xSvMo40SIBEPLkY="/>
         <field:display date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" object="${posteapourvoir}" z="1VnsoSTnmJ0OS+Gz46nlYuS9DLs="/>
-        <field:display date="true" dateTimePattern="${posteAPourvoir_dateendcandidat_date_format}" field="dateEndCandidat" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidat" object="${posteapourvoir}" z="YOVxXsqodA6HVzMcE9ph+Ip3BVg="/>
-        <field:display date="true" dateTimePattern="${posteAPourvoir_dateendcandidatactif_date_format}" field="dateEndCandidatActif" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatActif" object="${posteapourvoir}" z="OOVlqm6jrEDLG36yKzqYS97kvLc="/>
+        <c:if test="${candidatCanSignup}">
+        	<field:display date="true" dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" object="${posteapourvoir}" z="pUnxIcFk8ePJ18/usK2AhchljRs="/>
+        </c:if>
     </page:show>
 </div>

@@ -96,7 +96,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        	
 	        	if(AppliConfig.getCacheCandidatCanSignup()) {
 	        		Date currentTime = new Date();
-	        		if(pc.getPoste().getDateEndCandidat() == null || currentTime.compareTo(pc.getPoste().getDateEndCandidat()) > 0) {
+	        		if(pc.getPoste().getDateEndSignupCandidat() == null || currentTime.compareTo(pc.getPoste().getDateEndSignupCandidat()) > 0) {
 	        			return false;
 	        		}
 	        	}

@@ -21,7 +21,7 @@ public class PosteAPourvoirService {
 
 	public List<PosteAPourvoirAvailableBean>  getPosteAPourvoirAvailables(User candidat) {
 		
-		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndCandidatGreaterThan(new Date()).getResultList();
+		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
 
 		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(candidat).getResultList();
 		Set<PosteAPourvoir> postesAlreadyCandidated = new HashSet<PosteAPourvoir>();
@@ -48,7 +48,7 @@ public class PosteAPourvoirService {
 			postesAlreadyCandidated.add(candidature.getPoste());
 		}
 
-		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndCandidatGreaterThan(new Date()).getResultList();
+		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
 		
 		for(Long posteId: posteIds) {
 			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(posteId);

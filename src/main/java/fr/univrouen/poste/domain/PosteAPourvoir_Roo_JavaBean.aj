@@ -50,20 +50,12 @@ privileged aspect PosteAPourvoir_Roo_JavaBean {
         this.dateEndCandidatAuditionnable = dateEndCandidatAuditionnable;
     }
     
-    public Date PosteAPourvoir.getDateEndCandidat() {
-        return this.dateEndCandidat;
+    public Date PosteAPourvoir.getDateEndSignupCandidat() {
+        return this.dateEndSignupCandidat;
     }
     
-    public void PosteAPourvoir.setDateEndCandidat(Date dateEndCandidat) {
-        this.dateEndCandidat = dateEndCandidat;
-    }
-    
-    public Date PosteAPourvoir.getDateEndCandidatActif() {
-        return this.dateEndCandidatActif;
-    }
-    
-    public void PosteAPourvoir.setDateEndCandidatActif(Date dateEndCandidatActif) {
-        this.dateEndCandidatActif = dateEndCandidatActif;
+    public void PosteAPourvoir.setDateEndSignupCandidat(Date dateEndSignupCandidat) {
+        this.dateEndSignupCandidat = dateEndSignupCandidat;
     }
     
 }

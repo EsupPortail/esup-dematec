@@ -41,8 +41,7 @@
         <field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" size="15" z="user-managed"/>
         <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" z="OhtSmGEIPIKb6obN/VzokqX8X5w="/>
         <c:if test="${candidatCanSignup}">
-        	<field:datetime dateTimePattern="${posteAPourvoir_dateendcandidat_date_format}" field="dateEndCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidat" z="JTyqvgB7A27EeM/z2om9FAKA8wo="/>
-        	<field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatactif_date_format}" field="dateEndCandidatActif" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatActif" z="UBmcOm43kFWyjE6k3VCc16WfIbM="/>
+        	<field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>
         </c:if>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>

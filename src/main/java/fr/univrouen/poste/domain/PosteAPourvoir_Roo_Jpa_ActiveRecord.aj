@@ -14,7 +14,7 @@ privileged aspect PosteAPourvoir_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager PosteAPourvoir.entityManager;
     
-    public static final List<String> PosteAPourvoir.fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "profil", "localisation", "membres", "dateEndCandidatAuditionnable", "dateEndCandidat", "dateEndCandidatActif");
+    public static final List<String> PosteAPourvoir.fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "profil", "localisation", "membres", "dateEndCandidatAuditionnable", "dateEndSignupCandidat");
     
     public static final EntityManager PosteAPourvoir.entityManager() {
         EntityManager em = new PosteAPourvoir().entityManager;
