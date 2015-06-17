@@ -27,18 +27,10 @@
         </p>
     </div>
     <form:update id="fu_fr_univrouen_poste_domain_PosteAPourvoir" modelAttribute="posteAPourvoir" path="/admin/posteapourvoirs" versionField="Version" z="Aly8FKajkNA84D5GB6v0Kn3kCtI=">
-        <div class="row-fluid well ">
-            <div class="span4">
-                <field:input field="numEmploi" id="c_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" z="tTZzzyPokipeFVRzI4i5yhixQiA="/>
-            </div>
-            <div class="span4">
-                <field:input field="profil" id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" z="EFU0JX3+fbAAYwqP2B5DKLDw8Po="/>
-            </div>
-            <div class="span4">
-                <field:input field="localisation" id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" z="dxIvZ9reHBlYddpEAy0LTG8L7yg="/>
-            </div>
-        </div>
-        <field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" size="15" z="user-managed"/>
+        <field:input field="numEmploi" id="c_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" z="tTZzzyPokipeFVRzI4i5yhixQiA="/>
+        <field:input field="profil" id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" z="EFU0JX3+fbAAYwqP2B5DKLDw8Po="/>
+        <field:input field="localisation" id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" z="dxIvZ9reHBlYddpEAy0LTG8L7yg="/>
+       	<field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" size="15" z="user-managed"/>
         <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" z="OhtSmGEIPIKb6obN/VzokqX8X5w="/>
         <c:if test="${candidatCanSignup}">
         	<field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>
