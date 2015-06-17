@@ -62,9 +62,11 @@
             </menu:category>
         </sec:authorize>
         <menu:category id="c_postecandidature" label="Candidatures" z="user-managed">
-            <c:if test="${candidatCanSignup}">
-                <menu:item activeMenu="${activeMenu == 'addpostecandidatures'}" id="i_add_postecandidature" label="Ajout de candidatures" url="/addpostecandidatures"/>
-            </c:if>
+        	<sec:authorize access="hasRole('ROLE_CANDIDAT')">
+            	<c:if test="${candidatCanSignup}">
+                	<menu:item activeMenu="${activeMenu == 'addpostecandidatures'}" id="i_add_postecandidature" label="Ajout de candidatures" url="/addpostecandidatures"/>
+            	</c:if>
+            </sec:authorize>
             <menu:item activeMenu="${activeMenu == 'postecandidatures'}" id="i_postecandidature_list" messageCode="global_menu_list" url="/postecandidatures?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
             <menu:item id="i_postecandidature_new" messageCode="global_menu_new" render="false" url="/postecandidatures?form" z="user-managed"/>
             <menu:item id="fi_postecandidature_candidat" messageCode="global_menu_find" render="false" url="/postecandidatures?find=ByCandidat&amp;form" z="user-managed"/>
