@@ -76,8 +76,7 @@ $(document).ready(function(){
     );
     
     $( "#_dateEndCandidatAuditionnable_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
-    $( "#_dateEndCandidat_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
-    $( "#_dateEndCandidatActif_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
+    $( "#_dateEndSignupCandidat_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
     
 });
 </script>

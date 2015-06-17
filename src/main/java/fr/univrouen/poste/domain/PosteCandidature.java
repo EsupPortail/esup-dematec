@@ -224,12 +224,12 @@ public class PosteCandidature {
     }
 
     public static TypedQuery<PosteCandidature> findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThan(
-    		User candidat, Date dateEndCandidat) {
+    		User candidat, Date dateEndSignupCandidat) {
     	EntityManager em = entityManager();
-    	String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat and o.poste.dateEndCandidat > :dateEndCandidat";
+    	String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat and o.poste.dateEndSignupCandidat > :dateEndSignupCandidat";
     	TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);			
     	q.setParameter("candidat", candidat);
-    	q.setParameter("dateEndCandidat", dateEndCandidat);
+    	q.setParameter("dateEndSignupCandidat", dateEndSignupCandidat);
     	return q;
     }
     
