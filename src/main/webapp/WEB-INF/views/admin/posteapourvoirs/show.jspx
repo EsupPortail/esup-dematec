@@ -20,7 +20,7 @@
 --><div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
-    <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_PosteAPourvoir" object="${posteapourvoir}" path="/admin/posteapourvoirs" z="vpHWI8jaGoABcdcZl4yZnGbRPD4=">
+    <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_PosteAPourvoir" object="${posteapourvoir}" path="/admin/posteapourvoirs" z="user-managed">
         <field:display field="numEmploi" id="s_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" object="${posteapourvoir}" z="vcmmpxbb+Fw06QXMWkrjD79si1s="/>
         <field:display field="profil" id="s_fr_univrouen_poste_domain_PosteAPourvoir_profil" object="${posteapourvoir}" z="EF61CajqcUTOBsuATnw6XBWRK50="/>
         <field:display field="localisation" id="s_fr_univrouen_poste_domain_PosteAPourvoir_localisation" object="${posteapourvoir}" z="EVKhrRCWMnOipqXdkpoJiOPY7sM="/>
