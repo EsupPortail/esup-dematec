@@ -96,20 +96,24 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        	
 	        	if(AppliConfig.getCacheCandidatCanSignup()) {
 	        		Date currentTime = new Date();
-	        		if(pc.getPoste().getDateEndSignupCandidat() == null || currentTime.compareTo(pc.getPoste().getDateEndSignupCandidat()) > 0) {
+	        		if((pc.getAuditionnable() || (pc.getPoste().getDateEndSignupCandidat() == null || currentTime.compareTo(pc.getPoste().getDateEndSignupCandidat()) > 0)) && 
+	        				(!pc.getAuditionnable() || (pc.getPoste().getDateEndCandidatAuditionnable() == null || currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) > 0))) {
 	        			return false;
+	        		} else {
+	        			return true;
 	        		}
-	        	}
+	        	} else {
 	        	
-	        	if(pc.getCandidat().equals(user)) {
-	        		// restrictions si phase auditionnable
-	        		Date currentTime = new Date();     
-	    			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 && 
-	    				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) {
-	    				return pc.getAuditionnable() && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;
-	    			} else {
-	    				return true;
-	    			}
+		        	if(pc.getCandidat().equals(user)) {
+		        		// restrictions si phase auditionnable
+		        		Date currentTime = new Date();     
+		    			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 && 
+		    				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) {
+		    				return pc.getAuditionnable() && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;
+		    			} else {
+		    				return true;
+		    			}
+		        	}
 	        	}
 	        }  
 	        

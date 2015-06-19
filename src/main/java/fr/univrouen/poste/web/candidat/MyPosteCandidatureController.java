@@ -626,21 +626,24 @@ public class MyPosteCandidatureController {
 		else if (isCandidat) {
 			
 			if(!AppliConfig.getCacheCandidatCanSignup()) {
+				
 				postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList());
-			} else {
-				postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThan(user, new Date()).getResultList());
-			}
 			
-			// restrictions si phase auditionnable
-	        Date currentTime = new Date();     
-			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 && 
-				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) { 
-				for(PosteCandidature postecandidature: PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList()) {
-					if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) > 0) {
-						postecandidatures.remove(postecandidature);
+				// restrictions si phase auditionnable
+		        Date currentTime = new Date();     
+				if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 && 
+					currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) { 
+					for(PosteCandidature postecandidature: PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList()) {
+						if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) > 0) {
+							postecandidatures.remove(postecandidature);
+						}
 					}
 				}
+			
+			} else {				
+				postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, new Date()).getResultList());					
 			}
+			
 		}
 
 		else if (isMembre) {
