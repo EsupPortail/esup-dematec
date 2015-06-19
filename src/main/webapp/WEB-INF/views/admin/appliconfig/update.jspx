@@ -44,7 +44,7 @@
 	        	<ul>
 	        		<li>Les imports des fichiers Galaxie ne sont plus nécessaires.</li>
 	        		<li>La création de postes se fait via l'interface par formulaire web et vous devez positionner pour chaque poste une date de fin de déclaration de candidature (qui remplace 'Date fin candidat' et 'Date fin candidat actif').</li>
-	        		<li>Les anonymes ont donc la possibilité de se créer un compte dans l'application pour candidater sur les postes ouverts (avec des dates de fin de déclaration de candidature strictement plus petites que la date du jour).</li>
+	        		<li>Les anonymes ont donc la possibilité de se créer un compte dans l'application pour candidater sur les postes ouverts (avec des dates de fin de déclaration de candidature strictement plus grandes que la date du jour).</li>
 	        	</ul>
 	        </div>
 	    </div>
