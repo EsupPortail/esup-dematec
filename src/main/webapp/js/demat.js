@@ -71,6 +71,13 @@
     	
     	$('form').on('submit', preventDoubleSubmission);
     	
+    	
+    	$(".reset").click(function() {
+    		$("form").find('input:text, input:password, input:file, select, textarea').val('');
+    		$("form").find('input:radio, input:checkbox, option').removeAttr('checked').removeAttr('selected');
+    		$("form").find('option').removeAttr('selected');
+    	});
+    	
     });  
     
     

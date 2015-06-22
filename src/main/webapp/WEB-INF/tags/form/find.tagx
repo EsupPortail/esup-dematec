@@ -33,6 +33,9 @@
         <div class="submit" id="${fn:escapeXml(id)}_${fn:escapeXml(finderName)}_submit">
           <spring:message code="button_find" var="find_button" htmlEscape="false" />
           <input id="proceed" type="submit" value="${fn:escapeXml(find_button)}" class="btn btn-success"/>
+          <!--  -->
+          <spring:message code="button_reset" var="reset_button" htmlEscape="false" />
+          <input id="reset" type="reset" value="${fn:escapeXml(reset_button)}" class="btn reset"/>
         </div>
       </form:form>
     </util:panel>

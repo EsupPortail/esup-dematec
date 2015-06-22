@@ -62,6 +62,10 @@ hr {
 width: 100%
 }
 
+input.reset {
+margin-left:5px;
+}
+
 #toggleSidebar {
 left: 10px;
 margin-top: -20px;
