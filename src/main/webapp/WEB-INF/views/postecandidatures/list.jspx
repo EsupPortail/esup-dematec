@@ -39,9 +39,7 @@
                             <div class="row-fluid">
                                 <form:find finderName="ByMultiParams" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
                                     <div class="span4 demat-filter">
-                                        <div class="demat-filter">
-                                            <field:select  disableFormBinding="false" field="numEmploiPostes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
-                                        </div>
+                                        <field:select  disableFormBinding="false" field="numEmploiPostes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
                                     </div>
                                     <div class="span5 demat-filter">
                                         <field:select disableFormBinding="false" field="emailCandidats" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
