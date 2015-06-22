@@ -3,6 +3,7 @@
 
 package fr.univrouen.poste.web.searchcriteria;
 
+import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 import java.util.List;
 
@@ -46,6 +47,14 @@ privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
     
     public void PosteCandidatureSearchCriteria.setEmailCandidats(List<String> emailCandidats) {
         this.emailCandidats = emailCandidats;
+    }
+    
+    public List<ReviewStatusTypes> PosteCandidatureSearchCriteria.getReviewStatus() {
+        return this.reviewStatus;
+    }
+    
+    public void PosteCandidatureSearchCriteria.setReviewStatus(List<ReviewStatusTypes> reviewStatus) {
+        this.reviewStatus = reviewStatus;
     }
     
 }

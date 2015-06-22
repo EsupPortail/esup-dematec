@@ -139,7 +139,7 @@ public class PosteCandidature {
     }
 
     
-    public static Long countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable, Boolean modification) {
+    public static Long countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, List<ReviewStatusTypes> reviewStatus, Boolean recevable, Boolean auditionnable, Boolean modification) {
         EntityManager em = entityManager();
         String jpaQuery = "SELECT COUNT(o) FROM PosteCandidature AS o WHERE";
         if (postes != null) {
@@ -147,6 +147,9 @@ public class PosteCandidature {
         }
         if (candidats != null) {
         	jpaQuery = jpaQuery + " o.candidat IN :candidats AND";
+        }
+        if (reviewStatus != null) {
+        	jpaQuery = jpaQuery + " o.managerReview.reviewStatus IN :reviewStatus AND";
         }
         if (recevable != null) {
         	jpaQuery = jpaQuery + " o.recevable = :recevable AND";
@@ -169,6 +172,9 @@ public class PosteCandidature {
         if (candidats != null) {
         q.setParameter("candidats", candidats);
         }
+        if (reviewStatus != null) {
+        q.setParameter("reviewStatus", reviewStatus);
+        }
         if (recevable != null) {
         q.setParameter("recevable", recevable);
         }
@@ -178,7 +184,7 @@ public class PosteCandidature {
         return ((Long) q.getSingleResult());
     }
     
-    public static TypedQuery<PosteCandidature> findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, Boolean recevable, Boolean auditionnable, Boolean modification, String sortFieldName, String sortOrder) {
+    public static TypedQuery<PosteCandidature> findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, List<ReviewStatusTypes> reviewStatus, Boolean recevable, Boolean auditionnable, Boolean modification, String sortFieldName, String sortOrder) {
         EntityManager em = entityManager();
         String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE";
         if (postes != null) {
@@ -186,6 +192,9 @@ public class PosteCandidature {
         }
         if (candidats != null) {
         	jpaQuery = jpaQuery + " o.candidat IN :candidats AND";
+        }
+        if (reviewStatus != null) {
+        	jpaQuery = jpaQuery + " o.managerReview.reviewStatus IN :reviewStatus AND";
         }
         if (recevable != null) {
         	jpaQuery = jpaQuery + " o.recevable = :recevable AND";
@@ -213,6 +222,9 @@ public class PosteCandidature {
         }
         if (candidats != null) {
         q.setParameter("candidats", candidats);
+        }
+        if (reviewStatus != null) {
+        q.setParameter("reviewStatus", reviewStatus);
         }
         if (recevable != null) {
         q.setParameter("recevable", recevable);

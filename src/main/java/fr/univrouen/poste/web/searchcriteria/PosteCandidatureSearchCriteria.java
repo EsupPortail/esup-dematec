@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
 
@@ -20,6 +21,8 @@ public class PosteCandidatureSearchCriteria {
 	List<String> numEmploiPostes;
 	
 	List<String> emailCandidats;
+	
+	List<ReviewStatusTypes> reviewStatus;
 
 	public List<PosteAPourvoir> getPostes() {
 		List<PosteAPourvoir> postes = null;

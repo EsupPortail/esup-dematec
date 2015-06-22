@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -616,6 +617,7 @@ public class MyPosteCandidatureController {
 			
 			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
 			uiModel.addAttribute("candidats", User.findAllCandidatsIds());
+			uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
 			
 		    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
 		    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
@@ -698,7 +700,7 @@ public class MyPosteCandidatureController {
 
     	if(zip) {
 
-    		File tmpFile = zipService.getZip(PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList());
+    		File tmpFile = zipService.getZip(PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList());
 
     		String contentType = "application/zip";
     		int zipSize = (int) tmpFile.length();
@@ -718,7 +720,7 @@ public class MyPosteCandidatureController {
     		
     		if(mails) {
     			
-    			List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
+    			List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
     			Set<String> mailAdresses = new HashSet<String>();
     			for(PosteCandidature pc: postecandidatures) {
     				mailAdresses.add(pc.getEmail());
@@ -758,13 +760,13 @@ public class MyPosteCandidatureController {
 	    		if (page != null || size != null) {
 	                int sizeNo = size == null ? 10 : size.intValue();
 	                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-	                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-	                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification());
+	                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+	                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification());
 	                uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
 	                float nrOfPages = (float) nbResultsTotal / sizeNo;
 	                uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 	            } else {
-	            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).getResultList();
+	            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).getResultList();
 	                uiModel.addAttribute("postecandidatures", postecandidatures);
 	                uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
 	            }
@@ -776,6 +778,7 @@ public class MyPosteCandidatureController {
 	    		
 				uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
 				uiModel.addAttribute("candidats", User.findAllCandidatsIds());
+				uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
 				
 	    		uiModel.addAttribute("command", searchCriteria);
 	    		uiModel.addAttribute("finderview", true);

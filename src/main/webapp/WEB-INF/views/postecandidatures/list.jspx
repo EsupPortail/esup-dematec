@@ -39,12 +39,13 @@
                             <div class="row-fluid">
                                 <form:find finderName="ByMultiParams" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
                                     <div class="span4 demat-filter">
-                                        <field:select  disableFormBinding="false" field="numEmploiPostes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+                                        <field:select  disableFormBinding="false" field="numEmploiPostes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true" size="15"/>
                                     </div>
                                     <div class="span5 demat-filter">
-                                        <field:select disableFormBinding="false" field="emailCandidats" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" items="${candidats}" multiple="true" path="/admin/users" required="true"/>
+                                        <field:select disableFormBinding="false" field="emailCandidats" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" items="${candidats}" multiple="true" path="/admin/users" required="true" size="15"/>
                                     </div>
                                     <div class="span3 demat-filter">
+                                    	<field:select  disableFormBinding="false" field="reviewStatus" id="f_fr_univrouen_poste_domain_PosteCandidature_reviewStatus" label="Vue" items="${reviewStatusList}" multiple="true" path="/admin/" size="5" required="true"/>
 	                                    <div>
 	                                        <label for="recevable">Recevable</label>
 	                                        <spring-form:select id="recevable" path="recevable">
