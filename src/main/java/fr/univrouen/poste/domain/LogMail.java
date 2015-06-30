@@ -33,7 +33,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findLogMailsByStatusEquals" })
+@RooJpaActiveRecord(finders = { "findLogMailsByStatusEquals", "findLogMailsByStatusEqualsAndMailToEquals", "findLogMailsByMailToEquals"})
 public class LogMail {
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -46,6 +46,34 @@ public class LogMail {
     private String message;
 
     private String status;
-
+    
+	
+    public static Long countFindLogMails(String status, String mailTo) {
+    	if("".equals(mailTo)) {
+			return countFindLogMailsByStatusEquals(status);
+		}
+		if("".equals(status)) {
+			return countFindLogMailsByMailToEquals(mailTo);
+		}
+		return countFindLogMailsByStatusEqualsAndMailToEquals(status, mailTo);	
+    }
+    
+    
+    public static TypedQuery<LogMail> findLogMails(String status, String mailTo, String sortFieldName, String sortOrder) {
+    	if("".equals(mailTo)) {
+			return findLogMailsByStatusEquals(status, sortFieldName, sortOrder);
+		}
+		if("".equals(status)) {
+			return findLogMailsByMailToEquals(mailTo, sortFieldName, sortOrder);
+		}
+		return findLogMailsByStatusEqualsAndMailToEquals(status, mailTo, sortFieldName, sortOrder);	
+    }
+    
+    public static List<String> getAllMailTo() {
+    	EntityManager em = entityManager();
+    	TypedQuery<String> q = em.createQuery("select distinct(o.mailTo) FROM LogMail o ORDER BY o.mailTo", String.class);
+    	return q.getResultList();
+    }
 
 }
+

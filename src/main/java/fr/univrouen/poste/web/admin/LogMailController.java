@@ -17,6 +17,8 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.finder.RooWebFinder;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.LogMail;
+import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.EmailService;
 import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 
@@ -48,19 +51,26 @@ public class LogMailController {
     	return new LogSearchCriteria();
     }
     
-    @RequestMapping(params = "find=ByStatusEquals", method = RequestMethod.GET)
-    public String findLogMailsByStatusEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-    	if("".equals(searchCriteria.getStatus())) {
+	@ModelAttribute("users")
+	public List<String> getUserIds() {
+		List<String> userIds = LogMail.getAllMailTo();
+		userIds.add(0, "");
+		return userIds;
+	}
+    
+    @RequestMapping(params = "find=ByStatusEqualsAndUserIdEquals", method = RequestMethod.GET)
+    public String findLogMailsByStatusEqualsAndUserIdEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    	if("".equals(searchCriteria.getStatus()) && "".equals(searchCriteria.getUserId())) {
     		return this.list(page, size, sortFieldName, sortOrder, uiModel);
     	}
     	if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logmails", LogMail.findLogMailsByStatusEquals(searchCriteria.getStatus(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) LogMail.countFindLogMailsByStatusEquals(searchCriteria.getStatus()) / sizeNo;
+            uiModel.addAttribute("logmails", LogMail.findLogMails(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) LogMail.countFindLogMails(searchCriteria.getStatus(), searchCriteria.getUserId()) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("logmails", LogMail.findLogMailsByStatusEquals(searchCriteria.getStatus(), sortFieldName, sortOrder).getResultList());
+            uiModel.addAttribute("logmails", LogMail.findLogMails(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).getResultList());
         }    	
     	
         uiModel.addAttribute("command", searchCriteria);

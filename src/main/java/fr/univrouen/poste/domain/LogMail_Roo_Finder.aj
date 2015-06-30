@@ -9,12 +9,53 @@ import javax.persistence.TypedQuery;
 
 privileged aspect LogMail_Roo_Finder {
     
+    public static Long LogMail.countFindLogMailsByMailToEquals(String mailTo) {
+        if (mailTo == null || mailTo.length() == 0) throw new IllegalArgumentException("The mailTo argument is required");
+        EntityManager em = LogMail.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogMail AS o WHERE o.mailTo = :mailTo", Long.class);
+        q.setParameter("mailTo", mailTo);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long LogMail.countFindLogMailsByStatusEquals(String status) {
         if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
         EntityManager em = LogMail.entityManager();
         TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogMail AS o WHERE o.status = :status", Long.class);
         q.setParameter("status", status);
         return ((Long) q.getSingleResult());
+    }
+    
+    public static Long LogMail.countFindLogMailsByStatusEqualsAndMailToEquals(String status, String mailTo) {
+        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
+        if (mailTo == null || mailTo.length() == 0) throw new IllegalArgumentException("The mailTo argument is required");
+        EntityManager em = LogMail.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM LogMail AS o WHERE o.status = :status  AND o.mailTo = :mailTo", Long.class);
+        q.setParameter("status", status);
+        q.setParameter("mailTo", mailTo);
+        return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<LogMail> LogMail.findLogMailsByMailToEquals(String mailTo) {
+        if (mailTo == null || mailTo.length() == 0) throw new IllegalArgumentException("The mailTo argument is required");
+        EntityManager em = LogMail.entityManager();
+        TypedQuery<LogMail> q = em.createQuery("SELECT o FROM LogMail AS o WHERE o.mailTo = :mailTo", LogMail.class);
+        q.setParameter("mailTo", mailTo);
+        return q;
+    }
+    
+    public static TypedQuery<LogMail> LogMail.findLogMailsByMailToEquals(String mailTo, String sortFieldName, String sortOrder) {
+        if (mailTo == null || mailTo.length() == 0) throw new IllegalArgumentException("The mailTo argument is required");
+        EntityManager em = LogMail.entityManager();
+        String jpaQuery = "SELECT o FROM LogMail AS o WHERE o.mailTo = :mailTo";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogMail> q = em.createQuery(jpaQuery, LogMail.class);
+        q.setParameter("mailTo", mailTo);
+        return q;
     }
     
     public static TypedQuery<LogMail> LogMail.findLogMailsByStatusEquals(String status) {
@@ -37,6 +78,33 @@ privileged aspect LogMail_Roo_Finder {
         }
         TypedQuery<LogMail> q = em.createQuery(jpaQuery, LogMail.class);
         q.setParameter("status", status);
+        return q;
+    }
+    
+    public static TypedQuery<LogMail> LogMail.findLogMailsByStatusEqualsAndMailToEquals(String status, String mailTo) {
+        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
+        if (mailTo == null || mailTo.length() == 0) throw new IllegalArgumentException("The mailTo argument is required");
+        EntityManager em = LogMail.entityManager();
+        TypedQuery<LogMail> q = em.createQuery("SELECT o FROM LogMail AS o WHERE o.status = :status  AND o.mailTo = :mailTo", LogMail.class);
+        q.setParameter("status", status);
+        q.setParameter("mailTo", mailTo);
+        return q;
+    }
+    
+    public static TypedQuery<LogMail> LogMail.findLogMailsByStatusEqualsAndMailToEquals(String status, String mailTo, String sortFieldName, String sortOrder) {
+        if (status == null || status.length() == 0) throw new IllegalArgumentException("The status argument is required");
+        if (mailTo == null || mailTo.length() == 0) throw new IllegalArgumentException("The mailTo argument is required");
+        EntityManager em = LogMail.entityManager();
+        String jpaQuery = "SELECT o FROM LogMail AS o WHERE o.status = :status  AND o.mailTo = :mailTo";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<LogMail> q = em.createQuery(jpaQuery, LogMail.class);
+        q.setParameter("status", status);
+        q.setParameter("mailTo", mailTo);
         return q;
     }
     
