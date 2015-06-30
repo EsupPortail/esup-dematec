@@ -34,6 +34,7 @@
 	                        	<spring-form:select id="status" path="status" size="7">
 	                           		<spring-form:option value="">--</spring-form:option>
 	                            	<spring-form:option value="UPLOAD">UPLOAD</spring-form:option>
+	                            	<spring-form:option value="UPLOAD FAILED">UPLOAD FAILED</spring-form:option>
 	                            	<spring-form:option value="DELETE">DELETE</spring-form:option>
 	                            	<spring-form:option value="DOWNLOAD">DOWNLOAD</spring-form:option>
 	                            	<spring-form:option value="UPLOAD_REVIEW">UPLOAD_REVIEW</spring-form:option>
