@@ -65,7 +65,9 @@ public class ArchiveService {
 			
 			for (PosteCandidature posteCandidature : posteCandidatures) {
 				String folderName = destFolder.concat("/");
-				folderName = folderName.concat(posteCandidature.getPoste().getNumEmploi()).concat("/");	
+				String numEmploi = posteCandidature.getPoste().getNumEmploi();
+				numEmploi = numEmploi.replaceAll("[^a-zA-Z0-9.-]", "_");
+				folderName = folderName.concat(numEmploi).concat("/");	
 				
 				File folder = new File(folderName);
 				folder.mkdir();
@@ -80,9 +82,12 @@ public class ArchiveService {
 					folder.mkdir();			
 				}
 				
-				folderName = folderName.concat(posteCandidature.getCandidat().getNom()).concat("-");	
-				folderName = folderName.concat(posteCandidature.getCandidat().getPrenom()).concat("-");	
-				folderName = folderName.concat(posteCandidature.getCandidat().getNumCandidat()).concat("/");
+				String nom = posteCandidature.getCandidat().getNom().replaceAll("[^a-zA-Z0-9.-]", "_");
+				String prenom = posteCandidature.getCandidat().getPrenom().replaceAll("[^a-zA-Z0-9.-]", "_");
+				String numCandidat = posteCandidature.getCandidat().getNumCandidat().replaceAll("[^a-zA-Z0-9.-]", "_");
+				folderName = folderName.concat(nom).concat("-");	
+				folderName = folderName.concat(prenom).concat("-");	
+				folderName = folderName.concat(numCandidat).concat("/");
 				
 				folder = new File(folderName);
 				folder.mkdir();
