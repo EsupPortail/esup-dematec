@@ -116,6 +116,10 @@ public class DbToolService {
 			
 			if("1.3.x".equals(esupDematEcVersion)) { 
 				
+	    		logger.warn("\n\n#####\n\t" +
+	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
+	    				"\n#####\n");
+	    		
 			} else {
 				logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +
