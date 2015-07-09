@@ -129,6 +129,8 @@ public class ArchiveService {
 				
 			}
 		
+		} else {
+			logger.error("Le répertoire " + destFolder + " n'a pas pu être créé. Vérifiez qu'il n'existe pas déjà, que l'application a bien les droits de le créer, etc." );
 		}
 	}
 	
