@@ -97,8 +97,10 @@ Celle(s)-ci correspond(ent) au(x) poste(s) @@postes@@.\n
 http://localhost:8080/EsupDematEC/\n
 --\nUniversité ESUP - Direction des Ressources Humaines',
 
-E'Bonjour,\n\nVous avez demandé à récupérer un nouveau mot de passe. \n\nVotre nouveau mot de passe est:\n\n @@newPassword@@ \n
-http://localhost:8080/EsupDematEC/changepassword/index \n
+E'Bonjour.\n
+Vous avez demandé à récupérer un nouveau mot de passe.\n
+Pour ce faire, merci de suivre ce lien (ou de le copier-coller dans la barre d''adresse de votre navigateur pour y accéder) :\n
+http://localhost:8080/EsupDematEC/forgotpassword/formChange?activationKey=@@activationKey@@\n
 --\nUniversité ESUP - Direction des Ressources Humaines',
 
 '<div class="well help">  <p>En tant que membre (d''une commission) sur un ou plusieurs postes donnés, vous pouvez consulter ici les différentes candidatures liées à ce ou    ces poste(s).</p>
