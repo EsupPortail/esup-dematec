@@ -33,9 +33,9 @@
 
 -- ADMIN USER
 insert into c_user (id, activation_date, activation_key, email_address, enabled, is_admin, is_manager, is_super_manager, password, version, login_failed_nb, login_failed_time) 
-values (1, NULL, NULL, 'admin', TRUE, TRUE, FALSE, FALSE, '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, 0, 0);
+values (nextval('hibernate_sequence'), NULL, NULL, 'admin', TRUE, TRUE, FALSE, FALSE, '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, 0, 0);
 
-insert into appli_version values (1, '1.4.x', 1);
+insert into appli_version values (nextval('hibernate_sequence'), '1.4.x', 1);
 
 --  appli_config
 INSERT INTO appli_config (
@@ -74,7 +74,7 @@ candidat_can_signup
 
 VALUES (
 
-2, 
+nextval('hibernate_sequence'), 
 
 '', 
 
@@ -165,9 +165,9 @@ false
 );
 
 insert into appli_config_file_type (id, type_title, type_description, candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, version) 
-values (1, 'Fichier de candidature', 'Merci de sélectionner un fichier puis de valider votre sélection pour l''envoi effectif.', -1, -1, '.*', '.*', 1);
+values (nextval('hibernate_sequence'), 'Fichier de candidature', 'Merci de sélectionner un fichier puis de valider votre sélection pour l''envoi effectif.', -1, -1, '.*', '.*', 1);
 
 
 insert into galaxie_mapping(id, id_email, id_num_candidat, id_numemploi, id_civilite, id_localisation, id_nom, id_prenom, id_profil, id_etat_dossier, version) 
-values (1, 'Email', 'N° candidat', 'N° emploi', 'Civilité', 'Localisation', 'Nom', 'Prénom', 'Profil', 'Etat dossier', 0);
+values (nextval('hibernate_sequence'), 'Email', 'N° candidat', 'N° emploi', 'Civilité', 'Localisation', 'Nom', 'Prénom', 'Profil', 'Etat dossier', 0);
 
