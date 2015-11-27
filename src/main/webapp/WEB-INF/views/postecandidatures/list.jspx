@@ -151,7 +151,7 @@
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" render="${canManage}" sort="true" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReview" label="Gestionnaire" property="managerReview.manager" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewDate" label="Date gestion" property="managerReview.reviewDate" render="${canManage}" sort="true" z="user-managed"/>
-            <c:if test="${not empty galaxieEntry}">
+            <c:if test="${not candidatCanSignup}">
             	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry_etatDossier" label="Etat Dossier Galaxie" property="galaxieEntry.etatDossier" render="${canManage}" sort="true" z="user-managed"/>
             </c:if>
         </table:table>
