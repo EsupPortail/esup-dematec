@@ -85,6 +85,13 @@
     <table class="table table-striped table-bordered" id="table_${id}">
       <c:if test="${not empty data}">
         <thead>
+          <tr class="header">
+	        <td colspan="${fn:length(properties)}">
+		        <c:if test="${not empty maxPages}">
+		          <util:pagination maxPages="${maxPages}" page="${param.page}" size="${param.size}" displayFull="false"/>
+		        </c:if>
+	        </td>
+	      </tr>
           <tr>
           	<c:if test="${not empty multiselect}">
 			 <th>

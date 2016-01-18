@@ -5,6 +5,7 @@
   <jsp:directive.attribute name="page" type="java.lang.Integer" required="false" rtexprvalue="true" description="The current page (not required, defaults to 1)" />
   <jsp:directive.attribute name="size" type="java.lang.Integer" required="false" rtexprvalue="true" description="The number of records per page (not required, defaults to 10)" />
   <jsp:directive.attribute name="render" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the contents of this tag and all enclosed tags should be rendered (default 'true')" />
+  <jsp:directive.attribute name="displayFull" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if display should be fully (default 'true')" />
 
   <c:if test="${empty render or render}">
 
@@ -17,38 +18,6 @@
     </c:if>
 
 <c:if test="${maxPages gt 1}">
-
-    <spring:message code="list_size" var="list_size" htmlEscape="false" />
-    <c:out value="${list_size} " />
-
-
-	<spring:url value="" var="queryUrl">
-		<c:forEach items="${paramValues}" var="p">
-			<c:if test="${p.key ne 'page' and p.key ne 'size'}">
-				<c:forEach var='value' items='${p.value}'>
-					<spring:param name="${p.key}" value="${value}" />
-				</c:forEach>
-			</c:if>
-		</c:forEach>
-	</spring:url>
-
-
-    <c:forEach var="i" begin="10" end="100" step="30">
-      <c:choose>
-        <c:when test="${size == i}">
-          <c:out value="${i}" />
-        </c:when>
-        <c:otherwise>
-          <spring:url value="${queryUrl}" var="sizeUrl" htmlEscape="false">
-            <spring:param name="page" value="1" />
-            <spring:param name="size" value="${i}" />
-          </spring:url>
-          <a href="${sizeUrl}">${i}</a>
-        </c:otherwise>
-      </c:choose>
-      <c:out value=" " />
-    </c:forEach>
-    <c:out value="| " />
 
     <c:if test="${page ne 1}">
       <spring:url value="${queryUrl}" var="first" htmlEscape="false">
@@ -98,6 +67,48 @@
       </a>
     </c:if>
   </c:if>
+  
+  
+    <c:if test="${empty displayFull or displayFull}">
+  	 <c:set var="displayFull" value="true" />
+  </c:if>
+
+  <c:if test="${displayFull}">
+
+    <c:out value=" | " />
+
+    <spring:message code="list_size" var="list_size" htmlEscape="false" />
+    <c:out value="${list_size} " />
+
+
+	<spring:url value="" var="queryUrl">
+		<c:forEach items="${paramValues}" var="p">
+			<c:if test="${p.key ne 'page' and p.key ne 'size'}">
+				<c:forEach var='value' items='${p.value}'>
+					<spring:param name="${p.key}" value="${value}" />
+				</c:forEach>
+			</c:if>
+		</c:forEach>
+	</spring:url>
+
+
+    <c:forEach var="i" begin="10" end="100" step="30">
+      <c:choose>
+        <c:when test="${size == i}">
+          <c:out value="${i}" />
+        </c:when>
+        <c:otherwise>
+          <spring:url value="${queryUrl}" var="sizeUrl" htmlEscape="false">
+            <spring:param name="page" value="1" />
+            <spring:param name="size" value="${i}" />
+          </spring:url>
+          <a href="${sizeUrl}">${i}</a>
+        </c:otherwise>
+      </c:choose>
+      <c:out value=" " />
+    </c:forEach>
+    
+    </c:if>
   
   </c:if>
 
