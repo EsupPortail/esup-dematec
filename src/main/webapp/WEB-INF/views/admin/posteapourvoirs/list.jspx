@@ -29,8 +29,11 @@
         <p>Vous pouvez saisir une "Date Fin Candidat Auditionnable" correspondant à la date à partir de laquelle les candidats retenus pour audition n'ont plus accès à l'application.</p>
         <c:if test="${candidatCanSignup}">
         	<p class="alert">Votre instance d'EsupDematEC a été configurée pour laisser la possibilité aux candidats de s'inscrire directement dans l'application (sans passer par l'import d'un fichier Excel), 
-        	aussi vous pouvez ici créer un poste par formulaire web. 
-        	Attention, "Date Fin Candidature" doit être renseigné pour que le poste puisse effectivement être affiché en tant disponible à l'inscription / la candidature.</p>
+        	aussi vous pouvez ici créer un poste depuis un formulaire web. </p>
+        	<p>
+        	Attention, "Date Fin Candidature" doit être renseigné pour que le poste puisse effectivement être affiché disponible à la candidature.
+        	</p>
+        	<p>"Date Fin Candidature" correspond à la date à partir de laquelle les candidats (non auditionnable) n'ont plus accès au poste (candidature et dépôt).</p>
         </c:if>
     </util:help>
     <c:set value="false" var="canManage"/>
