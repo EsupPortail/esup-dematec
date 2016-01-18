@@ -33,7 +33,7 @@
         	<p>
         	Attention, "Date Fin Candidature" doit être renseigné pour que le poste puisse effectivement être affiché disponible à la candidature.
         	</p>
-        	<p>"Date Fin Candidature" correspond à la date à partir de laquelle les candidats (non auditionnable) n'ont plus accès au poste (candidature et dépôt).</p>
+        	<p>"Date Fin Candidature" correspond à la date à partir de laquelle les candidats (non retenus pour audition) n'ont plus accès au poste (candidature et dépôt).</p>
         </c:if>
     </util:help>
     <c:set value="false" var="canManage"/>
