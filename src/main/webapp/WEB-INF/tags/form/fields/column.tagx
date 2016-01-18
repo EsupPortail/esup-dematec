@@ -11,6 +11,7 @@
   <jsp:directive.attribute name="render" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the contents of this tag and all enclosed tags should be rendered (default 'true')" />
   <jsp:directive.attribute name="z" type="java.lang.String" required="false" description="Used for checking if element has been modified (to recalculate simply provide empty string value)" />
   <jsp:directive.attribute name="sort" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the column can be used to sort/order list (default 'false')" />
+  <jsp:directive.attribute name="cssClass" type="java.lang.String" required="false" rtexprvalue="true" description="Set class" />
   
   <c:if test="${empty render or render}">
     <c:if test="${empty label}">
@@ -19,6 +20,10 @@
 
     <c:if test="${empty dateTimePattern}">
       <c:set value="MM/dd/yyyy" var="dateTimePattern" />
+    </c:if>
+    
+    <c:if test="${empty cssClass}">
+      <c:set value="std" var="cssClass" />
     </c:if>
       
     <c:choose>
@@ -71,4 +76,12 @@
       </c:otherwise>
     </c:choose>
   </c:if>
+  <c:choose>
+      <c:when test="${empty columnClassProperties}">
+        <c:set var="columnClassProperties" value="${cssClass}" scope="request" />
+      </c:when>
+      <c:otherwise>
+        <c:set var="columnClassProperties" value="${columnClassProperties}&#9999;${cssClass}" scope="request" />
+      </c:otherwise>
+   </c:choose>
 </jsp:root>

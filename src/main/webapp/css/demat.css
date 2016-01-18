@@ -210,6 +210,21 @@ float: left;
 width: 100%;
 }
 
+.demat-popover {
+background-image: url("images/dialog-information.png");
+background-repeat: no-repeat;
+background-position: center;
+font-size: 0;
+width: auto;
+}
+.demat-popover:hover {
+display: block;
+font-size: 100%;
+background: #fefefe !important;
+position: absolute; 
+right: 30px;
+}
+
 @media (min-width: 1200px) {
 	
 #main .bs-docs-sidenav {

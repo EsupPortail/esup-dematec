@@ -36,6 +36,8 @@
     <c:set var="columnTypes" scope="request" />
     <c:set var="columnDatePatterns" scope="request" />
     <c:set var="columnSortProperties" scope="request" />
+    <c:set var="columnClassProperties" scope="request" />
+    
     
     <jsp:doBody />
 
@@ -62,6 +64,7 @@
     <c:set var="patterns" value="${fn:split(columnDatePatterns, '&#9999;')}" scope="request" />
     <c:set var="properties" value="${fn:split(columnProperties, '&#9999;')}" scope="request" />
     <c:set var="sortProperties" value="${fn:split(columnSortProperties, '&#9999;')}" scope="request" />
+    <c:set var="classProperties" value="${fn:split(columnClassProperties, '&#9999;')}" scope="request" />
 
     <c:if test="${not empty multiselect}">
      <script>
@@ -161,7 +164,8 @@
             <c:set var="columnMaxLength" value="${lengths[num.count-1]}" />
             <c:set var="columnType" value="${types[num.count-1]}" />
             <c:set var="columnDatePattern" value="${patterns[num.count-1]}" />
-            <td><c:choose>
+            <c:set var="classProperty" value="${classProperties[num.count-1]}" />
+            <td class="${empty classProperty ? 'std' : classProperty}"><c:choose>
               <c:when test="${columnType eq 'date'}">
                 <spring:escapeBody>
                   <spring:eval expression="item.${column}" var="columnDate"/>

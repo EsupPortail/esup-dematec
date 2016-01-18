@@ -154,6 +154,7 @@
             <c:if test="${not candidatCanSignup}">
             	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry_etatDossier" label="Etat Dossier Galaxie" property="galaxieEntry.etatDossier" render="${canManage}" sort="true" z="user-managed"/>
             </c:if>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerComment4Members" label="Com." property="managerComment4Members" render="${canManage}" z="user-managed" maxLength="-1" cssClass="demat-popover"/>
         </table:table>
     </page:list>
     
@@ -267,6 +268,10 @@
 			$("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
 			    return $(this).text() === "false";
 			}).text("");
+
+			$(".demat-popover").filter(function() {
+			    return !$(this).text().trim();
+			}).removeClass();
 		});
 		</script>
         </div>
