@@ -31,10 +31,10 @@
         <field:input field="profil" id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" z="EFU0JX3+fbAAYwqP2B5DKLDw8Po="/>
         <field:input field="localisation" id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" z="dxIvZ9reHBlYddpEAy0LTG8L7yg="/>
        	<field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" size="15" z="user-managed"/>
-        <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" z="OhtSmGEIPIKb6obN/VzokqX8X5w="/>
         <c:if test="${candidatCanSignup}">
         	<field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>
         </c:if>
+        <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" z="OhtSmGEIPIKb6obN/VzokqX8X5w="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>

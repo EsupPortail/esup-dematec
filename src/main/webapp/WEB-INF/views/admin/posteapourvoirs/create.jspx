@@ -25,8 +25,8 @@
         <field:input field="profil" id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" z="EFU0JX3+fbAAYwqP2B5DKLDw8Po="/>
         <field:input field="localisation" id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" z="dxIvZ9reHBlYddpEAy0LTG8L7yg="/>
         <field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" z="HHkyVQKY39PlyI1KAqWaKph2xZA="/>
+        <field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>        
         <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" z="OhtSmGEIPIKb6obN/VzokqX8X5w="/>
-        <field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_fr_univrouen_poste_domain_PosteAPourvoir" render="${not empty dependencies}" z="1nTHE8b9dKBDasZUbFQXnrlrCgQ="/>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
@@ -69,8 +69,7 @@ $(document).ready(function(){
     );
     
     $( "#_dateEndCandidatAuditionnable_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
-    $( "#_dateEndCandidat_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
-    $( "#_dateEndCandidatActif_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
+    $( "#_dateEndSignupCandidat_id" ).datepicker({ dateFormat:'dd/mm/yy'}); 
     
 });
 </script>
