@@ -83,6 +83,7 @@
             <menu:item id="fi_user_numcandidat" messageCode="global_menu_find" url="/admin/users?find=ByNumCandidat&amp;form&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
             <menu:item id="fi_user_activationkey" messageCode="global_menu_find" url="/admin/users?find=ByActivationKey&amp;form&amp;page=1&amp;size=${empty param.size ? 10 : param.size}" z="7F3UOFJD7vgsYduWEGMiohrKTA0="/>
             <menu:item id="fi_user_emailaddressandactivationdateisnotnull" messageCode="global_menu_find" url="/admin/users?find=ByEmailAddressAndActivationDateIsNotNull&amp;form&amp;page=1&amp;size=${empty param.size ? 10 : param.size}" z="dQMDgSICdNccqUrbYgrlqsutc3I="/>
+            <menu:item id="fi_user_nomlikeoremailaddresslikeorprenomlike" messageCode="global_menu_find" url="/admin/users?find=ByNomLikeOrEmailAddressLikeOrPrenomLike&amp;form&amp;page=1&amp;size=${empty param.size ? 10 : param.size}" z="eflTgqAEGjPKIQDINmpCJZLkJQc="/>
         </menu:category>
         <menu:category id="c_galaxieexcel" render="false" z="user-managed"/>
         <menu:category id="c_posteapourvoir" render="false" z="user-managed"/>

@@ -60,6 +60,11 @@
                                         <util:input-attr checked="${param.status == 'Candidat' ? 'checked' : ''}" name="status" type="radio" value="Candidat"/>Candidat
 									</div>
                                 </form:find>
+                            	<hr/>                    
+                                <form:find finderName="ByNomLikeOrEmailAddressLikeOrPrenomLike" id="ff_fr_univrouen_poste_domain_User" path="/admin/users">
+                                	<label for="_nomOrPrenomOrEmailAddress_id">Nom, Prénom ou Mail :</label>
+                                	<input class="" type="text" name="nomOrPrenomOrEmailAddress" id="_nomOrPrenomOrEmailAddress_id" value="${param.nomOrPrenomOrEmailAddress}"/>
+							    </form:find>    
                             </div>
                         </div>
                     </div>

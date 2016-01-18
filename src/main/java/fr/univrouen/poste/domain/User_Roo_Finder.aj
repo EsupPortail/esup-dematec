@@ -67,6 +67,39 @@ privileged aspect User_Roo_Finder {
         return ((Long) q.getSingleResult());
     }
     
+    public static Long User.countFindUsersByNomLikeOrEmailAddressLikeOrPrenomLike(String nom, String emailAddress, String prenom) {
+        if (nom == null || nom.length() == 0) throw new IllegalArgumentException("The nom argument is required");
+        nom = nom.replace('*', '%');
+        if (nom.charAt(0) != '%') {
+            nom = "%" + nom;
+        }
+        if (nom.charAt(nom.length() - 1) != '%') {
+            nom = nom + "%";
+        }
+        if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
+        emailAddress = emailAddress.replace('*', '%');
+        if (emailAddress.charAt(0) != '%') {
+            emailAddress = "%" + emailAddress;
+        }
+        if (emailAddress.charAt(emailAddress.length() - 1) != '%') {
+            emailAddress = emailAddress + "%";
+        }
+        if (prenom == null || prenom.length() == 0) throw new IllegalArgumentException("The prenom argument is required");
+        prenom = prenom.replace('*', '%');
+        if (prenom.charAt(0) != '%') {
+            prenom = "%" + prenom;
+        }
+        if (prenom.charAt(prenom.length() - 1) != '%') {
+            prenom = prenom + "%";
+        }
+        EntityManager em = User.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM User AS o WHERE LOWER(o.nom) LIKE LOWER(:nom)  OR LOWER(o.emailAddress) LIKE LOWER(:emailAddress)  OR LOWER(o.prenom) LIKE LOWER(:prenom)", Long.class);
+        q.setParameter("nom", nom);
+        q.setParameter("emailAddress", emailAddress);
+        q.setParameter("prenom", prenom);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long User.countFindUsersByNumCandidat(String numCandidat) {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = User.entityManager();
@@ -237,6 +270,79 @@ privileged aspect User_Roo_Finder {
         }
         TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
         q.setParameter("isSuperManager", isSuperManager);
+        return q;
+    }
+    
+    public static TypedQuery<User> User.findUsersByNomLikeOrEmailAddressLikeOrPrenomLike(String nom, String emailAddress, String prenom) {
+        if (nom == null || nom.length() == 0) throw new IllegalArgumentException("The nom argument is required");
+        nom = nom.replace('*', '%');
+        if (nom.charAt(0) != '%') {
+            nom = "%" + nom;
+        }
+        if (nom.charAt(nom.length() - 1) != '%') {
+            nom = nom + "%";
+        }
+        if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
+        emailAddress = emailAddress.replace('*', '%');
+        if (emailAddress.charAt(0) != '%') {
+            emailAddress = "%" + emailAddress;
+        }
+        if (emailAddress.charAt(emailAddress.length() - 1) != '%') {
+            emailAddress = emailAddress + "%";
+        }
+        if (prenom == null || prenom.length() == 0) throw new IllegalArgumentException("The prenom argument is required");
+        prenom = prenom.replace('*', '%');
+        if (prenom.charAt(0) != '%') {
+            prenom = "%" + prenom;
+        }
+        if (prenom.charAt(prenom.length() - 1) != '%') {
+            prenom = prenom + "%";
+        }
+        EntityManager em = User.entityManager();
+        TypedQuery<User> q = em.createQuery("SELECT o FROM User AS o WHERE LOWER(o.nom) LIKE LOWER(:nom)  OR LOWER(o.emailAddress) LIKE LOWER(:emailAddress)  OR LOWER(o.prenom) LIKE LOWER(:prenom)", User.class);
+        q.setParameter("nom", nom);
+        q.setParameter("emailAddress", emailAddress);
+        q.setParameter("prenom", prenom);
+        return q;
+    }
+    
+    public static TypedQuery<User> User.findUsersByNomLikeOrEmailAddressLikeOrPrenomLike(String nom, String emailAddress, String prenom, String sortFieldName, String sortOrder) {
+        if (nom == null || nom.length() == 0) throw new IllegalArgumentException("The nom argument is required");
+        nom = nom.replace('*', '%');
+        if (nom.charAt(0) != '%') {
+            nom = "%" + nom;
+        }
+        if (nom.charAt(nom.length() - 1) != '%') {
+            nom = nom + "%";
+        }
+        if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
+        emailAddress = emailAddress.replace('*', '%');
+        if (emailAddress.charAt(0) != '%') {
+            emailAddress = "%" + emailAddress;
+        }
+        if (emailAddress.charAt(emailAddress.length() - 1) != '%') {
+            emailAddress = emailAddress + "%";
+        }
+        if (prenom == null || prenom.length() == 0) throw new IllegalArgumentException("The prenom argument is required");
+        prenom = prenom.replace('*', '%');
+        if (prenom.charAt(0) != '%') {
+            prenom = "%" + prenom;
+        }
+        if (prenom.charAt(prenom.length() - 1) != '%') {
+            prenom = prenom + "%";
+        }
+        EntityManager em = User.entityManager();
+        String jpaQuery = "SELECT o FROM User AS o WHERE LOWER(o.nom) LIKE LOWER(:nom)  OR LOWER(o.emailAddress) LIKE LOWER(:emailAddress)  OR LOWER(o.prenom) LIKE LOWER(:prenom)";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        q.setParameter("nom", nom);
+        q.setParameter("emailAddress", emailAddress);
+        q.setParameter("prenom", prenom);
         return q;
     }
     
