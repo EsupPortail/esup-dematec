@@ -66,9 +66,8 @@
         <img alt="${fn:escapeXml(last_label)}" src="${last_image_url}" />
       </a>
     </c:if>
-  </c:if>
   
-  
+ 
     <c:if test="${empty displayFull or displayFull}">
   	 <c:set var="displayFull" value="true" />
   </c:if>
@@ -110,6 +109,8 @@
     
     </c:if>
   
+    </c:if>
+    
   </c:if>
 
 </jsp:root>
