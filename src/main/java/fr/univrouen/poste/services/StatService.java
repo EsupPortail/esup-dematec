@@ -51,4 +51,5 @@ public class StatService {
 				candidatNumber, userActifNumber, candidatActifNumber, posteCandidatureNumber, posteCandidatureActifNumber, 
 				posteCandidatureFileNumber, totalFileSizeFormatted, maxFileSize, nbPages, pagesKilo, nbRames, moyNbPages, moyPagesGr);
 	}
+	
 }

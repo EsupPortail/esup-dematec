@@ -52,7 +52,7 @@
         <dd>${stat.membreNumber}</dd>       
 
 		<dt>Candidats uniques</dt>
-		<dd>${cstat.andidatNumber}</dd>
+		<dd>${stat.candidatNumber}</dd>
 		
         <dt>Candidats actifs</dt>
         <dd>${stat.candidatActifNumber}</dd>

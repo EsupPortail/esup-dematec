@@ -106,5 +106,26 @@ public class StatBean {
 	public Long getMoyPagesGr() {
 		return moyPagesGr;
 	}
+
+	public String toText() {
+		return "Nombre de postes : " + posteNumber + "\n\n"
+				+ "Comptes créés : " + userNumber + "\n\n"
+				+ "Compts activés : " + userActifNumber + "\n\n"
+				+ "Admins : " + adminNumber + "\n\n"
+				+ "Super Managers : " + supermanagerNumber + "\n\n"
+				+ "Managers : " + managerNumber + "\n\n"
+				+ "Membres : "+ membreNumber + "\n\n"
+				+ "Candidats uniques : " + candidatNumber + "\n\n"
+				+ "Cadnidats actifs : " + candidatActifNumber + "\n\n"
+				+ "Nombre de candidatures : " + posteCandidatureNumber + "\n\n"
+				+ "Nombre de candidatures actives (au moins une modification) : " + posteCandidatureActifNumber + "\n\n"
+				+ "Fichiers déposés : " + posteCandidatureFileNumber + "\n\n"
+				+ "Volume total : " + totalFileSizeFormatted + "\n\n"
+				+ "Taille Max Fichier : " + maxFileSize + "\n\n"
+				+ "Nbre total de pages (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé) : " + nbPages + " [~" + pagesKilo + " kg - ~" + nbRames + " rames]\n\n"
+				+ "Nbre de pages en moyenne par candidature (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé) : " + "~" + moyNbPages + " [~" + moyPagesGr + " g]";
+	}
+	
+	
 	
 }

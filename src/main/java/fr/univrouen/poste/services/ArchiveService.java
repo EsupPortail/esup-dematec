@@ -53,6 +53,9 @@ public class ArchiveService {
     
     @Resource
     CsvService csvService;
+    
+    @Resource 
+    StatService statService;
 
 	@Transactional(readOnly=true)
 	public void archive(String destFolder) throws IOException, SQLException {
@@ -65,6 +68,10 @@ public class ArchiveService {
 			Writer csvGlobalWriter = new FileWriter(destFolder.concat("/candidatures.csv"));
 			csvService.csvWrite(csvGlobalWriter, posteCandidatures);
 			
+			Writer statWriter = new FileWriter(destFolder.concat("/stat.txt"));
+			StatBean stat = statService.stats();
+			statWriter.write(stat.toText());
+			statWriter.close();
 	
 			final String[] header = new String[] { "id", "filename", "sendDate", "owner" };
 			final CellProcessor[] processors = getProcessors();
