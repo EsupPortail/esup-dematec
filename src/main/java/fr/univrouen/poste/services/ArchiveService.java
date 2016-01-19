@@ -23,18 +23,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.supercsv.cellprocessor.FmtBool;
 import org.supercsv.cellprocessor.FmtDate;
-import org.supercsv.cellprocessor.Optional;
-import org.supercsv.cellprocessor.constraint.LMinMax;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.constraint.UniqueHashCode;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -50,8 +50,10 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 public class ArchiveService {
 	
 	private final Logger logger = Logger.getLogger(getClass());
+    
+    @Resource
+    CsvService csvService;
 
-	
 	@Transactional(readOnly=true)
 	public void archive(String destFolder) throws IOException, SQLException {
 		
@@ -59,6 +61,10 @@ public class ArchiveService {
 		
 		File destFolderFile = new File(destFolder);
 		if(destFolderFile.mkdir()) {
+			
+			Writer csvGlobalWriter = new FileWriter(destFolder.concat("/candidatures.csv"));
+			csvService.csvWrite(csvGlobalWriter, posteCandidatures);
+			
 	
 			final String[] header = new String[] { "id", "filename", "sendDate", "owner" };
 			final CellProcessor[] processors = getProcessors();
