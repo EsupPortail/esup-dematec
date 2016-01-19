@@ -73,6 +73,7 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
+import fr.univrouen.poste.services.CsvService;
 import fr.univrouen.poste.services.EmailService;
 import fr.univrouen.poste.services.GalaxieExcelParser;
 import fr.univrouen.poste.services.LogService;
@@ -111,6 +112,9 @@ public class MyPosteCandidatureController {
     
     @Resource
     TemplateService templateService;
+    
+    @Resource
+    CsvService csvService;
 
 
 	@ModelAttribute("currentUser")
@@ -691,7 +695,8 @@ public class MyPosteCandidatureController {
     		HttpServletResponse response, 
     		@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
     		@RequestParam(defaultValue="off", required=false) Boolean zip,
-    		@RequestParam(defaultValue="off", required=false) Boolean mails, 
+    		@RequestParam(defaultValue="off", required=false) Boolean mails,
+    		@RequestParam(defaultValue="off", required=false) Boolean csv,
     		@RequestParam(required = false) Integer page, 
     		@RequestParam(required = false) Integer size, 
     		@RequestParam(required = false) String sortFieldName, 
@@ -742,6 +747,20 @@ public class MyPosteCandidatureController {
         		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
         		FileCopyUtils.copy(inputStream, response.getOutputStream());
         		
+        		return null; 
+    			
+    		} else if(csv) {
+    			
+    			List<PosteCandidature> posteCandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
+    			
+        		String contentType = "text/csv";
+        		String baseName = "candidatures.csv";
+
+        		response.setContentType(contentType);
+        		response.setCharacterEncoding("utf-8");
+        		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+        		csvService.csvWrite(response.getWriter(), posteCandidatures);
+
         		return null; 
     			
     		} else {
