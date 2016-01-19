@@ -19,31 +19,24 @@ package fr.univrouen.poste.web.admin;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
-import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.StatBean;
+import fr.univrouen.poste.services.StatService;
 import fr.univrouen.poste.services.ZipService;
 
 @RequestMapping("/admin")
@@ -56,59 +49,15 @@ public class AdminController {
 	@Resource
 	ZipService zipService;
 	
+	@Resource 
+	StatService statService;
+	
+	
 	@RequestMapping
 	public String stats(Model uiModel) {
 
-
-		Long posteNumber = PosteAPourvoir.countPosteAPourvoirs();
-		Long userNumber = User.countUsers();
-		Long adminNumber = User.countAdmins();
-		Long supermanagerNumber = User.countSupermanagers();
-		Long managerNumber = User.countManagers();
-		Long membreNumber = User.countMembres();
-		Long candidatNumber = User.countCandidats();
-		Long userActifNumber = User.countActifCUsers();
-		Long candidatActifNumber = User.countActifCandidats();
-		Long posteCandidatureNumber = PosteCandidature.countPosteCandidatures();
-		Long posteCandidatureActifNumber = PosteCandidature.countPosteActifCandidatures();
-		Long posteCandidatureFileNumber = PosteCandidatureFile.countPosteCandidatureFiles();
-
-		long totalFileSize = 0;
-		long nbPages = 0;
-		for (PosteCandidatureFile posteCandidatureFile : PosteCandidatureFile.findAllPosteCandidatureFiles()) {
-			totalFileSize += posteCandidatureFile.getFileSize();
-			if(posteCandidatureFile.getNbPages() != null) {
-				nbPages += posteCandidatureFile.getNbPages();
-			}
-		}
-		String totalFileSizeFormatted = PosteCandidatureFile.readableFileSize(totalFileSize);
-
-		String maxFileSize = PosteCandidatureFile.getMaxFileSize();
-		
-		uiModel.addAttribute("posteNumber", posteNumber);
-		uiModel.addAttribute("userNumber", userNumber);
-		uiModel.addAttribute("candidatNumber", candidatNumber);
-		uiModel.addAttribute("adminNumber", adminNumber);
-		uiModel.addAttribute("supermanagerNumber", supermanagerNumber);
-		uiModel.addAttribute("managerNumber", managerNumber);
-		uiModel.addAttribute("membreNumber", membreNumber);
-		uiModel.addAttribute("userActifNumber", userActifNumber);
-		uiModel.addAttribute("candidatActifNumber", candidatActifNumber);
-		uiModel.addAttribute("posteCandidatureNumber", posteCandidatureNumber);
-		uiModel.addAttribute("posteCandidatureActifNumber", posteCandidatureActifNumber);		
-		uiModel.addAttribute("posteCandidatureFileNumber", posteCandidatureFileNumber);		
-		uiModel.addAttribute("totalFileSizeFormatted", totalFileSizeFormatted);
-		uiModel.addAttribute("maxFileSize", maxFileSize);
-		
-
-		double pagesKilo = nbPages*0.005;
-		int nbRames = (int)Math.floor(nbPages/500.0);
-		uiModel.addAttribute("nbPagesStat", nbPages + " [~" + pagesKilo + " kg - ~" + nbRames + " rames]");
-		if(posteCandidatureActifNumber != 0) {
-			int moyNbPages = (int)Math.floor(nbPages/posteCandidatureActifNumber);
-			int moyPagesGr = (int)Math.floor(pagesKilo/posteCandidatureActifNumber*1000.0);
-			uiModel.addAttribute("moyNbPagesStat", "~" + moyNbPages + " [~" + moyPagesGr + " g]");
-		}
+		StatBean stat = statService.stats();
+		uiModel.addAttribute("stat", stat);
 
 		return "admin";
 	}

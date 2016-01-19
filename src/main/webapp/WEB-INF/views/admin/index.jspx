@@ -31,54 +31,53 @@
 	<dl class="dl">
 
 		<dt>Nombre de postes</dt>
-		<dd>${posteNumber}</dd>
+		<dd>${stat.posteNumber}</dd>
 
 		<dt>Comptes cr&amp;eacute;&amp;eacute;s</dt>
-		<dd>${userNumber}</dd>
+		<dd>${stat.userNumber}</dd>
 				
         <dt>Comptes activés</dt>
-        <dd>${userActifNumber}</dd>
+        <dd>${stat.userActifNumber}</dd>
         
         <dt>Admins</dt>
-        <dd>${adminNumber}</dd>
+        <dd>${stat.adminNumber}</dd>
          
         <dt>Super Managers</dt>
-        <dd>${supermanagerNumber}</dd>
+        <dd>${stat.supermanagerNumber}</dd>
                   
         <dt>Managers</dt>
-        <dd>${managerNumber}</dd>
+        <dd>${stat.managerNumber}</dd>
          
         <dt>Membres</dt>
-        <dd>${membreNumber}</dd>       
+        <dd>${stat.membreNumber}</dd>       
 
 		<dt>Candidats uniques</dt>
-		<dd>${candidatNumber}</dd>
+		<dd>${cstat.andidatNumber}</dd>
 		
         <dt>Candidats actifs</dt>
-        <dd>${candidatActifNumber}</dd>
+        <dd>${stat.candidatActifNumber}</dd>
         
         <dt>Nombre de candidatures</dt>
-        <dd>${posteCandidatureNumber}</dd>
+        <dd>${stat.posteCandidatureNumber}</dd>
         
         <dt>Nombre de candidatures actives (au moins une modification)</dt>
-        <dd>${posteCandidatureActifNumber}</dd>
+        <dd>${stat.posteCandidatureActifNumber}</dd>
 
 		<dt>Fichiers d&amp;eacute;pos&amp;eacute;s</dt>
-		<dd>${posteCandidatureFileNumber}</dd>
+		<dd>${stat.posteCandidatureFileNumber}</dd>
 
 		<dt>Volume total</dt>
-		<dd>${totalFileSizeFormatted}</dd>
+		<dd>${stat.totalFileSizeFormatted}</dd>
 
         <dt>Taille Max Fichier</dt>
-        <dd>${maxFileSize}</dd>
+        <dd>${stat.maxFileSize}</dd>
         
-        <c:if test="${not empty nbPagesStat}">
-	        <dt>Nbre total de pages (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
-	        <dd>${nbPagesStat}</dd>
+	    <dt>Nbre total de pages (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
+	    <dd>${stat.nbPages} [~${stat.pagesKilo} kg - ~${stat.nbRames} rames]</dd>
 	        
-	        <dt>Nbre de pages en moyenne par candidature (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
-	        <dd>${moyNbPagesStat}</dd>        
-         </c:if>
+	    <dt>Nbre de pages en moyenne par candidature (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
+	    <dd>~${stat.moyNbPages} [~${stat.moyPagesGr} g]</dd>        
+
 	</dl>
      
 	<!--  
