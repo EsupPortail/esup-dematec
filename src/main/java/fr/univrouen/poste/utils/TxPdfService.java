@@ -1,13 +1,20 @@
 package fr.univrouen.poste.utils;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFMergerUtility;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.univrouen.poste.domain.PosteCandidatureFile;
+import fr.univrouen.poste.exceptions.EsupDematEcException;
 
 @Service
 public class TxPdfService {
@@ -42,6 +49,19 @@ public class TxPdfService {
 
 	}
 
-
-
+	
+	public void mergePdfs(List<InputStream> pdfFiles, String filename, OutputStream destStream) {
+		PDFMergerUtility ut = new PDFMergerUtility();
+		ut.setDestinationFileName(filename);
+		ut.setDestinationStream(destStream);
+		for(InputStream pdfFile: pdfFiles) {
+			ut.addSource(pdfFile);
+		}
+		try {
+			ut.mergeDocuments();
+		} catch (COSVisitorException | IOException e) {
+			throw new EsupDematEcException("Error merging pdf files- " + filename, e);
+		}	
+	}
+	
 }

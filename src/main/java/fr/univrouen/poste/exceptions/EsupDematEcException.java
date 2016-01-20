@@ -8,5 +8,8 @@ public class EsupDematEcException extends RuntimeException {
 		super(message);
 	}
 
+	public EsupDematEcException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 }

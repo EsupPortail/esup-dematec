@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -63,6 +64,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.AppliConfigFileType;
+import fr.univrouen.poste.domain.DematFileDummy;
 import fr.univrouen.poste.domain.ManagerReview;
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.domain.ManagerReviewLegendColor;
@@ -156,6 +158,53 @@ public class MyPosteCandidatureController {
 		}
 	}
 
+	
+	@RequestMapping(value = "/{id}", params = {"export"})
+	@PreAuthorize("hasPermission(#id, 'review') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+	public String exportCandidatureFiles(@PathVariable("id") Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+		try {
+			
+			Calendar cal = Calendar.getInstance();
+			Date currentTime = cal.getTime();
+			SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+			String currentTimeFmt = dateFmt.format(currentTime);
+			
+			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+			String fileName = postecandidature.getPoste().getNumEmploi() + "-" + postecandidature.getEmail() + "-" + currentTimeFmt + "." + export;
+			DematFileDummy dematFile = new DematFileDummy(fileName, "-");
+			
+			if("zip".equals(export)) {						
+				List<PosteCandidature> postecandidatures = Arrays.asList(new PosteCandidature[] {postecandidature});
+				File tmpFile = zipService.getZip(postecandidatures);
+	    		String contentType = "application/zip";
+	    		int zipSize = (int) tmpFile.length();
+	    		InputStream inputStream = new FileInputStream(tmpFile);
+	    		response.setContentType(contentType);
+	    		response.setContentLength(zipSize);
+	    		//response.setCharacterEncoding("utf-8");
+	    		response.setHeader("Content-Disposition","attachment; filename=\"" + fileName +"\"");
+	    		FileCopyUtils.copy(inputStream, response.getOutputStream());
+	    		tmpFile.delete();
+			} else if("pdf".equals(export)) {
+				List<InputStream> pdfFiles = new ArrayList<InputStream>();
+				for(PosteCandidatureFile posteCandidatureFile: postecandidature.getCandidatureFiles()) {
+					pdfFiles.add(posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream());
+				}
+				String contentType = "text/pdf";
+				response.setContentType(contentType);
+	    		response.setHeader("Content-Disposition","attachment; filename=\"" + fileName +"\"");
+				pdfService.mergePdfs(pdfFiles, fileName, response.getOutputStream());	
+			} else {
+				return "redirect:/postecandidatures/" + id.toString();
+			}
+	
+			logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidature, dematFile, request, currentTime);
+		} catch(Exception e) {
+			logger.info("PostCandidature " + id + " can't be exported as " + export, e);
+			return "redirect:/postecandidatures/" + id.toString() + "?exportFailed=" + export;
+		}
+		return null;
+	}
 
 	@RequestMapping(value = "/{id}/reviewFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'review') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")

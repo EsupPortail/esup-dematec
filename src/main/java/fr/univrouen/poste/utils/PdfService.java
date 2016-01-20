@@ -1,5 +1,9 @@
 package fr.univrouen.poste.utils;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
@@ -23,6 +27,8 @@ public class PdfService {
 		}
 	}
 
-
+	public void mergePdfs(List<InputStream> pdfFiles, String filename, OutputStream destStream) {
+		txPdfService.mergePdfs(pdfFiles, filename, destStream);
+	}
 
 }
