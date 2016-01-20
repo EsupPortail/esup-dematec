@@ -17,11 +17,11 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +31,6 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import fr.univrouen.poste.domain.PosteCandidature;
@@ -67,20 +66,14 @@ public class AdminController {
 	@Transactional
 	public void getZip(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		
-		File tmpFile = zipService.getZip(PosteCandidature.findAllPosteCandidatures());
+		List<PosteCandidature> postecandidatures = PosteCandidature.findAllPosteCandidatures();
 
 		String contentType = "application/zip";
-		int size = (int) tmpFile.length();
 		String baseName = "demat.zip";
-		InputStream inputStream = new FileInputStream(tmpFile);
 		
 		response.setContentType(contentType);
-		response.setContentLength(size);
-		//response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-		FileCopyUtils.copy(inputStream, response.getOutputStream());
-
-		tmpFile.delete();
+		zipService.writeZip(postecandidatures, response.getOutputStream());
 	}
 
 }

@@ -175,16 +175,10 @@ public class MyPosteCandidatureController {
 			
 			if("zip".equals(export)) {						
 				List<PosteCandidature> postecandidatures = Arrays.asList(new PosteCandidature[] {postecandidature});
-				File tmpFile = zipService.getZip(postecandidatures);
 	    		String contentType = "application/zip";
-	    		int zipSize = (int) tmpFile.length();
-	    		InputStream inputStream = new FileInputStream(tmpFile);
 	    		response.setContentType(contentType);
-	    		response.setContentLength(zipSize);
-	    		//response.setCharacterEncoding("utf-8");
 	    		response.setHeader("Content-Disposition","attachment; filename=\"" + fileName +"\"");
-	    		FileCopyUtils.copy(inputStream, response.getOutputStream());
-	    		tmpFile.delete();
+	    		zipService.writeZip(postecandidatures, response.getOutputStream());
 			} else if("pdf".equals(export)) {
 				List<InputStream> pdfFiles = new ArrayList<InputStream>();
 				for(PosteCandidatureFile posteCandidatureFile: postecandidature.getCandidatureFiles()) {
@@ -754,21 +748,13 @@ public class MyPosteCandidatureController {
 
     	if(zip) {
 
-    		File tmpFile = zipService.getZip(PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList());
+    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
 
     		String contentType = "application/zip";
-    		int zipSize = (int) tmpFile.length();
     		String baseName = "demat.zip";
-    		InputStream inputStream = new FileInputStream(tmpFile);
-
     		response.setContentType(contentType);
-    		response.setContentLength(zipSize);
-    		//response.setCharacterEncoding("utf-8");
     		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-    		FileCopyUtils.copy(inputStream, response.getOutputStream());
-
-    		tmpFile.delete();
-    		
+    		zipService.writeZip(postecandidatures, response.getOutputStream());
     		return null;    		
     	} else {
     		

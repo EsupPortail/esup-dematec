@@ -17,9 +17,8 @@
  */
 package fr.univrouen.poste.services;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -37,15 +36,10 @@ public class ZipService {
 	
 	private final Logger logger = Logger.getLogger(getClass());
 
-	public File getZip(List<PosteCandidature> posteCandidatures) throws IOException, SQLException {
-		
-		File tmpFile = File.createTempFile("demat-zip.", ".tmp");		
-		// we call tmpFile.deleteOnExit so that ths tmp file will be deleted
-		// when jvm stops ...
-		tmpFile.deleteOnExit();
-		
-		FileOutputStream output = new FileOutputStream(tmpFile);
-		ZipOutputStream out = new ZipOutputStream(output);
+
+	public void writeZip(List<PosteCandidature> posteCandidatures, OutputStream destStream) throws IOException, SQLException {
+
+		ZipOutputStream out = new ZipOutputStream(destStream);
 
 		for (PosteCandidature posteCandidature : posteCandidatures) {
 			String folderName = posteCandidature.getPoste().getNumEmploi().concat("/");	
@@ -61,12 +55,6 @@ public class ZipService {
 			}
 		}
 		out.close();
-		output.close();
-		
-		return tmpFile;
 	}
-
-
-
 	
 }
