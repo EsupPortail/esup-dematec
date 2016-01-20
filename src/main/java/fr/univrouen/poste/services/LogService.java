@@ -19,9 +19,13 @@ package fr.univrouen.poste.services;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
@@ -72,6 +76,42 @@ public class LogService {
 	
 	public static final String IMPORT_FAILED = "IMPORT FAILED";
 
+	
+	public void logActionFile(String action, List<PosteCandidature> postecandidatures, HttpServletRequest request, Date currentTime) {
+		
+		LogFile logFile = new LogFile();
+		
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();		
+		// Switch User par un admin / super-manager ?                                                                                                                                                            
+		for (GrantedAuthority a : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+			if (a instanceof SwitchUserGrantedAuthority) {
+				userId = ((SwitchUserGrantedAuthority)a).getSource().getName() + " [SU] " + userId;
+			}
+		}
+		
+		logFile.setUserId(userId);
+	    	    
+		Set<String> numEmplois = new HashSet<String>();
+		for(PosteCandidature postecandidature: postecandidatures) {
+			numEmplois.add(postecandidature.getPoste().getNumEmploi());
+		}
+	    logFile.setNumEmploi(StringUtils.join(numEmplois, "#"));
+	    
+	    logFile.setIp(request.getRemoteAddr());
+	    
+	    logFile.setAction(action);
+	    logFile.setActionDate(currentTime);
+	    
+		logFile.setFilename("##EXPORT##");
+	    
+	    // uer-agent
+	    String userAgent = request.getHeader("User-Agent");
+	    logFile.setUserAgent(userAgent);
+	    
+
+	    logFile.persist();
+    }
+	
 	public void logActionFile(String action, PosteCandidature postecandidature, DematFile dematFile, HttpServletRequest request, Date currentTime) {
 	    
 

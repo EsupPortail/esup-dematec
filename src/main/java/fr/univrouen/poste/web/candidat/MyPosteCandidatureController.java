@@ -18,8 +18,6 @@
 package fr.univrouen.poste.web.candidat;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -52,8 +50,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,11 +73,9 @@ import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
 import fr.univrouen.poste.services.CsvService;
 import fr.univrouen.poste.services.EmailService;
-import fr.univrouen.poste.services.GalaxieExcelParser;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.services.ReturnReceiptService;
 import fr.univrouen.poste.services.TemplateService;
-import fr.univrouen.poste.services.WordParser;
 import fr.univrouen.poste.services.ZipService;
 import fr.univrouen.poste.utils.PdfService;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
@@ -137,7 +131,6 @@ public class MyPosteCandidatureController {
 		try {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 			PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
-			// byte[] file = postecandidatureFile.getBigFile().getBinaryFile();
 			String filename = postecandidatureFile.getFilename();
 			Long size = postecandidatureFile.getFileSize();
 			String contentType = postecandidatureFile.getContentType();
@@ -148,7 +141,6 @@ public class MyPosteCandidatureController {
 	
 			Calendar cal = Calendar.getInstance();
 			Date currentTime = cal.getTime();
-			//postecandidature.setModification(currentTime);
 	
 			logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidature, postecandidatureFile, request, currentTime);
 		} catch(IOException ioe) {
@@ -617,7 +609,7 @@ public class MyPosteCandidatureController {
 	public String list(@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
 			@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  
 			@RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, 
-			@RequestParam(value = "zip", required = false, defaultValue = "off") Boolean zip, HttpServletResponse response, 
+			@RequestParam(value = "zip", required = false, defaultValue = "off") Boolean zip, HttpServletResponse response, HttpServletRequest request, 
 			Model uiModel) throws IOException, SQLException {
 
 		// uiModel.addAttribute("users", User.findUserEntries(firstResult,
@@ -718,6 +710,7 @@ public class MyPosteCandidatureController {
 	    		response.setContentType(contentType);
 	    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
 	    		zipService.writeZip(postecandidatures, response.getOutputStream());
+	    		logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidatures, request, currentTime);
 	    		return null;
 			}
 			
