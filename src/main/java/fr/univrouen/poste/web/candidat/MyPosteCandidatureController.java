@@ -617,7 +617,8 @@ public class MyPosteCandidatureController {
 	public String list(@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
 			@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  
 			@RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, 
-			Model uiModel) {
+			@RequestParam(value = "zip", required = false, defaultValue = "off") Boolean zip, HttpServletResponse response, 
+			Model uiModel) throws IOException, SQLException {
 
 		// uiModel.addAttribute("users", User.findUserEntries(firstResult,
 		// sizeNo));
@@ -707,6 +708,19 @@ public class MyPosteCandidatureController {
 				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			}
 			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes, sortFieldName, sortOrder).getResultList();		
+			if(zip) {
+	    		String contentType = "application/zip";
+	    		Calendar cal = Calendar.getInstance();
+	    		Date currentTime = cal.getTime();
+				SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+				String currentTimeFmt = dateFmt.format(currentTime);
+	    		String baseName = "demat-" + currentTimeFmt + ".zip";
+	    		response.setContentType(contentType);
+	    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+	    		zipService.writeZip(postecandidatures, response.getOutputStream());
+	    		return null;
+			}
+			
 			uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
 			List<PosteAPourvoir> membresPostes2Display = new ArrayList<PosteAPourvoir>(user.getPostes());
 			
