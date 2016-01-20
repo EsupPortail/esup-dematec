@@ -17,14 +17,15 @@
  */
 package fr.univrouen.poste.services;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,8 @@ import fr.univrouen.poste.domain.PosteCandidatureFile;
 
 @Service
 public class ZipService {
+	
+	static final int BUFFER = 2048; 
 	
 	private final Logger logger = Logger.getLogger(getClass());
 
@@ -50,7 +53,13 @@ public class ZipService {
 				String fileName = posteCandidatureFile.getId().toString().concat("-").concat(posteCandidatureFile.getFilename());
 				String folderFileName = folderName.concat(fileName);
 				out.putNextEntry(new ZipEntry(folderFileName));
-				out.write(IOUtils.toByteArray(posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream()));
+				InputStream inputStream = posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream();
+				BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, BUFFER);
+				byte[] bytes = new byte[BUFFER];
+				int length;
+				while ((length = bufInputStream.read(bytes)) >= 0) {
+					out.write(bytes, 0, length);
+				}
 				out.closeEntry();
 			}
 		}
