@@ -82,7 +82,7 @@ public class LogMailController {
     
 	@RequestMapping(value = "/{id}/resend")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')")
-	public String modifyRecevableCandidatureFile(@PathVariable("id") Long id) {
+	public String resendEmail(@PathVariable("id") Long id) {
 		
 		LogMail logMail = LogMail.findLogMail(id);
 		
