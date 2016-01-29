@@ -84,7 +84,7 @@
             &amp;nbsp;
             <span>
               <c:if test="${list}">
-                <spring:url value="${path}" var="list_form_url" />
+                <spring:url value="${path}?page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" var="list_form_url" />
                 <spring:url value="/resources/images/list.png" var="list_image_url" />
                 <spring:message arguments="${typeNamePlural}" code="entity_list_all" var="list_label" htmlEscape="false" />
                 <a href="${list_form_url}" alt="${fn:escapeXml(list_label)}" title="${fn:escapeXml(list_label)}" class="btn btn-primary">Retour</a>
