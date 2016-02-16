@@ -42,6 +42,7 @@
                             </div>
                             <div class="span3 demat-filter">
                             	<field:select disableFormBinding="false" field="userId" id="users" label="Utilisateur" items="${users}" multiple="false" path="/admin/users" required="false"/>
+                            	 <input id="textbox" type="text" />
                             </div>
                             <input name="sortFieldName" type="hidden" value="actionDate"/>
                             <input name="sortOrder" type="hidden" value="desc"/>
@@ -59,4 +60,12 @@
             <table:column id="c_fr_univrouen_poste_domain_LogAuth_ip" property="ip" z="cHnrqk4ghd3LJvHDDDiiVnAl3lY="/>
         </table:table>
     </page:list>
+    
+    
+  <script>
+	$(document).ready(function(){
+		$('#_userId_id').filterByText($('#textbox'), true);
+	});
+  </script>
+	
 </div>
