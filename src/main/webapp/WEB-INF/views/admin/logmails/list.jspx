@@ -49,6 +49,7 @@
 		                            </div>
 	                                <div class="span5 demat-filter">
 	                            		<field:select disableFormBinding="false" field="userId" id="users" label="MailTo" items="${users}" multiple="false" path="/admin/users" required="false"/>
+	                            		<input id="textbox" type="text" />
 	                            	</div>
 	                            	<input name="sortFieldName" type="hidden" value="actionDate"/>
 	                                <input name="sortOrder" type="hidden" value="desc"/>
@@ -68,4 +69,10 @@
             <table:column id="c_fr_univrouen_poste_domain_LogMail_status" property="status" sort="true" z="user-managed"/>
         </table:table>
     </page:list>
+    
+   <script>
+	$(document).ready(function(){
+		$('#_userId_id').filterByText($('#textbox'), true);
+	});
+  </script>
 </div>
