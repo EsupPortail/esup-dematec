@@ -57,16 +57,18 @@
     	
     	// jQuery plugin to prevent double submission of forms
     	function preventDoubleSubmission(e) {
-    	    var $form = $(this);
-
-    	    if ($form.data('submitted') === true) {
-    	      // Previously submitted - don't submit again
-    	      e.preventDefault();
-    	      alert('Envoi en cours, merci de patienter ... ou de recharger complètement votre page [F5] pour annuler.');
-    	    } else {
-    	      // Mark it so that the next submit can be ignored
-    	      $form.data('submitted', true);
-    	    }
+    		if(!$('#_zip_id').is(':checked') && !$('#_csv_id').is(':checked') && !$('#_mails_id').is(':checked')) {
+	    	    var $form = $(this);
+	
+	    	    if ($form.data('submitted') === true) {
+	    	      // Previously submitted - don't submit again
+	    	      e.preventDefault();
+	    	      alert('Envoi en cours, merci de patienter ... ou de recharger complètement votre page [F5] pour annuler.');
+	    	    } else {
+	    	      // Mark it so that the next submit can be ignored
+	    	      $form.data('submitted', true);
+	    	    }
+    		}
     	 }
     	
     	$('form').on('submit', preventDoubleSubmission);
