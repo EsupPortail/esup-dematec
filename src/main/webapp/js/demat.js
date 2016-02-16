@@ -80,6 +80,25 @@
     		$("form").find('option').removeAttr('selected');
     	});
     	
+    	$('#_zip_id').change(function() {
+            if($(this).is(":checked")) {
+            	$('#_csv_id').attr("checked", false);
+            	$('#_mails_id').attr("checked", false);
+            }
+        });
+    	$('#_csv_id').change(function() {
+            if($(this).is(":checked")) {
+            	$('#_zip_id').attr("checked", false);
+            	$('#_mails_id').attr("checked", false);
+            }
+        });
+    	$('#_mails_id').change(function() {
+            if($(this).is(":checked")) {
+            	$('#_csv_id').attr("checked", false);
+            	$('#_zip_id').attr("checked", false);
+            }
+        });
+    	
     });  
     
     
