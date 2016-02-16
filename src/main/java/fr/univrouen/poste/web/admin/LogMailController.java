@@ -95,8 +95,9 @@ public class LogMailController {
 		
 	    String mailFrom = AppliConfig.getCacheMailFrom();
 	    
-		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
-
+		Boolean emailSent = emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
+		ra.addAttribute("emailSent", emailSent);
+		
 		return "redirect:/admin/logmails/" + id.toString();
 	}
     
