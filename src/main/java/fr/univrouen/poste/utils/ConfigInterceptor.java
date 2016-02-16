@@ -32,6 +32,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.AppliVersion;
 
 public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	
@@ -108,6 +109,9 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 				modelAndView.addObject("activeMenu", activeMenu);
 				
 				modelAndView.addObject("candidatCanSignup", AppliConfig.getCacheCandidatCanSignup());
+				
+				modelAndView.addObject("versionEsupDematEC", AppliVersion.getCacheVersion());
+				
 			}
 		
 			if(request.getParameter("size")!=null) {
