@@ -194,6 +194,5 @@
         </c:otherwise>
       </c:choose>
     </div>
-    <br />
   </c:if>
 </jsp:root>
