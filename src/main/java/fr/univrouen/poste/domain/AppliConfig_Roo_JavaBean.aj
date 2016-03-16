@@ -67,11 +67,7 @@ privileged aspect AppliConfig_Roo_JavaBean {
     public String AppliConfig.getTexteMailNewCommissions() {
         return this.texteMailNewCommissions;
     }
-    
-    public void AppliConfig.setTexteMailNewCommissions(String texteMailNewCommissions) {
-        this.texteMailNewCommissions = texteMailNewCommissions;
-    }
-    
+
     public Boolean AppliConfig.getMembreSupprReviewFile() {
         return this.membreSupprReviewFile;
     }
@@ -98,10 +94,6 @@ privileged aspect AppliConfig_Roo_JavaBean {
     
     public String AppliConfig.getTexteMailNewCandidatures() {
         return this.texteMailNewCandidatures;
-    }
-    
-    public void AppliConfig.setTexteMailNewCandidatures(String texteMailNewCandidatures) {
-        this.texteMailNewCandidatures = texteMailNewCandidatures;
     }
     
     public String AppliConfig.getTexteMailCandidatReturnReceipt() {
