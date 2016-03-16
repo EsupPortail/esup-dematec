@@ -370,6 +370,16 @@ public class AppliConfig {
 		this.candidatCanSignup = candidatCanSignup;
 		cacheCandidatCanSignup = candidatCanSignup;
 	}
+	
+    public void setTexteMailNewCommissions(String texteMailNewCommissions) {
+        this.texteMailNewCommissions = texteMailNewCommissions;
+        cacheTexteMailNewCommissions = texteMailNewCommissions;
+    }
+    
+    public void setTexteMailNewCandidatures(String texteMailNewCandidatures) {
+        this.texteMailNewCandidatures = texteMailNewCandidatures;
+        cacheTexteMailNewCandidatures = texteMailNewCandidatures;
+    }
 
 	public static String getCacheTitre() {
 		if(cacheTitre == null) {
