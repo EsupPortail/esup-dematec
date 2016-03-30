@@ -34,23 +34,45 @@
 			
 			 <script>
 		
-					var data = {
+					var dataUpload = {
 						    labels: ${uploadStatsLabels},
 						    datasets: [
 						        {
-						            label: "Nombre de fichiers envoyés",
+						            label: "Fichiers envoyés",
 						            backgroundColor: "rgba(151,187,256,0.7)",
 						            data: ${uploadStatsValues}
 						        }
 						    ]
 						};
 					
-					var ctx = document.getElementById("uploadChart").getContext("2d");
-					var myNewChart = new Chart(ctx, {type: 'line', data: data});
+					var ctxUpload = document.getElementById("uploadChart").getContext("2d");
+					var chartUpload = new Chart(ctxUpload, {type: 'line', data: dataUpload});
 		
 				</script>
-			</div>
+		</div>
+	
+		<div class="span4">
+			<canvas id="authChart" width="400" height="400"><!--  --></canvas>
+			
+			 <script>
 		
+					var dataAuth = {
+						    labels: ${authStatsLabels},
+						    datasets: [
+						        {
+						            label: "Authentifications",
+						            backgroundColor: "rgba(256,187, 151, 0.7)",
+						            data: ${authStatsValues}
+						        }
+						    ]
+						};
+					
+					var ctxAuth = document.getElementById("authChart").getContext("2d");
+					var chartAuth = new Chart(ctxAuth, {type: 'line', data: dataAuth});
+		
+				</script>
+		</div>
+			
 	</div>
 		
 </div>
