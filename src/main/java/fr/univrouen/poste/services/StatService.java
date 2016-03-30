@@ -1,5 +1,6 @@
 package fr.univrouen.poste.services;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,11 @@ public class StatService {
 		List<Object[]> logfilesCounts = LogAuth.countSuccessLogAuthsByDate();
 		return map4chart(logfilesCounts);
 	}
+	
+	public List<List<Object>> sumPosteCandidatureFileSizeByDate() {
+		List<Object[]> logFilesSizes = PosteCandidatureFile.sumPosteCandidatureFileSizeByDate();
+		return map4chart(logFilesSizes);
+	}
 
 	private List<List<Object>> map4chart(List<Object[]> logfilesCounts) {
 		List<List<Object>> labelsValues = new ArrayList<List<Object>>();
@@ -70,9 +76,14 @@ public class StatService {
 		for(Object[] logfilesCount : logfilesCounts) {
 			String label = logfilesCount[2] + "/" + logfilesCount[1] + "/" + logfilesCount[0];
 			label = label.replaceAll("\\.0", "");
-			BigInteger value = (BigInteger)logfilesCount[3];
+			Long value = null;
+			if(logfilesCount[3] instanceof BigDecimal) {
+				value = ((BigDecimal)logfilesCount[3]).longValue();
+			} else {
+				value = ((BigInteger)logfilesCount[3]).longValue();
+			}
 			labels.add(label);
-			values.add(value.longValue());
+			values.add(value);
 		}
 		labelsValues.add(labels);
 		labelsValues.add(values);

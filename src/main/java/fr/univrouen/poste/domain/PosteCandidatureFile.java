@@ -17,10 +17,10 @@
  */
 package fr.univrouen.poste.domain;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -29,6 +29,7 @@ import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -93,4 +94,13 @@ public class PosteCandidatureFile implements DematFile {
 		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
         return bigValue.longValue();
     }
+    
+	public static List<Object[]> sumPosteCandidatureFileSizeByDate() {
+    	String sql = "SELECT date_part('year', send_time) as year, date_part('month', send_time) as month, date_part('day', send_time) as day, "
+    			+ "sum(sum(file_size)) over(order by date_part('year', send_time), date_part('month', send_time), date_part('day', send_time)) as file_size_sum "
+    			+ "from poste_candidature_file GROUP BY year, month, day";
+		Query q = entityManager().createNativeQuery(sql);
+        return q.getResultList();
+    }
+	
 }

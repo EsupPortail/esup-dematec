@@ -39,7 +39,7 @@
 						    datasets: [
 						        {
 						            label: "Fichiers envoyés",
-						            backgroundColor: "rgba(151,187,256,0.7)",
+						            backgroundColor: "rgba(0,0,136,0.5)",
 						            data: ${uploadStatsValues}
 						        }
 						    ]
@@ -61,7 +61,7 @@
 						    datasets: [
 						        {
 						            label: "Authentifications",
-						            backgroundColor: "rgba(256,187, 151, 0.7)",
+						            backgroundColor: "rgba(136, 0, 0, 0.5)",
 						            data: ${authStatsValues}
 						        }
 						    ]
@@ -72,7 +72,51 @@
 		
 				</script>
 		</div>
+				
+		<div class="span4">
+			<canvas id="sizeChart" width="400" height="400"><!--  --></canvas>
 			
+			 <script>
+			 
+					var dataSize = {
+						    labels: ${sumFilesSizeStatsLabels},
+						    datasets: [
+						        {
+						            label: "Volume total des candidatures",
+						            backgroundColor: "rgba(0, 136, 0, 0.5)",
+						            data: ${sumFilesSizeStatsValues}
+						        }
+						    ]
+						};
+					
+					var optionsSize = {
+							 scales: {
+				                    yAxes:[{ 
+				                    	scaleLabel: {
+				                    		display: false,
+				                    		labelString: "fez"
+				                    	},
+				                    	ticks: { 
+				                    		callback: function(value, index, values) { return humanFileSize(value); }
+				                    	}
+				                    }]  
+							 },
+							 tooltips : {
+								 callbacks: {
+								 	label:function(tooltipItem, data) { 
+								 		return humanFileSize(tooltipItem.yLabel); 
+								 		}
+								 }
+							 }
+					}
+					
+					var ctxSize = document.getElementById("sizeChart").getContext("2d");
+					var chartSize = new Chart(ctxSize, {type: 'line', data: dataSize, options: optionsSize});
+		
+				</script>
+		</div>	
+			
+	
 	</div>
 		
 </div>
