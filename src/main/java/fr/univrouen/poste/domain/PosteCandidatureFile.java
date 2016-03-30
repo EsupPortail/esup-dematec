@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +25,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -75,5 +78,19 @@ public class PosteCandidatureFile implements DematFile {
     public static String getMaxFileSize() {
         List<PosteCandidatureFile> files = entityManager().createQuery("SELECT o FROM PosteCandidatureFile o order by o.fileSize desc ", PosteCandidatureFile.class).setMaxResults(1).getResultList();
         if (!files.isEmpty()) return files.get(0).getFileSizeFormatted(); else return "Nan";
+    }
+    
+    public static Long getSumFileSize() {
+    	String sql = "SELECT SUM(file_size) FROM poste_candidature_file";
+		Query q = entityManager().createNativeQuery(sql);
+		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
+        return bigValue.longValue();
+    }
+    
+    public static Long getSumNbPages() {
+    	String sql = "SELECT SUM(nb_pages) FROM poste_candidature_file";
+		Query q = entityManager().createNativeQuery(sql);
+		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
+        return bigValue.longValue();
     }
 }
