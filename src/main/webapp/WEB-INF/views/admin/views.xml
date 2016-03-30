@@ -23,6 +23,9 @@
     <definition extends="default" name="admin">
         <put-attribute name="body" value="/WEB-INF/views/admin/index.jspx"/>
     </definition>
+    <definition extends="default" name="admin/chart">
+        <put-attribute name="body" value="/WEB-INF/views/admin/chart.jspx"/>
+    </definition>
     <definition extends="default" name="admin/currentsessions">
         <put-attribute name="body" value="/WEB-INF/views/admin/currentsessions.jspx"/>
     </definition>

@@ -1,7 +1,12 @@
 package fr.univrouen.poste.services;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import fr.univrouen.poste.domain.LogFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
@@ -51,5 +56,24 @@ public class StatService {
 				candidatNumber, userActifNumber, candidatActifNumber, posteCandidatureNumber, posteCandidatureActifNumber, 
 				posteCandidatureFileNumber, totalFileSizeFormatted, maxFileSize, nbPages, pagesKilo, nbRames, moyNbPages, moyPagesGr);
 	}
+	
+	
+	public List<List<Object>> countUploadLogFilesBydate() {
+		List<Object[]> logfilesCounts = LogFile.countUploadLogFilesBydate();
+		List<List<Object>> labelsValues = new ArrayList<List<Object>>();
+		List<Object> labels = new ArrayList<Object>();
+		List<Object> values = new ArrayList<Object>();
+		for(Object[] logfilesCount : logfilesCounts) {
+			String label = logfilesCount[2] + "/" + logfilesCount[1] + "/" + logfilesCount[0];
+			label = label.replaceAll("\\.0", "");
+			BigInteger value = (BigInteger)logfilesCount[3];
+			labels.add(label);
+			values.add(value.longValue());
+		}
+		labelsValues.add(labels);
+		labelsValues.add(values);
+		return labelsValues;
+	}
+	
 	
 }

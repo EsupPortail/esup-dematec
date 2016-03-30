@@ -17,7 +17,6 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -27,12 +26,16 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import flexjson.JSONSerializer;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.services.StatBean;
 import fr.univrouen.poste.services.StatService;
@@ -76,4 +79,26 @@ public class AdminController {
 		zipService.writeZip(postecandidatures, response.getOutputStream());
 	}
 
+	
+	@RequestMapping(value="/chart")
+	@Transactional
+	public String chart(Model uiModel) {
+	
+		List<List<Object>> countUploadLogFilesByDate = statService.countUploadLogFilesBydate();
+		
+		String uploadStatsLabels = "[]";
+		String uploadStatsValues = "[]";
+		try {	
+			JSONSerializer serializer = new JSONSerializer();
+			uploadStatsLabels = serializer.deepSerialize(countUploadLogFilesByDate.get(0));
+			uploadStatsValues = serializer.deepSerialize(countUploadLogFilesByDate.get(1));
+		} catch (Exception e) {
+			log.warn("Impossible de récupérer les statistiques", e);
+		}
+			
+		uiModel.addAttribute("uploadStatsLabels", uploadStatsLabels);
+		uiModel.addAttribute("uploadStatsValues", uploadStatsValues);
+		
+	    return "admin/chart";
+	}  
 }
