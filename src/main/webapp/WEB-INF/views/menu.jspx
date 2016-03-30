@@ -50,6 +50,7 @@
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
             <menu:category id="c_logfile" label="Statistiques" z="user-managed">
                 <menu:item activeMenu="${activeMenu == 'admin'}" id="admin_stats" label="Résumé" url="/admin"/>
+                <menu:item activeMenu="${activeMenu == 'chart'}" id="admin_chart" label="Graphes" url="/admin/chart"/>
                 <menu:item activeMenu="${activeMenu == 'adminlogimportgalaxies'}" id="i_logimportgalaxie_list" messageCode="global_menu_list" url="/admin/logimportgalaxies?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
                 <menu:item activeMenu="${activeMenu == 'adminlogimportcommissions'}" id="i_logimportcommission_list" messageCode="global_menu_list" url="/admin/logimportcommissions?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>
                 <menu:item activeMenu="${activeMenu == 'adminlogfiles'}" id="i_logfile_list" messageCode="global_menu_list" url="/admin/logfiles?sortFieldName=actionDate&amp;sortOrder=desc&amp;page=1&amp;size=${empty param.size ? sessionScope.size_in_session : param.size}" z="user-managed"/>

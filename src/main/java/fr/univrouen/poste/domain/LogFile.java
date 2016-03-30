@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -85,5 +85,11 @@ public class LogFile {
 		}
 		return countFindLogFilesByActionEqualsAndEmailEquals(action2, userId2);	
 	}
-	
+
+	public static List<Object[]>  countUploadLogFilesBydate() {
+    	String sql = "SELECT date_part('year', action_date) as year, date_part('month', action_date) as month, date_part('day', action_date) as day, count(*) as count FROM log_file WHERE action='UPLOAD' GROUP BY year, month, day ORDER BY year, month, day";
+		Query q = entityManager().createNativeQuery(sql);
+        return q.getResultList();
+    }
+    
 }
