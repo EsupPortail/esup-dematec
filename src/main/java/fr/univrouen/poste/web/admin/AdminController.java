@@ -86,7 +86,7 @@ public class AdminController {
 	
 		List<List<Object>> countUploadLogFilesByDate = statService.countUploadLogFilesBydate();
 		List<List<Object>> countSuccessLogAuthsByDate = statService.countSuccessLogAuthsByDate();
-		
+		List<List<Object>> sumPosteCandidatureFileSizeByDate = statService.sumPosteCandidatureFileSizeByDate();
 			
 		JSONSerializer serializer = new JSONSerializer();
 		
@@ -99,6 +99,11 @@ public class AdminController {
 		String authStatsValues = serializer.deepSerialize(countSuccessLogAuthsByDate.get(1));			
 		uiModel.addAttribute("authStatsLabels", authStatsLabels);
 		uiModel.addAttribute("authStatsValues", authStatsValues);
+	
+		String sumFilesSizeStatsLabels = serializer.deepSerialize(sumPosteCandidatureFileSizeByDate.get(0));
+		String sumFilesSizeStatsValues = serializer.deepSerialize(sumPosteCandidatureFileSizeByDate.get(1));			
+		uiModel.addAttribute("sumFilesSizeStatsLabels", sumFilesSizeStatsLabels);
+		uiModel.addAttribute("sumFilesSizeStatsValues", sumFilesSizeStatsValues);
 		
 	    return "admin/chart";
 	}  
