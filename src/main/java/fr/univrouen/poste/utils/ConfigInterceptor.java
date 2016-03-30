@@ -57,6 +57,7 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	    put("/admin/logimportgalaxies",   "Logs (Rapports) Imports Galaxie"); 
 	    put("/admin/logimportcommissions",   "Logs (Rapports) Imports Commission"); 
 	    put("/admin/su",   "SU");
+	    put("/admin/chart",   "Graphes");
 	    put("/admin",   "Résumé");
 	}};
 	
