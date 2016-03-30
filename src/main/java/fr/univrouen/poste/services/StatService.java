@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import fr.univrouen.poste.domain.LogAuth;
 import fr.univrouen.poste.domain.LogFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
@@ -60,6 +61,15 @@ public class StatService {
 	
 	public List<List<Object>> countUploadLogFilesBydate() {
 		List<Object[]> logfilesCounts = LogFile.countUploadLogFilesBydate();
+		return map4chart(logfilesCounts);
+	}
+
+	public List<List<Object>> countSuccessLogAuthsByDate() {
+		List<Object[]> logfilesCounts = LogAuth.countSuccessLogAuthsByDate();
+		return map4chart(logfilesCounts);
+	}
+
+	private List<List<Object>> map4chart(List<Object[]> logfilesCounts) {
 		List<List<Object>> labelsValues = new ArrayList<List<Object>>();
 		List<Object> labels = new ArrayList<Object>();
 		List<Object> values = new ArrayList<Object>();
@@ -74,6 +84,5 @@ public class StatService {
 		labelsValues.add(values);
 		return labelsValues;
 	}
-	
 	
 }

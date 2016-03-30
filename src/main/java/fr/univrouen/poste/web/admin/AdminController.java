@@ -85,19 +85,20 @@ public class AdminController {
 	public String chart(Model uiModel) {
 	
 		List<List<Object>> countUploadLogFilesByDate = statService.countUploadLogFilesBydate();
+		List<List<Object>> countSuccessLogAuthsByDate = statService.countSuccessLogAuthsByDate();
 		
-		String uploadStatsLabels = "[]";
-		String uploadStatsValues = "[]";
-		try {	
-			JSONSerializer serializer = new JSONSerializer();
-			uploadStatsLabels = serializer.deepSerialize(countUploadLogFilesByDate.get(0));
-			uploadStatsValues = serializer.deepSerialize(countUploadLogFilesByDate.get(1));
-		} catch (Exception e) {
-			log.warn("Impossible de récupérer les statistiques", e);
-		}
 			
+		JSONSerializer serializer = new JSONSerializer();
+		
+		String uploadStatsLabels = serializer.deepSerialize(countUploadLogFilesByDate.get(0));
+		String uploadStatsValues = serializer.deepSerialize(countUploadLogFilesByDate.get(1));			
 		uiModel.addAttribute("uploadStatsLabels", uploadStatsLabels);
 		uiModel.addAttribute("uploadStatsValues", uploadStatsValues);
+		
+		String authStatsLabels = serializer.deepSerialize(countSuccessLogAuthsByDate.get(0));
+		String authStatsValues = serializer.deepSerialize(countSuccessLogAuthsByDate.get(1));			
+		uiModel.addAttribute("authStatsLabels", authStatsLabels);
+		uiModel.addAttribute("authStatsValues", authStatsValues);
 		
 	    return "admin/chart";
 	}  

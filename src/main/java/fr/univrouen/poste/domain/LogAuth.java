@@ -17,7 +17,9 @@
  */
 package fr.univrouen.poste.domain;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -62,6 +64,11 @@ public class LogAuth {
 		}
 		return countFindLogAuthsByActionEqualsAndUserIdEquals(action2, userId2);	
 	}
-    
+
+	public static List<Object[]> countSuccessLogAuthsByDate() {
+    	String sql = "SELECT date_part('year', action_date) as year, date_part('month', action_date) as month, date_part('day', action_date) as day, count(*) as count FROM log_auth WHERE action='AUTH SUCCESS' GROUP BY year, month, day ORDER BY year, month, day";
+		Query q = entityManager().createNativeQuery(sql);
+        return q.getResultList();
+    }
     
 }
