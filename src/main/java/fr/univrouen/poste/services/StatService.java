@@ -32,14 +32,8 @@ public class StatService {
 		Long posteCandidatureActifNumber = PosteCandidature.countPosteActifCandidatures();
 		Long posteCandidatureFileNumber = PosteCandidatureFile.countPosteCandidatureFiles();
 
-		long totalFileSize = 0;
-		long nbPages = 0;
-		for (PosteCandidatureFile posteCandidatureFile : PosteCandidatureFile.findAllPosteCandidatureFiles()) {
-			totalFileSize += posteCandidatureFile.getFileSize();
-			if(posteCandidatureFile.getNbPages() != null) {
-				nbPages += posteCandidatureFile.getNbPages();
-			}
-		}
+		long totalFileSize = PosteCandidatureFile.getSumFileSize();
+		long nbPages = PosteCandidatureFile.getSumNbPages();
 		String totalFileSizeFormatted = PosteCandidatureFile.readableFileSize(totalFileSize);
 
 		String maxFileSize = PosteCandidatureFile.getMaxFileSize();
