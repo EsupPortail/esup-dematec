@@ -85,14 +85,22 @@ public class PosteCandidatureFile implements DematFile {
     	String sql = "SELECT SUM(file_size) FROM poste_candidature_file";
 		Query q = entityManager().createNativeQuery(sql);
 		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
-        return bigValue.longValue();
+		if(bigValue != null) {
+			return bigValue.longValue();
+		} else {
+			return new Long(0);
+		}
     }
     
     public static Long getSumNbPages() {
     	String sql = "SELECT SUM(nb_pages) FROM poste_candidature_file";
 		Query q = entityManager().createNativeQuery(sql);
 		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
-        return bigValue.longValue();
+		if(bigValue != null) {
+			return bigValue.longValue();
+		} else {
+			return new Long(0);
+		}
     }
     
 	public static List<Object[]> sumPosteCandidatureFileSizeByDate() {
