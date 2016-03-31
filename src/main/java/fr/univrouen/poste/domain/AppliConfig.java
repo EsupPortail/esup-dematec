@@ -105,17 +105,17 @@ public class AppliConfig {
 	
 	
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date dateEndCandidat;
     
 	
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date dateEndCandidatActif;
 
 
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date dateEndMembre;
 
     
