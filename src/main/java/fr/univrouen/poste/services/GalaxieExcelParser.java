@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
-import javax.persistence.TypedQuery;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +64,7 @@ public class GalaxieExcelParser {
 		for(GalaxieEntry galaxieEntry : GalaxieEntry.findAllGalaxieEntrys()) {
 			dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
 		}
-        
+		
 		for (List<String> row : cells) {
 			
 			// create a new galaxyEntry
@@ -100,7 +97,14 @@ public class GalaxieExcelParser {
 						try {
 							User user = User.findUsersByEmailAddress(dbGalaxyEntrie.getEmail()).getSingleResult();
 							if(user.getActivationDate() == null && !user.isCandidatActif()) {
-								logger.info("Le canndidat " + dbGalaxyEntrie.getNumCandidat() + " a changé d'email alors qu'il n'avait pas encore activé son compte - on relance la procédure de création de son compte/candidature.");
+								logger.info("Le candidat " + dbGalaxyEntrie.getNumCandidat() + " a changé d'email alors qu'il n'avait pas encore activé son compte - on relance la procédure de création de son compte/candidature.");
+								
+								// cas où le candidat postule à plusieurs postes pris en compte ainsi
+								List<GalaxieEntry> userGalaxieEntries = GalaxieEntry.findGalaxieEntrysByCandidat(user).getResultList();
+								for(GalaxieEntry userGalaxieEntry: userGalaxieEntries) {
+									dbGalaxyEntries.remove(getList4Id(userGalaxieEntry));
+								}
+								
 								user.remove();
 								galaxieEntry.persist();
 								dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
