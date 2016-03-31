@@ -54,10 +54,10 @@ Les admin et super-manager peuvent configurer certains éléments de l'applicati
 ## Installation 
 
 ### Pré-requis
-* Java (JDK - JAVA SE 7 OK):  http://www.oracle.com/technetwork/java/javase/downloads/index.html
-* Maven (dernière version 3.0.x ok) : http://maven.apache.org/download.cgi
-* Postgresql (8 ou 9 OK) : le mieux est de l'installer via le système de paquets de votre linux.
-* Tomcat (Tomcat 7 OK)
+* Java (JDK - JAVA SE 7 ou 8):  http://www.oracle.com/technetwork/java/javase/downloads/index.html
+* Maven (dernière version 3.0.x) : http://maven.apache.org/download.cgi
+* Postgresql (8 ou 9) : le mieux est de l'installer via le système de paquets de votre linux.
+* Tomcat (Tomcat 7 ou 8)
 
 ### PostgreSQL
 * pg_hba.conf : ajout de 
