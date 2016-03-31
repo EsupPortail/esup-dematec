@@ -43,6 +43,7 @@
                                     </div>
                                     <div class="span5 demat-filter">
                                         <field:select disableFormBinding="false" field="emailCandidats" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" items="${candidats}" multiple="true" path="/admin/users" required="true" size="15"/>
+                                    	<input id="textbox" type="text" />
                                     </div>
                                     <div class="span3 demat-filter">
                                     	<field:select  disableFormBinding="false" field="reviewStatus" id="f_fr_univrouen_poste_domain_PosteCandidature_reviewStatus" label="Vue" items="${reviewStatusList}" multiple="true" path="/admin/" size="5" required="true"/>
@@ -275,7 +276,10 @@
 
 			$(".demat-popover").filter(function() {
 			    return !$(this).text().trim();
-			}).removeClass();
+			}).removeClass();	
+
+			$('#_emailCandidats_id').filterByText($('#textbox'), true);
+
 		});
 		</script>
         </div>
