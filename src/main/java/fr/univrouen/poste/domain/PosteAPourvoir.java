@@ -43,11 +43,11 @@ public class PosteAPourvoir {
     private Set<User> membres;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date dateEndCandidatAuditionnable;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date dateEndSignupCandidat;
 
     public static List<PosteAPourvoir> findAllPosteAPourvoirs() {

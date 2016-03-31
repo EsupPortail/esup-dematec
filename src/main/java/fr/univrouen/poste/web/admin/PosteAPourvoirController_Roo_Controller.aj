@@ -77,8 +77,8 @@ privileged aspect PosteAPourvoirController_Roo_Controller {
     }
     
     void PosteAPourvoirController.addDateTimeFormatPatterns(Model uiModel) {
-        uiModel.addAttribute("posteAPourvoir_dateendcandidatauditionnable_date_format", "dd/MM/yyyy");
-        uiModel.addAttribute("posteAPourvoir_dateendsignupcandidat_date_format", "dd/MM/yyyy");
+        uiModel.addAttribute("posteAPourvoir_dateendcandidatauditionnable_date_format", "dd/MM/yyyy HH:mm");
+        uiModel.addAttribute("posteAPourvoir_dateendsignupcandidat_date_format", "dd/MM/yyyy HH:mm");
     }
     
     String PosteAPourvoirController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
