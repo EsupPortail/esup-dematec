@@ -36,13 +36,9 @@
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>
     <spring:url value="/resources/js/bootstrap-wysihtml5.js" var="bootstrap_wysihtml5_js_url"/>
     <spring:url value="/resources/js/bootstrap-wysihtml5.fr-FR.js" var="bootstrap_wysihtml5_fr_js_url"/>
-    <spring:url value="/resources/css/jquery-ui-smoothness-1.10.2.css" var="jquery_ui_css_url"/>
-    <spring:url value="/resources/js/jquery-ui-1.10.2.js" var="jquery_ui_js_url"/>
-    <spring:url value="/resources/js/jquery.ui.datepicker-fr.js" var="jquery_ui_datepicker_fr_js_url"/>
     <spring:url value="/resources/js/jquery.datetimepicker-2.5.1.full.min.js" var="datetimepicker_js_url"/>
     
     <link href="${bootstrap_wysihtml5_css_url}" rel="stylesheet" type="text/css"/>
-    <link href="${jquery_ui_css_url}" rel="stylesheet" type="text/css"/>
     <link href="${datetimepicker_css_url}" rel="stylesheet" type="text/css"/>
     
     <script src="${wysihtml5_js_url}">
@@ -52,12 +48,6 @@
         <!-- required for FF3 and Opera -->
     </script>
     <script src="${bootstrap_wysihtml5_fr_js_url}">
-        <!-- required for FF3 and Opera -->
-    </script>
-    <script src="${jquery_ui_js_url}">
-        <!-- required for FF3 and Opera -->
-    </script>
-    <script src="${jquery_ui_datepicker_fr_js_url}">
         <!-- required for FF3 and Opera -->
     </script>
     <script src="${datetimepicker_js_url}">
