@@ -60,9 +60,9 @@ privileged aspect AppliConfigController_Roo_Controller {
     }
     
     void AppliConfigController.addDateTimeFormatPatterns(Model uiModel) {
-        uiModel.addAttribute("appliConfig_dateendcandidat_date_format", "dd/MM/yyyy");
-        uiModel.addAttribute("appliConfig_dateendcandidatactif_date_format", "dd/MM/yyyy");
-        uiModel.addAttribute("appliConfig_dateendmembre_date_format", "dd/MM/yyyy");
+        uiModel.addAttribute("appliConfig_dateendcandidat_date_format", "dd/MM/yyyy HH:mm");
+        uiModel.addAttribute("appliConfig_dateendcandidatactif_date_format", "dd/MM/yyyy HH:mm");
+        uiModel.addAttribute("appliConfig_dateendmembre_date_format", "dd/MM/yyyy HH:mm");
     }
     
     void AppliConfigController.populateEditForm(Model uiModel, AppliConfig appliConfig) {
