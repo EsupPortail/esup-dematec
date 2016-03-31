@@ -18,7 +18,7 @@
     limitations under the License.
 
 -->
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.0" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     
     <display-name>PosteCandidature</display-name>
@@ -115,8 +115,9 @@
     
     <session-config>
         <session-timeout>30</session-timeout>
-    </session-config>
-    
+     	<tracking-mode>COOKIE</tracking-mode>
+ 	</session-config> 
+ 
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
         <location>/uncaughtException</location>
