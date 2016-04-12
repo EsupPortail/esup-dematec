@@ -92,8 +92,14 @@ public class GalaxieExcelParser {
 					dbGalaxyEntrie.setCivilite(galaxieEntry.getCivilite());
 					dbGalaxyEntrie.setNom(galaxieEntry.getNom());
 					dbGalaxyEntrie.setPrenom(galaxieEntry.getPrenom());
+					if(dbGalaxyEntrie.getEmail().isEmpty()) {
+						if(!galaxieEntry.getEmail().isEmpty()) {
+							dbGalaxyEntrie.setEmail(galaxieEntry.getEmail());
+							logger.info("Le candidat " + dbGalaxyEntrie.getNumCandidat() + " a maintenant renseigné son email : " + galaxieEntry.getEmail());
+						}
+					}
 					// si email différent et si le candidat n'a pas activé son compte - on réinitialise le compte == on le supprime et on le récréé avec cette nvelle adresse mail
-					if(!dbGalaxyEntrie.getEmail().equals(galaxieEntry.getEmail())) {
+					else if(!dbGalaxyEntrie.getEmail().equals(galaxieEntry.getEmail())) {
 						try {
 							User user = User.findUsersByEmailAddress(dbGalaxyEntrie.getEmail()).getSingleResult();
 							if(user.getActivationDate() == null && !user.isCandidatActif()) {
