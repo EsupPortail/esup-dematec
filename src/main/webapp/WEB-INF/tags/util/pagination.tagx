@@ -16,6 +16,17 @@
     <c:if test="${empty size || size lt 1}">
       <c:set var="size" value="10" />
     </c:if>
+    
+    <spring:url value="" var="queryUrl">
+		<c:forEach items="${paramValues}" var="p">
+			<c:if test="${p.key ne 'page' and p.key ne 'size'}">
+				<c:forEach var='value' items='${p.value}'>
+					<spring:param name="${p.key}" value="${value}" />
+				</c:forEach>
+			</c:if>
+		</c:forEach>
+	</spring:url>
+    
 
 <c:if test="${maxPages gt 1}">
 
@@ -78,18 +89,6 @@
 
     <spring:message code="list_size" var="list_size" htmlEscape="false" />
     <c:out value="${list_size} " />
-
-
-	<spring:url value="" var="queryUrl">
-		<c:forEach items="${paramValues}" var="p">
-			<c:if test="${p.key ne 'page' and p.key ne 'size'}">
-				<c:forEach var='value' items='${p.value}'>
-					<spring:param name="${p.key}" value="${value}" />
-				</c:forEach>
-			</c:if>
-		</c:forEach>
-	</spring:url>
-
 
     <c:forEach var="i" begin="10" end="100" step="30">
       <c:choose>
