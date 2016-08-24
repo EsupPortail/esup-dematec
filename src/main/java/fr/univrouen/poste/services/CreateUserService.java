@@ -19,6 +19,7 @@ package fr.univrouen.poste.services;
 
 import java.util.Random;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
@@ -80,6 +81,8 @@ public class CreateUserService {
 
 	    mailMessage = mailMessage.replaceAll("@@mailAddress@@", mailTo);
 	    mailMessage = mailMessage.replaceAll("@@activationKey@@", activationKey);
+	    mailMessage = mailMessage.replaceAll("@@nom@@", WordUtils.capitalizeFully(user.getNom()));
+	    mailMessage = mailMessage.replaceAll("@@prenom@@", WordUtils.capitalizeFully(user.getPrenom()));
 	    
 	    if(emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage)) {
 	    	logger.warn("User with email " + user.getEmailAddress() + " is created and we sent him an email");

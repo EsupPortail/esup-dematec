@@ -85,13 +85,13 @@ nextval('hibernate_sequence'),
 
 'Université ESUP - Recrutement EC 2013',
 
-E'Bonjour.\n
+E'Bonjour @@prenom@@ @@nom@@.\n
 Nous venons de vous créer un compte sur l''application de l''Université ESUP.\n
 Merci d''activer celui-ci via ce lien :\n
 http://localhost:8080/EsupDematEC/signup/activate/@@mailAddress@@/@@activationKey@@\n
 --\nUniversité ESUP - Direction des Ressources Humaines',  
 
-E'Bonjour.\n
+E'Bonjour @@prenom@@ @@nom@@.\n
 Une ou plusieurs candidatures ont été créées sur votre compte dans l''application de l''Université ESUP.\n
 Celle(s)-ci correspond(ent) au(x) poste(s) @@postes@@.\n
 http://localhost:8080/EsupDematEC/\n

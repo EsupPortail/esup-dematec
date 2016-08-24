@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +59,8 @@ public class GalaxieEntryService {
 		        		// new User 
 		        		UserRegistrationForm userRegistration = new UserRegistrationForm();
 		        		userRegistration.setEmailAddress(galaxieEntry.getEmail());
+		        		userRegistration.setLastName(galaxieEntry.getNom());
+		        		userRegistration.setFirstName(galaxieEntry.getPrenom());
 						candidat = createUserService.createCandidatUser(userRegistration);
 							
 						if(candidat != null) {
@@ -130,6 +133,10 @@ public class GalaxieEntryService {
 		
 		List<GalaxieEntry> galaxieEntries = GalaxieEntry.findGalaxieEntrysByCandidat(candidat).getResultList();
 		
+		String nom = "";
+		String prenom = "";
+		String civilite = "";
+		
 		for(GalaxieEntry galaxieEntry : galaxieEntries) {
 			
 			if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() != null && galaxieEntry.getCandidature() == null) {
@@ -154,6 +161,10 @@ public class GalaxieEntryService {
 				galaxieEntry.merge();
 				
 				postes.add(candidature.getPoste().getNumEmploi());
+				
+				nom = galaxieEntry.getNom();
+				prenom = galaxieEntry.getPrenom();
+				civilite = galaxieEntry.getCivilite();
 			}
 		}
 		
@@ -162,8 +173,11 @@ public class GalaxieEntryService {
 	    String mailFrom = AppliConfig.getCacheMailFrom();
 	    String mailSubject = AppliConfig.getCacheMailSubject();	    
 	    String mailMessage = AppliConfig.getCacheTexteMailNewCandidatures();
-
+	    
 	    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
+	    mailMessage = mailMessage.replaceAll("@@nom@@",  WordUtils.capitalizeFully(nom));
+	    mailMessage = mailMessage.replaceAll("@@prenom@@", WordUtils.capitalizeFully(prenom));
+	    mailMessage = mailMessage.replaceAll("@@civilite@@", civilite);
 	    
 	    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 		

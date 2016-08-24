@@ -47,11 +47,11 @@ public class User {
 	
 	private static final int MAX_MILISECONDS_LOCK = 10000;
 	
-    private String civilite;
+    private String civilite = "";
 
-    private String nom;
+    private String nom = "";
 
-    private String prenom;
+    private String prenom = "";
 	
     @NotNull
     @Column(unique = true)
