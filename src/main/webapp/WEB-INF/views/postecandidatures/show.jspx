@@ -100,7 +100,7 @@
                         <spring:message code="entity_delete_confirm" htmlEscape="false"/>
                     </spring:escapeBody>
                 </c:set>
-                <c:forEach items="${postecandidature.candidatureFiles}" var="candidatureFile">
+                <c:forEach items="${postecandidature.sortedCandidatureFiles}" var="candidatureFile">
                     <spring:url value="/postecandidatures/${postecandidature.id}/${candidatureFile.id}" var="candidatureFileUrl"/>
                     <tr>
                         <td>

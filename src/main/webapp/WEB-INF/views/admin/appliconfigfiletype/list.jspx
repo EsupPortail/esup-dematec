@@ -37,6 +37,7 @@
             <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp" property="candidatureContentTypeRestrictionRegexp" z="b/ofnOEtpJy+mAwEml8z3/zNufs="/>
             <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp" property="candidatureFilenameRestrictionRegexp" z="ceoPH+3wtPt3pf+DUo5cD42HWVI="/>
             <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription" property="typeDescription" z="um7CE0A58F+k/edoQg7+B0Shl7s="/>
+            <table:column id="c_fr_univrouen_poste_domain_AppliConfigFileType_listIndex" property="listIndex" label="Index"/>
         </table:table>
     </page:list>
 </div>

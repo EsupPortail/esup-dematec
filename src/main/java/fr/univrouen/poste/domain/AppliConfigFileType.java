@@ -14,7 +14,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 public class AppliConfigFileType {
 	
-	public static final List<String> fieldNames4OrderClauseFilter = Arrays.asList("typeTitle", "typeDescription", "candidatureFileMoSizeMax", "candidatureNbFileMax", "candidatureContentTypeRestrictionRegexp", "candidatureFilenameRestrictionRegexp", "id");
+	public static final List<String> fieldNames4OrderClauseFilter = Arrays.asList("typeTitle", "typeDescription", "candidatureFileMoSizeMax", "candidatureNbFileMax", "candidatureContentTypeRestrictionRegexp", "candidatureFilenameRestrictionRegexp", "id", "listIndex", "listIndex, id");
 	
 	@Column(columnDefinition="TEXT")
 	private String typeTitle;
@@ -34,6 +34,9 @@ public class AppliConfigFileType {
     @Column(columnDefinition="TEXT")
 	private String candidatureFilenameRestrictionRegexp = ".*";
 
+    @Column
+	private Long listIndex = new Long(0); 
+    
 	public static AppliConfigFileType getDefaultFileType() {
 		return AppliConfigFileType.findAllAppliConfigFileTypes().get(0);
 	} 

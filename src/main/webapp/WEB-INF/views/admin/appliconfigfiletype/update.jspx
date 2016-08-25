@@ -9,5 +9,6 @@
         <field:input field="candidatureContentTypeRestrictionRegexp" id="c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp" z="8iRQ4DKRAR8PaAUpNIaDM7Uv9gk="/>
         <field:input field="candidatureFilenameRestrictionRegexp" id="c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp" z="3KBdZFFtdG1ZrZr4SqoiopIeThY="/>
         <field:textarea field="typeDescription" id="c_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription" z="user-managed"/>
+        <field:input field="listIndex" id="c_fr_univrouen_poste_domain_AppliConfigFileType_listIndex" validationMessageCode="field_invalid_integer" z="gR80K/6vseNq6JHTgErmtKR2BJI="/>
     </form:update>
 </div>

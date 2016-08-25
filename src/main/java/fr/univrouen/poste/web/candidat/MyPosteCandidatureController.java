@@ -546,7 +546,7 @@ public class MyPosteCandidatureController {
 		PosteCandidatureFile posteCandidatureFile = new PosteCandidatureFile();
 		posteCandidatureFile.setFileType(AppliConfigFileType.getDefaultFileType());
 		uiModel.addAttribute("posteCandidatureFile", posteCandidatureFile);
-		uiModel.addAttribute("fileTypes", AppliConfigFileType.findAllAppliConfigFileTypes("id", "asc"));
+		uiModel.addAttribute("fileTypes", AppliConfigFileType.findAllAppliConfigFileTypes("listIndex, id", "asc"));
 		uiModel.addAttribute("texteCandidatAideCandidatureDepot", AppliConfig.getCacheTexteCandidatAideCandidatureDepot());
 		
 		
@@ -568,7 +568,7 @@ public class MyPosteCandidatureController {
 			}
 		}
 		
-		List<AppliConfigFileType> fileTypes = AppliConfigFileType.findAllAppliConfigFileTypes("id", "asc");
+		List<AppliConfigFileType> fileTypes = AppliConfigFileType.findAllAppliConfigFileTypes("listIndex, id", "asc");
 		List<AppliConfigFileType> fileTypesAvailable = new ArrayList<AppliConfigFileType>(); 
 		for(AppliConfigFileType fileType: fileTypes) {
 			if(fileType.getCandidatureNbFileMax()<0) {

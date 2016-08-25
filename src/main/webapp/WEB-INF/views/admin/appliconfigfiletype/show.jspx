@@ -9,5 +9,6 @@
         <field:display field="candidatureContentTypeRestrictionRegexp" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp" object="${appliconfigfiletype}" z="/nq5iWjpaNy09OZ2iaPwQP18uIY="/>
         <field:display field="candidatureFilenameRestrictionRegexp" id="s_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp" object="${appliconfigfiletype}" z="KxdYsNDCcGdMr32MJhjBIRk8/A0="/>
         <field:display field="typeDescription" id="s_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription" object="${appliconfigfiletype}" z="/8IPsdLDs1f2yWPxThWIl9e9bjI="/>
+        <field:display field="listIndex" id="s_fr_univrouen_poste_domain_AppliConfigFileType_listIndex" object="${appliconfigfiletype}" z="ufp/k7CSR7nf+6TWQdFrl0cXpz0="/>
     </page:show>
 </div>

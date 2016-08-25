@@ -29,14 +29,14 @@ privileged aspect PosteCandidature_Roo_Finder {
     public static TypedQuery<PosteCandidature> PosteCandidature.findPosteCandidaturesByCandidat(User candidat, String sortFieldName, String sortOrder) {
         if (candidat == null) throw new IllegalArgumentException("The candidat argument is required");
         EntityManager em = PosteCandidature.entityManager();
-        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM PosteCandidature AS o WHERE o.candidat = :candidat");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
+        TypedQuery<PosteCandidature> q = em.createQuery(queryBuilder.toString(), PosteCandidature.class);
         q.setParameter("candidat", candidat);
         return q;
     }

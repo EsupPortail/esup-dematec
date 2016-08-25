@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -254,5 +256,11 @@ public class PosteCandidature {
     	q.setParameter("date", date);
     	return q;
 	}
+	
+    public List<PosteCandidatureFile> getSortedCandidatureFiles() {
+    	List<PosteCandidatureFile> sortedCandidatureFiles = new ArrayList<PosteCandidatureFile>(this.candidatureFiles);
+    	Collections.sort(sortedCandidatureFiles, new PosteCandidatureFileComparator());
+        return sortedCandidatureFiles;
+    }
     
 }
