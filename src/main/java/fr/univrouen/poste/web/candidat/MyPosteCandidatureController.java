@@ -857,7 +857,7 @@ public class MyPosteCandidatureController {
 	
     @RequestMapping(value = "/{id}/updateManagerComment", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateManagerCommen(@PathVariable("id") Long id, @RequestParam String comment, Model uiModel) {
+    public String updateManagerComment(@PathVariable("id") Long id, @RequestParam String comment, Model uiModel) {
     	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
     	postecandidature.setManagerComment4Members(comment);
     	postecandidature.merge();
