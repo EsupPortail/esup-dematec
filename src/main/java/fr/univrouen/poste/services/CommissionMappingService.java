@@ -31,12 +31,15 @@ public class CommissionMappingService {
     private static final String id_nom = "Nom";
 
     private static final String id_prenom = "Prénom";
+    
+    private static final String id_president= "Président";
 
 	public void setAttrFromCell(CommissionEntry commissionEntry, String cellName, String cellValue) {
         if (id_numposte.equals(cellName)) commissionEntry.setNumPoste(cellValue.trim());
         if (id_nom.equals(cellName)) commissionEntry.setNom(cellValue.trim());
         if (id_prenom.equals(cellName)) commissionEntry.setPrenom(cellValue.trim());
         if (id_email.equals(cellName)) commissionEntry.setEmail(cellValue.trim());
+        if (id_president.equals(cellName)) commissionEntry.setPresident("oui".equalsIgnoreCase(cellValue.trim()));
 	}
 	
 }

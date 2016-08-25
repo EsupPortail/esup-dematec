@@ -51,14 +51,14 @@ privileged aspect CommissionEntry_Roo_Finder {
     public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByMembre(User membre, String sortFieldName, String sortOrder) {
         if (membre == null) throw new IllegalArgumentException("The membre argument is required");
         EntityManager em = CommissionEntry.entityManager();
-        String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.membre = :membre";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM CommissionEntry AS o WHERE o.membre = :membre");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
+        TypedQuery<CommissionEntry> q = em.createQuery(queryBuilder.toString(), CommissionEntry.class);
         q.setParameter("membre", membre);
         return q;
     }
@@ -71,14 +71,14 @@ privileged aspect CommissionEntry_Roo_Finder {
     
     public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByMembreIsNull(String sortFieldName, String sortOrder) {
         EntityManager em = CommissionEntry.entityManager();
-        String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.membre IS NULL";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM CommissionEntry AS o WHERE o.membre IS NULL");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
+        TypedQuery<CommissionEntry> q = em.createQuery(queryBuilder.toString(), CommissionEntry.class);
         return q;
     }
     
@@ -96,14 +96,14 @@ privileged aspect CommissionEntry_Roo_Finder {
         if (numPoste == null || numPoste.length() == 0) throw new IllegalArgumentException("The numPoste argument is required");
         if (email == null || email.length() == 0) throw new IllegalArgumentException("The email argument is required");
         EntityManager em = CommissionEntry.entityManager();
-        String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.numPoste = :numPoste AND o.email = :email";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM CommissionEntry AS o WHERE o.numPoste = :numPoste AND o.email = :email");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
+        TypedQuery<CommissionEntry> q = em.createQuery(queryBuilder.toString(), CommissionEntry.class);
         q.setParameter("numPoste", numPoste);
         q.setParameter("email", email);
         return q;
@@ -117,14 +117,14 @@ privileged aspect CommissionEntry_Roo_Finder {
     
     public static TypedQuery<CommissionEntry> CommissionEntry.findCommissionEntrysByPosteIsNull(String sortFieldName, String sortOrder) {
         EntityManager em = CommissionEntry.entityManager();
-        String jpaQuery = "SELECT o FROM CommissionEntry AS o WHERE o.poste IS NULL";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM CommissionEntry AS o WHERE o.poste IS NULL");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<CommissionEntry> q = em.createQuery(jpaQuery, CommissionEntry.class);
+        TypedQuery<CommissionEntry> q = em.createQuery(queryBuilder.toString(), CommissionEntry.class);
         return q;
     }
     

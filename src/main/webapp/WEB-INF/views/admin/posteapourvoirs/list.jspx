@@ -21,19 +21,19 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <util:help>
-    	<c:if test="${not candidatCanSignup}">
-        	<p>Les différents postes donnés ici ont été générés depuis le menu Importation. Vous pouvez ici vérifier que l'ensemble des postes a bien été
+        <c:if test="${not candidatCanSignup}">
+            <p>Les différents postes donnés ici ont été générés depuis le menu Importation. Vous pouvez ici vérifier que l'ensemble des postes a bien été
 				créé.</p>
-		</c:if>
+        </c:if>
         <p>Pour chacun des postes, vous pouvez éditer leurs membres, pour ce faire, cliquez sur le bouton "Modifier" du poste voulu.</p>
         <p>Vous pouvez saisir une "Date Fin Candidat Auditionnable" correspondant à la date à partir de laquelle les candidats retenus pour audition n'ont plus accès à l'application.</p>
         <c:if test="${candidatCanSignup}">
-        	<p class="alert">Votre instance d'EsupDematEC a été configurée pour laisser la possibilité aux candidats de s'inscrire directement dans l'application (sans passer par l'import d'un fichier Excel), 
+            <p class="alert">Votre instance d'EsupDematEC a été configurée pour laisser la possibilité aux candidats de s'inscrire directement dans l'application (sans passer par l'import d'un fichier Excel), 
         	aussi vous pouvez ici créer un poste depuis un formulaire web. </p>
-        	<p>
+            <p>
         	Attention, "Date Fin Candidature" doit être renseigné pour que le poste puisse effectivement être affiché disponible à la candidature.
         	</p>
-        	<p>"Date Fin Candidature" correspond à la date à partir de laquelle les candidats (non retenus pour audition) n'ont plus accès au poste (candidature et dépôt).</p>
+            <p>"Date Fin Candidature" correspond à la date à partir de laquelle les candidats (non retenus pour audition) n'ont plus accès au poste (candidature et dépôt).</p>
         </c:if>
     </util:help>
     <c:set value="false" var="canManage"/>
@@ -46,10 +46,9 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" property="profil" z="GbIqGAwYsYdwDUxFMNg1+/TlaEo="/>
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" property="localisation" sort="true" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" property="membres" z="Oj8AzSZWWBW0uI0w9Xngx4nqcu0="/>
-            <c:if test="${candidatCanSignup}">
-                <table:column date="true" dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" property="dateEndSignupCandidat" z="I9zpSWSBxNNFIL2MZUzIndPuIec="/>
-            </c:if>
+            <c:if test="${candidatCanSignup}"/>
             <table:column date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" property="dateEndCandidatAuditionnable" z="eRnuqrnQy3FWVT6pYNm6mwfwD5g="/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteAPourvoir_presidents" property="presidents" z="tqD5ndShSmDQJiSoUm+fEVkNmqc="/>
         </table:table>
     </page:list>
 </div>

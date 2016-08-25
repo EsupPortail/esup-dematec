@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -88,6 +89,9 @@ public class PosteCandidature {
     
     @OneToOne (mappedBy="candidature", fetch=FetchType.LAZY)
     private GalaxieEntry galaxieEntry;
+    
+    @ManyToMany
+    private Set<User> reporters;
 
     public String getNom() {
         return this.candidat.getNom();

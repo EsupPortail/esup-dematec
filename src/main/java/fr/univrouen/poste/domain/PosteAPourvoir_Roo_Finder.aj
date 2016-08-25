@@ -37,14 +37,14 @@ privileged aspect PosteAPourvoir_Roo_Finder {
     public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(Date dateEndSignupCandidat, String sortFieldName, String sortOrder) {
         if (dateEndSignupCandidat == null) throw new IllegalArgumentException("The dateEndSignupCandidat argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
-        String jpaQuery = "SELECT o FROM PosteAPourvoir AS o WHERE o.dateEndSignupCandidat > :dateEndSignupCandidat";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM PosteAPourvoir AS o WHERE o.dateEndSignupCandidat > :dateEndSignupCandidat");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<PosteAPourvoir> q = em.createQuery(jpaQuery, PosteAPourvoir.class);
+        TypedQuery<PosteAPourvoir> q = em.createQuery(queryBuilder.toString(), PosteAPourvoir.class);
         q.setParameter("dateEndSignupCandidat", dateEndSignupCandidat);
         return q;
     }
@@ -60,14 +60,14 @@ privileged aspect PosteAPourvoir_Roo_Finder {
     public static TypedQuery<PosteAPourvoir> PosteAPourvoir.findPosteAPourvoirsByNumEmploi(String numEmploi, String sortFieldName, String sortOrder) {
         if (numEmploi == null || numEmploi.length() == 0) throw new IllegalArgumentException("The numEmploi argument is required");
         EntityManager em = PosteAPourvoir.entityManager();
-        String jpaQuery = "SELECT o FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM PosteAPourvoir AS o WHERE o.numEmploi = :numEmploi");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<PosteAPourvoir> q = em.createQuery(jpaQuery, PosteAPourvoir.class);
+        TypedQuery<PosteAPourvoir> q = em.createQuery(queryBuilder.toString(), PosteAPourvoir.class);
         q.setParameter("numEmploi", numEmploi);
         return q;
     }

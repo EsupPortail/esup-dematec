@@ -87,6 +87,7 @@ public class CommissionExcelParser {
 					if(!fieldsEquals(dbCommissionEntry, commissionEntry)) {
 						dbCommissionEntry.setNom(commissionEntry.getNom());
 						dbCommissionEntry.setPrenom(commissionEntry.getPrenom());
+						dbCommissionEntry.setPresident(commissionEntry.getPresident());
 						dbCommissionEntry.merge();
 					}
 				}
@@ -99,7 +100,8 @@ public class CommissionExcelParser {
 	private boolean fieldsEquals(CommissionEntry dbCommissionEntry,
 			CommissionEntry commissionEntry) {
 		return dbCommissionEntry.getNom().equals(commissionEntry.getNom()) 
-				&& dbCommissionEntry.getPrenom().equals(commissionEntry.getPrenom());
+				&& dbCommissionEntry.getPrenom().equals(commissionEntry.getPrenom())
+				&& dbCommissionEntry.getPresident().equals(commissionEntry.getPresident());
 	}
 
 	private List<String> getList4Id(CommissionEntry commissionEntry) {

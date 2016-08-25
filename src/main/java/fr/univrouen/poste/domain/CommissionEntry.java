@@ -42,6 +42,8 @@ public class CommissionEntry {
     private String nom;
 
     private String prenom;
+    
+    private Boolean president = false;
 
     @ManyToOne(fetch=FetchType.LAZY)
     private User membre;

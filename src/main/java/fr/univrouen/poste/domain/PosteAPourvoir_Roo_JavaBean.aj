@@ -42,6 +42,14 @@ privileged aspect PosteAPourvoir_Roo_JavaBean {
         this.membres = membres;
     }
     
+    public Set<User> PosteAPourvoir.getPresidents() {
+        return this.presidents;
+    }
+    
+    public void PosteAPourvoir.setPresidents(Set<User> presidents) {
+        this.presidents = presidents;
+    }
+    
     public Date PosteAPourvoir.getDateEndCandidatAuditionnable() {
         return this.dateEndCandidatAuditionnable;
     }

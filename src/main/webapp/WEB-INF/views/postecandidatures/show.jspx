@@ -147,15 +147,16 @@
                     </tr>
                 </c:forEach>
                 <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
-                	<tfoot>
-                		<tr class="footer">
-                			 <spring:url value="/postecandidatures/${postecandidature.id}" var="pcUrl"/>
-                			<td colspan="5">
-                				<a href="${pcUrl}?export=pdf" class="btn">Export pdf</a> | <a href="${pcUrl}?export=zip" class="btn">Export zip</a>
-                				<c:if test="${not empty param.exportFailed}"> - <span class="alert alert-error">Export <b>${param.exportFailed}</b> impossible pour cette candidature.</span></c:if>
-                			</td>
-                		</tr>
-                	</tfoot>
+                    <tfoot>
+                        <tr class="footer">
+                            <spring:url value="/postecandidatures/${postecandidature.id}" var="pcUrl"/>
+                            <td colspan="5">
+                                <a class="btn" href="${pcUrl}?export=pdf">Export pdf</a> | <a class="btn" href="${pcUrl}?export=zip">Export zip</a>
+                                <c:if test="${not empty param.exportFailed}"> - <span class="alert alert-error">Export <b>${param.exportFailed}</b> impossible pour cette candidature.</span>
+                                </c:if>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </sec:authorize>
             </table>
         </c:if>
@@ -180,6 +181,7 @@
         <field:display field="managerReview" id="s_fr_univrouen_poste_domain_PosteCandidature_managerReview" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="galaxieEntry" id="s_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="managerComment4Members" id="s_fr_univrouen_poste_domain_PosteCandidature_managerComment4Members" object="${postecandidature}" render="false" z="user-managed"/>
+        <field:display field="reporters" id="s_fr_univrouen_poste_domain_PosteCandidature_reporters" object="${postecandidature}" z="v2mJvM4VPRt+hD6VFB6SDgjSnfo="/>
     </page:show>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
         <div class="demat-fluid">

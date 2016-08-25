@@ -99,4 +99,12 @@ privileged aspect PosteCandidature_Roo_JavaBean {
         this.galaxieEntry = galaxieEntry;
     }
     
+    public Set<User> PosteCandidature.getReporters() {
+        return this.reporters;
+    }
+    
+    public void PosteCandidature.setReporters(Set<User> reporters) {
+        this.reporters = reporters;
+    }
+    
 }

@@ -27,5 +27,6 @@
         <field:display field="poste" id="s_fr_univrouen_poste_domain_CommissionEntry_poste" object="${commissionentry}" z="GXrzRHqnQwL/Xs50VOstM02nj2E="/>
         <field:display field="numPoste" id="s_fr_univrouen_poste_domain_CommissionEntry_numPoste" object="${commissionentry}" z="UAYgJgdlZrGb+TM9CXUz+i/s3Vw="/>
         <field:display field="membre" id="s_fr_univrouen_poste_domain_CommissionEntry_membre" object="${commissionentry}" z="qWeBBa7mWu21m/R6ouUNWT/YA9A="/>
+        <field:display field="president" id="s_fr_univrouen_poste_domain_CommissionEntry_president" object="${commissionentry}" z="1a+OZWh11yQ4w8//pK606udayCA="/>
     </page:show>
 </div>

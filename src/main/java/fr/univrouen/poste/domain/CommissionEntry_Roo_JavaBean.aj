@@ -37,6 +37,14 @@ privileged aspect CommissionEntry_Roo_JavaBean {
         this.prenom = prenom;
     }
     
+    public Boolean CommissionEntry.getPresident() {
+        return this.president;
+    }
+    
+    public void CommissionEntry.setPresident(Boolean president) {
+        this.president = president;
+    }
+    
     public User CommissionEntry.getMembre() {
         return this.membre;
     }

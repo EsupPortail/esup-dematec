@@ -66,6 +66,7 @@
             <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_prenom" property="prenom" z="op2gk/O9vAZ1DNkY1rTSbGjBNzM="/>
             <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_poste" property="poste" render="false" sort="true" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_membre" property="membre" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_CommissionEntry_president" property="president" z="u3Q/pKThZuWEaAO4z/JVHac+Wxk="/>
         </table:table>
     </page:list>
 </div>

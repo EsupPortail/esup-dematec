@@ -117,8 +117,17 @@ public class CommissionEntryService {
 			   		}
 			   			
 			   		poste.getMembres().add(commissionEntry.getMembre());
-			   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS);  
+			   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme membre pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS); 
 			   		postes.add(poste.getNumEmploi());
+			   	}
+			   	if(commissionEntry.getPresident() && (commissionEntry.getPoste().getPresidents() == null || !commissionEntry.getPoste().getPresidents().contains(commissionEntry.getMembre()))) {           		
+			   		PosteAPourvoir poste = commissionEntry.getPoste();
+			   		if(poste.getPresidents() == null) {
+			   			poste.setPresidents(new HashSet<User>());
+			   		}
+			   			
+			   		poste.getPresidents().add(commissionEntry.getMembre());
+			   		logService.logImportCommission("Membre " + commissionEntry.getMembre().getEmailAddress() + " ajouté comme président pour le poste " + poste.getNumEmploi() + ".", LogService.IMPORT_SUCCESS); 
 			   	}
 			}
 		}

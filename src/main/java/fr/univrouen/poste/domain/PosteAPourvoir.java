@@ -42,6 +42,9 @@ public class PosteAPourvoir {
     @ManyToMany
     private Set<User> membres;
 
+    @ManyToMany
+    private Set<User> presidents;
+    
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date dateEndCandidatAuditionnable;

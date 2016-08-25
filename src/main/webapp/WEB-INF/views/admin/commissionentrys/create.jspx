@@ -27,6 +27,7 @@
         <field:select field="poste" id="c_fr_univrouen_poste_domain_CommissionEntry_poste" itemValue="id" items="${posteapourvoirs}" path="/admin/posteapourvoirs" z="q08YgwxhfFUNzvgdL+31/CzfjQg="/>
         <field:input field="numPoste" id="c_fr_univrouen_poste_domain_CommissionEntry_numPoste" z="YRB44RDhfoFMriSnIWCSTBg2J9k="/>
         <field:select field="membre" id="c_fr_univrouen_poste_domain_CommissionEntry_membre" itemValue="id" items="${users}" path="/admin/users" z="GedMcNmO9EeDg4XzAT0ZICIy92Y="/>
+        <field:checkbox field="president" id="c_fr_univrouen_poste_domain_CommissionEntry_president" z="b0JILl3qhN0EIIMHLPCtuSGzo74="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_fr_univrouen_poste_domain_CommissionEntry" render="${not empty dependencies}" z="2V7Vj/jw69idJMPkljsBP6eksNM="/>
 </div>

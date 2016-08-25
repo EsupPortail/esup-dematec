@@ -30,24 +30,21 @@
         <field:input field="numEmploi" id="c_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" z="tTZzzyPokipeFVRzI4i5yhixQiA="/>
         <field:input field="profil" id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" z="EFU0JX3+fbAAYwqP2B5DKLDw8Po="/>
         <field:input field="localisation" id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" z="dxIvZ9reHBlYddpEAy0LTG8L7yg="/>
-       	<field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" size="15" z="user-managed"/>
+        <field:select field="membres" id="c_fr_univrouen_poste_domain_PosteAPourvoir_membres" itemValue="id" items="${users}" multiple="true" path="/admin/users" size="15" z="user-managed"/>
         <c:if test="${candidatCanSignup}">
-        	<field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>
+            <field:datetime dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" z="k7uYcb7emKBcRfGrTyePEGtdPf8="/>
         </c:if>
         <field:datetime dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="c_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" z="OhtSmGEIPIKb6obN/VzokqX8X5w="/>
+        <field:select field="presidents" id="c_fr_univrouen_poste_domain_PosteAPourvoir_presidents" itemValue="id" items="${users}" multiple="true" path="/admin/users" z="a9j8RHSwiLxSk7euvrm9C6OxlFk="/>
     </form:update>
-    
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/css/jquery.datetimepicker-2.5.1.css" var="datetimepicker_css_url"/>
-    
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>
     <spring:url value="/resources/js/bootstrap-wysihtml5.js" var="bootstrap_wysihtml5_js_url"/>
     <spring:url value="/resources/js/bootstrap-wysihtml5.fr-FR.js" var="bootstrap_wysihtml5_fr_js_url"/>
     <spring:url value="/resources/js/jquery.datetimepicker-2.5.1.full.min.js" var="datetimepicker_js_url"/>
-    
     <link href="${bootstrap_wysihtml5_css_url}" rel="stylesheet" type="text/css"/>
     <link href="${datetimepicker_css_url}" rel="stylesheet" type="text/css"/>
-    
     <script src="${wysihtml5_js_url}">
         <!-- required for FF3 and Opera -->
     </script>
@@ -60,7 +57,6 @@
     <script src="${datetimepicker_js_url}">
         <!-- required for FF3 and Opera -->
     </script>
-    
     <script>
 $(document).ready(function(){
 	
