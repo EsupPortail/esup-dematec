@@ -106,6 +106,14 @@
                                     <spring:url value="/postecandidatures" var="finder4MembreByPostesUrl"/>
                                     <spring-form:form action="${finder4MembreByPostesUrl }" method="get">
                                         <field:select disableFormBinding="false" field="numEmploiPostes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" itemValue="numEmploi" items="${membresPostes}" multiple="true" path="/admin/posteapourvoirs" required="true"/>
+	                                	<div>
+	                                        <label for="auditionnable">Auditionnable</label>
+	                                        <spring-form:select id="auditionnable" path="auditionnable">
+	                                            <spring-form:option value="">--</spring-form:option>
+	                                            <spring-form:option value="true">Auditionnable</spring-form:option>
+	                                            <spring-form:option value="false">Non Auditionnable</spring-form:option>
+	                                        </spring-form:select>
+	                                    </div>
 	                                	<field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
                                         <input class="btn btn-success" id="proceed" type="submit" value="Trouver"/>
                                     </spring-form:form>

@@ -699,7 +699,7 @@ public class MyPosteCandidatureController {
 			if(membresPostes.isEmpty()) {
 				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			}
-			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes, sortFieldName, sortOrder).getResultList();		
+			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes, searchCriteria.getAuditionnable(), sortFieldName, sortOrder).getResultList();		
 			if(zip) {
 	    		String contentType = "application/zip";
 	    		Calendar cal = Calendar.getInstance();
