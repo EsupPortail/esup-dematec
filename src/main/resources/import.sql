@@ -69,7 +69,8 @@ color_candidature_vue_incomplet_modifie_depuis,
 color_candidature_vue_modifie_depuis,
 membre_suppr_review_file,
 candidature_recevable_default,
-candidat_can_signup
+candidat_can_signup,
+color_reporter_tag
 ) 
 
 VALUES (
@@ -160,7 +161,9 @@ false,
 
 true,
 
-false
+false,
+
+'#eeeeaa'
 
 );
 

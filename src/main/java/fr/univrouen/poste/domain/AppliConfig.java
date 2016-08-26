@@ -103,6 +103,8 @@ public class AppliConfig {
 	
 	private static Boolean cacheCandidatCanSignup;
 	
+	private static String cacheColorReporterTag;
+	
 	
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
@@ -215,6 +217,9 @@ public class AppliConfig {
     
     @Column
     private Boolean candidatCanSignup;
+    
+    @Column
+    private String colorReporterTag;
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -809,5 +814,20 @@ public class AppliConfig {
     	}
     	return cacheCandidatCanSignup;
 	}
+	
+	
+	public static String getCacheColorReporterTag() {
+    	if(cacheColorReporterTag == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheColorReporterTag = configs.get(0).getColorReporterTag();		
+    		} 
+    		if(cacheColorReporterTag == null) {
+    			cacheColorReporterTag = "#FFFFFF";
+    		}
+    	}
+    	return cacheColorReporterTag;
+    }
+	
 	
 }

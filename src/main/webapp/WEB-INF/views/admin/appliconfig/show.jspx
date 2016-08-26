@@ -53,5 +53,6 @@
         <field:display field="membreSupprReviewFile" id="s_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" object="${appliconfig}" z="Z7nCrH2zAYGZvn4YK5drTkST9DA="/>
         <field:display field="candidatureRecevableDefault" id="s_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" object="${appliconfig}" z="aCqa55N8xU1LzH+gIdclvc9ADmk="/>
         <field:display field="candidatCanSignup" id="s_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" object="${appliconfig}" z="XjR1XXNoYGJ240EzSZS8eDc4Wi0="/>
+        <field:display field="colorReporterTag" id="s_fr_univrouen_poste_domain_AppliConfig_colorReporterTag" object="${appliconfig}" z="ZudqtIJsqSohc8vkUn4zRUsEIac="/>
     </page:show>
 </div>

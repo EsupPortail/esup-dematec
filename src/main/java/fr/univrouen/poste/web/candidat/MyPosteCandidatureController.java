@@ -717,6 +717,12 @@ public class MyPosteCandidatureController {
 	    		return null;
 			}
 			
+			for(PosteCandidature pc : postecandidatures) {
+				if(pc.getReporters() != null && pc.getReporters().contains(user)) {
+					pc.setReporterTag(true);
+				}
+			}
+			
 			uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
 			List<PosteAPourvoir> membresPostes2Display = new ArrayList<PosteAPourvoir>(user.getPostes());
 			

@@ -67,7 +67,7 @@ privileged aspect AppliConfig_Roo_JavaBean {
     public String AppliConfig.getTexteMailNewCommissions() {
         return this.texteMailNewCommissions;
     }
-
+    
     public Boolean AppliConfig.getMembreSupprReviewFile() {
         return this.membreSupprReviewFile;
     }
@@ -134,6 +134,14 @@ privileged aspect AppliConfig_Roo_JavaBean {
     
     public Boolean AppliConfig.getCandidatCanSignup() {
         return this.candidatCanSignup;
+    }
+    
+    public String AppliConfig.getColorReporterTag() {
+        return this.colorReporterTag;
+    }
+    
+    public void AppliConfig.setColorReporterTag(String colorReporterTag) {
+        this.colorReporterTag = colorReporterTag;
     }
     
 }

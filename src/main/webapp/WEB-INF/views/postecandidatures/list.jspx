@@ -139,8 +139,14 @@
         <c:set value="true" var="canManage"/>
         <style type="text/css">
         	.table-striped tbody &gt; tr:nth-child(odd) &gt; td, .table-striped tbody &gt; tr:nth-child(odd) &gt; th {background-color: rgba(249, 249, 249, 0.2);}
-        	<c:set value="managerReviewStateColor" var="tableColorField"/>
         </style>
+        <c:set value="managerReviewStateColor" var="tableColorField"/>
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_MEMBRE')">
+        <style type="text/css">
+        	.table-striped tbody &gt; tr:nth-child(odd) &gt; td, .table-striped tbody &gt; tr:nth-child(odd) &gt; th {background-color: rgba(200, 200, 200, 0.2);}
+        </style>
+        <c:set value="reporterTagColor" var="tableColorField"/>
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
         <c:set value="true" var="seeAuditionnable"/>

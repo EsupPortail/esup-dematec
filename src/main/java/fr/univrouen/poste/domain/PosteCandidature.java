@@ -33,6 +33,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
@@ -92,6 +93,9 @@ public class PosteCandidature {
     
     @ManyToMany
     private Set<User> reporters;
+    
+    @Transient
+    private Boolean reporterTag = false;
 
     public String getNom() {
         return this.candidat.getNom();
@@ -115,6 +119,10 @@ public class PosteCandidature {
 
     public String getManagerReviewStateColor() {
         return ManagerReviewLegendColor.getColor(managerReview.getReviewStatus());
+    }
+    
+    public String getReporterTagColor() {
+        return reporterTag  ?  AppliConfig.getCacheColorReporterTag() : "#fafafa";
     }
 
     public List<User> getSortedReporters() {

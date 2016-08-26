@@ -107,4 +107,12 @@ privileged aspect PosteCandidature_Roo_JavaBean {
         this.reporters = reporters;
     }
     
+    public Boolean PosteCandidature.getReporterTag() {
+        return this.reporterTag;
+    }
+    
+    public void PosteCandidature.setReporterTag(Boolean reporterTag) {
+        this.reporterTag = reporterTag;
+    }
+    
 }

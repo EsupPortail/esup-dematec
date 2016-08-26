@@ -38,16 +38,16 @@
         </p>
     </div>
     <form:update id="fu_fr_univrouen_poste_domain_AppliConfig" modelAttribute="appliConfig" path="/admin/appliconfig" versionField="Version" z="+3ji0WJNMOrr2O0BUHNLY5BxIZ4=">
-    	<div class="well">
-	    	<field:checkbox field="candidatCanSignup" id="c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" z="IwRWslqM6yWRiTK6CKY/0iQT6Gk="/>
-	        <div class="alert">En permettant aux candidats de s'inscrire directement dans EsupDematEC, vous changez le comportement de l'application : 
+        <div class="well">
+            <field:checkbox field="candidatCanSignup" id="c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" z="IwRWslqM6yWRiTK6CKY/0iQT6Gk="/>
+            <div class="alert">En permettant aux candidats de s'inscrire directement dans EsupDematEC, vous changez le comportement de l'application : 
 	        	<ul>
-	        		<li>Les imports des fichiers Galaxie ne sont plus nécessaires.</li>
-	        		<li>La création de postes se fait via l'interface par formulaire web et vous devez positionner pour chaque poste une date de fin de déclaration de candidature (qui remplace 'Date fin candidat' et 'Date fin candidat actif').</li>
-	        		<li>Les anonymes ont donc la possibilité de se créer un compte dans l'application pour candidater sur les postes ouverts (avec des dates de fin de déclaration de candidature strictement plus grandes que la date du jour).</li>
-	        	</ul>
-	        </div>
-	    </div>
+                    <li>Les imports des fichiers Galaxie ne sont plus nécessaires.</li>
+                    <li>La création de postes se fait via l'interface par formulaire web et vous devez positionner pour chaque poste une date de fin de déclaration de candidature (qui remplace 'Date fin candidat' et 'Date fin candidat actif').</li>
+                    <li>Les anonymes ont donc la possibilité de se créer un compte dans l'application pour candidater sur les postes ouverts (avec des dates de fin de déclaration de candidature strictement plus grandes que la date du jour).</li>
+                </ul>
+            </div>
+        </div>
         <util:help>
             <p>Les différentes dates à paramétrer ci-dessous permettent d'interdire l'accès aux candidats et membres à partir d'une date donnée (incluse).
 		        <ul>
@@ -109,7 +109,7 @@ Université ESUP - Direction des Ressources Humaines
         <field:textarea field="texteEnteteMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable" z="user-managed"/>
         <field:textarea field="textePiedpageMailCandidatAuditionnable" id="c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable" z="user-managed"/>
         <util:help>
-            <p>Les codes  couleurs ci-dessous permettent aux managers et admins ()uniquement) de distinguer les candidatures marquées comme Vue, Vue_Incomplet, etc.
+            <p>Les codes  couleurs ci-dessous permettent aux managers et admins (uniquement) de distinguer les candidatures marquées comme Vue, Vue_Incomplet, etc.
 	        </p>
         </util:help>
         <field:input field="colorCandidatureNonVue" id="c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue" z="9ZGoi4SHWI1+elYQmJU+Txy4Yp0="/>
@@ -123,7 +123,12 @@ Université ESUP - Direction des Ressources Humaines
             <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
         </util:help>
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
-        <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>       
+        <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>
+        <util:help>
+            <p>Le code  couleur ci-dessous permet aux membres de commissions de distinguer les candidatures pour lesquelles ils ont été nommés rapporteurs
+	        </p>
+        </util:help>
+        <field:input field="colorReporterTag" id="c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag" z="XGrGXUIyeufdS51TiaAgTWC0OmE="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>
@@ -133,11 +138,9 @@ Université ESUP - Direction des Ressources Humaines
     <spring:url value="/resources/js/jquery.minicolors.min.js" var="jquery_minicolors_js_url"/>
     <spring:url value="/resources/css/jquery.minicolors.css" var="jquery_minicolors_css_url"/>
     <spring:url value="/resources/css/jquery.datetimepicker-2.5.1.css" var="datetimepicker_css_url"/>
-    
     <link href="${bootstrap_wysihtml5_css_url}" rel="stylesheet" type="text/css"/>
     <link href="${jquery_minicolors_css_url}" rel="stylesheet" type="text/css"/>
     <link href="${datetimepicker_css_url}" rel="stylesheet" type="text/css"/>
-        
     <script src="${wysihtml5_js_url}">
         <!-- required for FF3 and Opera -->
     </script>
@@ -181,6 +184,7 @@ $(document).ready(function(){
     $('#_colorCandidatureVueModifieDepuis_id').minicolors();
     $('#_colorCandidatureVueIncompletModifieDepuis_id').minicolors();
     $('#_colorCandidatureNonVue_id').minicolors();
+    $('#_colorReporterTag_id').minicolors();
     
 });
 </script>
