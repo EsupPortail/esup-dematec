@@ -31,6 +31,7 @@ import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -87,19 +88,21 @@ public class User {
 	// only for candidat
     private String numCandidat;
     
+	// only for membre
+    @ManyToMany(mappedBy="membres")
+    private Set<PosteAPourvoir> postes;
+    
       
     public Boolean getIsCandidat() {
     	return (numCandidat!=null && !numCandidat.isEmpty());
     }
 
-    
-	// only for membre
-    @ManyToMany(mappedBy="membres")
-    private Set<PosteAPourvoir> postes;
-    
-    
     public Boolean getIsMembre() {
     	return (postes!=null && !postes.isEmpty());
+    }
+    
+    public String getDisplayName() {
+    	return WordUtils.capitalizeFully(prenom + " " + nom);
     }
 
     // don't care of upper/lower case for authentication with email ...

@@ -591,6 +591,9 @@ public class MyPosteCandidatureController {
 		List<TemplateFile> templateFiles = TemplateFile.findAllTemplateFiles("id", "asc");
 		uiModel.addAttribute("templateFiles", templateFiles);
 		
+		Boolean isPresident = postecandidature.getPoste().getPresidents() != null && postecandidature.getPoste().getPresidents().contains(getCurrentUser());
+		uiModel.addAttribute("isPresident", isPresident);
+		
 		return "postecandidatures/show";
 	}
 	
@@ -860,6 +863,28 @@ public class MyPosteCandidatureController {
     public String updateManagerComment(@PathVariable("id") Long id, @RequestParam String comment, Model uiModel) {
     	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
     	postecandidature.setManagerComment4Members(comment);
+    	postecandidature.merge();
+        uiModel.asMap().clear();
+        return "redirect:/postecandidatures/" + id;
+    }
+    
+    @RequestMapping(value = "/{id}/addReporter", method = RequestMethod.POST, produces = "text/html")
+    @PreAuthorize("hasPermission(#id, 'manageReporters')")
+    public String addReporter(@PathVariable("id") Long id, @RequestParam Long userId, Model uiModel) {
+    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+    	User user = User.findUser(userId);
+    	postecandidature.getReporters().add(user);
+    	postecandidature.merge();
+        uiModel.asMap().clear();
+        return "redirect:/postecandidatures/" + id;
+    }
+    
+    @RequestMapping(value = "/{id}/delReporter", method = RequestMethod.POST, produces = "text/html")
+    @PreAuthorize("hasPermission(#id, 'manageReporters')")
+    public String delReporter(@PathVariable("id") Long id, @RequestParam Long userId, Model uiModel) {
+    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+    	User user = User.findUser(userId);
+    	postecandidature.getReporters().remove(user);
     	postecandidature.merge();
         uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;

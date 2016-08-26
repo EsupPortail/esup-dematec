@@ -16,13 +16,17 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -33,7 +37,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(finders = { "findPosteAPourvoirsByNumEmploi", "findPosteAPourvoirsByDateEndSignupCandidatGreaterThan" })
 public class PosteAPourvoir {
 
-    private String numEmploi;
+	private String numEmploi;
 
     private String profil;
 
@@ -44,6 +48,18 @@ public class PosteAPourvoir {
 
     @ManyToMany
     private Set<User> presidents;
+    
+    public List<User> getSortedMembres() {
+    	List<User> sortedMembres = new ArrayList<User>(this.membres);
+    	Collections.sort(sortedMembres, new UserComparator());
+    	return sortedMembres;
+    }
+    
+    public List<User> getSortedPresidents() {
+    	List<User> sortedPresidents = new ArrayList<User>(this.presidents);
+    	Collections.sort(sortedPresidents, new UserComparator());
+    	return sortedPresidents;
+    }
     
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")

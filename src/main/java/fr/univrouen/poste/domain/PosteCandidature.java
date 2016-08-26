@@ -117,6 +117,12 @@ public class PosteCandidature {
         return ManagerReviewLegendColor.getColor(managerReview.getReviewStatus());
     }
 
+    public List<User> getSortedReporters() {
+    	List<User> sortedReporters = new ArrayList<User>(this.reporters);
+    	Collections.sort(sortedReporters, new UserComparator());
+    	return sortedReporters;
+    }
+    
     public void setModification(Date modification) {
         if (ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
             managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
