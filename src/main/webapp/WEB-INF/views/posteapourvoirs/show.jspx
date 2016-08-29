@@ -17,7 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---><div xmlns:spring="http://www.springframework.org/tags" xmlns:sec="http://www.springframework.org/security/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+--><div xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:spring="http://www.springframework.org/tags" xmlns:sec="http://www.springframework.org/security/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <c:set value="false" var="canManage"/>
@@ -35,6 +35,58 @@
         <field:display date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" object="${posteapourvoir}" z="1VnsoSTnmJ0OS+Gz46nlYuS9DLs="/>
         <field:display field="presidents" id="s_fr_univrouen_poste_domain_PosteAPourvoir_presidents" object="${posteapourvoir}" z="xjj8+aOt0mtWa6mF7jrc6iS2v9A="/>
     </page:show>
+    
+    <hr/>
+    
+    <h4>Fichier internes au poste / comité de sélection : </h4>
+    <table class="table  table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Fichier</th>
+                        <th>Taille</th>
+                        <th>Date d'envoi</th>
+                        <sec:authorize access="hasRole('ROLE_ADMIN')">
+                            <th>Suppression</th>
+                        </sec:authorize>
+                    </tr>
+                </thead>
+                <c:set var="delete_confirm_msg">
+                    <spring:escapeBody javaScriptEscape="true">
+                        <spring:message code="entity_delete_confirm" htmlEscape="false"/>
+                    </spring:escapeBody>
+                </c:set>
+                <c:forEach items="${posteapourvoir.posteFiles}" var="posteFile">
+                    <spring:url value="/posteapourvoirs/${posteapourvoir.id}/${posteFile.id}" var="posteFileUrl"/>
+                    <tr>
+                        <td>
+                            <h4>
+                                <a href="${posteFileUrl}">${posteFile.filename}</a>
+                            </h4>
+                        </td>
+                        <td>${posteFile.fileSizeFormatted}</td>
+                        <td>
+                            <spring:eval expression="posteFile.sendTime"/>
+                        </td>
+                        <sec:authorize access="hasRole('ROLE_ADMIN')">
+                            <spring:url value="/posteapourvoirs/${posteapourvoir.id}/delFile/${posteFile.id}" var="deletePosteFileUrl"/>
+                            <td>
+                                <a class="btn btn-danger" href="${deletePosteFileUrl}" onclick="return confirm('${delete_confirm_msg}');">
+                                    <i class="icon-trash">
+                                        <!--  -->
+                                    </i>Supprimer
+							</a>
+                            </td>
+                        </sec:authorize>
+                    </tr>
+                </c:forEach>
+            </table>
+        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+            <form:create id="fc_fr_univrouen_poste_domain_PosteAPourvoirFile" modelAttribute="posteFile" multipart="true" path="${posteapourvoir.id}/addFile" save_button="Envoyer" label="Fichier">
+               <fieldset>
+                  <input id="fc_fr_univrouen_poste_domain_PosteAPourvoirFile_file" name="file" required="required" type="file"/>
+               </fieldset>
+            </form:create>
+        </sec:authorize>
     
     <hr/>
     

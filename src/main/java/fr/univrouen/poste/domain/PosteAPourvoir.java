@@ -19,10 +19,14 @@ package fr.univrouen.poste.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -48,6 +52,10 @@ public class PosteAPourvoir {
 
     @ManyToMany
     private Set<User> presidents;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sendTime DESC")
+    private Set<PosteAPourvoirFile> posteFiles = new HashSet<PosteAPourvoirFile>();
     
     public List<User> getSortedMembres() {
     	List<User> sortedMembres = new ArrayList<User>(this.membres);

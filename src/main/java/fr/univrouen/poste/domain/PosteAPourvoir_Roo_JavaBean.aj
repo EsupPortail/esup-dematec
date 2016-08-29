@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteAPourvoirFile;
 import fr.univrouen.poste.domain.User;
 import java.util.Date;
 import java.util.Set;
@@ -48,6 +49,14 @@ privileged aspect PosteAPourvoir_Roo_JavaBean {
     
     public void PosteAPourvoir.setPresidents(Set<User> presidents) {
         this.presidents = presidents;
+    }
+    
+    public Set<PosteAPourvoirFile> PosteAPourvoir.getPosteFiles() {
+        return this.posteFiles;
+    }
+    
+    public void PosteAPourvoir.setPosteFiles(Set<PosteAPourvoirFile> posteFiles) {
+        this.posteFiles = posteFiles;
     }
     
     public Date PosteAPourvoir.getDateEndCandidatAuditionnable() {
