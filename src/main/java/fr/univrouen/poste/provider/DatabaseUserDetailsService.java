@@ -48,7 +48,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 
-		username = username.toLowerCase();
+		username = username.trim().toLowerCase();
 
 		TypedQuery<User> query = User.findUsersByEmailAddress(username, null, null);
 
