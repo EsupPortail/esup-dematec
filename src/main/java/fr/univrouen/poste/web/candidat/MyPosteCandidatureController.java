@@ -152,7 +152,7 @@ public class MyPosteCandidatureController {
 
 	
 	@RequestMapping(value = "/{id}", params = {"export"})
-	@PreAuthorize("hasPermission(#id, 'review') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#id, 'review')")
 	public String exportCandidatureFiles(@PathVariable("id") Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			
@@ -193,7 +193,7 @@ public class MyPosteCandidatureController {
 	}
 
 	@RequestMapping(value = "/{id}/reviewFile/{idFile}")
-	@PreAuthorize("hasPermission(#id, 'review') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#id, 'review')")
 	public void downloadReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
@@ -220,7 +220,7 @@ public class MyPosteCandidatureController {
 	}
 	
 	@RequestMapping(value = "/{id}/templateReviewFile/{idFile}")
-	@PreAuthorize("hasPermission(#id, 'review') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#id, 'review')")
 	public void downloadTemplateReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
@@ -247,7 +247,7 @@ public class MyPosteCandidatureController {
 	}
 	
 	@RequestMapping(value = "/{id}/delFile/{idFile}")
-	@PreAuthorize("hasPermission(#id, 'manage') and hasPermission(#idFile, 'delFile') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#id, 'manage') and hasPermission(#idFile, 'delFile')")
 	public String deleteCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
@@ -262,7 +262,7 @@ public class MyPosteCandidatureController {
 	}
 
 	@RequestMapping(value = "/{id}/delMemberReviewFile/{idFile}")
-	@PreAuthorize("hasPermission(#id, 'review') and hasPermission(#idFile, 'delMemberReviewFile') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#id, 'review') and hasPermission(#idFile, 'delMemberReviewFile')")
 	public String delMemberReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);

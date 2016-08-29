@@ -19,18 +19,18 @@
 
 --><!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 <tiles-definitions>
-    <definition extends="default" name="admin/posteapourvoirs/list">
-        <put-attribute name="body" value="/WEB-INF/views/admin/posteapourvoirs/list.jspx"/>
+    <definition extends="default" name="posteapourvoirs/list">
+        <put-attribute name="body" value="/WEB-INF/views/posteapourvoirs/list.jspx"/>
     </definition>
-<definition extends="default" name="admin/posteapourvoirs/show">
-        <put-attribute name="body" value="/WEB-INF/views/admin/posteapourvoirs/show.jspx"/>
+<definition extends="default" name="posteapourvoirs/show">
+        <put-attribute name="body" value="/WEB-INF/views/posteapourvoirs/show.jspx"/>
     </definition>
 
 
-<definition extends="default" name="admin/posteapourvoirs/update">
-        <put-attribute name="body" value="/WEB-INF/views/admin/posteapourvoirs/update.jspx"/>
+<definition extends="default" name="posteapourvoirs/update">
+        <put-attribute name="body" value="/WEB-INF/views/posteapourvoirs/update.jspx"/>
     </definition>
-<definition extends="default" name="admin/posteapourvoirs/create">
-        <put-attribute name="body" value="/WEB-INF/views/admin/posteapourvoirs/create.jspx"/>
+<definition extends="default" name="posteapourvoirs/create">
+        <put-attribute name="body" value="/WEB-INF/views/posteapourvoirs/create.jspx"/>
     </definition>
 </tiles-definitions>
