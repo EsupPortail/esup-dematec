@@ -79,9 +79,12 @@
 	<br />
 	
 	<spring:url value="/postecandidatures" var="postecandidatures_url" />
+	<spring:url value="/posteapourvoirs" var="posteapourvoirs_url" />
 	
 	<sec:authorize access="hasRole('ROLE_MEMBRE')">
 		<a href="${postecandidatures_url}" class="btn btn-primary btn-large">Liste des candidatures</a>
+		&amp;nbsp;<span>&amp;nbsp;</span>&amp;nbsp;
+		<a href="${posteapourvoirs_url}" class="btn btn-primary btn-large">Liste des postes</a>
 	</sec:authorize>
 
 

@@ -17,7 +17,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---><div xmlns:sec="http://www.springframework.org/security/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+--><div xmlns:spring="http://www.springframework.org/tags" xmlns:sec="http://www.springframework.org/security/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <c:set value="false" var="canManage"/>
@@ -35,4 +35,10 @@
         <field:display date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" object="${posteapourvoir}" z="1VnsoSTnmJ0OS+Gz46nlYuS9DLs="/>
         <field:display field="presidents" id="s_fr_univrouen_poste_domain_PosteAPourvoir_presidents" object="${posteapourvoir}" z="xjj8+aOt0mtWa6mF7jrc6iS2v9A="/>
     </page:show>
+    
+    <hr/>
+    
+    <spring:url value="/postecandidatures?numEmploiPostes=${posteapourvoir.numEmploi}&amp;_numEmploiPostes=${posteapourvoir.id}" var="postecandidatures_url" />
+	<a href="${postecandidatures_url}" class="btn btn-success btn-large">Candidatures</a>
+    
 </div>

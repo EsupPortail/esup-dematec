@@ -44,7 +44,7 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	    put("/admin/users", "Utilisateurs");
 	    put("/admin/galaxieexcels",   "Fichiers Excel Galaxie");
 	    put("/admin/galaxieentrys",   "Importation depuis Galaxie");
-	    put("/admin/posteapourvoirs",   "Liste des postes");
+	    put("/posteapourvoirs",   "Liste des postes");
 	    put("/admin/candidats",   "Liste des candidats");
 	    put("/addpostecandidatures",   "Ajout de candidatures");
 	    put("/postecandidatures",   "Candidatures");
