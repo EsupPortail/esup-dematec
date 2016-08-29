@@ -18,11 +18,16 @@
 package fr.univrouen.poste.web.membre;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,6 +52,7 @@ public class PosteAPourvoirController {
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String create(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteAPourvoir);
@@ -58,6 +64,7 @@ public class PosteAPourvoirController {
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
+    @PreAuthorize("hasPermission(#id, 'viewposte')")
     public String show(@PathVariable("id") Long id, Model uiModel) {
         addDateTimeFormatPatterns(uiModel);
         uiModel.addAttribute("posteapourvoir", PosteAPourvoir.findPosteAPourvoir(id));
@@ -66,8 +73,18 @@ public class PosteAPourvoirController {
     }
     
     @RequestMapping(produces = "text/html")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-        if (page != null || size != null) {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    	boolean isMembre = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"));
+    	
+    	if(isMembre) {
+    		String emailAddress = auth.getName();
+    		User user = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+    		List<PosteAPourvoir> posteapourvoirs = PosteAPourvoir.findPosteAPourvoirsByMembre(user);
+    		uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
+    	} else if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
             uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findPosteAPourvoirEntries(firstResult, sizeNo, sortFieldName, sortOrder));
@@ -81,6 +98,7 @@ public class PosteAPourvoirController {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String update(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteAPourvoir);
@@ -92,6 +110,7 @@ public class PosteAPourvoirController {
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public String updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, PosteAPourvoir.findPosteAPourvoir(id));
         return "posteapourvoirs/update";

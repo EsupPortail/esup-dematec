@@ -78,6 +78,13 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 			return pc.getPoste().getPresidents()!=null && pc.getPoste().getPresidents().contains(user);
 		}
 		
+		if("viewposte".equals(permissionKey)) {
+			Long id = (Long) targetDomainObject;
+			PosteAPourvoir posteAPourvoir = PosteAPourvoir.findPosteAPourvoir(id);
+        	User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+			return posteAPourvoir.getMembres()!=null &&  posteAPourvoir.getMembres().contains(user);
+		}
+		
 		if(!"manage".equals(permissionKey) && !"view".equals(permissionKey) && !"review".equals(permissionKey))
 				return false;
         

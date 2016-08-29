@@ -26,7 +26,7 @@
 				candidatures (et fichiers attachés) liées à ce poste.</strong>
         </p>
     </div>
-    <form:update id="fu_fr_univrouen_poste_domain_PosteAPourvoir" modelAttribute="posteAPourvoir" path="/admin/posteapourvoirs" versionField="Version" z="Aly8FKajkNA84D5GB6v0Kn3kCtI=">
+    <form:update id="fu_fr_univrouen_poste_domain_PosteAPourvoir" modelAttribute="posteAPourvoir" path="/posteapourvoirs" versionField="Version" z="Aly8FKajkNA84D5GB6v0Kn3kCtI=">
         <field:input field="numEmploi" id="c_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" z="tTZzzyPokipeFVRzI4i5yhixQiA="/>
         <field:input field="profil" id="c_fr_univrouen_poste_domain_PosteAPourvoir_profil" z="EFU0JX3+fbAAYwqP2B5DKLDw8Po="/>
         <field:input field="localisation" id="c_fr_univrouen_poste_domain_PosteAPourvoir_localisation" z="dxIvZ9reHBlYddpEAy0LTG8L7yg="/>

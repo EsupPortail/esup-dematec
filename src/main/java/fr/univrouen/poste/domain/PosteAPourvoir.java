@@ -87,4 +87,12 @@ public class PosteAPourvoir {
         q.setParameter("numEmplois", numEmplois);
         return q.getResultList();
     }
+
+    public static List<PosteAPourvoir> findPosteAPourvoirsByMembre(User membre) {
+        if (membre == null) throw new IllegalArgumentException("The membre argument is required");
+        TypedQuery<PosteAPourvoir> q = entityManager().createQuery("SELECT o FROM PosteAPourvoir o WHERE :membre MEMBER OF o.membres ORDER BY o.numEmploi asc", PosteAPourvoir.class);
+        q.setParameter("membre", membre);
+        return q.getResultList();
+    }
+    
 }
