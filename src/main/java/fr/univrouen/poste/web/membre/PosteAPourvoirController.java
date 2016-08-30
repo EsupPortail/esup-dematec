@@ -60,6 +60,12 @@ public class PosteAPourvoirController {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
+	protected User getCurrentUser() {
+		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
+		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		return currentUser;
+	}
+	
     void populateEditForm(Model uiModel, PosteAPourvoir posteAPourvoir) {
         uiModel.addAttribute("posteAPourvoir", posteAPourvoir);
         uiModel.addAttribute("users", User.findAllNoCandidats());
@@ -81,9 +87,12 @@ public class PosteAPourvoirController {
     @PreAuthorize("hasPermission(#id, 'viewposte')")
     public String show(@PathVariable("id") Long id, Model uiModel) {
         addDateTimeFormatPatterns(uiModel);
-        uiModel.addAttribute("posteapourvoir", PosteAPourvoir.findPosteAPourvoir(id));
+        PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
+        uiModel.addAttribute("posteapourvoir", poste);
         uiModel.addAttribute("itemId", id);
         uiModel.addAttribute("posteFile", new PosteAPourvoirFile());
+		Boolean isPresident = poste.getPresidents() != null && poste.getPresidents().contains(getCurrentUser());
+		uiModel.addAttribute("isPresident", isPresident);
         return "posteapourvoirs/show";
     }
     
@@ -120,6 +129,11 @@ public class PosteAPourvoirController {
             return "posteapourvoirs/update";
         }
         uiModel.asMap().clear();
+        
+        // attention de preserver les fichiers ...
+        PosteAPourvoir oldPoste = PosteAPourvoir.findPosteAPourvoir(posteAPourvoir.getId());
+        posteAPourvoir.setPosteFiles(oldPoste.getPosteFiles());
+        
         posteAPourvoir.merge();
         return "redirect:/posteapourvoirs/" + encodeUrlPathSegment(posteAPourvoir.getId().toString(), httpServletRequest);
     }
