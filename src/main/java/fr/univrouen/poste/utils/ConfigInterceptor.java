@@ -49,6 +49,7 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	    put("/addpostecandidatures",   "Ajout de candidatures");
 	    put("/postecandidatures",   "Candidatures");
 	    put("/admin/logfiles",   "Statistiques sur les fichiers");
+	    put("/admin/logpostefiles",   "Statistiques sur les fichiers liés aux postes");
 	    put("/admin/logauths",   "Statistiques authentification"); 
 	    put("/admin/logmails",   "Statistiques Mail"); 
 	    put("/admin/commissionexcels",   "Fichiers Excel Commission"); 

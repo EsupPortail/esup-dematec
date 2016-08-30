@@ -37,6 +37,7 @@ import fr.univrouen.poste.domain.LogFile;
 import fr.univrouen.poste.domain.LogImportCommission;
 import fr.univrouen.poste.domain.LogImportGalaxie;
 import fr.univrouen.poste.domain.LogMail;
+import fr.univrouen.poste.domain.LogPosteFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
@@ -147,6 +148,40 @@ public class LogService {
 	    logFile.setNom(candidat.getNom());
 	    logFile.setNumCandidat(candidat.getNumCandidat());
 	    logFile.setPrenom(candidat.getPrenom());
+	    
+	    // uer-agent
+	    String userAgent = request.getHeader("User-Agent");
+	    logFile.setUserAgent(userAgent);
+	    
+
+	    logFile.persist();
+    }
+	
+	public void logActionPosteFile(String action, PosteAPourvoir poste, DematFile dematFile, HttpServletRequest request, Date currentTime) {
+		
+		LogPosteFile logFile = new LogPosteFile();
+		
+		String userId = SecurityContextHolder.getContext().getAuthentication().getName();		
+		// Switch User par un admin / super-manager ?                                                                                                                                                            
+		for (GrantedAuthority a : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+			if (a instanceof SwitchUserGrantedAuthority) {
+				userId = ((SwitchUserGrantedAuthority)a).getSource().getName() + " [SU] " + userId;
+			}
+		}
+		
+		logFile.setEmail(userId);
+	    	    
+	    logFile.setNumEmploi(poste.getNumEmploi());
+	    
+	    logFile.setIp(request.getRemoteAddr());
+	    
+	    logFile.setAction(action);
+	    logFile.setActionDate(currentTime);
+	    
+	    if(dematFile != null) {
+		    logFile.setFilename(dematFile.getFilename());
+		    logFile.setFileSize(dematFile.getFileSizeFormatted());
+	    }
 	    
 	    // uer-agent
 	    String userAgent = request.getHeader("User-Agent");

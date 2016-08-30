@@ -30,6 +30,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -47,8 +48,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteAPourvoirFile;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.LogService;
 
@@ -58,7 +57,11 @@ import fr.univrouen.poste.services.LogService;
 @Transactional
 public class PosteAPourvoirController {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = Logger.getLogger(getClass());	
+
+	@Autowired
+	LogService logService;
+
 	
 	protected User getCurrentUser() {
 		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -163,7 +166,7 @@ public class PosteAPourvoirController {
 			Calendar cal = Calendar.getInstance();
 			Date currentTime = cal.getTime();
 	
-			//logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidature, postecandidatureFile, request, currentTime);
+			logService.logActionPosteFile(LogService.DOWNLOAD_ACTION, poste, posteFile, request, currentTime);
 		} catch(IOException ioe) {
 	        String ip = request.getRemoteAddr();	
 			logger.warn("Download IOException, that can be just because the client [" + ip +
@@ -177,8 +180,11 @@ public class PosteAPourvoirController {
 		PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
 		PosteAPourvoirFile posteFile = PosteAPourvoirFile.findPosteAPourvoirFile(idFile);
 		poste.getPosteFiles().remove(posteFile);
-
-		//logService.logActionFile(LogService.DELETE_ACTION, postecandidature, postecandidatureFile, request, currentTime);
+		
+		Calendar cal = Calendar.getInstance();
+		Date currentTime = cal.getTime();
+		
+		logService.logActionPosteFile(LogService.DELETE_ACTION, poste, posteFile, request, currentTime);
 		return "redirect:/posteapourvoirs/" + id.toString();
 	}
 
@@ -239,7 +245,7 @@ public class PosteAPourvoirController {
 					poste.getPosteFiles().add(posteFile);
 					poste.persist();
 				
-					// logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+					logService.logActionPosteFile(LogService.UPLOAD_ACTION, poste, posteFile, request, currentTime);
 				}
 			}
 		} else {

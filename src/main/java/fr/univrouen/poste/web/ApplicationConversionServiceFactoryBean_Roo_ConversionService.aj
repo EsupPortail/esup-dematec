@@ -15,6 +15,7 @@ import fr.univrouen.poste.domain.LogFile;
 import fr.univrouen.poste.domain.LogImportCommission;
 import fr.univrouen.poste.domain.LogImportGalaxie;
 import fr.univrouen.poste.domain.LogMail;
+import fr.univrouen.poste.domain.LogPosteFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.TemplateFile;
@@ -316,6 +317,30 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<LogPosteFile, String> ApplicationConversionServiceFactoryBean.getLogPosteFileToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.LogPosteFile, java.lang.String>() {
+            public String convert(LogPosteFile logPosteFile) {
+                return new StringBuilder().append(logPosteFile.getActionDate()).append(' ').append(logPosteFile.getNumEmploi()).append(' ').append(logPosteFile.getEmail()).append(' ').append(logPosteFile.getIp()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, LogPosteFile> ApplicationConversionServiceFactoryBean.getIdToLogPosteFileConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.LogPosteFile>() {
+            public fr.univrouen.poste.domain.LogPosteFile convert(java.lang.Long id) {
+                return LogPosteFile.findLogPosteFile(id);
+            }
+        };
+    }
+    
+    public Converter<String, LogPosteFile> ApplicationConversionServiceFactoryBean.getStringToLogPosteFileConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.LogPosteFile>() {
+            public fr.univrouen.poste.domain.LogPosteFile convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), LogPosteFile.class);
+            }
+        };
+    }
+    
     public Converter<Long, PosteAPourvoir> ApplicationConversionServiceFactoryBean.getIdToPosteAPourvoirConverter() {
         return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.PosteAPourvoir>() {
             public fr.univrouen.poste.domain.PosteAPourvoir convert(java.lang.Long id) {
@@ -425,6 +450,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getLogMailToStringConverter());
         registry.addConverter(getIdToLogMailConverter());
         registry.addConverter(getStringToLogMailConverter());
+        registry.addConverter(getLogPosteFileToStringConverter());
+        registry.addConverter(getIdToLogPosteFileConverter());
+        registry.addConverter(getStringToLogPosteFileConverter());
         registry.addConverter(getPosteAPourvoirToStringConverter());
         registry.addConverter(getIdToPosteAPourvoirConverter());
         registry.addConverter(getStringToPosteAPourvoirConverter());

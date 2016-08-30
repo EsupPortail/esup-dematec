@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show create="false" delete="false" id="ps_fr_univrouen_poste_domain_LogPosteFile" object="${logpostefile}" path="/admin/logpostefiles" update="false" z="t0n794WKHZpvmNx5RXLftN8Pzk8=">
+        <field:display date="true" dateTimePattern="${logPosteFile_actiondate_date_format}" field="actionDate" id="s_fr_univrouen_poste_domain_LogPosteFile_actionDate" object="${logpostefile}" z="I2wfRvAFCJMTov64xBmaeV5lSdg="/>
+        <field:display field="numEmploi" id="s_fr_univrouen_poste_domain_LogPosteFile_numEmploi" object="${logpostefile}" z="bQ0tfCw6Sc2JaNPlVgMtCV/hJ24="/>
+        <field:display field="email" id="s_fr_univrouen_poste_domain_LogPosteFile_email" object="${logpostefile}" z="miBFg7vP/O6e8L+VwbrbdoITtCU="/>
+        <field:display field="ip" id="s_fr_univrouen_poste_domain_LogPosteFile_ip" object="${logpostefile}" z="RFXYiu7dBWU3Fyblj77904ySyOs="/>
+        <field:display field="action" id="s_fr_univrouen_poste_domain_LogPosteFile_action" object="${logpostefile}" z="2n3OAPGYRnrXa14DRdlZsosS1Zw="/>
+        <field:display field="filename" id="s_fr_univrouen_poste_domain_LogPosteFile_filename" object="${logpostefile}" z="BNiNeouWVCIW5t+Wf45zVREPvpI="/>
+        <field:display field="fileSize" id="s_fr_univrouen_poste_domain_LogPosteFile_fileSize" object="${logpostefile}" z="UktG2v2AmaVn+5RaIs68ndXz+MM="/>
+        <field:display field="userAgent" id="s_fr_univrouen_poste_domain_LogPosteFile_userAgent" object="${logpostefile}" z="V5yei8usbiJqP+exM7P4NTHDCvQ="/>
+    </page:show>
+</div>

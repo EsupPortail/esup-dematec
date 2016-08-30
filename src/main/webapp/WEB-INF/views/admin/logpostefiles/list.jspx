@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:spring-form="http://www.springframework.org/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <div class="accordion help" id="accordionfilter">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
+            </div>
+            <div class="accordion-body collapse ${finderview ? 'in' : ''}" id="collapseFilter">
+                <div class="accordion-inner">
+                    <div class="row-fluid">
+                        <form:find finderName="ByActionEquals" id="ff_fr_univrouen_poste_domain_LogPosteFile" path="/admin/logpostefiles">
+                            <div class="span3 demat-filter">
+                                <h4>Action :</h4>
+                                <spring-form:select id="status" path="status" size="7">
+                                    <spring-form:option value="">--</spring-form:option>
+                                    <spring-form:option value="UPLOAD">UPLOAD</spring-form:option>
+                                    <spring-form:option value="UPLOAD FAILED">UPLOAD FAILED</spring-form:option>
+                                    <spring-form:option value="DELETE">DELETE</spring-form:option>
+                                    <spring-form:option value="DOWNLOAD">DOWNLOAD</spring-form:option>
+                                </spring-form:select>
+                            </div>
+                            <div class="span3 demat-filter">
+                                <field:select disableFormBinding="false" field="userId" id="users" items="${users}" label="Email" multiple="false" path="/admin/users" required="false"/>
+                                <input id="textbox" type="text"/>
+                            </div>
+                            <input name="sortFieldName" type="hidden" value="actionDate"/>
+                            <input name="sortOrder" type="hidden" value="desc"/>
+                        </form:find>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <page:list id="pl_fr_univrouen_poste_domain_LogPosteFile" items="${logpostefiles}" z="PbD17Nzybc49ihuarRR0aLWs0tM=">
+        <table:table create="false" data="${logpostefiles}" delete="false" id="l_fr_univrouen_poste_domain_LogPosteFile" path="/admin/logpostefiles" update="false" view="false" z="user-managed">
+            <table:column date="true" dateTimePattern="${logPosteFile_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogPosteFile_actionDate" property="actionDate" sort="true" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogPosteFile_email" property="email" sort="true" z="ehgXCsZrNHmBJyZ79jZTe2wb3Mg="/>
+            <table:column id="c_fr_univrouen_poste_domain_LogPosteFile_ip" property="ip"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogPosteFile_userAgent" property="userAgent"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogPosteFile_numEmploi" property="numEmploi" sort="true" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogPosteFile_action" property="action" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogPosteFile_filename" property="filename" label="Fichier"/>
+            <table:column id="c_fr_univrouen_poste_domain_LogPosteFile_fileSizeFormatted" label="Taille" property="fileSize"/>
+            <table:column date="true" dateTimePattern="${logPosteFile_actiondate_date_format}" id="c_fr_univrouen_poste_domain_LogPosteFile_actionDate" property="actionDate" sort="true"  z="buUMd0MK4SpJMEoyUITKpLSkJu0="/>
+        </table:table>
+    </page:list>
+    <script>
+	$(document).ready(function(){
+		$('#_userId_id').filterByText($('#textbox'), true);
+	});
+  </script>
+</div>
