@@ -270,7 +270,7 @@ public class MyPosteCandidatureController {
 		
 		Calendar cal = Calendar.getInstance();
 		Date currentTime = cal.getTime();
-		postecandidature.setModification(currentTime);
+		// postecandidature.setModification(currentTime);
 		
 		logService.logActionFile(LogService.DELETE_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
 		return "redirect:/postecandidatures/" + id.toString();
