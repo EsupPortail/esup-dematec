@@ -24,16 +24,16 @@
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
         <c:set value="true" var="canManage"/>
     </sec:authorize>
-    <page:show create="false" delete="false" update="${canManage}" id="ps_fr_univrouen_poste_domain_PosteAPourvoir" object="${posteapourvoir}" path="/posteapourvoirs" z="user-managed">
-        <field:display field="numEmploi" id="s_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" object="${posteapourvoir}" z="vcmmpxbb+Fw06QXMWkrjD79si1s="/>
-        <field:display field="profil" id="s_fr_univrouen_poste_domain_PosteAPourvoir_profil" object="${posteapourvoir}" z="EF61CajqcUTOBsuATnw6XBWRK50="/>
-        <field:display field="localisation" id="s_fr_univrouen_poste_domain_PosteAPourvoir_localisation" object="${posteapourvoir}" z="EVKhrRCWMnOipqXdkpoJiOPY7sM="/>
+    <page:show create="false" delete="false" update="${canManage}" id="ps_fr_univrouen_poste_domain_PosteAPourvoir" object="${posteapourvoir}" path="/posteapourvoirs" z="user-managed" list="false">
+        <field:display field="numEmploi" label="Emploi" id="s_fr_univrouen_poste_domain_PosteAPourvoir_numEmploi" object="${posteapourvoir}" z="vcmmpxbb+Fw06QXMWkrjD79si1s="/>
+        <field:display field="profil" render="${canManage}" id="s_fr_univrouen_poste_domain_PosteAPourvoir_profil" object="${posteapourvoir}" z="EF61CajqcUTOBsuATnw6XBWRK50="/>
+        <field:display field="localisation" render="${canManage}" id="s_fr_univrouen_poste_domain_PosteAPourvoir_localisation" object="${posteapourvoir}" z="EVKhrRCWMnOipqXdkpoJiOPY7sM="/>
         <field:display field="membres" id="s_fr_univrouen_poste_domain_PosteAPourvoir_membres" object="${posteapourvoir}" z="1kOjOg6dZs98xSvMo40SIBEPLkY="/>
         <c:if test="${candidatCanSignup}">
-            <field:display date="true" dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" object="${posteapourvoir}" z="pUnxIcFk8ePJ18/usK2AhchljRs="/>
+            <field:display render="${canManage}" date="true" dateTimePattern="${posteAPourvoir_dateendsignupcandidat_date_format}" field="dateEndSignupCandidat" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndSignupCandidat" object="${posteapourvoir}" z="pUnxIcFk8ePJ18/usK2AhchljRs="/>
         </c:if>
-        <field:display date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" object="${posteapourvoir}" z="1VnsoSTnmJ0OS+Gz46nlYuS9DLs="/>
-        <field:display field="presidents" id="s_fr_univrouen_poste_domain_PosteAPourvoir_presidents" object="${posteapourvoir}" z="xjj8+aOt0mtWa6mF7jrc6iS2v9A="/>
+        <field:display render="${canManage}" date="true" dateTimePattern="${posteAPourvoir_dateendcandidatauditionnable_date_format}" field="dateEndCandidatAuditionnable" id="s_fr_univrouen_poste_domain_PosteAPourvoir_dateEndCandidatAuditionnable" object="${posteapourvoir}" z="1VnsoSTnmJ0OS+Gz46nlYuS9DLs="/>
+        <field:display field="presidents" label="Présidents" id="s_fr_univrouen_poste_domain_PosteAPourvoir_presidents" object="${posteapourvoir}" z="xjj8+aOt0mtWa6mF7jrc6iS2v9A="/>
     </page:show>
     
     <hr/>
@@ -44,7 +44,7 @@
     </sec:authorize>
     
     <div class="well">
-	    <h4>Fichier internes au poste / comité de sélection : </h4>
+	    <h4>Fichiers internes au poste / comité de sélection : </h4>
 	    <table class="table  table-bordered table-striped">
 	                <thead>
 	                    <tr>

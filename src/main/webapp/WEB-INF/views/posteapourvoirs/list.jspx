@@ -38,6 +38,12 @@
 	        </c:if>
 	    </util:help>
 	</sec:authorize>
+	<sec:authorize access="hasRole('ROLE_MEMBRE')">
+	    <util:help>
+            <p>En tant que membre de commission, vous avez accès ici à des documents partagés à l'ensemble de la commission pour un poste donné.</p>
+            <p>Les présidents de commission ont la possibilité d'ajouter des documents dans ces espaces.</p>
+        </util:help>
+    </sec:authorize>   
     <c:set value="false" var="canManage"/>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
         <c:set value="true" var="canManage"/>

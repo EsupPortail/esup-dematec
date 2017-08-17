@@ -43,5 +43,5 @@ public class AuthenticationSuccessEventListener implements ApplicationListener<A
 	    	targetUser.persist();
 	    }
 	}
-
 }
+

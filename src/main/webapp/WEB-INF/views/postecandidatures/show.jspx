@@ -285,6 +285,11 @@
     		<c:set value="true" var="isAdminOrManager"/>
     	</sec:authorize>
     	<div class="demat-fluid">
+    		<c:if test="${isAdminOrManager or isPresident}">
+	            <util:help >
+	            	Ci-dessous vous pouvez affecter des rapporteurs à cette candidature.
+	            </util:help>
+	        </c:if>
             <div class="demat6 well">
 	            <h4>Rapporteurs</h4>
 	            <ul>
