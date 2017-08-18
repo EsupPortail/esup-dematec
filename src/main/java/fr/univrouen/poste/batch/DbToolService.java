@@ -22,7 +22,7 @@ public class DbToolService {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.4.x";
+	final static String currentEsupDematEcVersion = "1.5.x";
 	
 	@Resource
 	DataSource dataSource;
@@ -115,6 +115,22 @@ public class DbToolService {
 			} 
 			
 			if("1.3.x".equals(esupDematEcVersion)) { 
+				
+	    		logger.warn("\n\n#####\n\t" +
+	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
+	    				"\n#####\n");
+	    		
+	    		esupDematEcVersion = "1.4.x";
+			} 
+			
+			if("1.4.x".equals(esupDematEcVersion)) { 
+				
+				String sqlUpdate = "update appli_config_file_type set list_index = 0;";
+				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
+				Connection connection = dataSource.getConnection();
+				CallableStatement statement = connection.prepareCall(sqlUpdate);
+				statement.execute();
+				connection.close();
 				
 	    		logger.warn("\n\n#####\n\t" +
 	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
