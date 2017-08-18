@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.validation.Valid;
 
@@ -108,5 +109,20 @@ public class CommissionExcelController {
         return "admin/commissionexcels/show";
     }
     
+    @RequestMapping(value = "/{id}/file")
+    public void downloadFile(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+    	try {
+    		CommissionExcel commissionExcel = CommissionExcel.findCommissionExcel(id);
+    		String filename = commissionExcel.getFilename();
+    		String contentType = "application/vnd.ms-office";
+    		response.setContentType(contentType);
+    		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+    		IOUtils.copy(commissionExcel.getBigFile().getBinaryFile().getBinaryStream(), response.getOutputStream());
+    	} catch(IOException ioe) {
+    		String ip = request.getRemoteAddr();	
+    		logger.info("Download IOException, that can be just because the client [" + ip +
+    				"] canceled the download process : " + ioe.getCause());
+    	}
+    }
     
 }

@@ -28,6 +28,10 @@
         <field:display field="cells" id="s_fr_univrouen_poste_domain_GalaxieExcel_cells" object="${galaxieexcel}" render="false" z="user-managed"/>
         <field:display field="bigFile" id="s_fr_univrouen_poste_domain_GalaxieExcel_bigFile" object="${galaxieexcel}" z="fqWuFsggcq9Yi7mUiwLkBtccnkI="/>
     </page:show>
+    
+    <spring:url value="/admin/galaxieexcels/${galaxieexcel.id}/file" var="galaxieExcelUrl"/>
+    <a href="${galaxieExcelUrl}">Fichier original</a>
+    
     <table class="table table-bordered table-striped">
         <c:forEach items="${galaxieexcel.cells}" var="cellRow" varStatus="loop">
             <c:choose>

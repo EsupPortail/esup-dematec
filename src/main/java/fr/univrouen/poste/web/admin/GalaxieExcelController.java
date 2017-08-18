@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.validation.Valid;
 
@@ -42,8 +44,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.GalaxieExcel;
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.services.ExcelParser;
 import fr.univrouen.poste.services.GalaxieExcelParser;
+import fr.univrouen.poste.services.LogService;
 
 @RequestMapping("/admin/galaxieexcels")
 @Controller
@@ -103,6 +108,22 @@ public class GalaxieExcelController {
         uiModel.addAttribute("galaxieexcel", galaxieExcel);
         uiModel.addAttribute("itemId", id);
         return "admin/galaxieexcels/show";
+    }
+    
+    @RequestMapping(value = "/{id}/file")
+    public void downloadFile(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+    	try {
+    		GalaxieExcel galaxieExcel = GalaxieExcel.findGalaxieExcel(id);
+    		String filename = galaxieExcel.getFilename();
+    		String contentType = "application/vnd.ms-office";
+    		response.setContentType(contentType);
+    		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+    		IOUtils.copy(galaxieExcel.getBigFile().getBinaryFile().getBinaryStream(), response.getOutputStream());
+    	} catch(IOException ioe) {
+    		String ip = request.getRemoteAddr();	
+    		logger.info("Download IOException, that can be just because the client [" + ip +
+    				"] canceled the download process : " + ioe.getCause());
+    	}
     }
     
     void populateEditForm(Model uiModel, GalaxieExcel galaxieExcel) {
