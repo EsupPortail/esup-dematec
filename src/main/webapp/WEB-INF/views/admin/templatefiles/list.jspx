@@ -3,6 +3,7 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <spring:url value="/resources/doc/template.docx" var="templateExemple"/>
+    <spring:url value="/resources/doc/template-ater.docx" var="templateAterExemple"/>
     <div class="well help">
         <p>Vous pouvez si vous le souhaitez proposer ici des modèles de rapports de commission.</p>
         <p>Ces modèles de rapports seront proposés aux membres de commission sur chaque candidature.</p>
@@ -14,7 +15,7 @@
             </ul>
         </p>
         <p>Les noms des signets doivent correspondre aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ...</p>
-        <p>Un exemple d'un tel document est donné <a href="${templateExemple}">ici</a>.</p>
+        <p>Un exemple d'un tel document est donné <a href="${templateExemple}">ici (EC)</a> ou encore <a href="${templateAterExemple}">ici (ATER)</a>.</p>
     </div>
     <page:list id="pl_fr_univrouen_poste_domain_TemplateFile" items="${templatefiles}" z="wh83C3xzc7udAXdyAvDyUAQL2Ek=">
         <table:table data="${templatefiles}" id="l_fr_univrouen_poste_domain_TemplateFile" path="/admin/templatefiles" update="false" view="false" z="user-managed">
