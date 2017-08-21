@@ -17,6 +17,7 @@
  */
 package fr.univrouen.poste.domain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -35,8 +36,16 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -44,6 +53,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
+import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 
 @RooJavaBean
 @RooToString(excludeFields = {"candidatureFiles", "memberReviewFiles"})
@@ -165,101 +175,157 @@ public class PosteCandidature {
     }
 
     
-    public static Long countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, List<ReviewStatusTypes> reviewStatus, Boolean recevable, Boolean auditionnable, Boolean modification) {
-        EntityManager em = entityManager();
-        String jpaQuery = "SELECT COUNT(o) FROM PosteCandidature AS o WHERE";
-        if (postes != null) {
-        	jpaQuery = jpaQuery + " o.poste IN :postes AND";
+    public static Long countFindPosteCandidatures(PosteCandidatureSearchCriteria searchCriteria) {
+    	EntityManager em = entityManager();
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+		Root<PosteCandidature> c = query.from(PosteCandidature.class);
+		
+		final List<Predicate> predicates = new ArrayList<Predicate>();
+
+        if (searchCriteria.getPostes() != null) {
+			predicates.add(c.get("poste").in(searchCriteria.getPostes()));
         }
-        if (candidats != null) {
-        	jpaQuery = jpaQuery + " o.candidat IN :candidats AND";
+        if (searchCriteria.getCandidats() != null) {
+        	predicates.add(c.get("candidat").in(searchCriteria.getCandidats()));
         }
-        if (reviewStatus != null) {
-        	jpaQuery = jpaQuery + " o.managerReview.reviewStatus IN :reviewStatus AND";
+        if (searchCriteria.getReviewStatus() != null) {
+        	Join<PosteCandidature, ManagerReview> m = c.join("managerReview");
+			predicates.add(m.get("reviewStatus").in(searchCriteria.getReviewStatus()));
         }
-        if (recevable != null) {
-        	jpaQuery = jpaQuery + " o.recevable = :recevable AND";
+        if (searchCriteria.getRecevable() != null) {
+        	predicates.add(c.get("recevable").in(searchCriteria.getRecevable()));
         }
-        if (auditionnable != null) {
-        	jpaQuery = jpaQuery + " o.auditionnable = :auditionnable AND";
+        if (searchCriteria.getAuditionnable() != null) {
+        	predicates.add(c.get("auditionnable").in(searchCriteria.getAuditionnable()));
         }
-        if (modification != null) {
-        	if(modification) {
-        		jpaQuery = jpaQuery + " o.modification IS NOT NULL AND";
+        if (searchCriteria.getModification() != null) {
+        	if(searchCriteria.getModification()) {
+        		predicates.add(c.get("modification").isNotNull());
         	} else {
-        		jpaQuery = jpaQuery + " o.modification IS NULL AND";
+        		predicates.add(c.get("modification").isNull());
         	}
         }
-        jpaQuery = jpaQuery + " 1=1";
-        TypedQuery q = em.createQuery(jpaQuery, Long.class);
-        if (postes != null) {
-        q.setParameter("postes", postes);
-        }
-        if (candidats != null) {
-        q.setParameter("candidats", candidats);
-        }
-        if (reviewStatus != null) {
-        q.setParameter("reviewStatus", reviewStatus);
-        }
-        if (recevable != null) {
-        q.setParameter("recevable", recevable);
-        }
-        if (auditionnable != null) {
-        q.setParameter("auditionnable", auditionnable);
-        }
-        return ((Long) q.getSingleResult());
+        if(searchCriteria.getSearchText()!=null && !searchCriteria.getSearchText().isEmpty()) {
+			String searchString = computeSearchString(searchCriteria.getSearchText());
+			Expression<Boolean> fullTestSearchExpression = getFullTestSearchExpression(criteriaBuilder, searchString);
+			predicates.add(criteriaBuilder.isTrue(fullTestSearchExpression));
+		}
+        
+        query.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));	
+		
+		query.select(criteriaBuilder.count(c));
+		return em.createQuery(query).getSingleResult();
     }
     
-    public static TypedQuery<PosteCandidature> findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(List<PosteAPourvoir> postes, List<User> candidats, List<ReviewStatusTypes> reviewStatus, Boolean recevable, Boolean auditionnable, Boolean modification, String sortFieldName, String sortOrder) {
-        EntityManager em = entityManager();
-        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE";
-        if (postes != null) {
-        	jpaQuery = jpaQuery + " o.poste IN :postes AND";
+    public static TypedQuery<PosteCandidature> findPostesCandidatures(PosteCandidatureSearchCriteria searchCriteria, String sortFieldName, String sortOrder) {
+       
+    	EntityManager em = entityManager();
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<PosteCandidature> query = criteriaBuilder.createQuery(PosteCandidature.class);
+		Root<PosteCandidature> c = query.from(PosteCandidature.class);
+		
+		final List<Predicate> predicates = new ArrayList<Predicate>();
+		final List<Order> orders = new ArrayList<Order>();
+		
+		if("DESC".equalsIgnoreCase(sortOrder)) {
+			if("nom".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.desc(c.join("candidat").get("nom"))); 
+		    } else if("email".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.desc(c.join("candidat").get("emailAddress")));   
+			} else if("numCandidat".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.desc(c.join("candidat").get("numCandidat")));   
+			} else if("managerReviewState".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.desc(c.join("managerReview").get("reviewStatus")));   
+			} 
+		} else {
+			if("nom".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.asc(c.join("candidat").get("nom"))); 
+		    } else if("email".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.asc(c.join("candidat").get("emailAddress")));   
+			} else if("numCandidat".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.asc(c.join("candidat").get("numCandidat")));   
+			} else if("managerReviewState".equals(sortFieldName)) {
+				orders.add(criteriaBuilder.asc(c.join("managerReview").get("reviewStatus")));   
+			} 
+		}
+		
+        if (searchCriteria.getPostes() != null) {
+			predicates.add(c.get("poste").in(searchCriteria.getPostes()));
         }
-        if (candidats != null) {
-        	jpaQuery = jpaQuery + " o.candidat IN :candidats AND";
+        if (searchCriteria.getCandidats() != null) {
+        	predicates.add(c.get("candidat").in(searchCriteria.getCandidats()));
         }
-        if (reviewStatus != null) {
-        	jpaQuery = jpaQuery + " o.managerReview.reviewStatus IN :reviewStatus AND";
+        if (searchCriteria.getReviewStatus() != null) {
+        	Join<PosteCandidature, ManagerReview> m = c.join("managerReview");
+			predicates.add(m.get("reviewStatus").in(searchCriteria.getReviewStatus()));
         }
-        if (recevable != null) {
-        	jpaQuery = jpaQuery + " o.recevable = :recevable AND";
+        if (searchCriteria.getRecevable() != null) {
+        	predicates.add(c.get("recevable").in(searchCriteria.getRecevable()));
         }
-        if (auditionnable != null) {
-        	jpaQuery = jpaQuery + " o.auditionnable = :auditionnable AND";
+        if (searchCriteria.getAuditionnable() != null) {
+        	predicates.add(c.get("auditionnable").in(searchCriteria.getAuditionnable()));
         }
-        if (modification != null) {
-        	if(modification) {
-        		jpaQuery = jpaQuery + " o.modification IS NOT NULL AND";
+        if (searchCriteria.getModification() != null) {
+        	if(searchCriteria.getModification()) {
+        		predicates.add(c.get("modification").isNotNull());
         	} else {
-        		jpaQuery = jpaQuery + " o.modification IS NULL AND";
+        		predicates.add(c.get("modification").isNull());
         	}
         }
-        jpaQuery = jpaQuery + " 1=1";
-        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
-            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
-            }
-        }
-        TypedQuery<PosteCandidature> q = em.createQuery(jpaQuery, PosteCandidature.class);
-        if (postes != null) {
-        q.setParameter("postes", postes);
-        }
-        if (candidats != null) {
-        q.setParameter("candidats", candidats);
-        }
-        if (reviewStatus != null) {
-        q.setParameter("reviewStatus", reviewStatus);
-        }
-        if (recevable != null) {
-        q.setParameter("recevable", recevable);
-        }
-        if (auditionnable != null) {
-        q.setParameter("auditionnable", auditionnable);
-        }
-        return q;
+        
+        if(searchCriteria.getSearchText()!=null && !searchCriteria.getSearchText().isEmpty()) {
+			String searchString = computeSearchString(searchCriteria.getSearchText());
+			Expression<Boolean> fullTestSearchExpression = getFullTestSearchExpression(criteriaBuilder, searchString);
+			Expression<Double> fullTestSearchRanking = getFullTestSearchRanking(criteriaBuilder, searchString);	
+			predicates.add(criteriaBuilder.isTrue(fullTestSearchExpression));
+			orders.add(criteriaBuilder.desc(fullTestSearchRanking));
+		}
+        
+		if("DESC".equalsIgnoreCase(sortOrder)) {
+			if(sortFieldName == null) {
+				orders.add(criteriaBuilder.desc(c.join("poste").get("numEmploi")));
+				orders.add(criteriaBuilder.desc(c.join("candidat").get("nom")));   
+			}
+		} else {
+			if(sortFieldName == null) {
+				orders.add(criteriaBuilder.asc(c.join("poste").get("numEmploi")));
+				orders.add(criteriaBuilder.asc(c.join("candidat").get("nom")));   
+			}
+		}
+        
+		query.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));	
+		query.orderBy(orders);
+		
+		query.select(c);
+		return em.createQuery(query);
     }
+    
+	private static String computeSearchString(String searchString) {
+		List<String> searchStrings = Arrays.asList(StringUtils.split(searchString, " "));
+		List<String> searchStringsExpr = new ArrayList<String>();
+		for(String s : searchStrings) {
+			searchStringsExpr.add(s + ":*");
+		}
+		searchString = StringUtils.join(searchStringsExpr, "|");
+		return searchString;
+	}
+	
+	private static Expression<Boolean> getFullTestSearchExpression(CriteriaBuilder cb, String searchString) {
+		return cb.function(
+				"fts",
+				Boolean.class,
+				cb.literal(searchString)
+				);
+	}
+
+	private static Expression<Double> getFullTestSearchRanking(CriteriaBuilder cb, String searchString) {
+		return cb.function(
+				"ts_rank",
+				Double.class,
+				cb.literal(searchString)
+				);
+	}
 
     public static TypedQuery<PosteCandidature> findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThan(
     		User candidat, Date date) {

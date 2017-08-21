@@ -764,7 +764,7 @@ public class MyPosteCandidatureController {
 
     	if(zip) {
 
-    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
+    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, null, null).getResultList();
 
     		String contentType = "application/zip";
     		String baseName = "demat.zip";
@@ -776,7 +776,7 @@ public class MyPosteCandidatureController {
     		
     		if(mails) {
     			
-    			List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
+    			List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, null, null).getResultList();
     			Set<String> mailAdresses = new HashSet<String>();
     			for(PosteCandidature pc: postecandidatures) {
     				mailAdresses.add(pc.getEmail());
@@ -802,7 +802,7 @@ public class MyPosteCandidatureController {
     			
     		} else if(csv) {
     			
-    			List<PosteCandidature> posteCandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), null, null).getResultList();
+    			List<PosteCandidature> posteCandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, null, null).getResultList();
     			
         		String contentType = "text/csv";
         		String baseName = "candidatures.csv";
@@ -815,28 +815,17 @@ public class MyPosteCandidatureController {
         		return null; 
     			
     		} else {
-
-	    		if(sortFieldName == null) 
-	            	sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
-	    		if("nom".equals(sortFieldName))
-	    			sortFieldName = "candidat.nom";
-	    		if("email".equals(sortFieldName))
-	    			sortFieldName = "candidat.emailAddress";
-	    		if("numCandidat".equals(sortFieldName))
-	    			sortFieldName = "candidat.numCandidat";
-	    		if("managerReviewState".equals(sortFieldName))
-	    			sortFieldName = "managerReview.reviewStatus";
-	    		
+    			
 	    		if (page != null || size != null) {
 	                int sizeNo = size == null ? 10 : size.intValue();
 	                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-	                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-	                long nbResultsTotal = PosteCandidature.countFindPosteCandidaturesByPostesAndCandidatsAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification());
+	                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+	                long nbResultsTotal = PosteCandidature.countFindPosteCandidatures(searchCriteria);
 	                uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
 	                float nrOfPages = (float) nbResultsTotal / sizeNo;
 	                uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 	            } else {
-	            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidaturesByPostesAndCandidatAndRecevableAndAuditionnableAndModification(searchCriteria.getPostes(), searchCriteria.getCandidats(), searchCriteria.getReviewStatus(), searchCriteria.getRecevable(), searchCriteria.getAuditionnable(), searchCriteria.getModification(), sortFieldName, sortOrder).getResultList();
+	            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
 	                uiModel.addAttribute("postecandidatures", postecandidatures);
 	                uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
 	            }

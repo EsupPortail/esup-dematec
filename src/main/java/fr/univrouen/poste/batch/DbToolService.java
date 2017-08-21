@@ -126,7 +126,35 @@ public class DbToolService {
 			if("1.4.x".equals(esupDematEcVersion)) { 
 				
 				String sqlUpdate = "update appli_config_file_type set list_index = 0;";
+				
+				sqlUpdate += "ALTER TABLE poste_candidature ADD COLUMN textsearchable_index_col tsvector;"
+						+ " UPDATE poste_candidature SET textsearchable_index_col = "
+						+ " setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') "
+						+ " || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') "
+				    + "  || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') "
+				     + " || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') "
+				     + " FROM c_user where poste_candidature.candidat=c_user.id;"
+				+ " CREATE INDEX textsearch_idx ON poste_candidature USING gin(textsearchable_index_col);"
+
+
+				+ " CREATE FUNCTION textsearchable_poste_candidature_trigger() RETURNS trigger AS $$"
+				+ " begin"
+				  + " new.textsearchable_index_col :="
+				    + " setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') "
+				    + " || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') "
+				    + "  || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') "
+				    + "  || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') "
+				   + "   FROM c_user where poste_candidature.candidat=c_user.id;"
+				  + " return new;"
+				+ " end"
+				+ " $$ LANGUAGE plpgsql;"
+
+				+ " CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE"
+				+ "    ON poste_candidature FOR EACH ROW EXECUTE PROCEDURE textsearchable_poste_candidature_trigger();";
+				
+				
 				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
+				
 				Connection connection = dataSource.getConnection();
 				CallableStatement statement = connection.prepareCall(sqlUpdate);
 				statement.execute();

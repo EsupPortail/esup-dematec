@@ -39,6 +39,7 @@
                             <div class="row-fluid">
                                 <form:find finderName="ByMultiParams" id="ff_fr_univrouen_poste_domain_PosteCandidature" path="/postecandidatures">
                                     <div class="span4 demat-filter">
+                                   		<field:input cssClass="input-large " disableFormBinding="false" field="searchText" id="f_fr_univrouen_poste_domain_PosteCandidature_searchText" label="Recherche libre sur le nom, prénom, email, n°galaxie"/>
                                         <field:select  disableFormBinding="false" field="numEmploiPostes" id="f_fr_univrouen_poste_domain_PosteCandidature_poste" items="${posteapourvoirs}" multiple="true" path="/admin/posteapourvoirs" required="true" size="15"/>
                                     </div>
                                     <div class="span5 demat-filter">

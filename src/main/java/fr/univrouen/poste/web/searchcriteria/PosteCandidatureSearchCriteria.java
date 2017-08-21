@@ -1,6 +1,5 @@
 package fr.univrouen.poste.web.searchcriteria;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -23,6 +22,8 @@ public class PosteCandidatureSearchCriteria {
 	List<String> emailCandidats;
 	
 	List<ReviewStatusTypes> reviewStatus;
+	
+	String searchText;
 
 	public List<PosteAPourvoir> getPostes() {
 		List<PosteAPourvoir> postes = null;

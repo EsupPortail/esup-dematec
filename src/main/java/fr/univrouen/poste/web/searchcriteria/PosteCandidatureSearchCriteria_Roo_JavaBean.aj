@@ -57,4 +57,12 @@ privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
         this.reviewStatus = reviewStatus;
     }
     
+    public String PosteCandidatureSearchCriteria.getSearchText() {
+        return this.searchText;
+    }
+    
+    public void PosteCandidatureSearchCriteria.setSearchText(String searchText) {
+        this.searchText = searchText;
+    }
+    
 }

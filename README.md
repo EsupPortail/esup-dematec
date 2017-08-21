@@ -54,10 +54,10 @@ Les admin et super-manager peuvent configurer certains éléments de l'applicati
 ## Installation 
 
 ### Pré-requis
-* Java (JDK - JAVA SE 7 ou 8):  http://www.oracle.com/technetwork/java/javase/downloads/index.html
+* Java JDK 8 :  http://www.oracle.com/technetwork/java/javase/downloads/index.html
 * Maven (dernière version 3.0.x) : http://maven.apache.org/download.cgi
-* Postgresql (8 ou 9) : le mieux est de l'installer via le système de paquets de votre linux.
-* Tomcat (Tomcat 7 ou 8)
+* Postgresql 9 : le mieux est de l'installer via le système de paquets de votre linux.
+* Tomcat 8
 
 ### PostgreSQL
 * pg_hba.conf : ajout de 
@@ -119,13 +119,6 @@ apt-get install postgresql-contrib
 
 Puis la création de l'extension lo se fait via un super-user:
 
-* avec postgresql 8 :
-```
-psql
-\c esupdematec
-\i /usr/share/postgresql/8.4/contrib/lo.sql
-```
-
 * avec postgresql 9 :
 ```
 psql
@@ -139,7 +132,7 @@ Et enfin ajout du trigger* :
 CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
 ```
 
-CF http://docs.postgresqlfr.org/8.3/lo.html
+CF https://www.postgresql.org/docs/9.4/static/lo.html
 
 \* afin que les tables soient préalablement créées, notamment la table big_file sur lequel on souhaite mettre le trigger lo_manage, vous devez démarrer l'application une fois ; en n'oubliant pas ensuite, pour ne pas écraser la base au redémarrage, de __modifier src/main/resources/META-INF/persistence.xml : create-> update__ - cf ci-dessous.
 

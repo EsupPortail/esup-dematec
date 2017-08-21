@@ -75,7 +75,10 @@
               <form:password id="_${sec_field}_id" path="${sec_field}" disabled="${disabled}" cssClass="${cssClass}"/>
             </c:when>
             <c:otherwise>
-              <form:input id="_${sec_field}_id" path="${sec_field}" disabled="${disabled}" cssClass="input-xxlarge ${cssClass}"/>
+            	<c:if test="${empty cssClass}">
+            		<c:set value="input-xxlarge" var="cssClass" />
+            	</c:if>
+              <form:input id="_${sec_field}_id" path="${sec_field}" disabled="${disabled}" cssClass="${cssClass}"/>
             </c:otherwise>
           </c:choose>
           <br />
