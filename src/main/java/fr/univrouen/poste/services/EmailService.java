@@ -52,23 +52,28 @@ public class EmailService implements Serializable {
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public boolean sendMessage(String mailFrom, String mailTo, String subject, String mailMessage) {
-		if(this.isEnabled) {
-	    	try {
-	    		mail.setFrom(mailFrom);
-			    mail.setTo(mailTo);
-			    mail.setSubject(subject);
-			    mail.setText(mailMessage);
-		        mailSender.send(mail);
-		        logger.debug("Email sent : " + mail.toString());
-		        logService.logMail(mailTo, mailMessage, LogService.MAIL_SENT);
-	    	} catch(Exception e) {   		
-		        logger.error("Email failed : " + mail.toString(), e);
-		        logService.logMail(mailTo, mailMessage, LogService.MAIL_FAILED);
-		        return false;
-	    	}
+		boolean mailEmpty = mailMessage.trim().isEmpty();
+		if(mailEmpty) {
+			logger.info("\tmethod call was :  sendMessage(" + mailFrom + ", " + mailTo + ", " + subject + ", " + mailMessage + ") but mail body is empty so we doesn't send it");
 		} else {
-			logger.warn("sendMessage called but email is not enabled ...");
-			logger.info("\tmethod call was :  sendMessage(" + mailFrom + ", " + mailTo + ", " + subject + ", " + mailMessage + ")");
+			if(this.isEnabled) {
+		    	try {
+		    		mail.setFrom(mailFrom);
+				    mail.setTo(mailTo);
+				    mail.setSubject(subject);
+				    mail.setText(mailMessage);
+			        mailSender.send(mail);
+			        logger.debug("Email sent : " + mail.toString());
+			        logService.logMail(mailTo, mailMessage, LogService.MAIL_SENT);
+		    	} catch(Exception e) {   		
+			        logger.error("Email failed : " + mail.toString(), e);
+			        logService.logMail(mailTo, mailMessage, LogService.MAIL_FAILED);
+			        return false;
+		    	}
+			} else {
+				logger.warn("sendMessage called but email is not enabled ...");
+				logger.info("\tmethod call was :  sendMessage(" + mailFrom + ", " + mailTo + ", " + subject + ", " + mailMessage + ")");
+			}
 		}
 		return true;
     }
