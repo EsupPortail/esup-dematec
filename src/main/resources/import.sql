@@ -31,32 +31,6 @@
 -- CREATE EXTENSION lo;
 -- CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
 
--- postgresql full text search
-ALTER TABLE poste_candidature ADD COLUMN textsearchable_index_col tsvector;
-UPDATE poste_candidature SET textsearchable_index_col = 
-     setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') 
-     || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') 
-     || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') 
-     || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') 
-     FROM c_user where poste_candidature.candidat=c_user.id;
-CREATE INDEX textsearch_idx ON poste_candidature USING gin(textsearchable_index_col);
-
-
-CREATE FUNCTION textsearchable_poste_candidature_trigger() RETURNS trigger AS $$
-begin
-  new.textsearchable_index_col :=
-    setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') 
-     || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') 
-     || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') 
-     || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') 
-     FROM c_user where poste_candidature.candidat=c_user.id;
-  return new;
-end
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
-    ON poste_candidature FOR EACH ROW EXECUTE PROCEDURE textsearchable_poste_candidature_trigger();
-
 
 -- ADMIN USER
 insert into c_user (id, activation_date, activation_key, email_address, enabled, is_admin, is_manager, is_super_manager, password, version, login_failed_nb, login_failed_time) 

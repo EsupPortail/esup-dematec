@@ -144,7 +144,7 @@ public class DbToolService {
 				    + " || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') "
 				    + "  || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') "
 				    + "  || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') "
-				   + "   FROM c_user where poste_candidature.candidat=c_user.id;"
+				   + "   FROM c_user where new.candidat=c_user.id;"
 				  + " return new;"
 				+ " end"
 				+ " $$ LANGUAGE plpgsql;"
