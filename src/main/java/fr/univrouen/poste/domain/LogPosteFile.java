@@ -83,7 +83,7 @@ public class LogPosteFile {
     }
 
 	public static List<String> findAllUserIds() {
-    	String sql = "SELECT distinct(user_id) FROM log_poste_file ORDER BY user_id";
+    	String sql = "SELECT distinct(email) FROM log_poste_file ORDER BY email";
 		Query q = entityManager().createNativeQuery(sql);
         return q.getResultList();
 	}
