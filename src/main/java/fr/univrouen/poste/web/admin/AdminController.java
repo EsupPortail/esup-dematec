@@ -87,7 +87,9 @@ public class AdminController {
 		List<List<Object>> countUploadLogFilesByDate = statService.countUploadLogFilesBydate();
 		List<List<Object>> countSuccessLogAuthsByDate = statService.countSuccessLogAuthsByDate();
 		List<List<Object>> sumPosteCandidatureFileSizeByDate = statService.sumPosteCandidatureFileSizeByDate();
-			
+		List<List<Object>> sumMemberReviewFileSizeByDate = statService.sumMemberReviewFileSizeByDate();
+		List<List<Object>> sumPosteAPourvoirFileSizeByDate = statService.sumPosteAPourvoirFileSizeByDate();
+		
 		JSONSerializer serializer = new JSONSerializer();
 		
 		String uploadStatsLabels = serializer.deepSerialize(countUploadLogFilesByDate.get(0));
@@ -104,6 +106,16 @@ public class AdminController {
 		String sumFilesSizeStatsValues = serializer.deepSerialize(sumPosteCandidatureFileSizeByDate.get(1));			
 		uiModel.addAttribute("sumFilesSizeStatsLabels", sumFilesSizeStatsLabels);
 		uiModel.addAttribute("sumFilesSizeStatsValues", sumFilesSizeStatsValues);
+		
+		String sumMemberReviewFilesSizeStatsLabels = serializer.deepSerialize(sumMemberReviewFileSizeByDate.get(0));
+		String sumMemberReviewFilesSizeStatsValues = serializer.deepSerialize(sumMemberReviewFileSizeByDate.get(1));			
+		uiModel.addAttribute("sumMemberReviewFilesSizeStatsLabels", sumMemberReviewFilesSizeStatsLabels);
+		uiModel.addAttribute("sumMemberReviewFilesSizeStatsValues", sumMemberReviewFilesSizeStatsValues);
+		
+		String sumPosteAPourvoirFilesSizeStatsLabels = serializer.deepSerialize(sumPosteAPourvoirFileSizeByDate.get(0));
+		String sumPosteAPourvoirFilesSizeStatsValues = serializer.deepSerialize(sumPosteAPourvoirFileSizeByDate.get(1));			
+		uiModel.addAttribute("sumPosteAPourvoirFilesSizeStatsLabels", sumPosteAPourvoirFilesSizeStatsLabels);
+		uiModel.addAttribute("sumPosteAPourvoirFilesSizeStatsValues", sumPosteAPourvoirFilesSizeStatsValues);
 		
 	    return "admin/chart";
 	}  

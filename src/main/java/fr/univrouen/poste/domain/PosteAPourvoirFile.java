@@ -16,12 +16,15 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
+import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -64,5 +67,24 @@ public class PosteAPourvoirFile implements DematFile {
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
+
+	public static List<Object[]> sumPosteAPourvoirFileSizeByDate() {
+	    String sql = "SELECT date_part('year', send_time) as year, date_part('month', send_time) as month, date_part('day', send_time) as day, "
+	    		+ "sum(sum(file_size)) over(order by date_part('year', send_time), date_part('month', send_time), date_part('day', send_time)) as file_size_sum "
+	    		+ "from posteapourvoir_file GROUP BY year, month, day";
+		Query q = entityManager().createNativeQuery(sql);
+	    return q.getResultList();
+	}
+
+	public static long getSumFileSize() {
+    	String sql = "SELECT SUM(file_size) FROM posteapourvoir_file";
+		Query q = entityManager().createNativeQuery(sql);
+		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
+		if(bigValue != null) {
+			return bigValue.longValue();
+		} else {
+			return new Long(0);
+		}
+	}
 	
 }

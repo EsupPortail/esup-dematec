@@ -18,21 +18,25 @@
     limitations under the License.
 
 -->
-<div xmlns:sec="http://www.springframework.org/security/tags" xmlns:c="http://java.sun.com/jsp/jstl/core"  xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form"
-    xmlns:spring="http://www.springframework.org/tags"
-	>
-    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+<div xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields"
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:page="urn:jsptagdir:/WEB-INF/tags/form"
+	xmlns:spring="http://www.springframework.org/tags">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
-	
-    <spring:url value="/resources/js/Chart.min.js" var="chart_js_url" />
+
+	<spring:url value="/resources/js/Chart.min.js" var="chart_js_url" />
 	<script src="${chart_js_url}" type="text/javascript"><!-- required for FF3 and Opera --></script>
 
 	<div class="row-fluid">
 
 		<div class="span4">
-			<canvas id="uploadChart" width="400" height="400"><!--  --></canvas>
-			
-			 <script>
+			<canvas id="uploadChart" width="400" height="400">
+				<!--  --></canvas>
+
+			<script>
 		
 					var dataUpload = {
 	
@@ -51,7 +55,7 @@
 		        			 },
 							 title:  {
 								display: true,
-								text : "Fichiers envoyés",
+								text : "Fichiers de candidatures envoyés",
 								fontSize: 20
 							 }
 					}
@@ -61,11 +65,12 @@
 		
 				</script>
 		</div>
-	
+
 		<div class="span4">
-			<canvas id="authChart" width="400" height="400"><!--  --></canvas>
-			
-			 <script>
+			<canvas id="authChart" width="400" height="400">
+				<!--  --></canvas>
+
+			<script>
 		
 					var dataAuth = {
 						    labels: ${authStatsLabels},
@@ -93,11 +98,19 @@
 		
 				</script>
 		</div>
-				
+
+	</div>
+	
+	<hr/>
+	
+	<div class="row-fluid">
+	
 		<div class="span4">
-			<canvas id="sizeChart" width="400" height="400"><!--  --></canvas>
-			
-			 <script>
+		
+			<canvas id="sizeChart" width="400" height="400">
+				<!--  --></canvas>
+
+			<script>
 			 
 					var dataSize = {
 						    labels: ${sumFilesSizeStatsLabels},
@@ -138,9 +151,104 @@
 					var chartSize = new Chart(ctxSize, {type: 'line', data: dataSize, options: optionsSize});
 		
 				</script>
-		</div>	
-			
-	
-	</div>
+		</div>
+
+
+		<div class="span4">
+			<canvas id="sizeMemberChart" width="400" height="400">
+				<!--  --></canvas>
+
+			<script>
+			 
+					var dataSize = {
+						    labels: ${sumMemberReviewFilesSizeStatsLabels},
+						    datasets: [
+						        {
+						            backgroundColor: "rgba(0, 136, 0, 0.5)",
+						            data: ${sumMemberReviewFilesSizeStatsValues}
+						        }
+						    ]
+						};
+					
+					var optionsSize = {
+							 legend: {
+		        				display: false
+		        			 },
+							 title:  {
+								display: true,
+								text : "Volume total des rapports de commission",
+								fontSize: 20
+							 },
+							 scales: {
+				                    yAxes:[{
+				                    	ticks: { 
+				                    		callback: function(value, index, values) { return humanFileSize(value); }
+				                    	}
+				                    }]  
+							 },
+							 tooltips : {
+								 callbacks: {
+								 	label:function(tooltipItem, data) { 
+								 		return humanFileSize(tooltipItem.yLabel); 
+								 		}
+								 }
+							 }
+					}
+					
+					var ctxSize = document.getElementById("sizeMemberChart").getContext("2d");
+					var chartSize = new Chart(ctxSize, {type: 'line', data: dataSize, options: optionsSize});
 		
+				</script>
+		</div>
+
+
+		<div class="span4">
+			<canvas id="sizePosteChart" width="400" height="400">
+				<!--  --></canvas>
+
+			<script>
+			 
+					var dataSize = {
+						    labels: ${sumPosteAPourvoirFilesSizeStatsLabels},
+						    datasets: [
+						        {
+						            backgroundColor: "rgba(0, 136, 0, 0.5)",
+						            data: ${sumPosteAPourvoirFilesSizeStatsValues}
+						        }
+						    ]
+						};
+					
+					var optionsSize = {
+							 legend: {
+		        				display: false
+		        			 },
+							 title:  {
+								display: true,
+								text : "Volume total des fichiers des comités de sélection",
+								fontSize: 20
+							 },
+							 scales: {
+				                    yAxes:[{
+				                    	ticks: { 
+				                    		callback: function(value, index, values) { return humanFileSize(value); }
+				                    	}
+				                    }]  
+							 },
+							 tooltips : {
+								 callbacks: {
+								 	label:function(tooltipItem, data) { 
+								 		return humanFileSize(tooltipItem.yLabel); 
+								 		}
+								 }
+							 }
+					}
+					
+					var ctxSize = document.getElementById("sizePosteChart").getContext("2d");
+					var chartSize = new Chart(ctxSize, {type: 'line', data: dataSize, options: optionsSize});
+		
+				</script>
+		</div>
+
+	</div>
+
 </div>

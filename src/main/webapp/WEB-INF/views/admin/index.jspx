@@ -63,13 +63,13 @@
         <dt>Nombre de candidatures actives (au moins une modification)</dt>
         <dd>${stat.posteCandidatureActifNumber}</dd>
 
-		<dt>Fichiers d&amp;eacute;pos&amp;eacute;s</dt>
+		<dt>Fichiers de candidatures d&amp;eacute;pos&amp;eacute;s</dt>
 		<dd>${stat.posteCandidatureFileNumber}</dd>
 
-		<dt>Volume total</dt>
+		<dt>Volume total des fichiers de candidature</dt>
 		<dd>${stat.totalFileSizeFormatted}</dd>
 
-        <dt>Taille Max Fichier</dt>
+        <dt>Taille Max Fichier de candidature</dt>
         <dd>${stat.maxFileSize}</dd>
         
 	    <dt>Nbre total de pages (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
@@ -78,6 +78,17 @@
 	    <dt>Nbre de pages en moyenne par candidature (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
 	    <dd>~${stat.moyNbPages} [~${stat.moyPagesGr} g]</dd>        
 
+		<dt>Rapports de commission d&amp;eacute;pos&amp;eacute;s</dt>
+		<dd>${stat.memberReviewFileNumber}</dd>
+
+		<dt>Volume total des rapports de commission</dt>
+		<dd>${stat.totalMemberReviewFileSizeFormatted}</dd>
+		
+		<dt>Fichiers internes des comit&amp;eacute;s de s&amp;eacute;lection d&amp;eacute;pos&amp;eacute;s</dt>
+		<dd>${stat.posteAPourvoirFileNumber}</dd>
+
+		<dt>Volume total des fichiers internes des comit&amp;eacute;s de s&amp;eacute;lection</dt>
+		<dd>${stat.totalposteAPourvoirFileSizeFormatted}</dd>
 	</dl>
      
 	<!--  

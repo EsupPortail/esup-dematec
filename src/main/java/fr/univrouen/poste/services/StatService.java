@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import fr.univrouen.poste.domain.LogAuth;
 import fr.univrouen.poste.domain.LogFile;
+import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteAPourvoirFile;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.User;
@@ -47,10 +49,19 @@ public class StatService {
 			moyNbPages = (long)Math.floor(nbPages/posteCandidatureActifNumber);
 			moyPagesGr = (long)Math.floor(pagesKilo/posteCandidatureActifNumber*1000.0);
 		}
+		
+		Long memberReviewFileNumber = MemberReviewFile.countMemberReviewFiles();
+		long totalMemberReviewFileSize = MemberReviewFile.getSumFileSize();
+		String totalMemberReviewFileSizeFormatted =  PosteCandidatureFile.readableFileSize(totalMemberReviewFileSize);
+		
+		Long posteAPourvoirFileNumber = PosteAPourvoirFile.countPosteAPourvoirFiles();
+		long totalposteAPourvoirFileSize = PosteAPourvoirFile.getSumFileSize();
+		String totalposteAPourvoirFileSizeFormatted  =  PosteCandidatureFile.readableFileSize(totalposteAPourvoirFileSize);
 
 		return new StatBean(posteNumber, userNumber, adminNumber, supermanagerNumber, managerNumber, membreNumber, 
 				candidatNumber, userActifNumber, candidatActifNumber, posteCandidatureNumber, posteCandidatureActifNumber, 
-				posteCandidatureFileNumber, totalFileSizeFormatted, maxFileSize, nbPages, pagesKilo, nbRames, moyNbPages, moyPagesGr);
+				posteCandidatureFileNumber, totalFileSizeFormatted, maxFileSize, nbPages, pagesKilo, nbRames, moyNbPages, moyPagesGr,
+				memberReviewFileNumber, totalMemberReviewFileSizeFormatted, posteAPourvoirFileNumber, totalposteAPourvoirFileSizeFormatted);
 	}
 	
 	
@@ -66,6 +77,16 @@ public class StatService {
 	
 	public List<List<Object>> sumPosteCandidatureFileSizeByDate() {
 		List<Object[]> logFilesSizes = PosteCandidatureFile.sumPosteCandidatureFileSizeByDate();
+		return map4chart(logFilesSizes);
+	}
+	
+	public List<List<Object>> sumMemberReviewFileSizeByDate() {
+		List<Object[]> logFilesSizes = MemberReviewFile.sumMemberReviewFileSizeByDate();
+		return map4chart(logFilesSizes);
+	}
+	
+	public List<List<Object>> sumPosteAPourvoirFileSizeByDate() {
+		List<Object[]> logFilesSizes = PosteAPourvoirFile.sumPosteAPourvoirFileSizeByDate();
 		return map4chart(logFilesSizes);
 	}
 

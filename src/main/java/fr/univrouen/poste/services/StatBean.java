@@ -21,12 +21,17 @@ public class StatBean {
 	Long nbRames;
 	Long moyNbPages;
 	Long moyPagesGr;
+	Long memberReviewFileNumber;
+	String totalMemberReviewFileSizeFormatted;
+	Long posteAPourvoirFileNumber;
+	String totalposteAPourvoirFileSizeFormatted;
 	
 	public StatBean(Long posteNumber, Long userNumber, Long adminNumber, Long supermanagerNumber, Long managerNumber,
 			Long membreNumber, Long candidatNumber, Long userActifNumber, Long candidatActifNumber,
 			Long posteCandidatureNumber, Long posteCandidatureActifNumber, Long posteCandidatureFileNumber,
 			String totalFileSizeFormatted, String maxFileSize, Long nbPages, Double pagesKilo, Long nbRames,
-			Long moyNbPages, Long moyPagesGr) {
+			Long moyNbPages, Long moyPagesGr, Long memberReviewFileNumber, String totalMemberReviewFileSizeFormatted, 
+			Long posteAPourvoirFileNumber, String totalposteAPourvoirFileSizeFormatted) {
 		super();
 		this.posteNumber = posteNumber;
 		this.userNumber = userNumber;
@@ -47,6 +52,10 @@ public class StatBean {
 		this.nbRames = nbRames;
 		this.moyNbPages = moyNbPages;
 		this.moyPagesGr = moyPagesGr;
+		this.memberReviewFileNumber = memberReviewFileNumber;
+		this.totalMemberReviewFileSizeFormatted = totalMemberReviewFileSizeFormatted;
+		this.posteAPourvoirFileNumber = posteAPourvoirFileNumber;
+		this.totalposteAPourvoirFileSizeFormatted = totalposteAPourvoirFileSizeFormatted;
 	}
 	
 	public Long getPosteNumber() {
@@ -107,6 +116,22 @@ public class StatBean {
 		return moyPagesGr;
 	}
 
+	public Long getMemberReviewFileNumber() {
+		return memberReviewFileNumber;
+	}
+
+	public String getTotalMemberReviewFileSizeFormatted() {
+		return totalMemberReviewFileSizeFormatted;
+	}
+
+	public Long getPosteAPourvoirFileNumber() {
+		return posteAPourvoirFileNumber;
+	}
+
+	public String getTotalposteAPourvoirFileSizeFormatted() {
+		return totalposteAPourvoirFileSizeFormatted;
+	}
+
 	public String toText() {
 		return "Nombre de postes : " + posteNumber + "\n\n"
 				+ "Comptes créés : " + userNumber + "\n\n"
@@ -119,11 +144,15 @@ public class StatBean {
 				+ "Cadnidats actifs : " + candidatActifNumber + "\n\n"
 				+ "Nombre de candidatures : " + posteCandidatureNumber + "\n\n"
 				+ "Nombre de candidatures actives (au moins une modification) : " + posteCandidatureActifNumber + "\n\n"
-				+ "Fichiers déposés : " + posteCandidatureFileNumber + "\n\n"
-				+ "Volume total : " + totalFileSizeFormatted + "\n\n"
-				+ "Taille Max Fichier : " + maxFileSize + "\n\n"
+				+ "Fichiers de candidatures déposés : " + posteCandidatureFileNumber + "\n\n"
+				+ "Volume total des candidatures : " + totalFileSizeFormatted + "\n\n"
+				+ "Taille Max Fichier de candidature : " + maxFileSize + "\n\n"
 				+ "Nbre total de pages (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé) : " + nbPages + " [~" + pagesKilo + " kg - ~" + nbRames + " rames]\n\n"
-				+ "Nbre de pages en moyenne par candidature (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé) : " + "~" + moyNbPages + " [~" + moyPagesGr + " g]";
+				+ "Nbre de pages en moyenne par candidature (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé) : " + "~" + moyNbPages + " [~" + moyPagesGr + " g]" + "\n\n"
+				+ "Rapports de commission déposés : " + memberReviewFileNumber + "\n\n"
+				+ "Volume total des rapports de commission : " + totalMemberReviewFileSizeFormatted + "\n\n" 
+				+ "Fichiers internes des comités de sélection : " + posteAPourvoirFileNumber + "\n\n"
+				+ "Volume total des fichiers internes des comités de sélection : " + totalposteAPourvoirFileSizeFormatted + "\n\n";
 	}
 	
 	
