@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.univrouen.poste.domain.GalaxieExcel;
 import fr.univrouen.poste.domain.GalaxieMapping;
@@ -44,7 +45,7 @@ public class GalaxieMappingController {
 	}
 	
     @RequestMapping(value = "/testFile", method = RequestMethod.POST, produces = "text/html")
-    public String testFile(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws IOException, SQLException {
+    public String testFile(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest, final RedirectAttributes redirectAttributes) throws IOException, SQLException {
         if (bindingResult.hasErrors()) {
         	logger.warn(bindingResult.getAllErrors());
             return "redirect:/admin/galaxieexcels";
@@ -68,10 +69,13 @@ public class GalaxieMappingController {
 		try {
 			galaxieMappingService.checkCellsHead(cellsPosition);
 		} catch(Exception e) {
-			return "redirect:/admin/galaxiemapping?test=failed";
+			redirectAttributes.addFlashAttribute("test", "failed");
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+			return "redirect:/admin/galaxiemapping";
 		}
 		
-        return "redirect:/admin/galaxiemapping?test=success";
+		redirectAttributes.addFlashAttribute("test", "success");
+        return "redirect:/admin/galaxiemapping";
     }
 	
 }

@@ -23,14 +23,14 @@
     <form:create id="pl_fr_univrouen_poste_domain_GalaxieMapping_test_form" label="Test du mapping Galaxie" modelAttribute="galaxieExcel" multipart="true" path="/admin/galaxiemapping/testFile">
         <input id="fc_fr_univrouen_poste_domain_GalaxieExcel_file" name="file" type="file"/>
     </form:create>
-    <c:if test="${param.test == 'success'}">
+    <c:if test="${test == 'success'}">
         <script type="text/javascript">
     		alert("Test OK");
     	</script>
     </c:if>
-    <c:if test="${param.test == 'failed'}">
+    <c:if test="${test == 'failed'}">
         <script type="text/javascript">
-    		alert("Le test a échoué, le mapping est à revoir en fonction du fichier Excel Galaxie proposé.");
+    		alert("Le test a échoué, le mapping est à revoir en fonction du fichier Excel Galaxie proposé.\n${errorMessage}");
     	</script>
     </c:if>
 </div>
