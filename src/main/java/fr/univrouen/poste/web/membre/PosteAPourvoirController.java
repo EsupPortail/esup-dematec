@@ -257,4 +257,11 @@ public class PosteAPourvoirController {
 
 		return "redirect:/posteapourvoirs/" + id.toString();
 	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+    @RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new PosteAPourvoir());
+        return "posteapourvoirs/create";
+    }
 }

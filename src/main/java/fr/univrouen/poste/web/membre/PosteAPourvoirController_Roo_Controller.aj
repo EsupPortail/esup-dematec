@@ -8,17 +8,10 @@ import fr.univrouen.poste.web.membre.PosteAPourvoirController;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 privileged aspect PosteAPourvoirController_Roo_Controller {
-    
-    @RequestMapping(params = "form", produces = "text/html")
-    public String PosteAPourvoirController.createForm(Model uiModel) {
-        populateEditForm(uiModel, new PosteAPourvoir());
-        return "posteapourvoirs/create";
-    }
     
     void PosteAPourvoirController.addDateTimeFormatPatterns(Model uiModel) {
         uiModel.addAttribute("posteAPourvoir_dateendcandidatauditionnable_date_format", "dd/MM/yyyy HH:mm");
