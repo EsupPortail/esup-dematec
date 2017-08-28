@@ -242,6 +242,9 @@ public class PosteAPourvoirController {
 					Date currentTime = cal.getTime();
 					posteFile.setSendTime(currentTime);
 					
+					User currentUser = getCurrentUser();
+					posteFile.setSender(currentUser);
+					
 					poste.getPosteFiles().add(posteFile);
 					poste.persist();
 				

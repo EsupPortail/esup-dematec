@@ -14,7 +14,7 @@ privileged aspect PosteAPourvoirFile_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager PosteAPourvoirFile.entityManager;
     
-    public static final List<String> PosteAPourvoirFile.fieldNames4OrderClauseFilter = java.util.Arrays.asList("filename", "file", "sendTime", "fileSize", "contentType", "bigFile");
+    public static final List<String> PosteAPourvoirFile.fieldNames4OrderClauseFilter = java.util.Arrays.asList("filename", "file", "sendTime", "fileSize", "contentType", "sender", "bigFile");
     
     public static final EntityManager PosteAPourvoirFile.entityManager() {
         EntityManager em = new PosteAPourvoirFile().entityManager;

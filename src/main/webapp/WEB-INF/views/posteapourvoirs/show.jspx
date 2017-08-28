@@ -51,6 +51,7 @@
 	                        <th>Fichier</th>
 	                        <th>Taille</th>
 	                        <th>Date d'envoi</th>
+	                        <th>Émetteur</th>
 	                        <c:if test="${manageposte}">
 	                            <th>Suppression</th>
 	                        </c:if>
@@ -73,6 +74,7 @@
 	                        <td>
 	                            <spring:eval expression="posteFile.sendTime"/>
 	                        </td>
+	                        <td>${posteFile.sender.emailAddress}</td>
 	                        <c:if test="${manageposte}">
 	                            <spring:url value="/posteapourvoirs/${posteapourvoir.id}/delFile/${posteFile.id}" var="deletePosteFileUrl"/>
 	                            <td>

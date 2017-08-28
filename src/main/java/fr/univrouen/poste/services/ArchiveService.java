@@ -43,6 +43,8 @@ import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import fr.univrouen.poste.domain.MemberReviewFile;
+import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteAPourvoirFile;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 
@@ -144,6 +146,40 @@ public class ArchiveService {
 					}
 					beanWriter.close();
 				}
+				
+			}
+			
+			for(PosteAPourvoir poste : PosteAPourvoir.findAllPosteAPourvoirs()) {
+				
+				String folderName = destFolder.concat("/");
+				String numEmploi = poste.getNumEmploi();
+				numEmploi = numEmploi.replaceAll("[^a-zA-Z0-9.-]", "_");
+				folderName = folderName.concat(numEmploi).concat("/");	
+				
+				File folder = new File(folderName);
+				folder.mkdir();
+				
+				folderName = folderName.concat("Fichiers_Internes").concat("/");	
+				folder = new File(folderName);
+				folder.mkdir();
+				
+				ICsvBeanWriter beanWriter = new CsvBeanWriter(new FileWriter(folderName.concat("metadata.csv")), CsvPreference.STANDARD_PREFERENCE);
+				beanWriter.writeHeader(header);
+				
+				for (PosteAPourvoirFile posteFile : poste.getPosteFiles()) {
+					String fileName = posteFile.getId().toString().concat("-").concat(posteFile.getFilename());
+					String folderFileName = folderName.concat(fileName);
+					File file = new File(folderFileName);
+					file.createNewFile();
+					
+					OutputStream outputStream = new FileOutputStream(file);
+					InputStream inputStream = posteFile.getBigFile().getBinaryFile().getBinaryStream();					
+					IOUtils.copyLarge(inputStream, outputStream);
+					
+					ArchiveMetadataFileBean archiveMetadataFileBean = new ArchiveMetadataFileBean(fileName, posteFile.getFilename(), posteFile.getSendTime(), posteFile.getSender().getEmailAddress());
+					beanWriter.write(archiveMetadataFileBean, header, processors);
+				}
+				beanWriter.close();
 				
 			}
 		

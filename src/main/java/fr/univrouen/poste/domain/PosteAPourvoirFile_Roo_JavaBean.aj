@@ -5,6 +5,7 @@ package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.BigFile;
 import fr.univrouen.poste.domain.PosteAPourvoirFile;
+import fr.univrouen.poste.domain.User;
 import java.util.Date;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,6 +49,14 @@ privileged aspect PosteAPourvoirFile_Roo_JavaBean {
     
     public void PosteAPourvoirFile.setContentType(String contentType) {
         this.contentType = contentType;
+    }
+    
+    public User PosteAPourvoirFile.getSender() {
+        return this.sender;
+    }
+    
+    public void PosteAPourvoirFile.setSender(User sender) {
+        this.sender = sender;
     }
     
     public BigFile PosteAPourvoirFile.getBigFile() {

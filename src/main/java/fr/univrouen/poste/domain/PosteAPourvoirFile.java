@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Query;
 import javax.persistence.Temporal;
@@ -52,6 +53,9 @@ public class PosteAPourvoirFile implements DematFile {
     private Long fileSize;
     
     private String contentType;
+    
+    @ManyToOne
+    private User sender;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private BigFile bigFile = new BigFile();
