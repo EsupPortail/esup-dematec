@@ -10,19 +10,11 @@ privileged aspect UserRegistrationForm_Roo_JavaBean {
     public String UserRegistrationForm.getFirstName() {
         return this.firstName;
     }
-    
-    public void UserRegistrationForm.setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    
+
     public String UserRegistrationForm.getLastName() {
         return this.lastName;
     }
-    
-    public void UserRegistrationForm.setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    
+
     public String UserRegistrationForm.getEmailAddress() {
         return this.emailAddress;
     }

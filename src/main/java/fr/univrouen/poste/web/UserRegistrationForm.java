@@ -54,7 +54,17 @@ public class UserRegistrationForm {
 
     // don't care of upper/lower case for authentication with email ...
 	public void setEmailAddress(String emailAddress) {
-    	this.emailAddress = emailAddress.toLowerCase();
+    	this.emailAddress = emailAddress.toLowerCase().trim();
     }
+	
+    public void setFirstName(String firstName) {
+        this.firstName = firstName.trim();
+    }
+    
+    public void setLastName(String lastName) {
+        this.lastName = lastName.trim();
+    }
+    
+	
 
 }
