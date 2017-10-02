@@ -29,6 +29,10 @@ padding: 15px;
 border: 2px groove threedface;
 }
 
+.btn {
+min-width: 16px;
+}
+
 .row-fluid, .row-fluid:before, .row-fluid:after {
 display: initial;
 }
