@@ -287,7 +287,12 @@
     	<div class="demat-fluid">
     		<c:if test="${isAdminOrManager or isPresident}">
 	            <util:help >
-	            	Ci-dessous vous pouvez affecter des rapporteurs à cette candidature.
+	            	<p>
+	            		Ci-dessous, et en tant que président ou gestionnaire de l'application, vous pouvez affecter des rapporteurs à cette candidature.
+	            	</p>
+	            	<p>
+	            		Une telle affectation ne modifie pas les droits des membres de commission sur la candidature, cela leur permet juste d'identifier les candidatures sur lesquelles ils sont rapporteurs, ce par un simple code couleur.
+	            	</p>
 	            </util:help>
 	        </c:if>
             <div class="demat6 well">
