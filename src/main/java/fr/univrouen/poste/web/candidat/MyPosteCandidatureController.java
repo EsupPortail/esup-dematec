@@ -786,7 +786,7 @@ public class MyPosteCandidatureController {
     			Collections.sort(mailAdressesSorted);
     			StringBuffer mailAdressesString = new StringBuffer();
     			for(String email: mailAdressesSorted) {
-    				mailAdressesString.append(email).append(System.lineSeparator());
+    				mailAdressesString.append(email).append("\r\n");
     			}
 
         		String contentType = "text/plain";
