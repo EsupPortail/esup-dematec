@@ -312,7 +312,7 @@
     	      <div class="demat6 well demat-pc-manage">
 	    		<spring:url value="/postecandidatures/${postecandidature.id}/addReporter" var="addReporterUrl"/>
 	            <form action="${addReporterUrl}" method="post">
-		            <field:select label="Ajouter un rapporteur" multiple="false" size="1" disableFormBinding="true" itemValue="id" itemLabel="displayName" field="userId" id="f_fr_univrouen_poste_domain_PosteCandidature_candidat" items="${postecandidature.poste.sortedMembres}" path="/admin/users" required="true"/>
+		            <field:select label="Ajouter un rapporteur" multiple="false" size="1" disableFormBinding="true" itemValue="id" itemLabel="displayName" field="userId" id="f_fr_univrouen_poste_domain_PosteCandidature_reporters" items="${postecandidature.poste.sortedMembres}" path="/admin/users" required="true"/>
 		            <input id="proceed" type="submit" value="Ajouter" class="btn btn-success"/>
 		        </form>
 		      </div>
