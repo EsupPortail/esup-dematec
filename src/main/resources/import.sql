@@ -71,7 +71,10 @@ color_candidature_vue_modifie_depuis,
 membre_suppr_review_file,
 candidature_recevable_default,
 candidat_can_signup,
-color_reporter_tag
+color_reporter_tag,
+postes_menu4members boolean,
+president_reporters_view boolean,
+texte_postes_menu4members text
 ) 
 
 VALUES (
@@ -164,7 +167,16 @@ true,
 
 false,
 
-'#eeeeaa'
+'#eeeeaa', 
+
+true, 
+
+false, 
+
+'<div class="well help"> 
+<p>En tant que membre de commission, vous avez accès ici à des documents partagés à l''ensemble de la commission pour un poste donné.</p>
+<p>Les présidents de commission ont la possibilité d''ajouter des documents dans ces espaces.</p>
+</div>'
 
 );
 

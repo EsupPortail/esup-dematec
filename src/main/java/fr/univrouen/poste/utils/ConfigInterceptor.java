@@ -112,8 +112,10 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 				
 				modelAndView.addObject("candidatCanSignup", AppliConfig.getCacheCandidatCanSignup());
 				
-				modelAndView.addObject("versionEsupDematEC", AppliVersion.getCacheVersion());
+				modelAndView.addObject("postesMenu4Members", AppliConfig.getCachePostesMenu4Members());
 				
+				modelAndView.addObject("versionEsupDematEC", AppliVersion.getCacheVersion());
+			
 			}
 		
 			if(request.getParameter("size")!=null) {

@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteAPourvoirFile;
 import fr.univrouen.poste.domain.User;
@@ -120,6 +121,7 @@ public class PosteAPourvoirController {
         } else {
             uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirs(sortFieldName, sortOrder));
         }
+    	uiModel.addAttribute("textePostesMenu4Members", AppliConfig.getCacheTextePostesMenu4Members());
         addDateTimeFormatPatterns(uiModel);
         return "posteapourvoirs/list";
     }

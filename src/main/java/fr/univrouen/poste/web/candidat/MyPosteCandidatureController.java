@@ -594,6 +594,8 @@ public class MyPosteCandidatureController {
 		Boolean isPresident = postecandidature.getPoste().getPresidents() != null && postecandidature.getPoste().getPresidents().contains(getCurrentUser());
 		uiModel.addAttribute("isPresident", isPresident);
 		
+		uiModel.addAttribute("presidentReportersView", AppliConfig.getCachePresidentReportersView());
+		
 		return "postecandidatures/show";
 	}
 	

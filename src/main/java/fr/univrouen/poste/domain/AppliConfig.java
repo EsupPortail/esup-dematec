@@ -105,6 +105,12 @@ public class AppliConfig {
 	
 	private static String cacheColorReporterTag;
 	
+	private static Boolean cachePostesMenu4Members;
+    
+	private static Boolean cachePresidentReportersView;
+	
+	private static String cacheTextePostesMenu4Members;
+	
 	
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
@@ -220,6 +226,16 @@ public class AppliConfig {
     
     @Column
     private String colorReporterTag;
+    
+    @Column
+    private Boolean postesMenu4Members;
+    
+    @Column
+    private Boolean presidentReportersView;
+    
+    @Column(columnDefinition="TEXT")
+    private String textePostesMenu4Members;
+    
     
     public void setTitre(String titre) {
     	this.titre = titre;
@@ -385,6 +401,23 @@ public class AppliConfig {
         this.texteMailNewCandidatures = texteMailNewCandidatures;
         cacheTexteMailNewCandidatures = texteMailNewCandidatures;
     }
+
+	public void setPostesMenu4Members(Boolean postesMenu4Members) {
+		this.postesMenu4Members = postesMenu4Members;
+		cachePostesMenu4Members = postesMenu4Members;
+	}
+
+	public void setPresidentReportersView(Boolean presidentReportersView) {
+		this.presidentReportersView = presidentReportersView;
+		cachePresidentReportersView = presidentReportersView;
+	}
+	
+	
+
+	public void setTextePostesMenu4Members(String textePostesMenu4Members) {
+		this.textePostesMenu4Members = textePostesMenu4Members;
+		cacheTextePostesMenu4Members = textePostesMenu4Members;
+	}
 
 	public static String getCacheTitre() {
 		if(cacheTitre == null) {
@@ -828,6 +861,44 @@ public class AppliConfig {
     	}
     	return cacheColorReporterTag;
     }
-	
+
+	public static Boolean getCachePostesMenu4Members() {
+		if(cachePostesMenu4Members == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cachePostesMenu4Members = configs.get(0).getPostesMenu4Members();		
+    		}
+    		if(cachePostesMenu4Members == null) {
+    			cachePostesMenu4Members = false;
+    		}
+    	}
+    	return cachePostesMenu4Members;
+	}
+
+	public static Boolean getCachePresidentReportersView() {
+		if(cachePresidentReportersView == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cachePresidentReportersView = configs.get(0).getPresidentReportersView();		
+    		}
+    		if(cachePresidentReportersView == null) {
+    			cachePresidentReportersView = false;
+    		}
+    	}
+    	return cachePresidentReportersView;
+	}
+
+	public static String getCacheTextePostesMenu4Members() {
+    	if(cacheTextePostesMenu4Members == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheTextePostesMenu4Members = configs.get(0).getTextePostesMenu4Members();		
+    		} 
+    		if(cacheTextePostesMenu4Members == null) {
+    			cacheTextePostesMenu4Members = "";
+    		}
+    	}
+    	return cacheTextePostesMenu4Members;
+    }
 	
 }

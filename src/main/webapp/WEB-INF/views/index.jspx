@@ -84,7 +84,9 @@
 	<sec:authorize access="hasRole('ROLE_MEMBRE')">
 		<a href="${postecandidatures_url}" class="btn btn-primary btn-large">Liste des candidatures</a>
 		&amp;nbsp;<span>&amp;nbsp;</span>&amp;nbsp;
-		<a href="${posteapourvoirs_url}" class="btn btn-primary btn-large">Liste des postes</a>
+        <c:if test="${postesMenu4Members}">
+			<a href="${posteapourvoirs_url}" class="btn btn-primary btn-large">Liste des postes</a>
+		</c:if>
 	</sec:authorize>
 
 

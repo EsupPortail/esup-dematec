@@ -125,9 +125,21 @@ Université ESUP - Direction des Ressources Humaines
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
         <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>
         <util:help>
-            <p>Le code  couleur ci-dessous permet aux membres de commissions de distinguer les candidatures pour lesquelles ils ont été nommés rapporteurs
+        	<p>L'option ci-dessous permet aux membres de commission d'accéder à des documents partagés à l'ensemble de la commission pour un poste donné.</p>
+            <p>Les présidents de commission, tout comme les gestionnaires de l'application, ont la possibilité d'ajouter des documents dans ces espaces.
 	        </p>
         </util:help>
+        <field:checkbox field="postesMenu4Members" id="c_fr_univrouen_poste_domain_AppliConfig_postesMenu4Members" z="user-managed" />
+        <field:textarea field="textePostesMenu4Members" id="c_fr_univrouen_poste_domain_AppliConfig_textePostesMenu4Members" z="user-managed" wysiwyg="true"/>
+        <util:help>
+        	<p>
+        		Vous avez la possibilité de permettre aux gestionnaires et présidents de poste d'affecter des rapporteurs à une candidature.
+        	</p>
+            <p>
+            	Si cette option est activée, le code  couleur ci-dessous permet aux membres de commissions de distinguer les candidatures pour lesquelles ils ont été nommés rapporteurs
+	        </p>
+        </util:help>
+        <field:checkbox field="presidentReportersView" id="c_fr_univrouen_poste_domain_AppliConfig_presidentReportersView" z="user-managed"/>
         <field:input field="colorReporterTag" id="c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag" z="XGrGXUIyeufdS51TiaAgTWC0OmE="/>
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>

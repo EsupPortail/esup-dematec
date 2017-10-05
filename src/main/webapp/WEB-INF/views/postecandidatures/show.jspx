@@ -284,6 +284,7 @@
     	<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
     		<c:set value="true" var="isAdminOrManager"/>
     	</sec:authorize>
+    	<c:if test="${presidentReportersView}">
     	<div class="demat-fluid">
     		<c:if test="${isAdminOrManager or isPresident}">
 	            <util:help >
@@ -324,6 +325,7 @@
 	        </c:if>
     	</div>
         <hr/>
+        </c:if>
         <div class="well">
             <h4>Rapports du comité de sélection</h4>
             <util:help>

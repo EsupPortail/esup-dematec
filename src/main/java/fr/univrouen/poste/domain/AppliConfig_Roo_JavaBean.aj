@@ -144,4 +144,16 @@ privileged aspect AppliConfig_Roo_JavaBean {
         this.colorReporterTag = colorReporterTag;
     }
     
+    public Boolean AppliConfig.getPostesMenu4Members() {
+        return this.postesMenu4Members;
+    }
+    
+    public Boolean AppliConfig.getPresidentReportersView() {
+        return this.presidentReportersView;
+    }
+    
+    public String AppliConfig.getTextePostesMenu4Members() {
+        return this.textePostesMenu4Members;
+    }
+    
 }
