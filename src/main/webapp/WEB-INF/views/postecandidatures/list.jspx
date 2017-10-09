@@ -164,10 +164,10 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_prenom" label="Prénom" property="prenom"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat" property="candidat" render="false" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_numcandidat" label="N°Galaxie" property="numCandidat" render="${canManage}" sort="true"/>           
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
-            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${seeAuditionnable}" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed" sort="true"/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${seeAuditionnable}" z="user-managed" sort="true"/>
             <c:if test="${laureatEnable and canManage}">
-            	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_laureat" property="laureat" z="user-managed"/>
+            	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_laureat" property="laureat" z="user-managed" sort="true"/>
             </c:if>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewState" label="Vue" property="managerReviewState" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" render="${canManage}" sort="true" z="user-managed"/>
