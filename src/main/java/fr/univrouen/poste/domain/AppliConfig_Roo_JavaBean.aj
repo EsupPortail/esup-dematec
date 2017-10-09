@@ -156,4 +156,12 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.textePostesMenu4Members;
     }
     
+    public Boolean AppliConfig.getLaureatEnable() {
+        return this.laureatEnable;
+    }
+    
+    public String AppliConfig.getTexteMailCandidatLaureat() {
+        return this.texteMailCandidatLaureat;
+    }
+    
 }

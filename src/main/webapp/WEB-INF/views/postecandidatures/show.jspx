@@ -240,6 +240,40 @@
                             <a class="btn btn-danger" data-toggle="modal" href="#auditionnableDialog" role="button">Retenu pour audition ?</a>
                         </c:otherwise>
                     </c:choose>
+                    <c:if test="${laureatEnable}">
+	                     &amp;nbsp;
+	        			<c:choose>
+	                        <c:when test="${postecandidature.laureat}">
+	                            <p class="label label-important">Cette candidature est lauréate.</p>
+	                        </c:when>
+	                        <c:otherwise>
+	                            <div aria-hidden="true" class="modal hide fade" id="laureatDialog" role="dialog" tabindex="-1">
+	                                <spring:url value="/postecandidatures/${postecandidature.id}/laureat" var="laureatCandidatureUrl"/>
+	                                <form action="${laureatCandidatureUrl}">
+	                                    <input name="laureat" type="hidden" value="true"/>
+	                                    <div class="modal-header">
+	                                        <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+	                                        <h3 id="myModalLabel">Candidature laureate ?</h3>
+	                                    </div>
+	                                    <div class="modal-body">
+	                                        <p>Si vous confirmez, cette candidature sera considérée comme <b>lauréate</b>.</p>
+	                                        <p>
+								Il recevra de fait un mail (que vous pouvez 'modifier' ci-dessous).</p>
+	                                        <p>
+	                                            <h4>Mail :</h4>
+	                                            <textarea cols="100" name="mailCorps" rows="20">${texteMailCandidatLaureat}</textarea>
+	                                        </p>
+	                                    </div>
+	                                    <div class="modal-footer">
+	                                        <button aria-hidden="true" class="btn" data-dismiss="modal">Annuler</button>
+	                                        <button class="btn btn-danger" href="${laureatCandidatureUrl}" onclick="return confirm('Êtes-vous sûr ?');" type="submit">Confirmer</button>
+	                                    </div>
+	                                </form>
+	                            </div>
+	                            <a class="btn btn-danger" data-toggle="modal" href="#laureatDialog" role="button">Canidature lauréate ?</a>
+	                        </c:otherwise>
+	                    </c:choose>
+                    </c:if>
                 </div>
             </div>
             <div class="demat6 demat-pc-manage">

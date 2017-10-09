@@ -111,6 +111,10 @@ public class AppliConfig {
 	
 	private static String cacheTextePostesMenu4Members;
 	
+	private static Boolean cacheLaureatEnable;
+	
+	private static String cacheTexteMailCandidatLaureat;
+	
 	
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
@@ -235,6 +239,12 @@ public class AppliConfig {
     
     @Column(columnDefinition="TEXT")
     private String textePostesMenu4Members;
+    
+    @Column
+    private Boolean laureatEnable;  
+    
+    @Column(columnDefinition="TEXT")
+	private String texteMailCandidatLaureat;
     
     
     public void setTitre(String titre) {
@@ -417,6 +427,16 @@ public class AppliConfig {
 	public void setTextePostesMenu4Members(String textePostesMenu4Members) {
 		this.textePostesMenu4Members = textePostesMenu4Members;
 		cacheTextePostesMenu4Members = textePostesMenu4Members;
+	}
+
+	public void setLaureatEnable(Boolean laureatEnable) {
+		this.laureatEnable = laureatEnable;
+		cacheLaureatEnable = laureatEnable;
+	}
+	
+	public void setTexteMailCandidatLaureat(String texteMailCandidatLaureat) {
+		this.texteMailCandidatLaureat = texteMailCandidatLaureat;
+		cacheTexteMailCandidatLaureat = texteMailCandidatLaureat;
 	}
 
 	public static String getCacheTitre() {
@@ -901,4 +921,32 @@ public class AppliConfig {
     	return cacheTextePostesMenu4Members;
     }
 	
+	public static Boolean getCacheLaureatEnable() {
+		if(cacheLaureatEnable == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheLaureatEnable = configs.get(0).getLaureatEnable();		
+    		}
+    		if(cacheLaureatEnable == null) {
+    			cacheLaureatEnable = false;
+    		}
+    	}
+    	return cacheLaureatEnable;
+	}
+	
+
+	public static String getCacheTexteMailCandidatLaureat() {
+    	if(cacheTexteMailCandidatLaureat == null) {
+    		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
+    		if(!configs.isEmpty()) {
+    			cacheTexteMailCandidatLaureat = configs.get(0).getTexteMailCandidatLaureat();		
+    		} 
+    		if(cacheTexteMailCandidatLaureat == null) {
+    			cacheTexteMailCandidatLaureat = "";
+    		}
+    	}
+    	return cacheTexteMailCandidatLaureat;
+    }
+	
 }
+

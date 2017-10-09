@@ -97,4 +97,13 @@ public class PosteCandidatureMultiManageController {
 	    return "redirect:" + referer;
 	}
 	
+	@RequestMapping(value = "/manage", params = "laureat", method = RequestMethod.POST, produces = "text/html")
+	public String candidaturesLaureates(@RequestParam("candidatureId") List<Long> pcIds, @RequestParam(required=true) String mailCorps, HttpServletRequest request) {
+		for(Long id: pcIds) {
+			myPosteCandidatureController.modifyLaureatCandidatureFile(id, true, mailCorps);
+		}
+	    String referer = request.getHeader("Referer");
+	    return "redirect:" + referer;
+	}
+	
 }

@@ -90,6 +90,8 @@ public class PosteCandidature {
 
     private Boolean auditionnable = false;
     
+    private Boolean laureat = false;   
+    
     @Type(type="org.hibernate.type.StringClobType")
     private String managerComment4Members = "";
 

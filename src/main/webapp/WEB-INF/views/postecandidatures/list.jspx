@@ -166,6 +166,9 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_candidat_numcandidat" label="N°Galaxie" property="numCandidat" render="${canManage}" sort="true"/>           
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_recevable" property="recevable" render="${canManage}" z="user-managed"/>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_auditionnable" property="auditionnable" render="${seeAuditionnable}" z="user-managed"/>
+            <c:if test="${laureatEnable and canManage}">
+            	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_laureat" property="laureat" z="user-managed"/>
+            </c:if>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewState" label="Vue" property="managerReviewState" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_creation_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_creation" property="creation" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_modification" property="modification" render="${canManage}" sort="true" z="user-managed"/>
@@ -236,7 +239,32 @@
                                     </div>
                                     
                             </div>
-                            <a class="btn btn-danger" data-toggle="modal" href="#auditionnableDialog" role="button">Retenus pour auditions ?</a>
+                            
+                            <c:if test="${laureatEnable}">
+	                            &amp;nbsp;
+	                            <div aria-hidden="true" class="modal hide fade" id="laureatDialog" role="dialog" tabindex="-1">
+	
+	                                    <div class="modal-header">
+	                                        <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+	                                        <h3 id="myModalLabel">Candidatures lauréates ? ?</h3>
+	                                    </div>
+	                                    <div class="modal-body">
+	                                        <p>Si vous confirmez, cette candidature sera considérée comme <b>lauréate</b>.</p>
+	                                        <p>Il recevra de fait un mail (que vous pouvez 'modifier' ci-dessous).</p>
+	                                        <p>
+	                                           <h4>Mail :</h4>
+	                                           <textarea cols="100" name="mailCorps" rows="20">${texteMailCandidatLaureat}</textarea>
+	                                        </p>
+	                                    </div>
+	                                    <div class="modal-footer">
+	                                        <button aria-hidden="true" class="btn" data-dismiss="modal">Annuler</button>
+	                                        <input type="submit" class="btn btn-danger" name="laureat" value="Confirmer" onclick="return confirm('Êtes-vous sûr ?');"/>
+	                                    </div>
+	                                    
+	                            </div>
+                            </c:if>
+                            
+                            <a class="btn btn-danger" data-toggle="modal" href="#laureatDialog" role="button">Candidatures lauréates ?</a>
                 </div>
             </div>
             <div class="demat6 demat-pc-manage">

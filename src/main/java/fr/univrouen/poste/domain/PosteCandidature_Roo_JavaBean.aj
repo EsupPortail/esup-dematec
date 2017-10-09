@@ -75,6 +75,14 @@ privileged aspect PosteCandidature_Roo_JavaBean {
         this.auditionnable = auditionnable;
     }
     
+    public Boolean PosteCandidature.getLaureat() {
+        return this.laureat;
+    }
+    
+    public void PosteCandidature.setLaureat(Boolean laureat) {
+        this.laureat = laureat;
+    }
+    
     public String PosteCandidature.getManagerComment4Members() {
         return this.managerComment4Members;
     }

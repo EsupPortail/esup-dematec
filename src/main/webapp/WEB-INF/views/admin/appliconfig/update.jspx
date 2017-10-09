@@ -125,14 +125,14 @@ Université ESUP - Direction des Ressources Humaines
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
         <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>
         <util:help>
-        	<p>L'option ci-dessous permet aux membres de commission d'accéder à des documents partagés à l'ensemble de la commission pour un poste donné.</p>
+            <p>L'option ci-dessous permet aux membres de commission d'accéder à des documents partagés à l'ensemble de la commission pour un poste donné.</p>
             <p>Les présidents de commission, tout comme les gestionnaires de l'application, ont la possibilité d'ajouter des documents dans ces espaces.
 	        </p>
         </util:help>
-        <field:checkbox field="postesMenu4Members" id="c_fr_univrouen_poste_domain_AppliConfig_postesMenu4Members" z="user-managed" />
-        <field:textarea field="textePostesMenu4Members" id="c_fr_univrouen_poste_domain_AppliConfig_textePostesMenu4Members" z="user-managed" wysiwyg="true"/>
+        <field:checkbox field="postesMenu4Members" id="c_fr_univrouen_poste_domain_AppliConfig_postesMenu4Members" z="user-managed"/>
+        <field:textarea field="textePostesMenu4Members" id="c_fr_univrouen_poste_domain_AppliConfig_textePostesMenu4Members" wysiwyg="true" z="user-managed"/>
         <util:help>
-        	<p>
+            <p>
         		Vous avez la possibilité de permettre aux gestionnaires et présidents de poste d'affecter des rapporteurs à une candidature.
         	</p>
             <p>
@@ -141,6 +141,15 @@ Université ESUP - Direction des Ressources Humaines
         </util:help>
         <field:checkbox field="presidentReportersView" id="c_fr_univrouen_poste_domain_AppliConfig_presidentReportersView" z="user-managed"/>
         <field:input field="colorReporterTag" id="c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag" z="XGrGXUIyeufdS51TiaAgTWC0OmE="/>
+        
+        <util:help>
+            <p>
+        		Vous avez la possibilité de permettre aux gestionnaires de marquer comme laureats des candidatures. Lors de cette action, un mail peut ainsi leur être envoyé pour leur informer de cela. 
+	        </p>
+        </util:help>
+        <field:checkbox field="laureatEnable" id="c_fr_univrouen_poste_domain_AppliConfig_laureatEnable" z="Ab0ZV/QwqC66T8g14JFm56+Npqk="/>
+        <field:textarea field="texteMailCandidatLaureat" id="c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatLaureat" z="kLm8MqD97VVzJhcpdCa2gGRbpFU="/>
+        
     </form:update>
     <spring:url value="/resources/css/bootstrap-wysihtml5.css" var="bootstrap_wysihtml5_css_url"/>
     <spring:url value="/resources/js/wysihtml5-0.3.0.js" var="wysihtml5_js_url"/>

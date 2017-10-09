@@ -54,5 +54,10 @@
         <field:display field="candidatureRecevableDefault" id="s_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" object="${appliconfig}" z="aCqa55N8xU1LzH+gIdclvc9ADmk="/>
         <field:display field="candidatCanSignup" id="s_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" object="${appliconfig}" z="XjR1XXNoYGJ240EzSZS8eDc4Wi0="/>
         <field:display field="colorReporterTag" id="s_fr_univrouen_poste_domain_AppliConfig_colorReporterTag" object="${appliconfig}" z="ZudqtIJsqSohc8vkUn4zRUsEIac="/>
+        <field:display field="postesMenu4Members" id="s_fr_univrouen_poste_domain_AppliConfig_postesMenu4Members" object="${appliconfig}" z="uRNajrHYFoVK1VQXo9NbFpaCCgU="/>
+        <field:display field="presidentReportersView" id="s_fr_univrouen_poste_domain_AppliConfig_presidentReportersView" object="${appliconfig}" z="o79Ekwn9Phs/sdL1qnDju9kW12o="/>
+        <field:display field="textePostesMenu4Members" id="s_fr_univrouen_poste_domain_AppliConfig_textePostesMenu4Members" object="${appliconfig}" z="9AnDXL4hd2uyGt21S73ALI5nlH8="/>
+        <field:display field="laureatEnable" id="s_fr_univrouen_poste_domain_AppliConfig_laureatEnable" object="${appliconfig}" z="ePBwznhAI0VJ/Yeq2Y6vtTcEW60="/>
+        <field:display field="texteMailCandidatLaureat" id="s_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatLaureat" object="${appliconfig}" z="b319IGSBwaA9gH8grG7b08wmev4="/>
     </page:show>
 </div>

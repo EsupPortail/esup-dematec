@@ -485,6 +485,31 @@ public class MyPosteCandidatureController {
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 	
+	
+	@RequestMapping(value = "/{id}/laureat")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+	public String modifyLaureatCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean laureat, @RequestParam(required=false) String mailCorps) {
+		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+		
+		mailCorps = mailCorps == null ? "" : mailCorps;
+				
+		if(laureat) {
+			String mailTo = postecandidature.getEmail();
+    	    String mailFrom = AppliConfig.getCacheMailFrom();
+    	    String mailSubject = AppliConfig.getCacheMailSubject();
+    	    
+    	    String mailMessage = mailCorps; 	    
+    	    
+    	    mailMessage = mailMessage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());        
+    		    		
+    		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
+		}
+
+		postecandidature.setLaureat(laureat);
+
+		return "redirect:/postecandidatures/" + id.toString();
+	}
+	
 	@RequestMapping(value = "/{id}/review")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 	public String modifyReviewCandidature(@PathVariable("id") Long id, @RequestParam(required=true) String reviewStatus) {
@@ -596,6 +621,9 @@ public class MyPosteCandidatureController {
 		
 		uiModel.addAttribute("presidentReportersView", AppliConfig.getCachePresidentReportersView());
 		
+		uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
+		uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
+		
 		return "postecandidatures/show";
 	}
 	
@@ -668,6 +696,9 @@ public class MyPosteCandidatureController {
 		    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
 		    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
 		    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
+		    
+			uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
+			uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
 		}
 
 		else if (isCandidat) {
@@ -848,6 +879,9 @@ public class MyPosteCandidatureController {
 			    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
 			    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
 			    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
+			    
+				uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
+				uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
 	    		
 	            addDateTimeFormatPatterns(uiModel);       
 	            return "postecandidatures/list";           

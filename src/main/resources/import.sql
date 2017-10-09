@@ -74,7 +74,9 @@ candidat_can_signup,
 color_reporter_tag,
 postes_menu4members boolean,
 president_reporters_view boolean,
-texte_postes_menu4members text
+texte_postes_menu4members text,
+laureat_enable,
+texte_mail_candidat_laureat
 ) 
 
 VALUES (
@@ -176,7 +178,14 @@ false,
 '<div class="well help"> 
 <p>En tant que membre de commission, vous avez accès ici à des documents partagés à l''ensemble de la commission pour un poste donné.</p>
 <p>Les présidents de commission ont la possibilité d''ajouter des documents dans ces espaces.</p>
-</div>'
+</div>',
+
+false, 
+
+'Bonjour,\n\n
+Le comité de sélection a décidé de retenir votre candidature au poste @@numEmploi@@.\n\n
+Cordialement.\n
+--\nUniversité ESUP - Direction des Ressources Humaines',
 
 );
 
