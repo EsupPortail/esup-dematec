@@ -135,13 +135,13 @@ public class SignUpController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String create(UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
+    public String create(@ModelAttribute("User") @Valid UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
     	if(AppliConfig.getCacheCandidatCanSignup()) {
 	    	// be sure that there is no password sent by the web form
 	    	userRegistration.setPassword(null);
 	        if (result.hasErrors()) {
 	        	log.error(result.toString());
-	            return createForm(model);
+	            return "signup/index";
 	        } else {
 	        	if(User.countFindUsersByEmailAddress(userRegistration.getEmailAddress())>0) {
 	        		model.addAttribute("errorMessage", "Un compte avec cette même adresse mail est déjà présent dans cette application !");

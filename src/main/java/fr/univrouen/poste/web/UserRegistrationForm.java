@@ -29,27 +29,21 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 public class UserRegistrationForm {
 
 	@NotNull
-	@Size(min = 1)
+	@Size(min = 1, message="Merci de saisir votre prénom")
 	private String firstName;
 	
 	@NotNull
-	@Size(min = 1)
+	@Size(min = 1, message="Merci de saisir votre nom de famille")
 	private String lastName;
 	
 	@NotNull
-	@Size(min = 1)
+	@Size(min = 1, message="Merci de saisir votre adresse email")
 	private String emailAddress;
 	
-	@NotNull
-	@Size(min = 1)
 	private String password;
 	
-	@NotNull
-	@Size(min = 1)
 	private String repeatPassword;
 
-	@NotNull
-	@Size(min = 1)
 	private String activationKey;
 
     // don't care of upper/lower case for authentication with email ...
