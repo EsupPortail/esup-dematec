@@ -72,9 +72,9 @@ membre_suppr_review_file,
 candidature_recevable_default,
 candidat_can_signup,
 color_reporter_tag,
-postes_menu4members boolean,
-president_reporters_view boolean,
-texte_postes_menu4members text,
+postes_menu4members,
+president_reporters_view,
+texte_postes_menu4members,
 laureat_enable,
 texte_mail_candidat_laureat
 ) 
@@ -185,7 +185,7 @@ false,
 'Bonjour,\n\n
 Le comité de sélection a décidé de retenir votre candidature au poste @@numEmploi@@.\n\n
 Cordialement.\n
---\nUniversité ESUP - Direction des Ressources Humaines',
+--\nUniversité ESUP - Direction des Ressources Humaines'
 
 );
 
