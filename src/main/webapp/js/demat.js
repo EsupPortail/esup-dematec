@@ -5,7 +5,7 @@
     	$("#changePasswordForm").submit(function( event ) {  	
 			var newPasswd = $('#_changepassword_newpassword');
 			if (newPasswd.val().length < 6) {
-				alert('Merci de saisir un password contenant au moins 6 caractères.');
+				alert('Merci de saisir un mot de passe contenant au moins 6 caractères.');
 				$('form').off("submit", preventDoubleSubmission);
 				event.preventDefault();
 			} 
@@ -13,7 +13,7 @@
     	$(".password-container #User").submit(function( event ) {  	
 			var newPasswd = $('#_password_id');
 			if (newPasswd.val().length < 6) {
-				alert('Merci de saisir un password contenant au moins 6 caractères.');
+				alert('Merci de saisir un mot de passe contenant au moins 6 caractères.');
 				$('form').off("submit", preventDoubleSubmission);
 				event.preventDefault();
 			} 
