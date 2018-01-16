@@ -125,44 +125,63 @@ public class DbToolService {
 			
 			if("1.4.x".equals(esupDematEcVersion)) { 
 				
-				String sqlUpdate = "update appli_config_file_type set list_index = 0;";
+				// Hack : en 1.5.0 et 1.5.1 l'initialisation de la base mettait 1.4.x comme numéro de version au lieu de 1.5.x 
 				
-				sqlUpdate += "ALTER TABLE poste_candidature ADD COLUMN textsearchable_index_col tsvector;"
-						+ " UPDATE poste_candidature SET textsearchable_index_col = "
-						+ " setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') "
-						+ " || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') "
-				    + "  || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') "
-				     + " || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') "
-				     + " FROM c_user where poste_candidature.candidat=c_user.id;"
-				+ " CREATE INDEX textsearch_idx ON poste_candidature USING gin(textsearchable_index_col);"
-
-
-				+ " CREATE FUNCTION textsearchable_poste_candidature_trigger() RETURNS trigger AS $$"
-				+ " begin"
-				  + " new.textsearchable_index_col :="
-				    + " setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') "
-				    + " || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') "
-				    + "  || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') "
-				    + "  || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') "
-				   + "   FROM c_user where new.candidat=c_user.id;"
-				  + " return new;"
-				+ " end"
-				+ " $$ LANGUAGE plpgsql;"
-
-				+ " CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE"
-				+ "    ON poste_candidature FOR EACH ROW EXECUTE PROCEDURE textsearchable_poste_candidature_trigger();";
+				String sqlTestDematEcVersion = "SELECT column_name FROM information_schema.columns WHERE table_name='poste_candidature' and column_name='textsearchable_index_col';";
+				Connection connectionTest = dataSource.getConnection();
+				CallableStatement statementTest = connectionTest.prepareCall(sqlTestDematEcVersion);
+				statementTest.execute();
+				Boolean realVersionIs14x = !statementTest.getResultSet().next();
+				connectionTest.close();
 				
-				
-				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
-				
-				Connection connection = dataSource.getConnection();
-				CallableStatement statement = connection.prepareCall(sqlUpdate);
-				statement.execute();
-				connection.close();
-				
-	    		logger.warn("\n\n#####\n\t" +
-	    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
-	    				"\n#####\n");
+				if(realVersionIs14x) {
+					
+					logger.info("\n\nMaj depuis 1.4.x ...\n\n");
+					
+					String sqlUpdate = "update appli_config_file_type set list_index = 0;";
+					
+					sqlUpdate += "ALTER TABLE poste_candidature ADD COLUMN textsearchable_index_col tsvector;"
+							+ " UPDATE poste_candidature SET textsearchable_index_col = "
+							+ " setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') "
+							+ " || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') "
+					    + "  || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') "
+					     + " || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') "
+					     + " FROM c_user where poste_candidature.candidat=c_user.id;"
+					+ " CREATE INDEX textsearch_idx ON poste_candidature USING gin(textsearchable_index_col);"
+	
+	
+					+ " CREATE FUNCTION textsearchable_poste_candidature_trigger() RETURNS trigger AS $$"
+					+ " begin"
+					  + " new.textsearchable_index_col :="
+					    + " setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') "
+					    + " || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') "
+					    + "  || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') "
+					    + "  || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') "
+					   + "   FROM c_user where new.candidat=c_user.id;"
+					  + " return new;"
+					+ " end"
+					+ " $$ LANGUAGE plpgsql;"
+	
+					+ " CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE"
+					+ "    ON poste_candidature FOR EACH ROW EXECUTE PROCEDURE textsearchable_poste_candidature_trigger();";
+					
+					
+					logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
+					
+					Connection connection = dataSource.getConnection();
+					CallableStatement statement = connection.prepareCall(sqlUpdate);
+					statement.execute();
+					connection.close();
+					
+		    		logger.warn("\n\n#####\n\t" +
+		    				"Pensez à mettre à jour les configurations de l'application depuis l'IHM - menu 'Configuration' !" +
+		    				"\n#####\n");
+				} else {
+					logger.info("\n\nVersion précédente en 1.5.0 ou 1.5.1 ; seul le numéro de version en base était en 1.4.x\n\n");
+					logger.warn("\n\n#####\n\t" +
+		    				"Base de données à jour en 1.5.x" +
+		    				"\n#####\n");
+				}
 	    		
 			} else {
 				logger.warn("\n\n#####\n\t" +
