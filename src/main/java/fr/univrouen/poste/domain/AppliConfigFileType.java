@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -23,9 +24,11 @@ public class AppliConfigFileType {
 	private String typeDescription;
 	
     @Column
+    @NotNull
 	private Long candidatureFileMoSizeMax = new Long(-1); 
 	
     @Column
+    @NotNull
 	private Long candidatureNbFileMax = new Long(-1); 
 	
     @Column(columnDefinition="TEXT")
@@ -35,6 +38,7 @@ public class AppliConfigFileType {
 	private String candidatureFilenameRestrictionRegexp = ".*";
 
     @Column
+    @NotNull
 	private Long listIndex = new Long(0); 
     
 	public static AppliConfigFileType getDefaultFileType() {
