@@ -348,7 +348,7 @@
                    </c:forEach>
                 </ul>
 		    </div>
-    	    <c:if test="${isAdminOrManager or isPresident}">
+    	    <c:if test="${(isAdminOrManager or isPresident) and not empty postecandidature.poste.sortedMembres}">
     	      <div class="demat6 well demat-pc-manage">
 	    		<spring:url value="/postecandidatures/${postecandidature.id}/addReporter" var="addReporterUrl"/>
 	            <form action="${addReporterUrl}" method="post">
