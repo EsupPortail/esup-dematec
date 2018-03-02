@@ -663,6 +663,8 @@ public class MyPosteCandidatureController {
 
     	if(sortFieldName == null) 
             sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
+		if("poste".equals(sortFieldName))
+    		sortFieldName = "poste.numEmploi";
     	if("nom".equals(sortFieldName))
     		sortFieldName = "candidat.nom";
     	if("email".equals(sortFieldName))
@@ -849,6 +851,19 @@ public class MyPosteCandidatureController {
     			
     		} else {
     			
+    			if(sortFieldName == null) 
+    	            sortFieldName = "poste.numEmploi,candidat.nom";   
+    			if("poste".equals(sortFieldName))
+    	    		sortFieldName = "poste.numEmploi";
+    	    	if("nom".equals(sortFieldName))
+    	    		sortFieldName = "candidat.nom";
+    	    	if("email".equals(sortFieldName))
+    	    		sortFieldName = "candidat.emailAddress";
+    			if("numCandidat".equals(sortFieldName))
+    				sortFieldName = "candidat.numCandidat";
+    	    	if("managerReviewState".equals(sortFieldName))
+    	    		sortFieldName = "managerReview.reviewStatus";
+    	    	
 	    		if (page != null || size != null) {
 	                int sizeNo = size == null ? 10 : size.intValue();
 	                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;

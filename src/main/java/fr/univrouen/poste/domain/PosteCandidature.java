@@ -60,7 +60,7 @@ import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 @RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat"})
 public class PosteCandidature {
 
-    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate", "candidat.numCandidat", "galaxieEntry.etatDossier", "recevable", "auditionnable", "laureat");
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "poste.numEmploi", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate", "candidat.numCandidat", "galaxieEntry.etatDossier", "recevable", "auditionnable", "laureat");
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
@@ -230,26 +230,19 @@ public class PosteCandidature {
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 		final List<Order> orders = new ArrayList<Order>();
 		
-		if("DESC".equalsIgnoreCase(sortOrder)) {
-			if("nom".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.desc(c.join("candidat").get("nom"))); 
-		    } else if("email".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.desc(c.join("candidat").get("emailAddress")));   
-			} else if("numCandidat".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.desc(c.join("candidat").get("numCandidat")));   
-			} else if("managerReviewState".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.desc(c.join("managerReview").get("reviewStatus")));   
-			} 
+		String[] sortFieldNameSplit = sortFieldName.split("\\.");
+		if("DESC".equalsIgnoreCase(sortOrder)) {	
+			if(sortFieldNameSplit.length<2) {
+				orders.add(criteriaBuilder.desc(c.get(sortFieldName)));   
+			} else {
+				orders.add(criteriaBuilder.desc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
+			}
 		} else {
-			if("nom".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.asc(c.join("candidat").get("nom"))); 
-		    } else if("email".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.asc(c.join("candidat").get("emailAddress")));   
-			} else if("numCandidat".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.asc(c.join("candidat").get("numCandidat")));   
-			} else if("managerReviewState".equals(sortFieldName)) {
-				orders.add(criteriaBuilder.asc(c.join("managerReview").get("reviewStatus")));   
-			} 
+			if(sortFieldNameSplit.length<2) {
+				orders.add(criteriaBuilder.asc(c.get(sortFieldName)));   
+			} else {
+				orders.add(criteriaBuilder.asc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
+			}
 		}
 		
         if (searchCriteria.getPostes() != null) {
