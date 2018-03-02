@@ -850,9 +850,7 @@ public class MyPosteCandidatureController {
         		return null; 
     			
     		} else {
-    			
-    			if(sortFieldName == null) 
-    	            sortFieldName = "poste.numEmploi,candidat.nom";   
+
     			if("poste".equals(sortFieldName))
     	    		sortFieldName = "poste.numEmploi";
     	    	if("nom".equals(sortFieldName))

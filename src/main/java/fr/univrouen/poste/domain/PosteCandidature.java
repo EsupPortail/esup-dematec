@@ -230,18 +230,20 @@ public class PosteCandidature {
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 		final List<Order> orders = new ArrayList<Order>();
 		
-		String[] sortFieldNameSplit = sortFieldName.split("\\.");
-		if("DESC".equalsIgnoreCase(sortOrder)) {	
-			if(sortFieldNameSplit.length<2) {
-				orders.add(criteriaBuilder.desc(c.get(sortFieldName)));   
+		if(sortFieldName != null) {
+			String[] sortFieldNameSplit = sortFieldName.split("\\.");
+			if("DESC".equalsIgnoreCase(sortOrder)) {	
+				if(sortFieldNameSplit.length<2) {
+					orders.add(criteriaBuilder.desc(c.get(sortFieldName)));   
+				} else {
+					orders.add(criteriaBuilder.desc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
+				}
 			} else {
-				orders.add(criteriaBuilder.desc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
-			}
-		} else {
-			if(sortFieldNameSplit.length<2) {
-				orders.add(criteriaBuilder.asc(c.get(sortFieldName)));   
-			} else {
-				orders.add(criteriaBuilder.asc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
+				if(sortFieldNameSplit.length<2) {
+					orders.add(criteriaBuilder.asc(c.get(sortFieldName)));   
+				} else {
+					orders.add(criteriaBuilder.asc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
+				}
 			}
 		}
 		
