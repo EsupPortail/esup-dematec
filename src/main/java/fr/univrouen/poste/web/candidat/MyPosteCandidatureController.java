@@ -673,6 +673,8 @@ public class MyPosteCandidatureController {
 			sortFieldName = "candidat.numCandidat";
     	if("managerReviewState".equals(sortFieldName))
     		sortFieldName = "managerReview.reviewStatus";
+    	if("galaxieEntryEtatDossier".equals(sortFieldName))
+    		sortFieldName = "galaxieEntry.etatDossier";
     		
     	// pagination only for admin / manager users ...
     	if (isAdmin || isManager) {
@@ -861,6 +863,8 @@ public class MyPosteCandidatureController {
     				sortFieldName = "candidat.numCandidat";
     	    	if("managerReviewState".equals(sortFieldName))
     	    		sortFieldName = "managerReview.reviewStatus";
+    	    	if("galaxieEntryEtatDossier".equals(sortFieldName))
+    	    		sortFieldName = "galaxieEntry.etatDossier";
     	    	
 	    		if (page != null || size != null) {
 	                int sizeNo = size == null ? 10 : size.intValue();
