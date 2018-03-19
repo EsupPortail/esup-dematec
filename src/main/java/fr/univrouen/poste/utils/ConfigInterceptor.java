@@ -18,6 +18,7 @@
 package fr.univrouen.poste.utils;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -110,7 +111,10 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 				modelAndView.addObject("subTitle", subTitle);
 				modelAndView.addObject("activeMenu", activeMenu);
 				
-				modelAndView.addObject("candidatCanSignup", AppliConfig.getCacheCandidatCanSignup());
+				Boolean candidatCanSignup = AppliConfig.getCacheCandidatCanSignup();
+				Date currentTime = new Date();     	    
+		    	candidatCanSignup = candidatCanSignup && currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) < 0;
+				modelAndView.addObject("candidatCanSignup", candidatCanSignup);
 				
 				modelAndView.addObject("postesMenu4Members", AppliConfig.getCachePostesMenu4Members());
 				

@@ -17,6 +17,8 @@
  */
 package fr.univrouen.poste.web;
 
+import java.util.Date;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,8 @@ public class LoginController {
     	String textePremierePageAnonyme = AppliConfig.getCacheTextePremierePageAnonyme();
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
     	Boolean candidatCanSignup = AppliConfig.getCacheCandidatCanSignup();
+    	Date currentTime = new Date();     	    
+    	candidatCanSignup = candidatCanSignup && currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) < 0;
     	model.addAttribute("candidatCanSignup", candidatCanSignup);
         return "login";
     }

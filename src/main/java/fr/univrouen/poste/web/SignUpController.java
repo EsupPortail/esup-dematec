@@ -136,7 +136,10 @@ public class SignUpController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String create(@ModelAttribute("User") @Valid UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
-    	if(AppliConfig.getCacheCandidatCanSignup()) {
+    	Boolean candidatCanSignup = AppliConfig.getCacheCandidatCanSignup();
+    	Date currentTime = new Date();     	    
+    	candidatCanSignup = candidatCanSignup && currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) < 0;
+    	if(candidatCanSignup) {
 	    	// be sure that there is no password sent by the web form
 	    	userRegistration.setPassword(null);
 	        if (result.hasErrors()) {
