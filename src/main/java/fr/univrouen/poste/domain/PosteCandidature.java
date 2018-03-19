@@ -152,6 +152,14 @@ public class PosteCandidature {
         this.modification = modification;
     }
 
+    public String getGalaxieEntryEtatDossier() {
+    	String etatDossier = "";
+    	if(this.getGalaxieEntry() != null) {
+    		etatDossier = this.getGalaxieEntry().getEtatDossier();
+    	}
+    	return etatDossier;
+    }
+    
     public static Long countPosteActifCandidatures() {
         return entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidature o WHERE o.modification is not NULL", Long.class).getSingleResult();
     }

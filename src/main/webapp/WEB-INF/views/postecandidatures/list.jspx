@@ -175,7 +175,7 @@
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerReview" label="Gestionnaire" property="managerReview.manager" render="${canManage}" sort="true" z="user-managed"/>
             <table:column date="true" dateTimePattern="${posteCandidature_modification_date_format}" id="c_fr_univrouen_poste_domain_PosteCandidature_managerReviewDate" label="Date gestion" property="managerReview.reviewDate" render="${canManage}" sort="true" z="user-managed"/>
             <c:if test="${not candidatCanSignup}">
-            	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry_etatDossier" label="Etat Dossier Galaxie" property="galaxieEntry.etatDossier" render="${canManage}" sort="true" z="user-managed"/>
+            	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry_etatDossier" label="Etat Dossier Galaxie" property="galaxieEntryEtatDossier" render="${canManage}" sort="true" z="user-managed"/>
             </c:if>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerComment4Members" label="Com." property="managerComment4Members" render="${canManage}" z="user-managed" maxLength="-1" cssClass="demat-popover"/>
         </table:table>
