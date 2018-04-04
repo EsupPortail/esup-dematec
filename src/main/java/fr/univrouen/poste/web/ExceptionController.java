@@ -17,6 +17,7 @@
  */
 package fr.univrouen.poste.web;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,8 +55,8 @@ public class ExceptionController implements HandlerExceptionResolver {
 		}
 		
         String ip = request.getRemoteAddr();	
-		if(ex instanceof MultipartException) {
-			log.warn("MultipartException with this client " + ip + ". We can assume that the client has canceled his request (because of a double-click / double-submit of the form for example).", ex);
+		if(ex instanceof MultipartException || ex instanceof IOException) {
+			log.warn("MultipartException or IOException with this client " + ip + ". We can assume that the client has canceled his request (because of a double-click / double-submit of the form for example).", ex);
 		} else {	
 			log.error("Uncaught exception  with this client " + ip, ex);
 		}
@@ -67,10 +68,16 @@ public class ExceptionController implements HandlerExceptionResolver {
 			logService.logActionFile(LogService.UPLOAD_FAILED_ACTION, posteCandidature, null, request, new Date());
 		}
 		
-    	//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        ModelAndView modelAndview = new ModelAndView("uncaughtException");
-        modelAndview.addObject("exception", ex);
-        return modelAndview;
+		
+		if(response.isCommitted()) {
+			// Client can't get exception page here. 
+			return null;
+		} else {
+	    	//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        ModelAndView modelAndview = new ModelAndView("uncaughtException");
+	        modelAndview.addObject("exception", ex);
+	        return modelAndview;
+		}
     }
 
 	@RequestMapping("/denied")
