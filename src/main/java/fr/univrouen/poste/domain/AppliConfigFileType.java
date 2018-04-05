@@ -45,4 +45,9 @@ public class AppliConfigFileType {
 		return AppliConfigFileType.findAllAppliConfigFileTypes().get(0);
 	} 
 	
+	public Long getListIndex() {
+		return listIndex == null ? Long.valueOf(0) : listIndex;
+	}
+	
 }
+

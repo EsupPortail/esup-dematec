@@ -55,10 +55,6 @@ privileged aspect AppliConfigFileType_Roo_JavaBean {
         this.candidatureFilenameRestrictionRegexp = candidatureFilenameRestrictionRegexp;
     }
     
-    public Long AppliConfigFileType.getListIndex() {
-        return this.listIndex;
-    }
-    
     public void AppliConfigFileType.setListIndex(Long listIndex) {
         this.listIndex = listIndex;
     }
