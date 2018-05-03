@@ -239,6 +239,7 @@
                                     </div>
                                     
                             </div>
+                            <a class="btn btn-danger" data-toggle="modal" href="#auditionnableDialog" role="button">Retenus pour auditions ?</a>
                             
                             <c:if test="${laureatEnable}">
 	                            &amp;nbsp;
