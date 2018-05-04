@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -55,7 +56,7 @@ public class ExcelParser {
 				// @see http://stackoverflow.com/questions/4929646/how-to-get-an-excel-blank-cell-value-in-apache-poi
 				int max = myRow.getLastCellNum();
 				for(int i=0; i<max; i++) {
-					HSSFCell myCell = (HSSFCell) myRow.getCell(i, Row.CREATE_NULL_AS_BLANK);
+					HSSFCell myCell = (HSSFCell) myRow.getCell(i, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 					if(Cell.CELL_TYPE_STRING == myCell.getCellType())
 						cellStoreVector.add(myCell.getStringCellValue());
 					else if((Cell.CELL_TYPE_NUMERIC == myCell.getCellType()))
