@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,28 +42,26 @@ public class ExcelParser {
 		List<List<String>> cellVectorHolder = new Vector<List<String>> ();
 
 		try {
-
-			POIFSFileSystem fileSystem = new POIFSFileSystem(xslFileInput);
-			HSSFWorkbook workBook = new HSSFWorkbook(fileSystem);
-			HSSFSheet sheet = workBook.getSheetAt(0);
+			Workbook workBook = WorkbookFactory.create(xslFileInput);
+			Sheet sheet = workBook.getSheetAt(0);
 			Iterator<Row> rowIter = sheet.rowIterator();
 
 			while (rowIter.hasNext()) {
-				HSSFRow myRow = (HSSFRow) rowIter.next();
+				Row myRow = (Row) rowIter.next();
 				List<String> cellStoreVector = new Vector<String>();
 				// take care of blank cell !
 				// @see http://stackoverflow.com/questions/4929646/how-to-get-an-excel-blank-cell-value-in-apache-poi
 				int max = myRow.getLastCellNum();
 				for(int i=0; i<max; i++) {
-					HSSFCell myCell = (HSSFCell) myRow.getCell(i, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-					if(Cell.CELL_TYPE_STRING == myCell.getCellType())
+					Cell myCell = (Cell) myRow.getCell(i, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+					if(CellType.STRING == myCell.getCellTypeEnum())
 						cellStoreVector.add(myCell.getStringCellValue());
-					else if((Cell.CELL_TYPE_NUMERIC == myCell.getCellType()))
+					else if((CellType.NUMERIC == myCell.getCellTypeEnum()))
 						cellStoreVector.add(Long.toString(new Double(myCell.getNumericCellValue()).longValue()));
-					else if((Cell.CELL_TYPE_BLANK == myCell.getCellType()))
+					else if((CellType.BLANK == myCell.getCellTypeEnum()))
 						cellStoreVector.add("");
 					else {
-						logger.debug("This cell is not numeric or string ... : " + myCell + " \n ... cellType : " + myCell.getCellType());
+						logger.debug("This cell is not numeric or string ... : " + myCell + " \n ... getCellTypeEnum : " + myCell.getCellTypeEnum());
 						cellStoreVector.add("");
 					}
 				}
