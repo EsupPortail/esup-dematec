@@ -73,7 +73,7 @@ public class PosteAPourvoirController {
 	
     void populateEditForm(Model uiModel, PosteAPourvoir posteAPourvoir) {
         uiModel.addAttribute("posteAPourvoir", posteAPourvoir);
-        uiModel.addAttribute("users", User.findAllNoCandidats());
+        uiModel.addAttribute("users", User.findAllNoCandidatsAndNoManagers());
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")

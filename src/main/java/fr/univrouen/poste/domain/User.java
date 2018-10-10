@@ -181,10 +181,10 @@ public class User {
         return entityManager().createQuery(jpaQuery, User.class);
     }
 
-	public static Object findAllNoCandidats() {
-        return entityManager().createQuery("SELECT o FROM User AS o WHERE o.numCandidat is NULL OR o.numCandidat = '' order by o.emailAddress", User.class).getResultList();
+	public static List<User> findAllNoCandidatsAndNoManagers() {
+        return entityManager().createQuery("SELECT o FROM User AS o WHERE (o.numCandidat is NULL OR o.numCandidat = '') AND o.isManager = FALSE AND o.isSuperManager = FALSE AND o.isAdmin = FALSE order by o.emailAddress", User.class).getResultList();
     }
-
+	
 	public void reportLoginFailure() {
 		if(!isLocked() && ++loginFailedNb >= MAX_LOGIN_ATTEMPTS_BEFORE_LOCK) {
 	        Calendar cal = Calendar.getInstance();
