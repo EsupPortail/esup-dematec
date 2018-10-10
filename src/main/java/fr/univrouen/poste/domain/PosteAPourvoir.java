@@ -76,6 +76,13 @@ public class PosteAPourvoir {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date dateEndSignupCandidat;
+    
+    public void setNumEmploi(String numEmploi) {
+    	if(numEmploi != null) {
+    		numEmploi = numEmploi.trim();
+    	}
+        this.numEmploi = numEmploi;
+    }
 
     public static List<PosteAPourvoir> findAllPosteAPourvoirs() {
         return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).getResultList();

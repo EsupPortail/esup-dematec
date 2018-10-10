@@ -15,10 +15,6 @@ privileged aspect PosteAPourvoir_Roo_JavaBean {
         return this.numEmploi;
     }
     
-    public void PosteAPourvoir.setNumEmploi(String numEmploi) {
-        this.numEmploi = numEmploi;
-    }
-    
     public String PosteAPourvoir.getProfil() {
         return this.profil;
     }
