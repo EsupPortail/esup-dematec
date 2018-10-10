@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteAPourvoirFile;
 import fr.univrouen.poste.domain.User;
@@ -138,6 +139,25 @@ public class PosteAPourvoirController {
         // attention de preserver les fichiers ...
         PosteAPourvoir oldPoste = PosteAPourvoir.findPosteAPourvoir(posteAPourvoir.getId());
         posteAPourvoir.setPosteFiles(oldPoste.getPosteFiles());
+        
+        // update poste par formulaire -> attention à ce que les CommissionEntry soient cohérents 
+        // sinon la modification sera écrasée au prochain 'import/génération' d'un Excel de commissions
+        for(User membre : oldPoste.getMembres()) {
+        	if(posteAPourvoir.getMembres()== null || !posteAPourvoir.getMembres().contains(membre)) {
+        		List<CommissionEntry> commissionEntriesForThisAffectation = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(oldPoste.getNumEmploi(), membre.getEmailAddress()).getResultList();
+        		for(CommissionEntry commissionEntry : commissionEntriesForThisAffectation) {
+        			commissionEntry.remove();
+        		}
+        	}
+        }
+        for(User president : oldPoste.getPresidents()) {
+        	if(posteAPourvoir.getPresidents()== null || !posteAPourvoir.getPresidents().contains(president)) {
+        		List<CommissionEntry> commissionEntriesForThisAffectation = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(oldPoste.getNumEmploi(), president.getEmailAddress()).getResultList();
+        		for(CommissionEntry commissionEntry : commissionEntriesForThisAffectation) {
+        			commissionEntry.remove();
+        		}
+        	}
+        }
         
         posteAPourvoir.merge();
         return "redirect:/posteapourvoirs/" + encodeUrlPathSegment(posteAPourvoir.getId().toString(), httpServletRequest);
