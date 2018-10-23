@@ -17,11 +17,11 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,15 +40,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.GalaxieExcel;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.services.ExcelParser;
 import fr.univrouen.poste.services.GalaxieExcelParser;
-import fr.univrouen.poste.services.LogService;
 
 @RequestMapping("/admin/galaxieexcels")
 @Controller
@@ -97,12 +93,19 @@ public class GalaxieExcelController {
     }
 
     @RequestMapping(value = "/{id}", produces = "text/html")
-    public String show(@PathVariable("id") Long id, Model uiModel) throws SQLException {
+    public String show(@PathVariable("id") Long id, Model uiModel) throws SQLException, IOException {
         addDateTimeFormatPatterns(uiModel);
         
         GalaxieExcel galaxieExcel = GalaxieExcel.findGalaxieExcel(id);
-    	InputStream xslFile = galaxieExcel.getBigFile().getBinaryFile().getBinaryStream();
-    	List<List<String>> cells = excelParser.getCells(xslFile);
+    	InputStream xslInputStream = galaxieExcel.getBigFile().getBinaryFile().getBinaryStream();
+    	
+    	// hack : transform getBinaryStream from postgresql as ByteArrayInputStream
+    	// using directly xslInputStream I get : 
+    	// org.apache.poi.poifs.filesystem.NotOLE2FileException: Invalid header signature; read 0x0000000000000000, expected 0xE11AB1A1E011CFD0 - Your file appears not to be a valid OLE2 document
+    	byte[] xslBytes = IOUtils.toByteArray(xslInputStream);
+    	ByteArrayInputStream bis = new ByteArrayInputStream(xslBytes);
+    	
+    	List<List<String>> cells = excelParser.getCells(bis);
     	galaxieExcel.setCells(cells);
        
         uiModel.addAttribute("galaxieexcel", galaxieExcel);
