@@ -31,15 +31,12 @@ public class EmailService implements Serializable {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-    private transient MailSender mailSender; 
-    
-    private transient SimpleMailMessage mail = new SimpleMailMessage();  
+    private MailSender mailSender; 
     
     private LogService logService;
     
     private Boolean isEnabled = false;
   
-    	
     public void setMailSender(MailSender mailSender) {
     	this.mailSender = mailSender;
     }
@@ -52,6 +49,9 @@ public class EmailService implements Serializable {
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public boolean sendMessage(String mailFrom, String mailTo, String subject, String mailMessage) {
+		
+		SimpleMailMessage mail = new SimpleMailMessage();
+		
 		boolean mailEmpty = mailMessage.trim().isEmpty();
 		if(mailEmpty) {
 			logger.info("\tmethod call was :  sendMessage(" + mailFrom + ", " + mailTo + ", " + subject + ", " + mailMessage + ") but mail body is empty so we doesn't send it");
