@@ -42,6 +42,7 @@
 	<spring:url value="/addpostecandidatures" var="addCandidatureUrl"/>
 	
 	<form action="${addCandidatureUrl}" method="post">
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		<table class="table table-striped table-bordered">
 			<thead>
 				<tr>

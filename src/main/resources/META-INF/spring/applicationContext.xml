@@ -109,5 +109,8 @@
 	<!-- Task executor for async methods (@see fr.univrouen.poste.utils.PdfService) -->
 	<task:annotation-driven executor="defaultExecutor" mode="aspectj"/>
 	<task:executor id="defaultExecutor" pool-size="10"/>
+	
+	<!-- enable this for integration of file upload functionality -->
+	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="filterMultipartResolver" />
 		
 </beans>

@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,16 +45,16 @@ public class ProfilChoiceController {
     	if(profil!=null) {
 			logger.info(auth.getName() + " a sélectionné le profil " + profil);
     		if("membre".equals(profil)) {
-    			authorities.remove(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
+    			authorities.remove(new SimpleGrantedAuthority("ROLE_CANDIDAT"));
     		}
     		if("candidat".equals(profil)) {
-    			authorities.remove(new GrantedAuthorityImpl("ROLE_MEMBRE"));
+    			authorities.remove(new SimpleGrantedAuthority("ROLE_MEMBRE"));
     		}
     		auth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), authorities);
     		SecurityContextHolder.getContext().setAuthentication(auth);
     	}
     	
-    	if(auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT")) && auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"))) {
+    	if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CANDIDAT")) && auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MEMBRE"))) {
     		return "profilChoice";
     	} else {
     		return "index";

@@ -60,18 +60,19 @@
 						<spring:message code="security_login_message" />
 					</h4>
 				</c:if>
-				<spring:url value="/resources/j_spring_security_check" var="form_url" />
+				<spring:url value="/login" var="form_url" />
 				<form action="${fn:escapeXml(form_url)}" method="POST" name="f">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					<div>
 						<!-- spring:message code="security_login_form_name_message" htmlEscape="true" var="name_msg"/ -->
 						<spring:message code="security_login_form_name" var="j_username_label" htmlEscape="false" />
-						<input id="j_username" name="j_username" type="text" class="input-block-level" placeholder="${fn:escapeXml(j_username_label)}" />
+						<input id="j_username" name="username" type="text" class="input-block-level" placeholder="${fn:escapeXml(j_username_label)}" />
 					</div>
 					<br />
 					<div>
 						<!-- spring:message code="security_login_form_password_message" htmlEscape="false" var="pwd_msg"/ -->
 						<spring:message code="security_login_form_password" var="j_password_label" htmlEscape="false" />
-						<input id="j_password" name="j_password" type="password" class="input-block-level" placeholder="${fn:escapeXml(j_password_label)}" />
+						<input id="j_password" name="password" type="password" class="input-block-level" placeholder="${fn:escapeXml(j_password_label)}" />
 					</div>
 					<br />
 					<div>

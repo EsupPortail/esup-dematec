@@ -28,7 +28,7 @@ import javax.persistence.TypedQuery;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -68,22 +68,22 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 		
 		// Roles
 		if (targetUser.getIsAdmin()) {
-			authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		}
 		if (targetUser.getIsCandidat()) {
 			// TODO : check date
-			authorities.add(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_CANDIDAT"));
 		}
 		if (targetUser.getIsManager()) {
-			authorities.add(new GrantedAuthorityImpl("ROLE_MANAGER"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
 		}
 		if (targetUser.getIsSuperManager()) {
-			authorities.add(new GrantedAuthorityImpl("ROLE_MANAGER"));
-			authorities.add(new GrantedAuthorityImpl("ROLE_SUPER_MANAGER"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_SUPER_MANAGER"));
 		}
 		if (targetUser.getIsMembre()) {
 			// TODO : check date
-			authorities.add(new GrantedAuthorityImpl("ROLE_MEMBRE"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_MEMBRE"));
 		}
 
 		// Enabled

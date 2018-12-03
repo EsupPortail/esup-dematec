@@ -207,7 +207,8 @@
                         <c:otherwise>
                             <div aria-hidden="true" class="modal hide fade" id="auditionnableDialog" role="dialog" tabindex="-1">
                                 <spring:url value="/postecandidatures/${postecandidature.id}/auditionnable" var="auditionnableCandidatureUrl"/>
-                                <form action="${auditionnableCandidatureUrl}">
+                                <form action="${auditionnableCandidatureUrl}" method="POST">
+                                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                     <input name="auditionnable" type="hidden" value="true"/>
                                     <div class="modal-header">
                                         <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
@@ -249,7 +250,8 @@
 	                        <c:otherwise>
 	                            <div aria-hidden="true" class="modal hide fade" id="laureatDialog" role="dialog" tabindex="-1">
 	                                <spring:url value="/postecandidatures/${postecandidature.id}/laureat" var="laureatCandidatureUrl"/>
-	                                <form action="${laureatCandidatureUrl}">
+	                                <form action="${laureatCandidatureUrl}" method="POST">
+	                                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	                                    <input name="laureat" type="hidden" value="true"/>
 	                                    <div class="modal-header">
 	                                        <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
@@ -339,7 +341,8 @@
                       &amp;nbsp;
                       <c:if test="${isAdminOrManager or isPresident}">
                       	<spring:url value="/postecandidatures/${postecandidature.id}/delReporter" var="delReporterUrl"/>
-			            <form action="${delReporterUrl}" method="post" style="display:inline">
+			            <form action="${delReporterUrl}" method="POST" style="display:inline">
+			            	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				            <input type="hidden" name="userId" value="${reporter.id}" />
 				            <input id="proceed" type="submit" value="Supprimer" class="btn btn-danger btn-mini"/>
 				        </form>
@@ -351,7 +354,8 @@
     	    <c:if test="${(isAdminOrManager or isPresident) and not empty postecandidature.poste.sortedMembres}">
     	      <div class="demat6 well demat-pc-manage">
 	    		<spring:url value="/postecandidatures/${postecandidature.id}/addReporter" var="addReporterUrl"/>
-	            <form action="${addReporterUrl}" method="post">
+	            <form action="${addReporterUrl}" method="POST">
+	            	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		            <field:select label="Ajouter un rapporteur" multiple="false" size="1" disableFormBinding="true" itemValue="id" itemLabel="displayName" field="userId" id="f_fr_univrouen_poste_domain_PosteCandidature_reporters" items="${postecandidature.poste.sortedMembres}" path="/admin/users" required="true"/>
 		            <input id="proceed" type="submit" value="Ajouter" class="btn btn-success"/>
 		        </form>

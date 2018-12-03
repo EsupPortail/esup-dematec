@@ -20,6 +20,7 @@ package fr.univrouen.poste.services;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -87,8 +88,9 @@ public class ReturnReceiptService {
 	public final void sendDepotStatusIfRequired(Authentication auth) {
 		
 		String emailAddress = auth.getName();
-		
-		boolean isCandidat = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
+		Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
+				
+		boolean isCandidat = roles.contains("ROLE_CANDIDAT");
 		
 		if(isCandidat) {
 			MailReturnReceiptModeTypes mailReturnReceiptMode = AppliConfig.getCacheMailReturnReceiptModeType();

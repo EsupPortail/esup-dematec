@@ -38,11 +38,17 @@
         <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
         	<menu:item id="su" label="SU" url="/admin/su" />
         </sec:authorize>
-        <menu:item id="logout" label="Déconnexion [${userName}]" url="/resources/j_spring_security_logout" />
+        <li id="logout">
+        	<spring:url value="/logout" var="logout_url" />
+        	<form action="${logout_url}" method="post">
+	        	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	        	<input type="submit" href="/logout" value="Déconnexion [${userName}]" class="btn-link"/>
+        	</form>
+        </li>
 	</menu:menu>
 
 	<sec:authorize access="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')">
-		<spring:url value="/j_spring_security_exit_user" var="su_exit_url" />
+		<spring:url value="/logout/impersonate" var="su_exit_url" />
 		<ul class="nav navbar-nav navbar-right multipass-supervisor-nav">
 			<li><a href="${su_exit_url}" class="btn btn-warning">SORTIR DU SU !</a></li>
 		</ul>

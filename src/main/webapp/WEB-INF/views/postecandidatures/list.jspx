@@ -132,7 +132,7 @@
     
     <spring:url value="/admin/multipostecandidatures/manage" var="manageCandidaturesUrl"/>
     <form action="${manageCandidaturesUrl}" method="post">
-    
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     <c:set value="false" var="canManage"/>
     <c:set value="false" var="seeAuditionnable"/>
     <c:set value="false" var="canSort"/>

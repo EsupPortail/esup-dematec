@@ -44,7 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -443,7 +442,7 @@ public class MyPosteCandidatureController {
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 	
-	@RequestMapping(value = "/{id}/modify")
+	@RequestMapping(value = "/{id}/modify", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 	public String modifyRecevableCandidature(@PathVariable("id") Long id, @RequestParam(required=true) Boolean recevable) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
@@ -453,7 +452,7 @@ public class MyPosteCandidatureController {
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 	
-	@RequestMapping(value = "/{id}/auditionnable")
+	@RequestMapping(value = "/{id}/auditionnable", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=false) String mailCorps) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
@@ -486,7 +485,7 @@ public class MyPosteCandidatureController {
 	}
 	
 	
-	@RequestMapping(value = "/{id}/laureat")
+	@RequestMapping(value = "/{id}/laureat", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 	public String modifyLaureatCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean laureat, @RequestParam(required=false) String mailCorps) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
@@ -510,7 +509,7 @@ public class MyPosteCandidatureController {
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 	
-	@RequestMapping(value = "/{id}/review")
+	@RequestMapping(value = "/{id}/review", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 	public String modifyReviewCandidature(@PathVariable("id") Long id, @RequestParam(required=true) String reviewStatus) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
@@ -655,11 +654,11 @@ public class MyPosteCandidatureController {
 		String emailAddress = auth.getName();
 		User user = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
 		
-		boolean isAdmin = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_ADMIN"));
-		boolean isManager = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MANAGER"));
-		boolean isSuperManager = isManager || auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_SUPER_MANAGER"));
-		boolean isMembre = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"));
-		boolean isCandidat = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
+		boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
+		boolean isManager = request.isUserInRole("ROLE_MANAGER");
+		boolean isSuperManager = isManager || request.isUserInRole("ROLE_SUPER_MANAGER");
+		boolean isMembre = request.isUserInRole("ROLE_MEMBRE");
+		boolean isCandidat = request.isUserInRole("ROLE_CANDIDAT");
 
     	if(sortFieldName == null) 
             sortFieldName = "o.poste.numEmploi,o.candidat.nom";   

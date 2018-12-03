@@ -7,13 +7,13 @@
     <version>1.6.0-SNAPSHOT</version>
     <name>EsupDematEC</name>
     <properties>
-        <aspectj.version>1.8.2</aspectj.version>
-        <java.version>7</java.version>
+        <aspectj.version>1.8.13</aspectj.version>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <roo.version>1.2.5.RELEASE</roo.version>
-        <slf4j.version>1.6.2</slf4j.version>
-        <spring.version>3.2.18.RELEASE</spring.version>
-    	<spring-security.version>3.1.7.RELEASE</spring-security.version>
+        <roo.version>1.3.2.RELEASE</roo.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <spring.version>4.3.20.RELEASE</spring.version>
+    	<spring-security.version>4.2.9.RELEASE</spring-security.version>
     </properties>
     <repositories>
         <repository>
@@ -52,15 +52,21 @@
     <dependencies>
         <!-- General dependencies for standard applications -->
         <dependency>
+        	<groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.9</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -101,7 +107,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.0.1</version>
+            <version>3.1</version>
         </dependency>
         <!-- ROO dependencies -->
         <dependency>
@@ -166,7 +172,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>4.2.0.Final</version>
+            <version>5.4.2.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.xml.bind</groupId>
@@ -178,11 +184,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
-        </dependency>
+	<dependency>
+	    <groupId>org.hibernate.javax.persistence</groupId>
+	    <artifactId>hibernate-jpa-2.1-api</artifactId>
+	    <version>1.0.2.Final</version>
+	</dependency>
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
@@ -211,7 +217,7 @@
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
-            <version>1.3</version>
+            <version>1.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -229,11 +235,6 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-js-resources</artifactId>
-            <version>2.2.1.RELEASE</version>
-        </dependency>
-        <dependency>
             <groupId>commons-digester</groupId>
             <artifactId>commons-digester</artifactId>
             <version>2.1</version>
@@ -247,12 +248,7 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp.jstl</groupId>
-            <artifactId>jstl-api</artifactId>
-            <version>1.2</version>
+            <version>1.3.3</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>
@@ -261,8 +257,8 @@
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>
-            <artifactId>el-api</artifactId>
-            <version>1.0</version>
+            <artifactId>javax.el-api</artifactId>
+            <version>2.2.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -284,12 +280,12 @@
         <dependency>
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
-            <version>2.2.2</version>
+            <version>3.0.8</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>1.4</version>
+            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -329,9 +325,9 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.1</version>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>

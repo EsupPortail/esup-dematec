@@ -31,11 +31,12 @@
         <p>Les actions effectuées sur les fichiers seront journalisées dans la base en votre nom (avec le nom de l'utilisateur cible mentionné également)</p>
     </div>
     
-    <spring:url value="/j_spring_security_switch_user" var="su_url"/>
-    <form class="form-horizontal" action="${su_url}" method="GET">
+    <spring:url value="/login/impersonate" var="su_url"/>
+    <form class="form-horizontal" action="${su_url}" method="POST">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
      <fieldset>
 	      <label for="_uid_id">Entrez l'email de l'utilisateur cible : </label>
-	      <input type="text"  placeholder="nom@univ.fr" id="j_username"  name="j_username" maxlength="100"/>
+	      <input type="text"  placeholder="nom@univ.fr" id="j_username"  name="username" maxlength="100"/>
 	      <button type="submit" class="btn btn-success">SU</button>
       </fieldset>
     </form>

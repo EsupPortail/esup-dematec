@@ -33,10 +33,8 @@ import fr.univrouen.poste.domain.User;
 @RooConversionService
 public class ApplicationConversionServiceFactoryBean extends FormattingConversionServiceFactoryBean {
 
-	@Override
 	protected void installFormatters(FormatterRegistry registry) {
-		super.installFormatters(registry);
-		// Register application converters and formatters
+		// not used
 	}
 	
 	public Converter<PosteAPourvoir, String> getPosteAPourvoirToStringConverter() {

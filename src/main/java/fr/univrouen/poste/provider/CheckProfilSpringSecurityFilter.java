@@ -10,9 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 public class CheckProfilSpringSecurityFilter extends GenericFilterBean {
@@ -23,13 +20,12 @@ public class CheckProfilSpringSecurityFilter extends GenericFilterBean {
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain chain) throws IOException, ServletException {
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		HttpServletRequest request = (HttpServletRequest) req;
 		
 		if(!request.getServletPath().startsWith("/resources/") && !"/profilChoice".equals(request.getServletPath())
-			&& auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT")) 
-			&& auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"))) {
-				logger.info(auth.getName() + " est authentifié et est à la fois membre et candidat, il faut qu'il choisisse un profil.");
+			&& request.isUserInRole("ROLE_CANDIDAT") 
+			&& request.isUserInRole("ROLE_MEMBRE")) {
+				logger.info(request.getRemoteUser() + " est authentifié et est à la fois membre et candidat, il faut qu'il choisisse un profil.");
 		        HttpServletResponse response = (HttpServletResponse) res;      
 	        response.sendRedirect(request.getContextPath() + "/profilChoice");
 		} else {

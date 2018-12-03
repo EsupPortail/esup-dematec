@@ -19,10 +19,11 @@ package fr.univrouen.poste.utils;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.AuthorityUtils;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.MemberReviewFile;
@@ -36,13 +37,14 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
 		
+		Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
 		
-		if(auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_ADMIN")) || 
-				auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MANAGER")))
+		if(roles.contains("ROLE_ADMIN") || 
+				roles.contains("ROLE_MANAGER"))
 			return true;
 		
-		boolean isMembre = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_MEMBRE"));
-		boolean isCandidat = auth.getAuthorities().contains(new GrantedAuthorityImpl("ROLE_CANDIDAT"));
+		boolean isMembre = roles.contains("ROLE_MEMBRE");
+		boolean isCandidat = roles.contains("ROLE_CANDIDAT");
 		
 		String permissionKey = (String) permission;
 
