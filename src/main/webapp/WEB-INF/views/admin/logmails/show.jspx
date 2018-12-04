@@ -34,6 +34,9 @@
     <br/>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
         <spring:url value="/admin/logmails/${logmail.id}/resend" var="resendEmailUrl"/>
-        <a class="btn btn-warning" href="${resendEmailUrl}" onclick="return confirm('Renvoyer le mail ?');">Renvoyer</a>
+        <form action="${resendEmailUrl}" method="POST" name="resendEmailForm" onsubmit="return confirm('Renvoyer le mail ?');">
+        	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        	<input type="submit" value="Renvoyer" class="btn btn-warning"/>
+        </form>
     </sec:authorize>
 </div>

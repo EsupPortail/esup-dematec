@@ -79,7 +79,7 @@ public class LogMailController {
         return "admin/logmails/list";
     }
     
-	@RequestMapping(value = "/{id}/resend")
+	@RequestMapping(value = "/{id}/resend", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')")
 	public String resendEmail(@PathVariable("id") Long id, RedirectAttributes ra) {
 		// With 'RedirectAttributes ra' we disable here adding model attributes in request header when redirecting ...
