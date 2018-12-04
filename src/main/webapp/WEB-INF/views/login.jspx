@@ -34,7 +34,7 @@
 
 			<spring:message code="security_login_title" htmlEscape="false" var="title" />
 			<util:panel id="title" title="${title}">
-				<c:if test="${not empty param.login_error}">
+				<c:if test="${param.error ne null}">
 					<div class="errors">
 						<h4 class="form-signin-heading alert alert-danger">
 							<!-- spring:message code="security_login_unsuccessful" / -->
