@@ -17,11 +17,15 @@
  */
 package fr.univrouen.poste.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -31,6 +35,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Service;
+
+import fr.univrouen.poste.domain.GalaxieExcel;
 
 @Service
 public class ExcelParser {
@@ -73,6 +79,17 @@ public class ExcelParser {
 		}
 
 		return cellVectorHolder;
+	}
+
+	public List<List<String>> getCells(GalaxieExcel galaxieExcel) throws SQLException, IOException {
+		// hack : transform getBinaryStream from postgresql as ByteArrayInputStream
+    	// using directly xslInputStream I get : 
+    	// org.apache.poi.poifs.filesystem.NotOLE2FileException: Invalid header signature; read 0x0000000000000000, expected 0xE11AB1A1E011CFD0 - Your file appears not to be a valid OLE2 document
+		InputStream xslInputStream = galaxieExcel.getBigFile().getBinaryFile().getBinaryStream();
+		byte[] xslBytes = IOUtils.toByteArray(xslInputStream);
+    	ByteArrayInputStream bis = new ByteArrayInputStream(xslBytes);
+    	
+    	return this.getCells(bis);
 	}
 
 }

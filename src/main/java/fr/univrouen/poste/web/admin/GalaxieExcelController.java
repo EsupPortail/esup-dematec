@@ -97,15 +97,7 @@ public class GalaxieExcelController {
         addDateTimeFormatPatterns(uiModel);
         
         GalaxieExcel galaxieExcel = GalaxieExcel.findGalaxieExcel(id);
-    	InputStream xslInputStream = galaxieExcel.getBigFile().getBinaryFile().getBinaryStream();
-    	
-    	// hack : transform getBinaryStream from postgresql as ByteArrayInputStream
-    	// using directly xslInputStream I get : 
-    	// org.apache.poi.poifs.filesystem.NotOLE2FileException: Invalid header signature; read 0x0000000000000000, expected 0xE11AB1A1E011CFD0 - Your file appears not to be a valid OLE2 document
-    	byte[] xslBytes = IOUtils.toByteArray(xslInputStream);
-    	ByteArrayInputStream bis = new ByteArrayInputStream(xslBytes);
-    	
-    	List<List<String>> cells = excelParser.getCells(bis);
+    	List<List<String>> cells = excelParser.getCells(galaxieExcel);
     	galaxieExcel.setCells(cells);
        
         uiModel.addAttribute("galaxieexcel", galaxieExcel);
