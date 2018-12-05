@@ -87,6 +87,16 @@ public class ExceptionController implements HandlerExceptionResolver {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		return new ModelAndView("accessDeniedException");
     }
+
 	
+	@RequestMapping("/uncaughtException")
+    public ModelAndView uncaughtExceptionView(HttpServletRequest request) {
+	    Throwable exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
+	    ModelAndView modelAndview = new ModelAndView("uncaughtException");
+	    modelAndview.addObject("uncaughtException", true);
+	    modelAndview.addObject("exception", exception);
+		return modelAndview;
+    }
    
 }
+

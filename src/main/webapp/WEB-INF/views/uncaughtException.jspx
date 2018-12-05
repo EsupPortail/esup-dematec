@@ -31,8 +31,13 @@
       <spring:message code="error_uncaughtexception_problemdescription" />
     </p>
     
+    <c:set value="${uncaughtException}" var="displayDetailException"/>
+    
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-	    <c:if test="${not empty exception}">
+    	<c:set value="true" var="displayDetailException"/>
+    </sec:authorize>
+    
+	    <c:if test="${displayDetailException and not empty exception}">
 	      <div class="collapse-group">
 	        <h4>
 	          <a class="btn" href="#"><spring:message code="exception_details" /></a>
@@ -63,6 +68,6 @@
 	    	});
 	      </script>
 	    </c:if>
-    </sec:authorize>
+
   </util:panel>
 </div>
