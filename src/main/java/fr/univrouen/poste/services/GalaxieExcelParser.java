@@ -17,6 +17,8 @@
  */
 package fr.univrouen.poste.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,10 +153,10 @@ public class GalaxieExcelParser {
 		return Arrays.asList(new String [] {galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()});
 	}
 	
-	public Map<String, String> getCells4GalaxieEntry(GalaxieExcel galaxieExcel, GalaxieEntry galaxieEntry) throws SQLException {
+	public Map<String, String> getCells4GalaxieEntry(GalaxieExcel galaxieExcel, GalaxieEntry galaxieEntry) throws SQLException, IOException {
 		
 		Map<String, String> cellsMap = null;
-		List<List<String>> cells = excelParser.getCells(galaxieExcel.getBigFile().getBinaryFile().getBinaryStream());
+		List<List<String>> cells = excelParser.getCells(galaxieExcel);
 
 		List<String> cellsHead = cells.remove(0);
 		

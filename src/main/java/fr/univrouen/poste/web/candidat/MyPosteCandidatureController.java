@@ -225,7 +225,6 @@ public class MyPosteCandidatureController {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 			
 			TemplateFile templateFile = TemplateFile.findTemplateFile(idFile);
-			InputStream templateDocx = templateFile.getBigFile().getBinaryFile().getBinaryStream();
 			
 			String filename = postecandidature.getPoste().getNumEmploi() + 
 					"-" + 
@@ -236,7 +235,7 @@ public class MyPosteCandidatureController {
 			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 			
-			templateService.generateTemplateFile(templateDocx, postecandidature, response.getOutputStream());
+			templateService.generateTemplateFile(templateFile, postecandidature, response.getOutputStream());
 			
 		} catch(IOException ioe) {
 	        String ip = request.getRemoteAddr();	
