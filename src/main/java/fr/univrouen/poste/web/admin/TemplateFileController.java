@@ -2,7 +2,9 @@ package fr.univrouen.poste.web.admin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.rowset.serial.SerialBlob;
@@ -14,12 +16,14 @@ import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.TemplateFile;
+import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
 
 @RequestMapping("/admin/templatefiles")
 @Controller
@@ -28,6 +32,11 @@ public class TemplateFileController {
 
 
 	private final Logger logger = Logger.getLogger(getClass());
+	
+	@ModelAttribute("templateFileTypes")
+	public List<TemplateFileType> getTemplateFileTypeEnum() {
+		return Arrays.asList(TemplateFileType.values());
+	}
 
 	@RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
 	public String addFile(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws IOException, SQLException {

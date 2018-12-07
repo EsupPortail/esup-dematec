@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -35,11 +35,17 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.web.multipart.MultipartFile;
 
 @RooJavaBean
-@RooToString(excludeFields = {"bigFile","file"})
-@RooJpaActiveRecord
+@RooToString(excludeFields = { "bigFile", "file" })
+@RooJpaActiveRecord(finders = { "findTemplateFilesByTemplateFileType" })
 public class TemplateFile {
 
     public static final List<String> fieldNames4OrderClauseFilter = Arrays.asList("filename", "file", "sendTime", "bigFile", "id");
+
+    public static enum TemplateFileType {
+        CANDIDATURE, MULTI_CANDIDATURES
+    }
+
+    ;
 
     private String filename;
 
@@ -47,10 +53,13 @@ public class TemplateFile {
     private MultipartFile file;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="dd/MM/yyyy HH:mm")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date sendTime;
-    
-    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private BigFile bigFile = new BigFile();
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private TemplateFileType templateFileType;
 }

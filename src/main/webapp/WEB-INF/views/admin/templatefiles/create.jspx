@@ -8,6 +8,7 @@
         <field:input field="file" id="c_fr_univrouen_poste_domain_TemplateFile_file" render="false" z="0SWy9nUqDV/dE33n8fI7Y4VqmdA="/>
         <field:datetime dateTimePattern="${templateFile_sendtime_date_format}" field="sendTime" id="c_fr_univrouen_poste_domain_TemplateFile_sendTime" render="false" z="user-managed"/>
         <field:select field="bigFile" id="c_fr_univrouen_poste_domain_TemplateFile_bigFile" itemValue="id" items="${bigfiles}" path="/bigfiles" render="false" z="user-managed"/>
+        <field:select field="templateFileType" id="c_fr_univrouen_poste_domain_TemplateFile_templateFileType" z="cG5oMXzOnbLKIR0NbFGYN+4Kt04=" path="/" items="${templateFileTypes}" multiple="false" size="1"/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_fr_univrouen_poste_domain_TemplateFile" render="${not empty dependencies}" z="vZGMhZSfhKEkF13Jcyg6g6TWR7I="/>
 </div>

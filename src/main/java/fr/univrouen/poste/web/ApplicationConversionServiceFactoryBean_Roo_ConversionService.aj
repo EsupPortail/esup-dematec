@@ -56,7 +56,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<AppliConfigFileType, String> ApplicationConversionServiceFactoryBean.getAppliConfigFileTypeToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.AppliConfigFileType, java.lang.String>() {
             public String convert(AppliConfigFileType appliConfigFileType) {
-                return new StringBuilder().append(appliConfigFileType.getTypeTitle()).append(' ').append(appliConfigFileType.getTypeDescription()).append(' ').append(appliConfigFileType.getCandidatureFileMoSizeMax()).append(' ').append(appliConfigFileType.getCandidatureNbFileMax()).toString();
+                return new StringBuilder().append(appliConfigFileType.getListIndex()).append(' ').append(appliConfigFileType.getTypeTitle()).append(' ').append(appliConfigFileType.getTypeDescription()).append(' ').append(appliConfigFileType.getCandidatureFileMoSizeMax()).toString();
             }
         };
     }
@@ -376,7 +376,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<TemplateFile, String> ApplicationConversionServiceFactoryBean.getTemplateFileToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.TemplateFile, java.lang.String>() {
             public String convert(TemplateFile templateFile) {
-                return new StringBuilder().append(templateFile.getFilename()).append(' ').append(templateFile.getFile()).append(' ').append(templateFile.getSendTime()).toString();
+                return new StringBuilder().append(templateFile.getFilename()).append(' ').append(templateFile.getFile()).append(' ').append(templateFile.getSendTime()).append(' ').append(templateFile.getTemplateFileType()).toString();
             }
         };
     }

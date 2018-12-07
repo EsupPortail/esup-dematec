@@ -22,7 +22,7 @@ public class DbToolService {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.5.x";
+	final static String currentEsupDematEcVersion = "1.6.x";
 	
 	@Resource
 	DataSource dataSource;
@@ -183,6 +183,21 @@ public class DbToolService {
 		    				"\n#####\n");
 				}
 	    		
+			} 
+			
+			if("1.5.x".equals(esupDematEcVersion)) { 
+			
+				logger.info("\n\nMaj depuis 1.5.x ...\n\n");
+				
+				String sqlUpdate = "update template_file set template_file_type = 'CANDIDATURE';";
+
+				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
+				
+				Connection connection = dataSource.getConnection();
+				CallableStatement statement = connection.prepareCall(sqlUpdate);
+				statement.execute();
+				connection.close();	
+				
 			} else {
 				logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +

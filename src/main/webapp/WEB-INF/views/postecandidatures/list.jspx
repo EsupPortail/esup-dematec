@@ -65,7 +65,7 @@
 	                                        </spring-form:select>
 	                                    </div>
 	                                    <div>
-	                                        <label for="auditionnable">Activité</label>
+	                                        <label for="modification">Activité</label>
 	                                        <spring-form:select id="modification" path="modification">
 	                                            <spring-form:option value="">--</spring-form:option>
 	                                            <spring-form:option value="true">Au moins 1 modification</spring-form:option>
@@ -73,17 +73,30 @@
 	                                        </spring-form:select>
 	                                    </div>
 	                                    <div class="row-fluid">
-	                                   		<div class="span3">
+	                                   		<div class="span4">
 	                                        	<field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>
 	                                        </div>
-	                                        <div class="span3">
+	                                        <div class="span4">
 	                                        	<field:checkbox disableFormBinding="true" field="mails" id="mails" label="Liste mails"/>
 	                                        </div>
-	                                        <div class="span3">
+	                                        <div class="span4">
 	                                        	<field:checkbox disableFormBinding="true" field="csv" id="csv" label="csv"/>
 	                                        </div>
 	                                    </div>
+	                                    <c:if test="${not empty templateFiles}">
+		                                     <div>
+		                                   		<label for="templateFile">Export Word via un modèle</label>
+		                                        <spring-form:select id="templateFile" path="templateFile">
+		                                            <spring-form:option value="">--</spring-form:option>
+		                                           	<c:forEach items="${templateFiles}" var="templateFile">
+		                                           		<spring-form:option value="${templateFile.id}">${templateFile.filename}</spring-form:option>
+		                                           	</c:forEach>
+		                                        </spring-form:select>
+		                                    </div>
+	                                    </c:if>
 	                                </div>
+	                                <input type="hidden" name="sortOrder" value="${sortOrder}"/>
+	                                <input type="hidden" name="sortFieldName" value="${sortFieldName}"/>
                                 </form:find>
                             </div>
                         </div>

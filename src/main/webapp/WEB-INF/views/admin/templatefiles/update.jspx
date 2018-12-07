@@ -7,5 +7,6 @@
         <field:input field="file" id="c_fr_univrouen_poste_domain_TemplateFile_file" z="0SWy9nUqDV/dE33n8fI7Y4VqmdA="/>
         <field:datetime dateTimePattern="${templateFile_sendtime_date_format}" field="sendTime" id="c_fr_univrouen_poste_domain_TemplateFile_sendTime" z="IkVJPBeWxJ9R0S+B/+8WMmRUXMI="/>
         <field:select field="bigFile" id="c_fr_univrouen_poste_domain_TemplateFile_bigFile" itemValue="id" items="${bigfiles}" path="/bigfiles" z="4cz6nPwzuzs9xkq7i4XDlmiat4o="/>
+        <field:input field="templateFileType" id="c_fr_univrouen_poste_domain_TemplateFile_templateFileType" z="cG5oMXzOnbLKIR0NbFGYN+4Kt04="/>
     </form:update>
 </div>

@@ -4,10 +4,16 @@
     <jsp:output omit-xml-declaration="yes"/>
     <spring:url value="/resources/doc/template.docx" var="templateExemple"/>
     <spring:url value="/resources/doc/template-ater.docx" var="templateAterExemple"/>
+    <spring:url value="/resources/doc/template-multi-candidatures.docx" var="templateMultiExemple"/>
     <div class="well help">
-        <p>Vous pouvez si vous le souhaitez proposer ici des modèles de rapports de commission.</p>
-        <p>Ces modèles de rapports seront proposés aux membres de commission sur chaque candidature.</p>
-        <p>Ces modèles peuvent utiliser les signets disponibles dans Microsoft Word (version docx) afin que ceux-ci soient informés automatiquement via les informations renseignées dans les fichiers Excel Galaxie.</p>
+        <p>Vous pouvez si vous le souhaitez proposer ici des modèles de rapports/documents pouvant intégrer dynamiquement des renseignements issus des fichiers Excel Galaxie importés.</p>
+        <p>Les modèles de rapports de type 'CANDIDATURE' seront proposés aux membres de commission sur chaque candidature.
+        Ils peuvent permettr de constituer/initier les rapports de commission par exemple.
+        </p>
+        <p>Les modèles de rapports de type 'MULTI_CANDIDATURE' seront proposés quand à eux aux admin et gestionnaires depuis la page listant les candidatures via le menu 'Filtrer'.
+        Ils peuvent permettre de constituer les listes d'émargements par exemple.
+      	</p>
+        <p>Ces modèles peuvent donc utiliser les signets disponibles dans Microsoft Word (version docx) afin que ceux-ci soient informés automatiquement via les informations renseignées dans les fichiers Excel Galaxie.</p>
         <p>Pour afficher les signets dans Microsoft Word : 
 	        <ul>
                 <li>Dans le menu Outils, cliquez sur Options, puis sur l'onglet Affichage.</li>
@@ -16,6 +22,9 @@
         </p>
         <p>Les noms des signets doivent correspondre aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ...</p>
         <p>Un exemple d'un tel document est donné <a href="${templateExemple}">ici (EC)</a> ou encore <a href="${templateAterExemple}">ici (ATER)</a>.</p>
+        <p>Un exemple d'un document à destination d'un rapport de type 'MULTI_CANDIDATURE' est donné  <a href="${templateMultiExemple}">ici</a>.</p>
+        <p>Vous noterez que les possibilités de répétition par candidature pour les rapports de type 'MULTI_CANDIDATURE' se limite à l'usage de ligne de tableaux dans un document Microsoft Word, ligne dans laquelle on trouvera au moins un signet.
+        Les signets dans les tableaux pour les modèles de rapport de type 'CANDIDATURE' ne sont pas pris en compte.</p>
     </div>
     <page:list id="pl_fr_univrouen_poste_domain_TemplateFile" items="${templatefiles}" z="wh83C3xzc7udAXdyAvDyUAQL2Ek=">
         <table:table data="${templatefiles}" id="l_fr_univrouen_poste_domain_TemplateFile" path="/admin/templatefiles" update="false" view="false" z="user-managed">
@@ -23,6 +32,7 @@
             <table:column id="c_fr_univrouen_poste_domain_TemplateFile_file" property="file" render="false" z="user-managed"/>
             <table:column date="true" dateTimePattern="${templateFile_sendtime_date_format}" id="c_fr_univrouen_poste_domain_TemplateFile_sendTime" property="sendTime" z="0wpbA+l2fBD2qmBZOkx/HhK+Jcc="/>
             <table:column id="c_fr_univrouen_poste_domain_TemplateFile_bigFile" property="bigFile" render="false" z="user-managed"/>
+            <table:column id="c_fr_univrouen_poste_domain_TemplateFile_templateFileType" property="templateFileType" z="VviJFd3KYoF/HFdfQYhYovS06XE="/>
         </table:table>
     </page:list>
 </div>

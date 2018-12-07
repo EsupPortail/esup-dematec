@@ -19,6 +19,7 @@ package fr.univrouen.poste.services;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,9 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
@@ -36,13 +40,12 @@ public class WordParser {
 
 	private final Logger log = Logger.getLogger(getClass());
 
-	public void  modifyWord(InputStream docx, Map<String, String> textMap, OutputStream out) {
+	public void  modifyWord(InputStream docx, Map<String, String> textMap, List<Map<String, String>> textMaps, OutputStream out) {
 		try {
 			XWPFDocument doc = new XWPFDocument(OPCPackage.open(docx));
 
 			// tentative avec les noms {{}}
 			for (XWPFParagraph p : doc.getParagraphs()) {
-
 				for(CTBookmark bookmark: p.getCTP().getBookmarkStartList()) {
 					log.trace(bookmark.getName());
 					for(String key : textMap.keySet()) {
@@ -59,6 +62,61 @@ public class WordParser {
 							run.setText(textMap.get(key));
 							p.getCTP().getDomNode().insertBefore(run.getCTR().getDomNode(), nextNode); 
 						}
+					}
+				}
+			}
+			
+			if(textMaps != null && !textMaps.isEmpty()) {
+				for(XWPFTable table : doc.getTables()) {
+					Boolean rowWithBookmarkFound = false;
+					int rowPos2duplicate = -1;
+					for(XWPFTableRow row : table.getRows()){
+						rowPos2duplicate++;
+						for(XWPFTableCell cell : row.getTableCells()){
+							for (XWPFParagraph p : cell.getParagraphs()) {
+								for(CTBookmark bookmark: p.getCTP().getBookmarkStartList()) {
+									for(String key : textMap.keySet()) {
+										String cleanKey = StringUtils.stripAccents(key);
+										cleanKey = cleanKey.replaceAll(" ", "_");
+										cleanKey = cleanKey.replaceAll( "\\W", "");
+										if(bookmark.getName().equalsIgnoreCase(cleanKey)) {
+											rowWithBookmarkFound = true;
+										}
+										if(rowWithBookmarkFound) break;
+									}
+									if(rowWithBookmarkFound) break;
+								}
+								if(rowWithBookmarkFound) break;
+							}
+							if(rowWithBookmarkFound) break;
+						}
+						if(rowWithBookmarkFound) break;
+					}
+					if(rowWithBookmarkFound) {
+						XWPFTableRow row2duplicate = table.getRow(rowPos2duplicate);
+						for(Map<String, String> iTextMap : textMaps) {
+							XWPFTableRow row = table.createRow();
+							int cellPos = -1;
+							for(XWPFTableCell cell : row2duplicate.getTableCells()) {
+								cellPos++;
+								int pPos = -1;
+								for (XWPFParagraph p : cell.getParagraphs()) {
+									pPos++;
+									for(CTBookmark bookmark: p.getCTP().getBookmarkStartList()) {
+										for(String key : iTextMap.keySet()) {
+											String cleanKey = StringUtils.stripAccents(key);
+											cleanKey = cleanKey.replaceAll(" ", "_");
+											cleanKey = cleanKey.replaceAll( "\\W", "");
+											if(bookmark.getName().equalsIgnoreCase(cleanKey)) {
+												XWPFRun run = row.getCell(cellPos).getParagraphArray(pPos).createRun();
+												run.setText(iTextMap.get(key));
+											}
+										}
+									}
+								}
+							}
+						}
+						table.removeRow(rowPos2duplicate);
 					}
 				}
 			}

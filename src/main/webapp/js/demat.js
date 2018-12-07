@@ -57,7 +57,7 @@
     	
     	// jQuery plugin to prevent double submission of forms
     	function preventDoubleSubmission(e) {
-    		if(!$('#_zip_id').is(':checked') && !$('#_csv_id').is(':checked') && !$('#_mails_id').is(':checked')) {
+    	  if(!$('#_zip_id').is(':checked') && !$('#_csv_id').is(':checked') && !$('#_mails_id').is(':checked') && !$('#templateFile').val()) {
 	    	    var $form = $(this);
 	
 	    	    if ($form.data('submitted') === true) {

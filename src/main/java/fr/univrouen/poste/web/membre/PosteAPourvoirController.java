@@ -62,8 +62,7 @@ public class PosteAPourvoirController {
 
 	@Autowired
 	LogService logService;
-
-	
+    
 	protected User getCurrentUser() {
 		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
 		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
@@ -290,4 +289,6 @@ public class PosteAPourvoirController {
         populateEditForm(uiModel, new PosteAPourvoir());
         return "posteapourvoirs/create";
     }
+	
 }
+

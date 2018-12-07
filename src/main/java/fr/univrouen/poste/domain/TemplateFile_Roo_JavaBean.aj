@@ -42,4 +42,12 @@ privileged aspect TemplateFile_Roo_JavaBean {
         this.bigFile = bigFile;
     }
     
+    public TemplateFileType TemplateFile.getTemplateFileType() {
+        return this.templateFileType;
+    }
+    
+    public void TemplateFile.setTemplateFileType(TemplateFileType templateFileType) {
+        this.templateFileType = templateFileType;
+    }
+    
 }

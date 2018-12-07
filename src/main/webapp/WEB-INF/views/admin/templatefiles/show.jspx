@@ -7,5 +7,6 @@
         <field:display field="file" id="s_fr_univrouen_poste_domain_TemplateFile_file" object="${templatefile}" z="F7Y72jAxDWG2nFwYAxPNeCZgvgE="/>
         <field:display date="true" dateTimePattern="${templateFile_sendtime_date_format}" field="sendTime" id="s_fr_univrouen_poste_domain_TemplateFile_sendTime" object="${templatefile}" z="PzndvMSues/QSji8keG7HNCfIrc="/>
         <field:display field="bigFile" id="s_fr_univrouen_poste_domain_TemplateFile_bigFile" object="${templatefile}" z="9bdvlqQTZndpQToACStznUbqS+A="/>
+        <field:display field="templateFileType" id="s_fr_univrouen_poste_domain_TemplateFile_templateFileType" object="${templatefile}" z="1ni4mHFsLgJuTmy2+pnPwCUzOgM="/>
     </page:show>
 </div>

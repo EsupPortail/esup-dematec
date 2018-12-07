@@ -4,6 +4,7 @@
 package fr.univrouen.poste.web.searchcriteria;
 
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
+import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 import java.util.List;
 
@@ -63,6 +64,14 @@ privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
     
     public void PosteCandidatureSearchCriteria.setSearchText(String searchText) {
         this.searchText = searchText;
+    }
+    
+    public TemplateFile PosteCandidatureSearchCriteria.getTemplateFile() {
+        return this.templateFile;
+    }
+    
+    public void PosteCandidatureSearchCriteria.setTemplateFile(TemplateFile templateFile) {
+        this.templateFile = templateFile;
     }
     
 }

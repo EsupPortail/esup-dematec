@@ -193,13 +193,13 @@ public class PosteCandidature {
 		
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (searchCriteria.getPostes() != null) {
+        if (searchCriteria.getPostes() != null && !searchCriteria.getPostes().isEmpty()) {
 			predicates.add(c.get("poste").in(searchCriteria.getPostes()));
         }
-        if (searchCriteria.getCandidats() != null) {
+        if (searchCriteria.getCandidats() != null && !searchCriteria.getCandidats().isEmpty()) {
         	predicates.add(c.get("candidat").in(searchCriteria.getCandidats()));
         }
-        if (searchCriteria.getReviewStatus() != null) {
+        if (searchCriteria.getReviewStatus() != null && !searchCriteria.getReviewStatus().isEmpty()) {
         	Join<PosteCandidature, ManagerReview> m = c.join("managerReview");
 			predicates.add(m.get("reviewStatus").in(searchCriteria.getReviewStatus()));
         }
@@ -238,7 +238,7 @@ public class PosteCandidature {
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 		final List<Order> orders = new ArrayList<Order>();
 		
-		if(sortFieldName != null) {
+		if(sortFieldName != null && !sortFieldName.isEmpty()) {
 			String[] sortFieldNameSplit = sortFieldName.split("\\.");
 			if("DESC".equalsIgnoreCase(sortOrder)) {	
 				if(sortFieldNameSplit.length<2) {
@@ -255,13 +255,13 @@ public class PosteCandidature {
 			}
 		}
 		
-        if (searchCriteria.getPostes() != null) {
+        if (searchCriteria.getPostes() != null && !searchCriteria.getPostes().isEmpty()) {
 			predicates.add(c.get("poste").in(searchCriteria.getPostes()));
         }
-        if (searchCriteria.getCandidats() != null) {
+        if (searchCriteria.getCandidats() != null && !searchCriteria.getCandidats().isEmpty()) {
         	predicates.add(c.get("candidat").in(searchCriteria.getCandidats()));
         }
-        if (searchCriteria.getReviewStatus() != null) {
+        if (searchCriteria.getReviewStatus() != null && !searchCriteria.getReviewStatus().isEmpty()) {
         	Join<PosteCandidature, ManagerReview> m = c.join("managerReview");
 			predicates.add(m.get("reviewStatus").in(searchCriteria.getReviewStatus()));
         }

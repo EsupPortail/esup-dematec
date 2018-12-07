@@ -68,6 +68,7 @@ import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.TemplateFile;
+import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
 import fr.univrouen.poste.services.CsvService;
@@ -611,7 +612,7 @@ public class MyPosteCandidatureController {
 		}
 		uiModel.addAttribute("fileTypes", fileTypesAvailable);
 		
-		List<TemplateFile> templateFiles = TemplateFile.findAllTemplateFiles("id", "asc");
+		List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.CANDIDATURE, "id", "asc").getResultList();
 		uiModel.addAttribute("templateFiles", templateFiles);
 		
 		Boolean isPresident = postecandidature.getPoste().getPresidents() != null && postecandidature.getPoste().getPresidents().contains(getCurrentUser());
@@ -701,6 +702,9 @@ public class MyPosteCandidatureController {
 		    
 			uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
 			uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
+			
+			List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES).getResultList();
+			uiModel.addAttribute("templateFiles", templateFiles);
 		}
 
 		else if (isCandidat) {
@@ -779,6 +783,9 @@ public class MyPosteCandidatureController {
 		
 		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
 		
+		uiModel.addAttribute("sortFieldName", sortFieldName);
+		uiModel.addAttribute("sortOrder", sortOrder);
+		
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";
 	}
@@ -798,15 +805,20 @@ public class MyPosteCandidatureController {
     		Model uiModel) throws IOException, SQLException {
 
     	if(zip) {
-
-    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, null, null).getResultList();
-
+    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
     		String contentType = "application/zip";
     		String baseName = "demat.zip";
     		response.setContentType(contentType);
     		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
     		zipService.writeZip(postecandidatures, response.getOutputStream());
-    		return null;    		
+    		return null; 
+    	} else if(searchCriteria.getTemplateFile() != null) {
+    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
+			String filename = searchCriteria.getTemplateFile().getFilename();
+			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+    		templateService.generateTemplateFile(searchCriteria.getTemplateFile(), postecandidatures, response.getOutputStream());
+    		return null; 
     	} else {
     		
     		if(mails) {
@@ -898,6 +910,12 @@ public class MyPosteCandidatureController {
 				uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
 				uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
 	    		
+				List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES).getResultList();
+				uiModel.addAttribute("templateFiles", templateFiles);
+				
+				uiModel.addAttribute("sortFieldName", sortFieldName);
+				uiModel.addAttribute("sortOrder", sortOrder);
+				
 	            addDateTimeFormatPatterns(uiModel);       
 	            return "postecandidatures/list";           
     		}
