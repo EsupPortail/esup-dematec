@@ -181,23 +181,26 @@
         <field:display field="managerReview" id="s_fr_univrouen_poste_domain_PosteCandidature_managerReview" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="galaxieEntry" id="s_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry" object="${postecandidature}" render="false" z="user-managed"/>
         <field:display field="managerComment4Members" id="s_fr_univrouen_poste_domain_PosteCandidature_managerComment4Members" object="${postecandidature}" render="false" z="user-managed"/>
-        <field:display field="reporters" id="s_fr_univrouen_poste_domain_PosteCandidature_reporters" object="${postecandidature}" z="v2mJvM4VPRt+hD6VFB6SDgjSnfo=" render="false"/>
+        <field:display field="reporters" id="s_fr_univrouen_poste_domain_PosteCandidature_reporters" object="${postecandidature}" render="false" z="user-managed"/>
+        <field:display field="laureat" id="s_fr_univrouen_poste_domain_PosteCandidature_laureat" object="${postecandidature}" render="false" z="ftvLorF0r2nurcQU577dQvmM+Ig="/>
+        <field:display field="reporterTag" id="s_fr_univrouen_poste_domain_PosteCandidature_reporterTag" object="${postecandidature}" render="false" z="UjFOGRXNq3QnQb36gAQX8V+aQ0w="/>
+        <field:display field="recevableEnum" id="s_fr_univrouen_poste_domain_PosteCandidature_recevableEnum" object="${postecandidature}" render="false"  z="ryZu5Ju49i5ZDBviKldKb0/7zIM="/>
     </page:show>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
         <div class="demat-fluid">
             <div class="demat6 demat-pc-manage">
                 <h4>Gestion de la candidature</h4>
                 <div class="well">
-                    <c:choose>
-                        <c:when test="${postecandidature.recevable}">
-                            <spring:url value="/postecandidatures/${postecandidature.id}/modify?recevable=false" var="modifyRecevableCandidatureUrl"/>
-                            <a class="btn btn-danger" href="${modifyRecevableCandidatureUrl}" onclick="return confirm('Candidature  non recevable ?');">Non Recevable</a>
-                        </c:when>
-                        <c:otherwise>
-                            <spring:url value="/postecandidatures/${postecandidature.id}/modify?recevable=true" var="modifyRecevableCandidatureUrl"/>
-                            <a class="btn btn-warning" href="${modifyRecevableCandidatureUrl}" onclick="return confirm('Candidature recevable ?');">Recevable</a>
-                        </c:otherwise>
-                    </c:choose>
+                	<spring:url value="/postecandidatures/${postecandidature.id}/modify" var="modifyRecevableCandidatureUrl"/>
+                    <form action="${modifyRecevableCandidatureUrl}" method="POST" class="form-inline">
+                    	<input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+                        <c:if test="${postecandidature.recevableEnum ne 'NON_RECEVABLE'}">
+                           	<input class="btn btn-danger" type="submit" name="recevable" value="NON_RECEVABLE" onclick="return confirm('Candidature  non recevable ?');"/>
+                        </c:if>
+                        <c:if test="${postecandidature.recevableEnum ne 'RECEVABLE'}">    
+                            <input class="btn btn-warning" type="submit" name="recevable" value="RECEVABLE" onclick="return confirm('Candidature recevable ?');"/>
+                        </c:if>
+                    </form>
         &amp;nbsp;
         <c:choose>
                         <c:when test="${postecandidature.auditionnable}">
@@ -208,7 +211,7 @@
                             <div aria-hidden="true" class="modal hide fade" id="auditionnableDialog" role="dialog" tabindex="-1">
                                 <spring:url value="/postecandidatures/${postecandidature.id}/auditionnable" var="auditionnableCandidatureUrl"/>
                                 <form action="${auditionnableCandidatureUrl}" method="POST">
-                                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
                                     <input name="auditionnable" type="hidden" value="true"/>
                                     <div class="modal-header">
                                         <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
@@ -244,37 +247,37 @@
                     <c:if test="${laureatEnable}">
 	                     &amp;nbsp;
 	        			<c:choose>
-	                        <c:when test="${postecandidature.laureat}">
-	                            <p class="label label-important">Cette candidature est lauréate.</p>
-	                        </c:when>
-	                        <c:otherwise>
-	                            <div aria-hidden="true" class="modal hide fade" id="laureatDialog" role="dialog" tabindex="-1">
-	                                <spring:url value="/postecandidatures/${postecandidature.id}/laureat" var="laureatCandidatureUrl"/>
-	                                <form action="${laureatCandidatureUrl}" method="POST">
-	                                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	                                    <input name="laureat" type="hidden" value="true"/>
-	                                    <div class="modal-header">
-	                                        <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
-	                                        <h3 id="myModalLabel">Candidature laureate ?</h3>
-	                                    </div>
-	                                    <div class="modal-body">
-	                                        <p>Si vous confirmez, cette candidature sera considérée comme <b>lauréate</b>.</p>
-	                                        <p>
+                            <c:when test="${postecandidature.laureat}">
+                                <p class="label label-important">Cette candidature est lauréate.</p>
+                            </c:when>
+                            <c:otherwise>
+                                <div aria-hidden="true" class="modal hide fade" id="laureatDialog" role="dialog" tabindex="-1">
+                                    <spring:url value="/postecandidatures/${postecandidature.id}/laureat" var="laureatCandidatureUrl"/>
+                                    <form action="${laureatCandidatureUrl}" method="POST">
+                                        <input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+                                        <input name="laureat" type="hidden" value="true"/>
+                                        <div class="modal-header">
+                                            <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                                            <h3 id="myModalLabel">Candidature laureate ?</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Si vous confirmez, cette candidature sera considérée comme <b>lauréate</b>.</p>
+                                            <p>
 								Il recevra de fait un mail (que vous pouvez 'modifier' ci-dessous).</p>
-	                                        <p>
-	                                            <h4>Mail :</h4>
-	                                            <textarea cols="100" name="mailCorps" rows="20">${texteMailCandidatLaureat}</textarea>
-	                                        </p>
-	                                    </div>
-	                                    <div class="modal-footer">
-	                                        <button aria-hidden="true" class="btn" data-dismiss="modal">Annuler</button>
-	                                        <button class="btn btn-danger" href="${laureatCandidatureUrl}" onclick="return confirm('Êtes-vous sûr ?');" type="submit">Confirmer</button>
-	                                    </div>
-	                                </form>
-	                            </div>
-	                            <a class="btn btn-danger" data-toggle="modal" href="#laureatDialog" role="button">Canidature lauréate ?</a>
-	                        </c:otherwise>
-	                    </c:choose>
+                                            <p>
+                                                <h4>Mail :</h4>
+                                                <textarea cols="100" name="mailCorps" rows="20">${texteMailCandidatLaureat}</textarea>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button aria-hidden="true" class="btn" data-dismiss="modal">Annuler</button>
+                                            <button class="btn btn-danger" href="${laureatCandidatureUrl}" onclick="return confirm('Êtes-vous sûr ?');" type="submit">Confirmer</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <a class="btn btn-danger" data-toggle="modal" href="#laureatDialog" role="button">Canidature lauréate ?</a>
+                            </c:otherwise>
+                        </c:choose>
                     </c:if>
                 </div>
             </div>
@@ -316,53 +319,53 @@
         </div>
     </sec:authorize>
     <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')">
-    	<hr/>
-    	<sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-    		<c:set value="true" var="isAdminOrManager"/>
-    	</sec:authorize>
-    	<c:if test="${presidentReportersView}">
-    	<div class="demat-fluid">
-    		<c:if test="${isAdminOrManager or isPresident}">
-	            <util:help >
-	            	<p>
+        <hr/>
+        <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+            <c:set value="true" var="isAdminOrManager"/>
+        </sec:authorize>
+        <c:if test="${presidentReportersView}">
+            <div class="demat-fluid">
+                <c:if test="${isAdminOrManager or isPresident}">
+                    <util:help>
+                        <p>
 	            		Ci-dessous, et en tant que président ou gestionnaire de l'application, vous pouvez affecter des rapporteurs à cette candidature.
 	            	</p>
-	            	<p>
+                        <p>
 	            		Une telle affectation ne modifie pas les droits des membres de commission sur la candidature, cela leur permet juste d'identifier les candidatures sur lesquelles ils sont rapporteurs, ce par un simple code couleur.
 	            	</p>
-	            </util:help>
-	        </c:if>
-            <div class="demat6 well">
-	            <h4>Rapporteurs</h4>
-	            <ul>
-                   <c:forEach items="${postecandidature.sortedReporters}" var="reporter">
-                      <li>
+                    </util:help>
+                </c:if>
+                <div class="demat6 well">
+                    <h4>Rapporteurs</h4>
+                    <ul>
+                        <c:forEach items="${postecandidature.sortedReporters}" var="reporter">
+                            <li>
                       ${reporter.displayName}
                       &amp;nbsp;
                       <c:if test="${isAdminOrManager or isPresident}">
-                      	<spring:url value="/postecandidatures/${postecandidature.id}/delReporter" var="delReporterUrl"/>
-			            <form action="${delReporterUrl}" method="POST" style="display:inline">
-			            	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-				            <input type="hidden" name="userId" value="${reporter.id}" />
-				            <input id="proceed" type="submit" value="Supprimer" class="btn btn-danger btn-mini"/>
-				        </form>
-                      </c:if>
-                      </li>
-                   </c:forEach>
-                </ul>
-		    </div>
-    	    <c:if test="${(isAdminOrManager or isPresident) and not empty postecandidature.poste.sortedMembres}">
-    	      <div class="demat6 well demat-pc-manage">
-	    		<spring:url value="/postecandidatures/${postecandidature.id}/addReporter" var="addReporterUrl"/>
-	            <form action="${addReporterUrl}" method="POST">
-	            	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		            <field:select label="Ajouter un rapporteur" multiple="false" size="1" disableFormBinding="true" itemValue="id" itemLabel="displayName" field="userId" id="f_fr_univrouen_poste_domain_PosteCandidature_reporters" items="${postecandidature.poste.sortedMembres}" path="/admin/users" required="true"/>
-		            <input id="proceed" type="submit" value="Ajouter" class="btn btn-success"/>
-		        </form>
-		      </div>
-	        </c:if>
-    	</div>
-        <hr/>
+                                    <spring:url value="/postecandidatures/${postecandidature.id}/delReporter" var="delReporterUrl"/>
+                                    <form action="${delReporterUrl}" method="POST" style="display:inline">
+                                        <input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+                                        <input name="userId" type="hidden" value="${reporter.id}"/>
+                                        <input class="btn btn-danger btn-mini" id="proceed" type="submit" value="Supprimer"/>
+                                    </form>
+                                </c:if>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
+                <c:if test="${(isAdminOrManager or isPresident) and not empty postecandidature.poste.sortedMembres}">
+                    <div class="demat6 well demat-pc-manage">
+                        <spring:url value="/postecandidatures/${postecandidature.id}/addReporter" var="addReporterUrl"/>
+                        <form action="${addReporterUrl}" method="POST">
+                            <input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+                            <field:select disableFormBinding="true" field="userId" id="f_fr_univrouen_poste_domain_PosteCandidature_reporters" itemLabel="displayName" itemValue="id" items="${postecandidature.poste.sortedMembres}" label="Ajouter un rapporteur" multiple="false" path="/admin/users" required="true" size="1"/>
+                            <input class="btn btn-success" id="proceed" type="submit" value="Ajouter"/>
+                        </form>
+                    </div>
+                </c:if>
+            </div>
+            <hr/>
         </c:if>
         <div class="well">
             <h4>Rapports du comité de sélection</h4>
@@ -458,7 +461,7 @@
                 </table>
             </c:if>
             <form:create id="fc_fr_univrouen_poste_domain_MemberReviewFile" label="Ajouter un rapport de commission" modelAttribute="memberReviewFile" multipart="true" path="${postecandidature.id}/addMemberReviewFile" save_button="Valider">
-                 <input id="c_fr_univrouen_poste_domain_MemberReviewFile_file" name="file" required="required" type="file"/>
+                <input id="c_fr_univrouen_poste_domain_MemberReviewFile_file" name="file" required="required" type="file"/>
             </form:create>
         </div>
     </sec:authorize>

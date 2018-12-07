@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.AppliConfig.MailReturnReceiptModeTypes;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 
 @RequestMapping("/admin/appliconfig")
 @Controller
@@ -38,5 +39,10 @@ public class AppliConfigController {
             List<MailReturnReceiptModeTypes> receiptModeTypes = Arrays.asList(MailReturnReceiptModeTypes.values());
             return receiptModeTypes;
     }
+    
+	@ModelAttribute("recevableEnumList")
+	public List<RecevableEnum> getRecevableEnumList() {
+		return Arrays.asList(RecevableEnum.values());
+	}
 
 }

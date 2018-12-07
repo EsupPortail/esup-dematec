@@ -37,6 +37,9 @@ min-width: 16px;
 display: initial;
 }
 
+.form-inline {
+display: inline;	
+}
 
 #main .row-fluid .span-demat-left {
 width: auto;

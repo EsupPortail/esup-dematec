@@ -91,7 +91,7 @@ public class CsvService {
 		}
 		
 		public String getRecevable() {
-			return posteCandidature.getRecevable() ? "true" : "false";
+			return posteCandidature.getRecevableEnum().name();
 		}
 		
 		public String getAuditionnable() {

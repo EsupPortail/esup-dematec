@@ -4,6 +4,7 @@
 package fr.univrouen.poste.domain;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import java.util.Date;
 
 privileged aspect AppliConfig_Roo_JavaBean {
@@ -128,8 +129,8 @@ privileged aspect AppliConfig_Roo_JavaBean {
         return this.colorCandidatureVueIncompletModifieDepuis;
     }
     
-    public Boolean AppliConfig.getCandidatureRecevableDefault() {
-        return this.candidatureRecevableDefault;
+    public RecevableEnum AppliConfig.getCandidatureRecevableEnumDefault() {
+        return this.candidatureRecevableEnumDefault;
     }
     
     public Boolean AppliConfig.getCandidatCanSignup() {

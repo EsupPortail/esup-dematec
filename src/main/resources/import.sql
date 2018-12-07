@@ -69,7 +69,7 @@ color_candidature_vue_incomplet,
 color_candidature_vue_incomplet_modifie_depuis,
 color_candidature_vue_modifie_depuis,
 membre_suppr_review_file,
-candidature_recevable_default,
+candidature_recevable_enum_default,
 candidat_can_signup,
 color_reporter_tag,
 postes_menu4members,
@@ -165,7 +165,7 @@ E'Merci de compléter le dossier de cette candidature via l''application de l''U
 
 false, 
 
-true,
+'RECEVABLE',
 
 false,
 

@@ -59,12 +59,12 @@ privileged aspect PosteCandidature_Roo_JavaBean {
         this.candidat = candidat;
     }
     
-    public Boolean PosteCandidature.getRecevable() {
-        return this.recevable;
+    public RecevableEnum PosteCandidature.getRecevableEnum() {
+        return this.recevableEnum;
     }
     
-    public void PosteCandidature.setRecevable(Boolean recevable) {
-        this.recevable = recevable;
+    public void PosteCandidature.setRecevableEnum(RecevableEnum recevableEnum) {
+        this.recevableEnum = recevableEnum;
     }
     
     public Boolean PosteCandidature.getAuditionnable() {

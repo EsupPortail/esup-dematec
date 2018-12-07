@@ -25,7 +25,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -62,6 +65,10 @@ public class PosteCandidature {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "poste.numEmploi", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate", "candidat.numCandidat", "galaxieEntry.etatDossier", "recevable", "auditionnable", "laureat");
 
+    public static enum RecevableEnum {
+        RECEVABLE, NON_RECEVABLE, NON_DEFINI
+    }
+
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private Date creation;
@@ -86,7 +93,9 @@ public class PosteCandidature {
     @ManyToOne
     private User candidat;
 
-    private Boolean recevable = true;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private RecevableEnum recevableEnum = RecevableEnum.RECEVABLE;
 
     private Boolean auditionnable = false;
     
@@ -109,6 +118,10 @@ public class PosteCandidature {
     @Transient
     private Boolean reporterTag = false;
 
+	public boolean isRecevable() {
+		return RecevableEnum.RECEVABLE.equals(recevableEnum);
+	}
+    
     public String getNom() {
         return this.candidat.getNom();
     }

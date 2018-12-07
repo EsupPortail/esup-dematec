@@ -51,7 +51,7 @@
         <field:display field="colorCandidatureVueModifieDepuis" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis" object="${appliconfig}" z="sL916nUeLxhorb2/nku180U8rEM="/>
         <field:display field="colorCandidatureVueIncompletModifieDepuis" id="s_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis" object="${appliconfig}" z="cDR8WhMXOpXy1AIMGdtK7QOhC9w="/>
         <field:display field="membreSupprReviewFile" id="s_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" object="${appliconfig}" z="Z7nCrH2zAYGZvn4YK5drTkST9DA="/>
-        <field:display field="candidatureRecevableDefault" id="s_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" object="${appliconfig}" z="aCqa55N8xU1LzH+gIdclvc9ADmk="/>
+        <field:display field="candidatureRecevableEnumDefault" id="s_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableEnumDefault" object="${appliconfig}" z="aCqa55N8xU1LzH+gIdclvc9ADmk="/>
         <field:display field="candidatCanSignup" id="s_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup" object="${appliconfig}" z="XjR1XXNoYGJ240EzSZS8eDc4Wi0="/>
         <field:display field="colorReporterTag" id="s_fr_univrouen_poste_domain_AppliConfig_colorReporterTag" object="${appliconfig}" z="ZudqtIJsqSohc8vkUn4zRUsEIac="/>
         <field:display field="postesMenu4Members" id="s_fr_univrouen_poste_domain_AppliConfig_postesMenu4Members" object="${appliconfig}" z="uRNajrHYFoVK1VQXo9NbFpaCCgU="/>

@@ -1,7 +1,4 @@
 package fr.univrouen.poste.web.admin;
-import fr.univrouen.poste.domain.AppliConfigFileType;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
-
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,11 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import fr.univrouen.poste.domain.AppliConfigFileType;
+import fr.univrouen.poste.domain.PosteCandidatureFile;
+
 @RequestMapping("/admin/appliconfigfiletype")
 @Controller
 @RooWebScaffold(path = "admin/appliconfigfiletype", formBackingObject = AppliConfigFileType.class)
 public class AppliConfigFileTypeController {	
-    
+	
     @RequestMapping(produces = "text/html")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if(sortFieldName == null || sortFieldName.isEmpty()) {

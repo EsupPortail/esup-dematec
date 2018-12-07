@@ -66,6 +66,7 @@ import fr.univrouen.poste.domain.ManagerReviewLegendColor;
 import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
@@ -444,10 +445,10 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/modify", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyRecevableCandidature(@PathVariable("id") Long id, @RequestParam(required=true) Boolean recevable) {
+	public String modifyRecevableCandidature(@PathVariable("id") Long id, @RequestParam(required=true) RecevableEnum recevable) {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		
-		postecandidature.setRecevable(recevable);
+		postecandidature.setRecevableEnum(recevable);
 
 		return "redirect:/postecandidatures/" + id.toString();
 	}

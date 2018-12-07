@@ -32,6 +32,8 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
+
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
@@ -99,7 +101,7 @@ public class AppliConfig {
 	
 	private static Boolean cacheMembreSupprReviewFile;
 	
-	private static Boolean cacheCandidatureRecevableDefault;
+	private static RecevableEnum cacheCandidatureRecevableEnumDefault;
 	
 	private static Boolean cacheCandidatCanSignup;
 	
@@ -223,7 +225,8 @@ public class AppliConfig {
     private String colorCandidatureVueIncompletModifieDepuis;
 
     @Column
-    private Boolean candidatureRecevableDefault;
+    @Enumerated(EnumType.STRING)
+    private RecevableEnum candidatureRecevableEnumDefault;
     
     @Column
     private Boolean candidatCanSignup;
@@ -392,9 +395,9 @@ public class AppliConfig {
 	}
 	
 
-	public void setCandidatureRecevableDefault(Boolean candidatureRecevableDefault) {
-		this.candidatureRecevableDefault = candidatureRecevableDefault;
-		cacheCandidatureRecevableDefault = candidatureRecevableDefault;
+	public void setCandidatureRecevableEnumDefault(RecevableEnum candidatureRecevableEnumDefault) {
+		this.candidatureRecevableEnumDefault = candidatureRecevableEnumDefault;
+		cacheCandidatureRecevableEnumDefault = candidatureRecevableEnumDefault;
 	}
 
 	public void setCandidatCanSignup(Boolean candidatCanSignup) {
@@ -842,17 +845,14 @@ public class AppliConfig {
     	return cacheMembreSupprReviewFile;
 	}
 
-	public static Boolean getCacheCandidatureRecevableDefault() {
-		if(cacheCandidatureRecevableDefault == null) {
+	public static RecevableEnum getCacheCandidatureRecevableEnumDefault() {
+		if(cacheCandidatureRecevableEnumDefault == null) {
     		List<AppliConfig> configs = AppliConfig.findAllAppliConfigs();  		
     		if(!configs.isEmpty()) {
-    			cacheCandidatureRecevableDefault = configs.get(0).getCandidatureRecevableDefault();		
-    		}
-    		if(cacheCandidatureRecevableDefault == null) {
-    			cacheCandidatureRecevableDefault = true;
+    			cacheCandidatureRecevableEnumDefault = configs.get(0).getCandidatureRecevableEnumDefault();		
     		}
     	}
-    	return cacheCandidatureRecevableDefault;
+    	return cacheCandidatureRecevableEnumDefault;
 	}
 	
 	public static Boolean getCacheCandidatCanSignup() {
@@ -947,6 +947,6 @@ public class AppliConfig {
     	}
     	return cacheTexteMailCandidatLaureat;
     }
-	
+
 }
 

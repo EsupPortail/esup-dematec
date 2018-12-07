@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.web.candidat.MyPosteCandidatureController;
 
 @RequestMapping("admin/multipostecandidatures")
@@ -45,7 +46,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "non_recevable", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesNonRecevables(@RequestParam("candidatureId") List<Long> pcIds, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyRecevableCandidature(id, false);
+			myPosteCandidatureController.modifyRecevableCandidature(id, RecevableEnum.NON_RECEVABLE);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
@@ -54,7 +55,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "recevable", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesRecevables(@RequestParam("candidatureId") List<Long> pcIds, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyRecevableCandidature(id, true);
+			myPosteCandidatureController.modifyRecevableCandidature(id, RecevableEnum.RECEVABLE);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;

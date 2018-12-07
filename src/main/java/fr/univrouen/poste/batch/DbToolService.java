@@ -190,6 +190,16 @@ public class DbToolService {
 				logger.info("\n\nMaj depuis 1.5.x ...\n\n");
 				
 				String sqlUpdate = "update template_file set template_file_type = 'CANDIDATURE';";
+				
+				sqlUpdate += "update poste_candidature set recevable_enum = 'RECEVABLE' where recevable is true;";
+				sqlUpdate += "update poste_candidature set recevable_enum = 'NON_RECEVABLE' where recevable is false;";
+				sqlUpdate += "update poste_candidature set recevable_enum = 'NON_DEFINI' where recevable is null;";
+				sqlUpdate += "alter table poste_candidature drop column recevable;";
+				
+				sqlUpdate += "update appli_config set candidature_recevable_enum_default = 'RECEVABLE' where candidature_recevable_default is true;";
+				sqlUpdate += "update appli_config set candidature_recevable_enum_default = 'NON_RECEVABLE' where candidature_recevable_default is true;";
+				sqlUpdate += "update appli_config set candidature_recevable_enum_default = 'NON_DEFINI' where candidature_recevable_default is null;";
+				sqlUpdate += "alter table appli_config drop column candidature_recevable_default;";
 
 				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
 				

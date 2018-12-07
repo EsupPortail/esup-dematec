@@ -112,7 +112,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        
 	        if("review".equals(permissionKey)) {
         		PosteAPourvoir poste = pc.getPoste();
-        		return user.getIsAdmin() || user.getIsManager() || user.getIsMembre() && poste.getMembres().contains(user) && pc.getRecevable();
+        		return user.getIsAdmin() || user.getIsManager() || user.getIsMembre() && poste.getMembres().contains(user) && pc.isRecevable();
 	        }
 	        
 	        if(isCandidat) {
@@ -142,7 +142,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        
 	        if("view".equals(permissionKey) && isMembre) {
 	        		PosteAPourvoir poste = pc.getPoste();
-	        		return poste.getMembres().contains(user) && pc.getRecevable();
+	        		return poste.getMembres().contains(user) && pc.isRecevable();
 	        }
         }
         

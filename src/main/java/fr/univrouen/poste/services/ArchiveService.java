@@ -87,7 +87,7 @@ public class ArchiveService {
 				File folder = new File(folderName);
 				folder.mkdir();
 				
-				folderName = folderName.concat(posteCandidature.getRecevable() ? "Recevable" : "Non_Recevable").concat("/");	
+				folderName = folderName.concat(posteCandidature.getRecevableEnum().name()).concat("/");	
 				folder = new File(folderName);
 				folder.mkdir();
 				

@@ -124,7 +124,7 @@ Université ESUP - Direction des Ressources Humaines
             <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
         </util:help>
         <field:checkbox field="membreSupprReviewFile" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile" z="5wZA3/wvtqZCgs5zNANesQb3alE="/>
-        <field:checkbox field="candidatureRecevableDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg="/>
+        <field:select field="candidatureRecevableEnumDefault" id="c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableEnumDefault" z="xh9qB5b8QvN/N+t3aQKzDlm29gg=" path="/" items="${recevableEnumList}" multiple="false" size="3"/>
         <util:help>
             <p>L'option ci-dessous permet aux membres de commission d'accéder à des documents partagés à l'ensemble de la commission pour un poste donné.</p>
             <p>Les présidents de commission, tout comme les gestionnaires de l'application, ont la possibilité d'ajouter des documents dans ces espaces.

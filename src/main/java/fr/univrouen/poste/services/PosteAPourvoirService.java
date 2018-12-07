@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.User;
 
 @Service
@@ -63,8 +64,8 @@ public class PosteAPourvoirService {
 				Date currentTime = cal.getTime();
 				candidature.setCreation(currentTime);
 
-				Boolean recevable = AppliConfig.getCacheCandidatureRecevableDefault();
-				candidature.setRecevable(recevable);
+				RecevableEnum recevableEnum = AppliConfig.getCacheCandidatureRecevableEnumDefault();
+				candidature.setRecevableEnum(recevableEnum);
 
 				candidature.persist();
 			}
