@@ -204,8 +204,12 @@
         &amp;nbsp;
         <c:choose>
                         <c:when test="${postecandidature.auditionnable}">
-                            <spring:url value="/postecandidatures/${postecandidature.id}/auditionnable?auditionnable=false" var="auditionnableCandidatureUrl"/>
-                            <a class="btn btn-danger" href="${auditionnableCandidatureUrl}" onclick="return confirm('Candidat non auditionnable sur cette candidature ? Aucun mail ne sera envoyé automatiquement au candidat pour lui informer de ce changement ... !');">Non retenu pour audition</a>
+                        	<spring:url value="/postecandidatures/${postecandidature.id}/auditionnable" var="auditionnableCandidatureUrl"/>
+                         	<form action="${auditionnableCandidatureUrl}" method="POST" class="form-inline">
+                                <input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+                                <input name="auditionnable" type="hidden" value="false"/>
+                            	<input type="submit" class="btn btn-danger" onclick="return confirm('Candidat non auditionnable sur cette candidature ? Aucun mail ne sera envoyé automatiquement au candidat pour lui informer de ce changement ... !');" value="Non retenu pour audition"/>
+                            </form>
                         </c:when>
                         <c:otherwise>
                             <div aria-hidden="true" class="modal hide fade" id="auditionnableDialog" role="dialog" tabindex="-1">
