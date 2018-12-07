@@ -661,6 +661,9 @@ public class MyPosteCandidatureController {
 		boolean isMembre = request.isUserInRole("ROLE_MEMBRE");
 		boolean isCandidat = request.isUserInRole("ROLE_CANDIDAT");
 
+		uiModel.addAttribute("sortFieldName", sortFieldName);
+		uiModel.addAttribute("sortOrder", sortOrder);
+		
     	if(sortFieldName == null) 
             sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
 		if("poste".equals(sortFieldName))
@@ -783,10 +786,7 @@ public class MyPosteCandidatureController {
 		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
 		
 		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
-		
-		uiModel.addAttribute("sortFieldName", sortFieldName);
-		uiModel.addAttribute("sortOrder", sortOrder);
-		
+
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";
 	}
@@ -805,6 +805,22 @@ public class MyPosteCandidatureController {
     		@RequestParam(required = false) String sortOrder,
     		Model uiModel) throws IOException, SQLException {
 
+    	uiModel.addAttribute("sortFieldName", sortFieldName);
+		uiModel.addAttribute("sortOrder", sortOrder);
+
+		if("poste".equals(sortFieldName))
+    		sortFieldName = "poste.numEmploi";
+    	if("nom".equals(sortFieldName))
+    		sortFieldName = "candidat.nom";
+    	if("email".equals(sortFieldName))
+    		sortFieldName = "candidat.emailAddress";
+		if("numCandidat".equals(sortFieldName))
+			sortFieldName = "candidat.numCandidat";
+    	if("managerReviewState".equals(sortFieldName))
+    		sortFieldName = "managerReview.reviewStatus";
+    	if("galaxieEntryEtatDossier".equals(sortFieldName))
+    		sortFieldName = "galaxieEntry.etatDossier";
+    	
     	if(zip) {
     		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
     		String contentType = "application/zip";
@@ -863,19 +879,6 @@ public class MyPosteCandidatureController {
         		return null; 
     			
     		} else {
-
-    			if("poste".equals(sortFieldName))
-    	    		sortFieldName = "poste.numEmploi";
-    	    	if("nom".equals(sortFieldName))
-    	    		sortFieldName = "candidat.nom";
-    	    	if("email".equals(sortFieldName))
-    	    		sortFieldName = "candidat.emailAddress";
-    			if("numCandidat".equals(sortFieldName))
-    				sortFieldName = "candidat.numCandidat";
-    	    	if("managerReviewState".equals(sortFieldName))
-    	    		sortFieldName = "managerReview.reviewStatus";
-    	    	if("galaxieEntryEtatDossier".equals(sortFieldName))
-    	    		sortFieldName = "galaxieEntry.etatDossier";
     	    	
 	    		if (page != null || size != null) {
 	                int sizeNo = size == null ? 10 : size.intValue();
@@ -913,9 +916,6 @@ public class MyPosteCandidatureController {
 	    		
 				List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES).getResultList();
 				uiModel.addAttribute("templateFiles", templateFiles);
-				
-				uiModel.addAttribute("sortFieldName", sortFieldName);
-				uiModel.addAttribute("sortOrder", sortOrder);
 				
 	            addDateTimeFormatPatterns(uiModel);       
 	            return "postecandidatures/list";           

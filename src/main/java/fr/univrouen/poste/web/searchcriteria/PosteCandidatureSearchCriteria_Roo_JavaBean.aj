@@ -4,17 +4,18 @@
 package fr.univrouen.poste.web.searchcriteria;
 
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 import java.util.List;
 
 privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
     
-    public Boolean PosteCandidatureSearchCriteria.getRecevable() {
+    public RecevableEnum PosteCandidatureSearchCriteria.getRecevable() {
         return this.recevable;
     }
     
-    public void PosteCandidatureSearchCriteria.setRecevable(Boolean recevable) {
+    public void PosteCandidatureSearchCriteria.setRecevable(RecevableEnum recevable) {
         this.recevable = recevable;
     }
     

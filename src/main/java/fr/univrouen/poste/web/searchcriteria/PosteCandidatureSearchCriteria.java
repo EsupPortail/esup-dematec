@@ -6,13 +6,14 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.User;
 
 @RooJavaBean
 public class PosteCandidatureSearchCriteria {
 
-	Boolean recevable;
+	RecevableEnum recevable;
 	
 	Boolean auditionnable;
 	

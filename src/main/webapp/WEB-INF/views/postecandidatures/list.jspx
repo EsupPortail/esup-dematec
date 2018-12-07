@@ -52,8 +52,9 @@
 	                                        <label for="recevable">Recevable</label>
 	                                        <spring-form:select id="recevable" path="recevable">
 	                                            <spring-form:option value="">--</spring-form:option>
-	                                            <spring-form:option value="true">Recevable</spring-form:option>
-	                                            <spring-form:option value="false">Non recevable</spring-form:option>
+	                                            <spring-form:option value="RECEVABLE">Recevable</spring-form:option>
+	                                            <spring-form:option value="NON_RECEVABLE">Non recevable</spring-form:option>
+	                                            <spring-form:option value="NON_DEFINI">Non défini</spring-form:option>
 	                                        </spring-form:select>
 	                                    </div>
 	                                    <div>

@@ -217,7 +217,7 @@ public class PosteCandidature {
 			predicates.add(m.get("reviewStatus").in(searchCriteria.getReviewStatus()));
         }
         if (searchCriteria.getRecevable() != null) {
-        	predicates.add(c.get("recevable").in(searchCriteria.getRecevable()));
+        	predicates.add(c.get("recevableEnum").in(searchCriteria.getRecevable()));
         }
         if (searchCriteria.getAuditionnable() != null) {
         	predicates.add(c.get("auditionnable").in(searchCriteria.getAuditionnable()));
@@ -279,7 +279,7 @@ public class PosteCandidature {
 			predicates.add(m.get("reviewStatus").in(searchCriteria.getReviewStatus()));
         }
         if (searchCriteria.getRecevable() != null) {
-        	predicates.add(c.get("recevable").in(searchCriteria.getRecevable()));
+        	predicates.add(c.get("recevableEnum").in(searchCriteria.getRecevable()));
         }
         if (searchCriteria.getAuditionnable() != null) {
         	predicates.add(c.get("auditionnable").in(searchCriteria.getAuditionnable()));
