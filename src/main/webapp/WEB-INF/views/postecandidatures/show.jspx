@@ -288,14 +288,21 @@
             <div class="demat6 demat-pc-manage">
                 <h4>Status : ${postecandidature.managerReviewState}</h4>
                 <div class="well">
+                	<spring:url value="/postecandidatures/${postecandidature.id}/review" var="reviewVueCandidatureUrl"/>
                     <c:if test="${postecandidature.managerReviewState != 'Vue'}">
-                        <spring:url value="/postecandidatures/${postecandidature.id}/review?reviewStatus=Vue" var="reviewVueCandidatureUrl"/>
-                        <a class="btn btn-warning" href="${reviewVueCandidatureUrl}" onclick="return confirm('Vous allez marquer cette candidature comme vue.');">Marquer comme Vue</a>
+                    	<form action="${reviewVueCandidatureUrl}" method="POST" class="form-inline">
+                    		<input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+                    		<input type="hidden" name="reviewStatus" value="Vue"/>
+                        	<input type="submit" class="btn btn-warning" onclick="return confirm('Vous allez marquer cette candidature comme vue.');" value="Marquer comme Vue"/>
+                        </form>
             	&amp;nbsp;
             </c:if>
                     <c:if test="${postecandidature.managerReviewState != 'Vue_incomplet'}">
-                        <spring:url value="/postecandidatures/${postecandidature.id}/review?reviewStatus=Vue_incomplet" var="reviewIncompletCandidatureUrl"/>
-                        <a class="btn btn-warning" href="${reviewIncompletCandidatureUrl}" onclick="return confirm('Vous allez marquer cette candidature comme vue mais incomplet.');">Marquer comme Vue mais incomplet</a>
+                    	<form action="${reviewVueCandidatureUrl}" method="POST" class="form-inline">
+                    		<input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+                    		<input type="hidden" name="reviewStatus" value="Vue_incomplet"/>
+                        	<input type="submit" class="btn btn-warning" onclick="return confirm('Vous allez marquer cette candidature comme vue mais incomplet.');" value="Marquer comme Vue mais incomplet"/>
+                        </form>
                 &amp;nbsp;
             </c:if>
                 </div>
