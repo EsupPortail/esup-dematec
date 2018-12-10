@@ -9,8 +9,11 @@ import fr.univrouen.poste.domain.MemberReviewFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
+import fr.univrouen.poste.domain.PosteCandidatureTag;
+import fr.univrouen.poste.domain.PosteCandidatureTagValue;
 import fr.univrouen.poste.domain.User;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 privileged aspect PosteCandidature_Roo_JavaBean {
@@ -121,6 +124,14 @@ privileged aspect PosteCandidature_Roo_JavaBean {
     
     public void PosteCandidature.setReporterTag(Boolean reporterTag) {
         this.reporterTag = reporterTag;
+    }
+    
+    public Map<PosteCandidatureTag, PosteCandidatureTagValue> PosteCandidature.getTags() {
+        return this.tags;
+    }
+    
+    public void PosteCandidature.setTags(Map<PosteCandidatureTag, PosteCandidatureTagValue> tags) {
+        this.tags = tags;
     }
     
 }

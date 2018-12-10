@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_fr_univrouen_poste_domain_PosteCandidatureTag" object="${postecandidaturetag}" path="/admin/candidaturetags" z="88XQbN+8H8O1c7GgH1QeipE2MDY=">
+        <field:display field="name" id="s_fr_univrouen_poste_domain_PosteCandidatureTag_name" object="${postecandidaturetag}" z="jEtY66V9//UGFUmJ95Vg5ZWj298="/>
+    </page:show>
+</div>

@@ -18,6 +18,8 @@ import fr.univrouen.poste.domain.LogMail;
 import fr.univrouen.poste.domain.LogPosteFile;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidatureTag;
+import fr.univrouen.poste.domain.PosteCandidatureTagValue;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.web.ApplicationConversionServiceFactoryBean;
@@ -373,6 +375,54 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<PosteCandidatureTag, String> ApplicationConversionServiceFactoryBean.getPosteCandidatureTagToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.PosteCandidatureTag, java.lang.String>() {
+            public String convert(PosteCandidatureTag posteCandidatureTag) {
+                return new StringBuilder().append(posteCandidatureTag.getName()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, PosteCandidatureTag> ApplicationConversionServiceFactoryBean.getIdToPosteCandidatureTagConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.PosteCandidatureTag>() {
+            public fr.univrouen.poste.domain.PosteCandidatureTag convert(java.lang.Long id) {
+                return PosteCandidatureTag.findPosteCandidatureTag(id);
+            }
+        };
+    }
+    
+    public Converter<String, PosteCandidatureTag> ApplicationConversionServiceFactoryBean.getStringToPosteCandidatureTagConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.PosteCandidatureTag>() {
+            public fr.univrouen.poste.domain.PosteCandidatureTag convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), PosteCandidatureTag.class);
+            }
+        };
+    }
+    
+    public Converter<PosteCandidatureTagValue, String> ApplicationConversionServiceFactoryBean.getPosteCandidatureTagValueToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.PosteCandidatureTagValue, java.lang.String>() {
+            public String convert(PosteCandidatureTagValue posteCandidatureTagValue) {
+                return new StringBuilder().append(posteCandidatureTagValue.getValue()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, PosteCandidatureTagValue> ApplicationConversionServiceFactoryBean.getIdToPosteCandidatureTagValueConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, fr.univrouen.poste.domain.PosteCandidatureTagValue>() {
+            public fr.univrouen.poste.domain.PosteCandidatureTagValue convert(java.lang.Long id) {
+                return PosteCandidatureTagValue.findPosteCandidatureTagValue(id);
+            }
+        };
+    }
+    
+    public Converter<String, PosteCandidatureTagValue> ApplicationConversionServiceFactoryBean.getStringToPosteCandidatureTagValueConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, fr.univrouen.poste.domain.PosteCandidatureTagValue>() {
+            public fr.univrouen.poste.domain.PosteCandidatureTagValue convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), PosteCandidatureTagValue.class);
+            }
+        };
+    }
+    
     public Converter<TemplateFile, String> ApplicationConversionServiceFactoryBean.getTemplateFileToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<fr.univrouen.poste.domain.TemplateFile, java.lang.String>() {
             public String convert(TemplateFile templateFile) {
@@ -459,6 +509,12 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getPosteCandidatureToStringConverter());
         registry.addConverter(getIdToPosteCandidatureConverter());
         registry.addConverter(getStringToPosteCandidatureConverter());
+        registry.addConverter(getPosteCandidatureTagToStringConverter());
+        registry.addConverter(getIdToPosteCandidatureTagConverter());
+        registry.addConverter(getStringToPosteCandidatureTagConverter());
+        registry.addConverter(getPosteCandidatureTagValueToStringConverter());
+        registry.addConverter(getIdToPosteCandidatureTagValueConverter());
+        registry.addConverter(getStringToPosteCandidatureTagValueConverter());
         registry.addConverter(getTemplateFileToStringConverter());
         registry.addConverter(getIdToTemplateFileConverter());
         registry.addConverter(getStringToTemplateFileConverter());

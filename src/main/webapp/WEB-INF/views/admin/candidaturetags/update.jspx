@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_fr_univrouen_poste_domain_PosteCandidatureTag" modelAttribute="posteCandidatureTag" path="/admin/candidaturetags" versionField="Version" z="ezi9loV4UXjS0y5WOXlN9DjRc0c=">
+        <field:input field="name" id="c_fr_univrouen_poste_domain_PosteCandidatureTag_name" z="AxTRSL758LHYKQptvl/uUf4WP9U="/>
+        <field:simple render="false" field="values" id="c_fr_univrouen_poste_domain_PosteCandidatureTag_values" messageCode="entity_reference_not_managed" messageCodeAttribute="Poste Candidature Tag Value" z="5AOAUtCXyM2Jvc/tfYHBvFPCD0Q="/>
+    </form:update>
+    
+    <page:list id="pl_fr_univrouen_poste_domain_PosteCandidatureTagValue" items="${postecandidaturetagvalues}" z="ETXF6jRHTjQWB4o0mNlkRozrxt4=">
+        <table:table data="${posteCandidatureTag.values}" id="l_fr_univrouen_poste_domain_PosteCandidatureTagValue" path="/admin/candidaturevaluetags" z="w75GKOdmKsY0ATnKcqe/n8L6TW0=" create="false" view="false">
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidatureTagValue_value" property="value" z="tNoFpxEEru9F/HBMoru6mbf8Xog="/>
+        </table:table>
+    </page:list>
+    
+     <form:create save_button="Ajouter une valeur" id="fc_fr_univrouen_poste_domain_PosteCandidatureTagValue" modelAttribute="posteCandidatureTagValue" path="/admin/candidaturetags/${posteCandidatureTag.id}?create=value" render="${empty dependencies}" z="XISZwo4YerDgLLoTqjMBkI6pUec=">
+        <field:input field="value" id="c_fr_univrouen_poste_domain_PosteCandidatureTagValue_value" z="tC3hIyiZRadOMc5pbR1CQ8zoVis="/>
+    </form:create>
+    
+</div>

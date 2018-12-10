@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_fr_univrouen_poste_domain_PosteCandidatureTag" items="${postecandidaturetags}" z="O29H+07G9IxdhG5ph/QZFc4qQ6I=">
+        <table:table data="${postecandidaturetags}" id="l_fr_univrouen_poste_domain_PosteCandidatureTag" path="/admin/candidaturetags" z="CPXS7IDSn4pB/OS6XFdscgSQIkc=" view="false">
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidatureTag_name" property="name" z="3Q4Hjwy6A19yLA6te4h49jwYb6Q="/>
+            <table:column id="c_fr_univrouen_poste_domain_PosteCandidatureTag_values" property="values"/>
+        </table:table>
+    </page:list>
+</div>

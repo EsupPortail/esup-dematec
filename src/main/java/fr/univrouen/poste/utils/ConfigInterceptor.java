@@ -57,7 +57,9 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter {
 	    put("/admin/commissionentrys",   "Importation Commission"); 
 	    put("/admin/currentsessions",   "Sessions courantes / Utilisateurs connectés"); 
 	    put("/admin/logimportgalaxies",   "Logs (Rapports) Imports Galaxie"); 
-	    put("/admin/logimportcommissions",   "Logs (Rapports) Imports Commission"); 
+	    put("/admin/logimportcommissions",   "Logs (Rapports) Imports Commission");
+	    put("/admin/candidaturetags",   "Gestion des Tags"); 
+	    put("/admin/candidaturevaluetags",   "Gestion des Tags"); 
 	    put("/admin/su",   "SU");
 	    put("/admin/chart",   "Graphes");
 	    put("/admin",   "Résumé");

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -48,6 +49,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -117,6 +119,9 @@ public class PosteCandidature {
     
     @Transient
     private Boolean reporterTag = false;
+    
+    @ManyToMany
+    private Map<PosteCandidatureTag, PosteCandidatureTagValue> tags = new HashedMap<PosteCandidatureTag, PosteCandidatureTagValue>();
 
 	public boolean isRecevable() {
 		return RecevableEnum.RECEVABLE.equals(recevableEnum);
