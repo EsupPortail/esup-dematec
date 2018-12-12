@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
 import javax.persistence.TypedQuery;
@@ -30,9 +31,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findPosteCandidatureTagsByValues" })
+@RooJpaActiveRecord(finders = { "findPosteCandidatureTagsByValues", "findPosteCandidatureTagsByName" })
 public class PosteCandidatureTag {
 
+	@Column(unique=true)
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

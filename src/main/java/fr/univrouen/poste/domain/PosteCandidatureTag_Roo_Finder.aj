@@ -11,6 +11,14 @@ import javax.persistence.TypedQuery;
 
 privileged aspect PosteCandidatureTag_Roo_Finder {
     
+    public static Long PosteCandidatureTag.countFindPosteCandidatureTagsByName(String name) {
+        if (name == null || name.length() == 0) throw new IllegalArgumentException("The name argument is required");
+        EntityManager em = PosteCandidatureTag.entityManager();
+        TypedQuery q = em.createQuery("SELECT COUNT(o) FROM PosteCandidatureTag AS o WHERE o.name = :name", Long.class);
+        q.setParameter("name", name);
+        return ((Long) q.getSingleResult());
+    }
+    
     public static Long PosteCandidatureTag.countFindPosteCandidatureTagsByValues(Set<PosteCandidatureTagValue> values) {
         if (values == null) throw new IllegalArgumentException("The values argument is required");
         EntityManager em = PosteCandidatureTag.entityManager();
@@ -25,6 +33,29 @@ privileged aspect PosteCandidatureTag_Roo_Finder {
             q.setParameter("values_item" + valuesIndex++, _postecandidaturetagvalue);
         }
         return ((Long) q.getSingleResult());
+    }
+    
+    public static TypedQuery<PosteCandidatureTag> PosteCandidatureTag.findPosteCandidatureTagsByName(String name) {
+        if (name == null || name.length() == 0) throw new IllegalArgumentException("The name argument is required");
+        EntityManager em = PosteCandidatureTag.entityManager();
+        TypedQuery<PosteCandidatureTag> q = em.createQuery("SELECT o FROM PosteCandidatureTag AS o WHERE o.name = :name", PosteCandidatureTag.class);
+        q.setParameter("name", name);
+        return q;
+    }
+    
+    public static TypedQuery<PosteCandidatureTag> PosteCandidatureTag.findPosteCandidatureTagsByName(String name, String sortFieldName, String sortOrder) {
+        if (name == null || name.length() == 0) throw new IllegalArgumentException("The name argument is required");
+        EntityManager em = PosteCandidatureTag.entityManager();
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM PosteCandidatureTag AS o WHERE o.name = :name");
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                queryBuilder.append(" ").append(sortOrder);
+            }
+        }
+        TypedQuery<PosteCandidatureTag> q = em.createQuery(queryBuilder.toString(), PosteCandidatureTag.class);
+        q.setParameter("name", name);
+        return q;
     }
     
     public static TypedQuery<PosteCandidatureTag> PosteCandidatureTag.findPosteCandidatureTagsByValues(Set<PosteCandidatureTagValue> values) {

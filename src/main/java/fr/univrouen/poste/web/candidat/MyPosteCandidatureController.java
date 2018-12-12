@@ -29,8 +29,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -52,6 +54,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,6 +71,8 @@ import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
+import fr.univrouen.poste.domain.PosteCandidatureTag;
+import fr.univrouen.poste.domain.PosteCandidatureTagValue;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
 import fr.univrouen.poste.domain.User;
@@ -624,6 +629,8 @@ public class MyPosteCandidatureController {
 		uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
 		uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
 		
+		uiModel.addAttribute("allPosteCandidatureTag", PosteCandidatureTag.findAllPosteCandidatureTags());
+		
 		return "postecandidatures/show";
 	}
 	
@@ -955,4 +962,15 @@ public class MyPosteCandidatureController {
         return "redirect:/postecandidatures/" + id;
     }
     
+    @RequestMapping(value = "/{id}/updateTags", method = RequestMethod.POST, produces = "text/html")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+    public String updateTags(@PathVariable("id") Long id, @Valid PosteCandidatureTagForm posteCandidatureTagForm, Model uiModel) {
+    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+    	postecandidature.setTags(posteCandidatureTagForm.getTags());
+        uiModel.asMap().clear();
+        return "redirect:/postecandidatures/" + id;
+    }
+    
+    
 }
+
