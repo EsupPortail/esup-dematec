@@ -44,6 +44,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -240,6 +241,14 @@ public class PosteCandidature {
 			predicates.add(criteriaBuilder.isTrue(fullTestSearchExpression));
 		}
         
+        for(PosteCandidatureTag tag : searchCriteria.getTags().keySet()) {
+        	if(searchCriteria.getTags().get(tag) != null) {
+        		MapJoin<PosteCandidature, PosteCandidatureTag, PosteCandidatureTagValue> t = c.joinMap("tags");
+        		predicates.add(criteriaBuilder.equal(t.key(), tag));
+        		predicates.add(criteriaBuilder.equal(t.value(), searchCriteria.getTags().get(tag)));
+        	}
+        }
+        
         query.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));	
 		
 		query.select(criteriaBuilder.count(c));
@@ -304,6 +313,14 @@ public class PosteCandidature {
 			predicates.add(criteriaBuilder.isTrue(fullTestSearchExpression));
 			orders.add(criteriaBuilder.desc(fullTestSearchRanking));
 		}
+        
+        for(PosteCandidatureTag tag : searchCriteria.getTags().keySet()) {
+        	if(searchCriteria.getTags().get(tag) != null) {
+        		MapJoin<PosteCandidature, PosteCandidatureTag, PosteCandidatureTagValue> t = c.joinMap("tags");
+        		predicates.add(criteriaBuilder.equal(t.key(), tag));
+        		predicates.add(criteriaBuilder.equal(t.value(), searchCriteria.getTags().get(tag)));
+        	}
+        }
         
 		if("DESC".equalsIgnoreCase(sortOrder)) {
 			if(sortFieldName == null) {

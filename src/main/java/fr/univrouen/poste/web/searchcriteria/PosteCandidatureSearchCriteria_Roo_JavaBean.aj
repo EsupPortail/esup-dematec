@@ -5,9 +5,12 @@ package fr.univrouen.poste.web.searchcriteria;
 
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
+import fr.univrouen.poste.domain.PosteCandidatureTag;
+import fr.univrouen.poste.domain.PosteCandidatureTagValue;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 import java.util.List;
+import java.util.Map;
 
 privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
     
@@ -73,6 +76,14 @@ privileged aspect PosteCandidatureSearchCriteria_Roo_JavaBean {
     
     public void PosteCandidatureSearchCriteria.setTemplateFile(TemplateFile templateFile) {
         this.templateFile = templateFile;
+    }
+    
+    public Map<PosteCandidatureTag, PosteCandidatureTagValue> PosteCandidatureSearchCriteria.getTags() {
+        return this.tags;
+    }
+    
+    public void PosteCandidatureSearchCriteria.setTags(Map<PosteCandidatureTag, PosteCandidatureTagValue> tags) {
+        this.tags = tags;
     }
     
 }

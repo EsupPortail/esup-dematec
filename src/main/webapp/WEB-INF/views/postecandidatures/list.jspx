@@ -73,6 +73,24 @@
 	                                            <spring-form:option value="false">Aucune modification</spring-form:option>
 	                                        </spring-form:select>
 	                                    </div>
+	                                    <c:forEach items="${allPosteCandidatureTag}" var="posteCandidatureTag">
+	                                    	<div>
+								           		<label>${posteCandidatureTag.name}</label>
+								           		<select name="tags[${posteCandidatureTag.id}]">
+								           			<option value="">--</option>
+								           			<c:forEach items="${posteCandidatureTag.values}" var="posteCandidatureTagValue">
+								           				<c:choose>
+								           					<c:when test="${command.tags[posteCandidatureTag] eq posteCandidatureTagValue}">
+								           						<option value="${posteCandidatureTagValue.id}" selected="selected">${posteCandidatureTagValue.value}</option>
+								           					</c:when>
+								           					<c:otherwise>
+								           						<option value="${posteCandidatureTagValue.id}">${posteCandidatureTagValue.value}</option>
+								           					</c:otherwise>
+								           				</c:choose>
+								           			</c:forEach>
+								           		</select>
+								           	</div>
+							           	</c:forEach>
 	                                    <div class="row-fluid">
 	                                   		<div class="span4">
 	                                        	<field:checkbox disableFormBinding="true" field="zip" id="zip" label="Zip"/>

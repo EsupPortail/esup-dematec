@@ -716,6 +716,9 @@ public class MyPosteCandidatureController {
 			
 			List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES).getResultList();
 			uiModel.addAttribute("templateFiles", templateFiles);
+			
+			uiModel.addAttribute("allPosteCandidatureTag", PosteCandidatureTag.findAllPosteCandidatureTags());
+			
 		}
 
 		else if (isCandidat) {
@@ -923,6 +926,8 @@ public class MyPosteCandidatureController {
 	    		
 				List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES).getResultList();
 				uiModel.addAttribute("templateFiles", templateFiles);
+				
+				uiModel.addAttribute("allPosteCandidatureTag", PosteCandidatureTag.findAllPosteCandidatureTags());
 				
 	            addDateTimeFormatPatterns(uiModel);       
 	            return "postecandidatures/list";           

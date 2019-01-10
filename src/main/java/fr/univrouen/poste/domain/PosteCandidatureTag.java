@@ -23,6 +23,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.TypedQuery;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -38,6 +39,7 @@ public class PosteCandidatureTag {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("value ASC")
     private Set<PosteCandidatureTagValue> values = new HashSet<PosteCandidatureTagValue>();
     
     public static PosteCandidatureTag findPosteCandidatureTagsByValue(PosteCandidatureTagValue value) {
