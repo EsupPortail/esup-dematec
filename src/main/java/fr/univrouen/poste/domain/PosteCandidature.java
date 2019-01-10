@@ -195,7 +195,7 @@ public class PosteCandidature {
 
     public static TypedQuery<PosteCandidature> findPosteCandidaturesRecevableByPostes(Set<PosteAPourvoir> postes, Boolean auditionnable, String sortFieldName, String sortOrder) {
         if (postes == null) throw new IllegalArgumentException("The postes argument is required");
-        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes AND o.recevable = TRUE";
+        String jpaQuery = "SELECT o FROM PosteCandidature AS o WHERE o.poste IN :postes AND o.recevableEnum = :recevable";     
         if (auditionnable != null) {
         	jpaQuery = jpaQuery + " AND o.auditionnable = :auditionnable";
         }
@@ -206,6 +206,7 @@ public class PosteCandidature {
             }
         }
         TypedQuery<PosteCandidature> q = entityManager().createQuery(jpaQuery, PosteCandidature.class);
+        q.setParameter("recevable", RecevableEnum.RECEVABLE);
         q.setParameter("postes", postes);
         if (auditionnable != null) {
         	q.setParameter("auditionnable", auditionnable);
