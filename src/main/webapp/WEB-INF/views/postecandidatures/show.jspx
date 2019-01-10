@@ -78,12 +78,29 @@
           <hr/>
         </sec:authorize>
         <sec:authorize access="hasRole('ROLE_MEMBRE')">
+         <div class="row-fluid">     
+	       <div class="span8">
             <c:if test="${not empty postecandidature.managerComment4Members}">
                 <fieldset class="managerComment4Members">
                     <legend>Commentaire de la part des gestionnaires sur cette candidature :</legend>
                     <pre>${postecandidature.managerComment4Members}</pre>
                 </fieldset>
             </c:if>
+            </div>
+            <div class="span4">
+            <c:if test="${not empty allPosteCandidatureTag}">
+                <fieldset class="allPosteCandidatureTag">
+                    <legend>Tags :</legend>
+                    <dl>
+	                    <c:forEach items="${allPosteCandidatureTag}" var="posteCandidatureTag">
+			           		<dt>${posteCandidatureTag.name}</dt>
+			           		<dd>${postecandidature.tags[posteCandidatureTag].value}</dd>
+			           	</c:forEach>
+			        </dl>
+                </fieldset>
+            </c:if>
+            </div>
+            </div>
         </sec:authorize>
         <c:if test="${not empty param.upload_restricion_size_contentype}">
             <c:choose>

@@ -255,6 +255,12 @@ color: #fff;
 text-decoration:none;
 }
 
+.managerComment4Members, .allPosteCandidatureTag,
+.managerComment4Members legend, .allPosteCandidatureTag legend,
+.allPosteCandidatureTag dl {
+margin : 0px;
+}
+
 @media (min-width: 1200px) {
 	
 #main .bs-docs-sidenav {

@@ -7,7 +7,7 @@
         <field:simple render="false" field="values" id="c_fr_univrouen_poste_domain_PosteCandidatureTag_values" messageCode="entity_reference_not_managed" messageCodeAttribute="Poste Candidature Tag Value" z="5AOAUtCXyM2Jvc/tfYHBvFPCD0Q="/>
     </form:update>
     
-    <page:list id="pl_fr_univrouen_poste_domain_PosteCandidatureTagValue" items="${postecandidaturetagvalues}" z="ETXF6jRHTjQWB4o0mNlkRozrxt4=">
+    <page:list id="pl_fr_univrouen_poste_domain_PosteCandidatureTagValue" items="${postecandidaturetagvalues}" z="ETXF6jRHTjQWB4o0mNlkRozrxt4=" render="${not empty postecandidaturetagvalues}">
         <table:table data="${posteCandidatureTag.values}" id="l_fr_univrouen_poste_domain_PosteCandidatureTagValue" path="/admin/candidaturevaluetags" z="w75GKOdmKsY0ATnKcqe/n8L6TW0=" create="false" view="false">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidatureTagValue_value" property="value" z="tNoFpxEEru9F/HBMoru6mbf8Xog="/>
         </table:table>

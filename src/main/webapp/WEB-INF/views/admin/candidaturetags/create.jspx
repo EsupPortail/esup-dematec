@@ -4,7 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:create id="fc_fr_univrouen_poste_domain_PosteCandidatureTag" modelAttribute="posteCandidatureTag" path="/admin/candidaturetags" render="${empty dependencies}" z="0G027lTsafHiPMWIc4W8KAlknPQ=">
         <field:input field="name" id="c_fr_univrouen_poste_domain_PosteCandidatureTag_name" z="AxTRSL758LHYKQptvl/uUf4WP9U="/>
-        <field:simple field="values" id="c_fr_univrouen_poste_domain_PosteCandidatureTag_values" messageCode="entity_reference_not_managed" messageCodeAttribute="Poste Candidature Tag Value" z="5AOAUtCXyM2Jvc/tfYHBvFPCD0Q="/>
+        <field:simple field="values" id="c_fr_univrouen_poste_domain_PosteCandidatureTag_values" render="false" messageCode="entity_reference_not_managed" messageCodeAttribute="Poste Candidature Tag Value" z="5AOAUtCXyM2Jvc/tfYHBvFPCD0Q="/>
     </form:create>
-    <form:dependency dependencies="${dependencies}" id="d_fr_univrouen_poste_domain_PosteCandidatureTag" render="${not empty dependencies}" z="hHtSiTBeFd6LOFjv9JZYwU6Fn2A="/>
+    <form:dependency dependencies="${dependencies}" id="d_fr_univrouen_poste_domain_PosteCandidatureTag" render="false" z="hHtSiTBeFd6LOFjv9JZYwU6Fn2A="/>
 </div>
