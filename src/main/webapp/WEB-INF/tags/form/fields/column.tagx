@@ -12,6 +12,7 @@
   <jsp:directive.attribute name="z" type="java.lang.String" required="false" description="Used for checking if element has been modified (to recalculate simply provide empty string value)" />
   <jsp:directive.attribute name="sort" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the column can be used to sort/order list (default 'false')" />
   <jsp:directive.attribute name="cssClass" type="java.lang.String" required="false" rtexprvalue="true" description="Set class" />
+  <jsp:directive.attribute name="html" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the content of this tag is html string" />
   
   <c:if test="${empty render or render}">
     <c:if test="${empty label}">
@@ -42,6 +43,14 @@
       <c:when test="${calendar and not empty columnTypes}">
         <c:set var="columnTypes" value="${columnTypes}&#9999;calendar" scope="request" />
         <c:set var="columnDatePatterns" value="${columnDatePatterns}&#9999;${dateTimePattern}" scope="request" />
+      </c:when>
+      <c:when test="${html and empty columnTypes}">
+        <c:set var="columnTypes" value="html" scope="request" />
+        <c:set var="columnDatePatterns" value="none" scope="request" />
+      </c:when>
+      <c:when test="${html and not empty columnTypes}">
+        <c:set var="columnTypes" value="${columnTypes}&#9999;html" scope="request" />
+        <c:set var="columnDatePatterns" value="${columnDatePatterns}&#9999;none" scope="request" />
       </c:when>
       <c:when test="${empty columnTypes}">
         <c:set var="columnTypes" value="default" scope="request" />

@@ -155,7 +155,17 @@ public class PosteCandidature {
     public String getReporterTagColor() {
         return reporterTag  ?  AppliConfig.getCacheColorReporterTag() : "#fafafa";
     }
-
+    
+    public String getTagsAsHtmlString() {
+        String tagsAsString = "";
+        for(PosteCandidatureTag tag : tags.keySet()) {
+        	if(tags.get(tag) != null) {
+        		tagsAsString += String.format("<span class=\"important\">%s : </span> %s<br/>", tag.getName(), tags.get(tag).getValue());
+        	}
+        }
+        return tagsAsString;
+    }
+    
     public List<User> getSortedReporters() {
     	List<User> sortedReporters = new ArrayList<User>(this.reporters);
     	Collections.sort(sortedReporters, new UserComparator());

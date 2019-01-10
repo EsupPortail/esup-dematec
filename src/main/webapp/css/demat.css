@@ -231,6 +231,9 @@ background: #fefefe !important;
 position: absolute; 
 right: 30px;
 }
+.demat-star {
+background-image: url("images/star.png");
+}
 
 .navbar-inverse form {
 margin: 0;

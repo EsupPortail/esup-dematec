@@ -210,6 +210,7 @@
             	<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_galaxieEntry_etatDossier" label="Etat Dossier Galaxie" property="galaxieEntryEtatDossier" render="${canManage}" sort="true" z="user-managed"/>
             </c:if>
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidature_managerComment4Members" label="Com." property="managerComment4Members" render="${canManage}" z="user-managed" maxLength="-1" cssClass="demat-popover"/>
+			<table:column id="c_fr_univrouen_poste_domain_PosteCandidature_tags" label="Tag" property="tagsAsHtmlString" render="${canManage and not empty allPosteCandidatureTag}" z="user-managed" maxLength="-1" cssClass="demat-popover demat-star" html="true"/>
         </table:table>
     </page:list>
     
