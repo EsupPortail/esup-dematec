@@ -252,12 +252,14 @@ public class PosteCandidature {
 			predicates.add(criteriaBuilder.isTrue(fullTestSearchExpression));
 		}
         
-        for(PosteCandidatureTag tag : searchCriteria.getTags().keySet()) {
-        	if(searchCriteria.getTags().get(tag) != null) {
-        		MapJoin<PosteCandidature, PosteCandidatureTag, PosteCandidatureTagValue> t = c.joinMap("tags");
-        		predicates.add(criteriaBuilder.equal(t.key(), tag));
-        		predicates.add(criteriaBuilder.equal(t.value(), searchCriteria.getTags().get(tag)));
-        	}
+        if(searchCriteria.getTags() != null) {
+	        for(PosteCandidatureTag tag : searchCriteria.getTags().keySet()) {
+	        	if(searchCriteria.getTags().get(tag) != null) {
+	        		MapJoin<PosteCandidature, PosteCandidatureTag, PosteCandidatureTagValue> t = c.joinMap("tags");
+	        		predicates.add(criteriaBuilder.equal(t.key(), tag));
+	        		predicates.add(criteriaBuilder.equal(t.value(), searchCriteria.getTags().get(tag)));
+	        	}
+	        }
         }
         
         query.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));	
@@ -325,12 +327,14 @@ public class PosteCandidature {
 			orders.add(criteriaBuilder.desc(fullTestSearchRanking));
 		}
         
-        for(PosteCandidatureTag tag : searchCriteria.getTags().keySet()) {
-        	if(searchCriteria.getTags().get(tag) != null) {
-        		MapJoin<PosteCandidature, PosteCandidatureTag, PosteCandidatureTagValue> t = c.joinMap("tags");
-        		predicates.add(criteriaBuilder.equal(t.key(), tag));
-        		predicates.add(criteriaBuilder.equal(t.value(), searchCriteria.getTags().get(tag)));
-        	}
+        if(searchCriteria.getTags() != null) {
+	        for(PosteCandidatureTag tag : searchCriteria.getTags().keySet()) {
+	        	if(searchCriteria.getTags().get(tag) != null) {
+	        		MapJoin<PosteCandidature, PosteCandidatureTag, PosteCandidatureTagValue> t = c.joinMap("tags");
+	        		predicates.add(criteriaBuilder.equal(t.key(), tag));
+	        		predicates.add(criteriaBuilder.equal(t.value(), searchCriteria.getTags().get(tag)));
+	        	}
+	        }
         }
         
 		if("DESC".equalsIgnoreCase(sortOrder)) {
