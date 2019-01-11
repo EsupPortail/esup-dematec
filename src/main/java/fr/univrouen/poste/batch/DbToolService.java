@@ -239,6 +239,7 @@ public class DbToolService {
 				"delete from member_review_file;" +
 				"delete from poste_candidature_candidature_files;" +
 				"delete from poste_candidature_file;" +
+				"delete from poste_candidature_tags;" +
 				"delete from poste_candidature;" +
 				"delete from manager_review;" +
 				"delete from posteapourvoir_membres;" +
