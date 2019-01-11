@@ -54,8 +54,8 @@ Les admin et super-manager peuvent configurer certains éléments de l'applicati
 ## Installation 
 
 ### Pré-requis
-* Java JDK 8 :  http://www.oracle.com/technetwork/java/javase/downloads/index.html
-* Maven (dernière version 3.0.x) : http://maven.apache.org/download.cgi
+* Java Open JDK 8 : https://openjdk.java.net/install : le mieux est de l'installer via le système de paquets de votre linux.
+* Maven (dernière version 3.0.x) : http://maven.apache.org/download.cgi : le mieux est de l'installer via le système de paquets de votre linux.
 * Postgresql 9 : le mieux est de l'installer via le système de paquets de votre linux.
 * Tomcat 8
 
