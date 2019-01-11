@@ -22,12 +22,19 @@
         </p>
         <p>Les noms des signets doivent correspondre 
         	<ul>
-        		<li>aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ...</li>
+        		<li>aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ... : 
+        			<i><c:forEach items="${galaxieKeys}" var="key" varStatus="loop">${key}${!loop.last ? ', ' : ''}</c:forEach></i>
+        		</li>
         		<li>ou encore aux noms suivants qui correspondent à ce qu'on peut retrouver dans la base d'esup-dematec : 
+        			<i>
         			candidature_candidat_nom, candidature_candidat_prenom, candidature_candidat_emailAddress, candidature_galaxieEntryEtatDossier, candidature_managerReviewState, candidature_candidat_numCandidat, 
-        			candidature_poste_localisation, candidature_poste_numEmploi, candidature_poste_profil, candidature_auditionnable, candidature_recevable</li>
-        		<li>ou encore les noms des tags (avec pour suffixe candidature_tag_) : 
-        			<c:forEach items="${allPosteCandidatureTags}" var="tag" varStatus="loop">candidature_tag_${tag.cleanName}${!loop.last ? ', ' : ''}</c:forEach>
+        			candidature_poste_localisation, candidature_poste_numEmploi, candidature_poste_profil, candidature_auditionnable, candidature_recevable
+        			</i>
+        		</li>       			
+        		<li>ou encore les noms des tags (avec pour suffixe candidature_tag_) :
+        			<i> 
+        				<c:forEach items="${allPosteCandidatureTags}" var="tag" varStatus="loop">candidature_tag_${tag.cleanName}${!loop.last ? ', ' : ''}</c:forEach>
+        			</i>
         		</li>
         	</ul>
         </p>

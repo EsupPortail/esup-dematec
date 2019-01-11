@@ -13,7 +13,10 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
@@ -23,7 +26,8 @@ import fr.univrouen.poste.domain.TemplateFile;
 @Service
 public class TemplateService {
 
-    
+	private final Logger log = Logger.getLogger(getClass());
+	
     @Resource
     GalaxieExcelParser galaxieExcelParser;
     
@@ -72,6 +76,27 @@ public class TemplateService {
     	ByteArrayInputStream docx = new ByteArrayInputStream(docxBytes);
     	wordParser.modifyWord(docx, textMaps.get(0), textMaps, out);
 		
+	}
+
+	@Transactional
+	public List<String> getGalaxieKeys() {
+		List<String> galaxieKeys = new ArrayList<String>();
+		List<GalaxieExcel> galaxieExcels  = GalaxieExcel.findAllGalaxieExcels("creation", "desc");
+		List<GalaxieEntry> galaxieEntries = GalaxieEntry.findAllGalaxieEntrys("id", "desc");
+		if(!galaxieExcels.isEmpty() && !galaxieEntries.isEmpty()) {
+			try {
+				Map<String, String> textMap = galaxieExcelParser.getCells4GalaxieEntry(galaxieExcels.get(0), galaxieEntries.get(0));
+				for(String key : textMap.keySet()) {
+					String cleanKey = StringUtils.stripAccents(key);
+					cleanKey = cleanKey.replaceAll(" ", "_");
+					cleanKey = cleanKey.replaceAll( "\\W", "");
+					galaxieKeys.add(cleanKey);
+				}
+			} catch (SQLException | IOException e) {
+				log.debug(e);
+			}
+		}
+		return galaxieKeys;
 	}
 
 }

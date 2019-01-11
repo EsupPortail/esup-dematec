@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.validation.Valid;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.univrouen.poste.domain.PosteCandidatureTag;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
+import fr.univrouen.poste.services.TemplateService;
 
 @RequestMapping("/admin/templatefiles")
 @Controller
@@ -33,6 +35,9 @@ public class TemplateFileController {
 
 
 	private final Logger logger = Logger.getLogger(getClass());
+	
+	@Resource
+	TemplateService templateService;
 	
 	@ModelAttribute("templateFileTypes")
 	public List<TemplateFileType> getTemplateFileTypeEnum() {
@@ -88,6 +93,8 @@ public class TemplateFileController {
             uiModel.addAttribute("templatefiles", TemplateFile.findAllTemplateFiles(sortFieldName, sortOrder));
         }
         uiModel.addAttribute("allPosteCandidatureTags", PosteCandidatureTag.findAllPosteCandidatureTags());
+        uiModel.addAttribute("galaxieKeys", templateService.getGalaxieKeys());
+        
         addDateTimeFormatPatterns(uiModel);
         return "admin/templatefiles/list";
     }
