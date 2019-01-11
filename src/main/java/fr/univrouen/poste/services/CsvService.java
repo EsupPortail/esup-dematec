@@ -19,20 +19,24 @@ package fr.univrouen.poste.services;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.tiles.jsp.taglib.GetAsStringTag;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.cellprocessor.FmtDate;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.io.CsvBeanWriter;
-import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.io.dozer.CsvDozerBeanWriter;
+import org.supercsv.io.dozer.ICsvDozerBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidatureTag;
 
 @Service
 public class CsvService {
@@ -45,15 +49,24 @@ public class CsvService {
 
 		log.info("Generate CSV for " + posteCandidatures.size() + " posteCandidatures");
 		
-		final String[] header = new String[] { "poste", "nom", "email", "prenom", "galaxie", "recevable", "auditionnable", "vue", "creation", "modification", "gestionnaire", "dateGestion"};
-		final CellProcessor[] processors = getProcessors();
+		List<String> header = new ArrayList<String>(Arrays.asList(new String[] { "poste", "nom", "email", "prenom", "galaxie", "recevable", "auditionnable", "vue", "creation", "modification", "gestionnaire", "dateGestion"}));
+		List<String> fieldMapping = new ArrayList<String>(header);
+		int i = 0;
+		for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
+			header.add(tag.getName());
+			fieldMapping.add(String.format("tagValues[%d]", i));
+			i++;
+		}
 		
-		ICsvBeanWriter beanWriter =  new CsvBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE);
-		beanWriter.writeHeader(header);
+		List<CellProcessor> processors = getProcessors();
+		
+		ICsvDozerBeanWriter beanWriter =  new CsvDozerBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE);
+		beanWriter.writeHeader(header.toArray(new String[header.size()]));
+		beanWriter.configureBeanMapping(CsvPosteCandidatureMetadataFileBean.class, fieldMapping.toArray(new String[fieldMapping.size()]));
 		
 		for (PosteCandidature posteCandidature : posteCandidatures) {
 			CsvPosteCandidatureMetadataFileBean csvMetadataFileBean = new CsvPosteCandidatureMetadataFileBean(posteCandidature);
-			beanWriter.write(csvMetadataFileBean, header, processors);
+			beanWriter.write(csvMetadataFileBean, processors.toArray(new CellProcessor[processors.size()]));
 		}
 		beanWriter.close();
 		
@@ -64,10 +77,13 @@ public class CsvService {
 	public class CsvPosteCandidatureMetadataFileBean {
 		
 		PosteCandidature posteCandidature;
+		
+		List<String> tagValues = new ArrayList<String>();
 
 		public CsvPosteCandidatureMetadataFileBean(PosteCandidature posteCandidature) {
 			super();
 			this.posteCandidature = posteCandidature;
+			tagValues = getTagValues();
 		}
 		
 		public String getPoste() {
@@ -125,11 +141,25 @@ public class CsvService {
 				return null;
 			}
 		}
+		
+		public List<String> getTagValues() {
+			List<String> tagValues = new ArrayList<String>();
+			for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
+				String tagValue = "";
+				if(posteCandidature.getTags() != null && posteCandidature.getTags().get(tag) != null) {
+					tagValue = posteCandidature.getTags().get(tag).getValue();
+				}
+				tagValues.add(tagValue);
+			}
+			return tagValues;
+		}
+		
+		
 	}
 
-	private static CellProcessor[] getProcessors() {
+	private static List<CellProcessor> getProcessors() {
 
-		final CellProcessor[] processors = new CellProcessor[] {
+		List<CellProcessor> processors = new ArrayList<CellProcessor>(Arrays.asList(new CellProcessor[] {
 				null,
 				null,
 				null,
@@ -142,8 +172,12 @@ public class CsvService {
 				new Optional(new FmtDate("dd/MM/yyyy - HH:mm")),
 				null,
 				new Optional(new FmtDate("dd/MM/yyyy - HH:mm"))
-		};
-
+		}));
+		
+		for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
+			processors.add(null);
+		}
+		
 		return processors;
 	}
 	

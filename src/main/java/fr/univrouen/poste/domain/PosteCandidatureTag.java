@@ -17,6 +17,7 @@
  */
 package fr.univrouen.poste.domain;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -51,5 +52,8 @@ public class PosteCandidatureTag {
         return q.getSingleResult();
     }
     
+    public static List<PosteCandidatureTag> findAllPosteCandidatureTags() {
+        return entityManager().createQuery("SELECT o FROM PosteCandidatureTag o ORDER BY id", PosteCandidatureTag.class).getResultList();
+    }
 }
 

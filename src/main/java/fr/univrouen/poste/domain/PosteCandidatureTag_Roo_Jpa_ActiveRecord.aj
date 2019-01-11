@@ -26,10 +26,6 @@ privileged aspect PosteCandidatureTag_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT COUNT(o) FROM PosteCandidatureTag o", Long.class).getSingleResult();
     }
     
-    public static List<PosteCandidatureTag> PosteCandidatureTag.findAllPosteCandidatureTags() {
-        return entityManager().createQuery("SELECT o FROM PosteCandidatureTag o", PosteCandidatureTag.class).getResultList();
-    }
-    
     public static List<PosteCandidatureTag> PosteCandidatureTag.findAllPosteCandidatureTags(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM PosteCandidatureTag o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
