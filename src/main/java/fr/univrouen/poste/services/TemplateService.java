@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
-import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.TemplateFile;
 
@@ -42,11 +41,12 @@ public class TemplateService {
     			break;
     		}
     	}
+    	textMap.putAll(candidature.getMapFields());
     	
     	InputStream docxInputStream = templateFile.getBigFile().getBinaryFile().getBinaryStream();
 		byte[] docxBytes = IOUtils.toByteArray(docxInputStream);
     	ByteArrayInputStream docx = new ByteArrayInputStream(docxBytes);
-    	wordParser.modifyWord(docx, textMap, null, out);	
+    	wordParser.modifyWord(docx, textMap, null, out);
     }
 
 	public void generateTemplateFile(TemplateFile templateFile, List<PosteCandidature> candidatures,
@@ -63,6 +63,7 @@ public class TemplateService {
         			break;
         		}
         	}
+        	textMap.putAll(candidature.getMapFields());
         	textMaps.add(textMap);
     	}
     	

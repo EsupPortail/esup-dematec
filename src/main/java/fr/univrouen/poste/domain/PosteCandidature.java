@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -164,6 +165,26 @@ public class PosteCandidature {
         	}
         }
         return tagsAsString;
+    }
+    
+    public Map<String, String> getMapFields() {
+    	Map<String, String> mapStrings = new HashMap<String, String>();
+    	mapStrings.put("candidature_candidat_nom", this.getCandidat().getNom());
+    	mapStrings.put("candidature_candidat_prenom", this.getCandidat().getPrenom());
+    	mapStrings.put("candidature_candidat_emailAddress", this.getCandidat().getEmailAddress());
+    	mapStrings.put("candidature_galaxieEntryEtatDossier", this.getGalaxieEntryEtatDossier());
+    	mapStrings.put("candidature_managerReviewState", this.getManagerReviewState());
+    	mapStrings.put("candidature_candidat_numCandidat", this.getCandidat().getNumCandidat());
+    	mapStrings.put("candidature_poste_localisation", this.getPoste().getLocalisation());
+    	mapStrings.put("candidature_poste_numEmploi", this.getPoste().getNumEmploi());
+    	mapStrings.put("candidature_poste_profil", this.getPoste().getProfil());
+    	mapStrings.put("candidature_auditionnable", this.getAuditionnable() ? "AUDITIONNABLE" : "NON_AUDITIONNABLE");
+    	mapStrings.put("candidature_recevable", this.getRecevableEnum().toString());
+    	for(PosteCandidatureTag tag : this.getTags().keySet()) {
+    		String tagValue = this.getTags().get(tag) != null ? this.getTags().get(tag).getValue() : "";
+    		mapStrings.put(String.format("candidature_tag_%s", tag.getCleanName()), tagValue);
+    	}
+    	return mapStrings;
     }
     
     public List<User> getSortedReporters() {

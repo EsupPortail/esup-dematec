@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:spring="http://www.springframework.org/tags" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <spring:url value="/resources/doc/template.docx" var="templateExemple"/>
@@ -20,7 +20,17 @@
                 <li>Activez la case à cocher Indicateurs de signets.</li>
             </ul>
         </p>
-        <p>Les noms des signets doivent correspondre aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ...</p>
+        <p>Les noms des signets doivent correspondre 
+        	<ul>
+        		<li>aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ...</li>
+        		<li>ou encore aux noms suivants qui correspondent à ce qu'on peut retrouver dans la base d'esup-dematec : 
+        			candidature_candidat_nom, candidature_candidat_prenom, candidature_candidat_emailAddress, candidature_galaxieEntryEtatDossier, candidature_managerReviewState, candidature_candidat_numCandidat, 
+        			candidature_poste_localisation, candidature_poste_numEmploi, candidature_poste_profil, candidature_auditionnable, candidature_recevable</li>
+        		<li>ou encore les noms des tags (avec pour suffixe candidature_tag_) : 
+        			<c:forEach items="${allPosteCandidatureTags}" var="tag" varStatus="loop">candidature_tag_${tag.cleanName}${!loop.last ? ', ' : ''}</c:forEach>
+        		</li>
+        	</ul>
+        </p>
         <p>Un exemple d'un tel document est donné <a href="${templateExemple}">ici (EC)</a> ou encore <a href="${templateAterExemple}">ici (ATER)</a>.</p>
         <p>Un exemple d'un document à destination d'un rapport de type 'MULTI_CANDIDATURE' est donné  <a href="${templateMultiExemple}">ici</a>.</p>
         <p>Vous noterez que les possibilités de répétition par candidature pour les rapports de type 'MULTI_CANDIDATURE' se limite à l'usage de ligne de tableaux dans un document Microsoft Word, ligne dans laquelle on trouvera au moins un signet.

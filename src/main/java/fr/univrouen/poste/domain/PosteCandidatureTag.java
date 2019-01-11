@@ -27,6 +27,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -55,5 +56,12 @@ public class PosteCandidatureTag {
     public static List<PosteCandidatureTag> findAllPosteCandidatureTags() {
         return entityManager().createQuery("SELECT o FROM PosteCandidatureTag o ORDER BY id", PosteCandidatureTag.class).getResultList();
     }
+
+	public String getCleanName() {
+		String cleanKey = StringUtils.stripAccents(getName());
+		cleanKey = cleanKey.replaceAll(" ", "_");
+		cleanKey = cleanKey.replaceAll( "\\W", "");
+		return cleanKey;
+	}
 }
 

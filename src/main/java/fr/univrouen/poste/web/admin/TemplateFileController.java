@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.univrouen.poste.domain.PosteCandidatureTag;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
 
@@ -86,6 +87,7 @@ public class TemplateFileController {
         } else {
             uiModel.addAttribute("templatefiles", TemplateFile.findAllTemplateFiles(sortFieldName, sortOrder));
         }
+        uiModel.addAttribute("allPosteCandidatureTags", PosteCandidatureTag.findAllPosteCandidatureTags());
         addDateTimeFormatPatterns(uiModel);
         return "admin/templatefiles/list";
     }
