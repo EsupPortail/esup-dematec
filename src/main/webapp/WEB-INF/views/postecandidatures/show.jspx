@@ -497,30 +497,32 @@
             </fieldset>
            </div>
            <div class="span4">
-           	<fieldset class="tags">
-                <legend>Tags :</legend>
-                <spring:url value="/postecandidatures/${postecandidature.id}/updateTags" var="updateTagsUrl"/>
-                <spring-form:form action="${updateTagsUrl}" method="POST">
-		           	<c:forEach items="${allPosteCandidatureTag}" var="posteCandidatureTag">
-		           		<label>${posteCandidatureTag.name}</label>
-		           		<select name="tags[${posteCandidatureTag.id}]">
-		           			<option value="">--</option>
-		           			<c:forEach items="${posteCandidatureTag.values}" var="posteCandidatureTagValue">
-		           				<c:choose>
-		           					<c:when test="${postecandidature.tags[posteCandidatureTag] eq posteCandidatureTagValue}">
-		           						<option value="${posteCandidatureTagValue.id}" selected="selected">${posteCandidatureTagValue.value}</option>
-		           					</c:when>
-		           					<c:otherwise>
-		           						<option value="${posteCandidatureTagValue.id}">${posteCandidatureTagValue.value}</option>
-		           					</c:otherwise>
-		           				</c:choose>
-		           			</c:forEach>
-		           		</select>
-		           	</c:forEach>
-		           	<br/>
-		           	<button class="btn btn-warning" type="submit">Mettre à jour / Sauver les tags</button>
-		        </spring-form:form>
-		      </fieldset>
+           <c:if test="${not empty allPosteCandidatureTag}">
+	           	<fieldset class="tags">
+	                <legend>Tags :</legend>
+	                <spring:url value="/postecandidatures/${postecandidature.id}/updateTags" var="updateTagsUrl"/>
+	                <spring-form:form action="${updateTagsUrl}" method="POST">
+			           	<c:forEach items="${allPosteCandidatureTag}" var="posteCandidatureTag">
+			           		<label>${posteCandidatureTag.name}</label>
+			           		<select name="tags[${posteCandidatureTag.id}]">
+			           			<option value="">--</option>
+			           			<c:forEach items="${posteCandidatureTag.values}" var="posteCandidatureTagValue">
+			           				<c:choose>
+			           					<c:when test="${postecandidature.tags[posteCandidatureTag] eq posteCandidatureTagValue}">
+			           						<option value="${posteCandidatureTagValue.id}" selected="selected">${posteCandidatureTagValue.value}</option>
+			           					</c:when>
+			           					<c:otherwise>
+			           						<option value="${posteCandidatureTagValue.id}">${posteCandidatureTagValue.value}</option>
+			           					</c:otherwise>
+			           				</c:choose>
+			           			</c:forEach>
+			           		</select>
+			           	</c:forEach>
+			           	<br/>
+			           	<button class="btn btn-warning" type="submit">Mettre à jour / Sauver les tags</button>
+			        </spring-form:form>
+			      </fieldset>
+			  </c:if>
            </div>        
           </div>
           <hr/>
