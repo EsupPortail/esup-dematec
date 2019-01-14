@@ -64,7 +64,7 @@ import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 
 @RooJavaBean
 @RooToString(excludeFields = {"candidatureFiles", "memberReviewFiles"})
-@RooJpaActiveRecord(finders = { "findPosteCandidaturesByCandidat"})
+@RooJpaActiveRecord(finders = {"findPosteCandidaturesByCandidat", "findPosteCandidaturesByCandidatAndPoste"})
 public class PosteCandidature {
 
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("creation", "modification", "poste", "poste.numEmploi", "candidatureFiles", "candidat", "recevable", "o.poste.numEmploi,o.candidat.nom", "candidat.nom", "candidat.emailAddress", "managerReview.reviewStatus", "managerReview.manager", "managerReview.reviewDate", "candidat.numCandidat", "galaxieEntry.etatDossier", "recevable", "auditionnable", "laureat");

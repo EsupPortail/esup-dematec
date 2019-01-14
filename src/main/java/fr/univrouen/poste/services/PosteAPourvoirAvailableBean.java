@@ -13,4 +13,6 @@ public class PosteAPourvoirAvailableBean {
 	
 	Boolean candidat = false;
 	
+	Boolean canBeUnsubscribed = false;
+	
 }

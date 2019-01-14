@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.LogService;
 import fr.univrouen.poste.services.PosteAPourvoirAvailableBean;
@@ -83,6 +85,33 @@ public class CandidatAddPosteCandidatureController {
 			
 	    	log.info("Candidatures sur les postes : " + posteIds + " pour le candidat " + candidat);
 	    	posteAPourvoirService.updateCandidatures(candidat, posteIds);
+    	}
+    	
+    	return "redirect:/addpostecandidatures";
+    }
+    
+    @RequestMapping(method = RequestMethod.DELETE, produces = "text/html")
+	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
+    public String delCandidature(@RequestParam(required=false) List<Long> posteIds, Model uiModel) {   	
+    			
+    	if(!AppliConfig.getCacheCandidatCanSignup()) {
+    		return "redirect:/postecandidatures";
+    	}
+    	
+    	if(posteIds != null) {
+    	
+	    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    	String emailAddress = auth.getName();
+			User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+			
+    		for(Long posteId : posteIds) {   			
+    			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(posteId);
+    			PosteCandidature candidature = PosteCandidature.findPosteCandidaturesByCandidatAndPoste(candidat, poste).getSingleResult();
+    			if(candidature.getModification() == null) {
+    				candidature.remove();
+    				log.info("Candidatures annulées sur les postes : " + posteIds + " pour le candidat " + candidat);
+    			}
+    		}
     	}
     	
     	return "redirect:/addpostecandidatures";

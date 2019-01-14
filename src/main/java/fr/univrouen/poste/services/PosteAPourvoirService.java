@@ -26,8 +26,12 @@ public class PosteAPourvoirService {
 
 		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(candidat).getResultList();
 		Set<PosteAPourvoir> postesAlreadyCandidated = new HashSet<PosteAPourvoir>();
+		Set<PosteAPourvoir> postesAlreadyCandidatedWithNoModifications = new HashSet<PosteAPourvoir>();
 		for(PosteCandidature candidature: candidatures) {
 			postesAlreadyCandidated.add(candidature.getPoste());
+			if(candidature.getModification() == null) {
+				postesAlreadyCandidatedWithNoModifications.add(candidature.getPoste());
+			}
 		}
 
 		List<PosteAPourvoirAvailableBean> posteAvailables = new ArrayList<PosteAPourvoirAvailableBean>();
@@ -35,6 +39,7 @@ public class PosteAPourvoirService {
 			PosteAPourvoirAvailableBean posteAvailable = new PosteAPourvoirAvailableBean();
 			posteAvailable.setPoste(poste);
 			posteAvailable.setCandidat(postesAlreadyCandidated.contains(poste));
+			posteAvailable.setCanBeUnsubscribed(postesAlreadyCandidatedWithNoModifications.contains(poste));
 			posteAvailables.add(posteAvailable);
 		}
 

@@ -119,14 +119,14 @@ privileged aspect User_Roo_Finder {
     public static TypedQuery<User> User.findUsersByActivationKey(String activationKey, String sortFieldName, String sortOrder) {
         if (activationKey == null || activationKey.length() == 0) throw new IllegalArgumentException("The activationKey argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.activationKey = :activationKey";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.activationKey = :activationKey");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("activationKey", activationKey);
         return q;
     }
@@ -145,14 +145,14 @@ privileged aspect User_Roo_Finder {
         if (activationKey == null || activationKey.length() == 0) throw new IllegalArgumentException("The activationKey argument is required");
         if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.activationKey = :activationKey AND o.emailAddress = :emailAddress";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.activationKey = :activationKey AND o.emailAddress = :emailAddress");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("activationKey", activationKey);
         q.setParameter("emailAddress", emailAddress);
         return q;
@@ -169,14 +169,14 @@ privileged aspect User_Roo_Finder {
     public static TypedQuery<User> User.findUsersByEmailAddress(String emailAddress, String sortFieldName, String sortOrder) {
         if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.emailAddress = :emailAddress";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.emailAddress = :emailAddress");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("emailAddress", emailAddress);
         return q;
     }
@@ -192,14 +192,14 @@ privileged aspect User_Roo_Finder {
     public static TypedQuery<User> User.findUsersByEmailAddressAndActivationDateIsNotNull(String emailAddress, String sortFieldName, String sortOrder) {
         if (emailAddress == null || emailAddress.length() == 0) throw new IllegalArgumentException("The emailAddress argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.emailAddress = :emailAddress AND o.activationDate IS NOT NULL";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.emailAddress = :emailAddress AND o.activationDate IS NOT NULL");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("emailAddress", emailAddress);
         return q;
     }
@@ -215,14 +215,14 @@ privileged aspect User_Roo_Finder {
     public static TypedQuery<User> User.findUsersByIsAdmin(Boolean isAdmin, String sortFieldName, String sortOrder) {
         if (isAdmin == null) throw new IllegalArgumentException("The isAdmin argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.isAdmin = :isAdmin";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.isAdmin = :isAdmin");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("isAdmin", isAdmin);
         return q;
     }
@@ -238,14 +238,14 @@ privileged aspect User_Roo_Finder {
     public static TypedQuery<User> User.findUsersByIsManager(Boolean isManager, String sortFieldName, String sortOrder) {
         if (isManager == null) throw new IllegalArgumentException("The isManager argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.isManager = :isManager";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.isManager = :isManager");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("isManager", isManager);
         return q;
     }
@@ -261,14 +261,14 @@ privileged aspect User_Roo_Finder {
     public static TypedQuery<User> User.findUsersByIsSuperManager(Boolean isSuperManager, String sortFieldName, String sortOrder) {
         if (isSuperManager == null) throw new IllegalArgumentException("The isSuperManager argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.isSuperManager = :isSuperManager";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.isSuperManager = :isSuperManager");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("isSuperManager", isSuperManager);
         return q;
     }
@@ -332,14 +332,14 @@ privileged aspect User_Roo_Finder {
             prenom = prenom + "%";
         }
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE LOWER(o.nom) LIKE LOWER(:nom)  OR LOWER(o.emailAddress) LIKE LOWER(:emailAddress)  OR LOWER(o.prenom) LIKE LOWER(:prenom)";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE LOWER(o.nom) LIKE LOWER(:nom)  OR LOWER(o.emailAddress) LIKE LOWER(:emailAddress)  OR LOWER(o.prenom) LIKE LOWER(:prenom)");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("nom", nom);
         q.setParameter("emailAddress", emailAddress);
         q.setParameter("prenom", prenom);
@@ -357,14 +357,14 @@ privileged aspect User_Roo_Finder {
     public static TypedQuery<User> User.findUsersByNumCandidat(String numCandidat, String sortFieldName, String sortOrder) {
         if (numCandidat == null || numCandidat.length() == 0) throw new IllegalArgumentException("The numCandidat argument is required");
         EntityManager em = User.entityManager();
-        String jpaQuery = "SELECT o FROM User AS o WHERE o.numCandidat = :numCandidat";
+        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM User AS o WHERE o.numCandidat = :numCandidat");
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            queryBuilder.append(" ORDER BY ").append(sortFieldName);
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
+                queryBuilder.append(" ").append(sortOrder);
             }
         }
-        TypedQuery<User> q = em.createQuery(jpaQuery, User.class);
+        TypedQuery<User> q = em.createQuery(queryBuilder.toString(), User.class);
         q.setParameter("numCandidat", numCandidat);
         return q;
     }

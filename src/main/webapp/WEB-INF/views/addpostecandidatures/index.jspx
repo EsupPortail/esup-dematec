@@ -40,39 +40,54 @@
 	<h3>Postes disponibles</h3>
 
 	<spring:url value="/addpostecandidatures" var="addCandidatureUrl"/>
-	
-	<form action="${addCandidatureUrl}" method="post">
-		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		<table class="table table-striped table-bordered">
-			<thead>
+	<spring:url value="/addpostecandidatures?del" var="delCandidatureUrl"/>
+		
+	<table class="table table-striped table-bordered">
+		<thead>
+			<tr>
+				<th>Num emploi</th>
+				<th>Profil</th>
+				<th>Localisation</th>
+				<th>Candidat ?</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach var="posteAvailable" items="${posteapourvoirs}">
 				<tr>
-					<th>Num emploi</th>
-					<th>Profil</th>
-					<th>Localisation</th>
-					<th>Candidat ?</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="posteAvailable" items="${posteapourvoirs}">
-					<tr>
-						<td>${posteAvailable.poste.numEmploi}</td>
-						<td>${posteAvailable.poste.profil}</td>
-						<td>${posteAvailable.poste.localisation}</td>
+					<td>${posteAvailable.poste.numEmploi}</td>
+					<td>${posteAvailable.poste.profil}</td>
+					<td>${posteAvailable.poste.localisation}</td>
+					<td>
 						<c:choose>
 							<c:when test="${posteAvailable.candidat}">
-								<td><input name="posteIds" type="checkbox" checked="checked" value="${posteAvailable.poste.id}" disabled="disabled"/></td>
+								<c:if test="${posteAvailable.canBeUnsubscribed}">
+										<spring-form:form action="${addCandidatureUrl}" method="delete">
+											<input name="posteIds" type="hidden" value="${posteAvailable.poste.id}"/>
+											<c:choose>
+												<c:when test="${posteAvailable.canBeUnsubscribed}">
+													<input type="submit" value="Annuler cette candidature" class="btn btn-danger"/> 
+												</c:when>
+												<c:otherwise>
+													<input type="submit" value="Annuler cette candidature" class="btn btn-warning" disabled="disabled"/> 
+												</c:otherwise>
+											</c:choose>
+										</spring-form:form>
+								</c:if>
 							</c:when>
 							<c:otherwise>
-								<td><input name="posteIds" type="checkbox" value="${posteAvailable.poste.id}"/></td>
-							</c:otherwise>
-						</c:choose>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		
-		<input type="submit" value="Valider" class="btn btn-success"/> 
-		
-	</form>
+								<spring-form:form action="${addCandidatureUrl}" method="post">
+									<input name="posteIds" type="hidden" value="${posteAvailable.poste.id}"/>
+									<input type="submit" value="Candidater" class="btn btn-success"/> 
+								</spring-form:form>
+						</c:otherwise>
+					</c:choose>
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+	
+	
 		
 </div>

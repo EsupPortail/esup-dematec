@@ -24,4 +24,12 @@ privileged aspect PosteAPourvoirAvailableBean_Roo_JavaBean {
         this.candidat = candidat;
     }
     
+    public Boolean PosteAPourvoirAvailableBean.getCanBeUnsubscribed() {
+        return this.canBeUnsubscribed;
+    }
+    
+    public void PosteAPourvoirAvailableBean.setCanBeUnsubscribed(Boolean canBeUnsubscribed) {
+        this.canBeUnsubscribed = canBeUnsubscribed;
+    }
+    
 }

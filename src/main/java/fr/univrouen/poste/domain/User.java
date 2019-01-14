@@ -214,9 +214,11 @@ public class User {
 	 */
 	public Boolean isCandidatActif() {
 		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(this, null, null).getResultList();
-		for(PosteCandidature candidature: candidatures)
-			if(candidature.getModification() != null)
+		for(PosteCandidature candidature: candidatures) {
+			if(candidature.getModification() != null) {
 				return true;
+			}
+		}
 		return false;
 	}
 	
