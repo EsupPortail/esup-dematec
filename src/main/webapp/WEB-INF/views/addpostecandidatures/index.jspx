@@ -61,19 +61,17 @@
 					<td>
 						<c:choose>
 							<c:when test="${posteAvailable.candidat}">
-								<c:if test="${posteAvailable.canBeUnsubscribed}">
-										<spring-form:form action="${addCandidatureUrl}" method="delete">
-											<input name="posteIds" type="hidden" value="${posteAvailable.poste.id}"/>
-											<c:choose>
-												<c:when test="${posteAvailable.canBeUnsubscribed}">
-													<input type="submit" value="Annuler cette candidature" class="btn btn-danger"/> 
-												</c:when>
-												<c:otherwise>
-													<input type="submit" value="Annuler cette candidature" class="btn btn-warning" disabled="disabled"/> 
-												</c:otherwise>
-											</c:choose>
-										</spring-form:form>
-								</c:if>
+								<spring-form:form action="${addCandidatureUrl}" method="delete">
+									<input name="posteIds" type="hidden" value="${posteAvailable.poste.id}"/>
+									<c:choose>
+										<c:when test="${posteAvailable.canBeUnsubscribed}">
+											<input type="submit" value="Annuler cette candidature" class="btn btn-danger"/> 
+										</c:when>
+										<c:otherwise>
+											Oui.
+										</c:otherwise>
+									</c:choose>
+								</spring-form:form>
 							</c:when>
 							<c:otherwise>
 								<spring-form:form action="${addCandidatureUrl}" method="post">
