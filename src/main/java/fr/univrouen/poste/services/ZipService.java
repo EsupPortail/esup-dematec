@@ -26,9 +26,13 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.ServletOutputStream;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteAPourvoirFile;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 
@@ -62,6 +66,23 @@ public class ZipService {
 				}
 				out.closeEntry();
 			}
+		}
+		out.close();
+	}
+
+
+	public void writeZip(PosteAPourvoir poste, ServletOutputStream destStream) throws IOException, SQLException {
+		ZipOutputStream out = new ZipOutputStream(destStream);
+		for (PosteAPourvoirFile posteCandidatureFile : poste.getPosteFiles()) {
+			out.putNextEntry(new ZipEntry(posteCandidatureFile.getFilename()));
+			InputStream inputStream = posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream();
+			BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, BUFFER);
+			byte[] bytes = new byte[BUFFER];
+			int length;
+			while ((length = bufInputStream.read(bytes)) >= 0) {
+				out.write(bytes, 0, length);
+			}
+			out.closeEntry();
 		}
 		out.close();
 	}

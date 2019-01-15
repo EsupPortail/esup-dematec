@@ -87,6 +87,16 @@
 	                        </c:if>
 	                    </tr>
 	                </c:forEach>
+	                <tfoot>
+	                    <tr class="footer">
+	                       <spring:url value="/posteapourvoirs/${posteapourvoir.id}" var="pcUrl"/>
+	                       <td colspan="5">
+	                         <a class="btn" href="${pcUrl}?export=zip">Export zip</a>
+	                         <c:if test="${not empty param.exportFailed}"> - <span class="alert alert-error">Export <b>${param.exportFailed}</b> impossible pour cette candidature.</span>
+	                         </c:if>
+	                       </td>
+	                    </tr>
+	                </tfoot>
 	            </table>
 	        <c:if test="${manageposte}">
 	            <form:create id="fc_fr_univrouen_poste_domain_PosteAPourvoirFile" modelAttribute="posteFile" multipart="true" path="${posteapourvoir.id}/addFile" save_button="Envoyer" label="Fichier">

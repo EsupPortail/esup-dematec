@@ -20,10 +20,12 @@ package fr.univrouen.poste.web.membre;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -47,10 +49,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.CommissionEntry;
+import fr.univrouen.poste.domain.DematFileDummy;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteAPourvoirFile;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.ZipService;
 
 @RequestMapping("/posteapourvoirs")
 @Controller
@@ -62,6 +66,9 @@ public class PosteAPourvoirController {
 
 	@Autowired
 	LogService logService;
+	
+	@Resource
+	ZipService zipService;
     
 	protected User getCurrentUser() {
 		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -289,6 +296,37 @@ public class PosteAPourvoirController {
         populateEditForm(uiModel, new PosteAPourvoir());
         return "posteapourvoirs/create";
     }
+	
+	@RequestMapping(value = "/{id}", params = {"export"})
+	@PreAuthorize("hasPermission(#id, 'review')")
+	public String exportPosteFiles(@PathVariable("id") Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+		try {
+			
+			Calendar cal = Calendar.getInstance();
+			Date currentTime = cal.getTime();
+			SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+			String currentTimeFmt = dateFmt.format(currentTime);
+			
+			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
+			String fileName = poste.getNumEmploi() + "-poste-" + currentTimeFmt + "." + export;
+			DematFileDummy dematFile = new DematFileDummy(fileName, "-");
+			
+			if("zip".equals(export)) {						
+	    		String contentType = "application/zip";
+	    		response.setContentType(contentType);
+	    		response.setHeader("Content-Disposition","attachment; filename=\"" + fileName +"\"");
+	    		zipService.writeZip(poste, response.getOutputStream());
+			} else {
+				return "redirect:/postecandidatures/" + id.toString();
+			}	
+			logService.logActionPosteFile(LogService.DOWNLOAD_ACTION, poste, dematFile, request, currentTime);
+		} catch(Exception e) {
+			logger.info("PostCandidature " + id + " can't be exported as " + export, e);
+			return "redirect:/postecandidatures/" + id.toString() + "?exportFailed=" + export;
+		}
+		return null;
+	}
+
 	
 }
 
