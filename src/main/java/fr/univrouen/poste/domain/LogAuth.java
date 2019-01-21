@@ -16,22 +16,32 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
+
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findLogAuthsByActionEquals", "findLogAuthsByActionEqualsAndUserIdEquals", "findLogAuthsByUserIdEquals"})
+@RooJpaActiveRecord
 public class LogAuth {
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -44,25 +54,64 @@ public class LogAuth {
 
     private String action;
 
-	public static TypedQuery<LogAuth>  findLogAuths(String action2, String userId2,
+	public static TypedQuery<LogAuth>  findLogAuths(LogSearchCriteria logSearchCriteria,
 			String sortFieldName, String sortOrder) {
-		if("".equals(userId2)) {
-			return findLogAuthsByActionEquals(action2, sortFieldName, sortOrder);
+		
+    	EntityManager em = entityManager();
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<LogAuth> query = criteriaBuilder.createQuery(LogAuth.class);
+		Root<LogAuth> c = query.from(LogAuth.class);
+		Expression<Boolean> logSearchCriteriaRestriction = computeLogSearchCriteriaRestriction(logSearchCriteria, c, criteriaBuilder);
+		
+		final List<Order> orders = new ArrayList<Order>();
+		
+		if(sortFieldName != null && !sortFieldName.isEmpty()) {
+			String[] sortFieldNameSplit = sortFieldName.split("\\.");
+			if("DESC".equalsIgnoreCase(sortOrder)) {	
+				if(sortFieldNameSplit.length<2) {
+					orders.add(criteriaBuilder.desc(c.get(sortFieldName)));   
+				} else {
+					orders.add(criteriaBuilder.desc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
+				}
+			} else {
+				if(sortFieldNameSplit.length<2) {
+					orders.add(criteriaBuilder.asc(c.get(sortFieldName)));   
+				} else {
+					orders.add(criteriaBuilder.asc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
+				}
+			}
 		}
-		if("".equals(action2)) {
-			return findLogAuthsByUserIdEquals(userId2, sortFieldName, sortOrder);
-		}
-		return findLogAuthsByActionEqualsAndUserIdEquals(action2, userId2, sortFieldName, sortOrder);	
+        
+		query.where(logSearchCriteriaRestriction);	
+		query.orderBy(orders);
+		
+		query.select(c);
+		return em.createQuery(query);
 	}
 
-	public static Long countFindLogAuths(String action2, String userId2) {
-		if("".equals(userId2)) {
-			return countFindLogAuthsByActionEquals(action2);
-		}
-		if("".equals(action2)) {
-			return countFindLogAuthsByUserIdEquals(userId2);
-		}
-		return countFindLogAuthsByActionEqualsAndUserIdEquals(action2, userId2);	
+	private static Expression<Boolean> computeLogSearchCriteriaRestriction(LogSearchCriteria logSearchCriteria,
+			Root<LogAuth> c, CriteriaBuilder criteriaBuilder) {
+		final List<Predicate> predicates = new ArrayList<Predicate>();
+        if (logSearchCriteria.getUserId() != null && !logSearchCriteria.getUserId().isEmpty()) {
+			predicates.add(c.get("userId").in(logSearchCriteria.getUserId()));
+        }
+        if (logSearchCriteria.getStatus() != null && !logSearchCriteria.getStatus().isEmpty()) {
+			predicates.add(c.get("action").in(logSearchCriteria.getStatus()));
+        }
+        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+	}
+
+	public static Long countFindLogAuths(LogSearchCriteria logSearchCriteria) {
+	   	EntityManager em = entityManager();
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+		Root<LogAuth> c = query.from(LogAuth.class);
+		Expression<Boolean> logSearchCriteriaRestriction = computeLogSearchCriteriaRestriction(logSearchCriteria, c, criteriaBuilder);
+
+		query.where(logSearchCriteriaRestriction);	
+		
+		query.select(criteriaBuilder.count(c));
+		return em.createQuery(query).getSingleResult();
 	}
 
 	public static List<Object[]> countSuccessLogAuthsByDate() {
