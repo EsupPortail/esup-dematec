@@ -9,6 +9,6 @@ public class LogSearchCriteria {
 	
 	String userId = "";
 	
-	String userName = "";
+	String nom = "";
 	
 }

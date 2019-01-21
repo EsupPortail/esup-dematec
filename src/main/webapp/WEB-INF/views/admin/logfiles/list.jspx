@@ -46,6 +46,9 @@
                             	<field:select disableFormBinding="false" field="userId" id="users" label="Email" items="${users}" multiple="false" path="/admin/users" required="false"/>
                             	<input id="textbox" type="text" />
                             </div>
+                            <div class="span3 demat-filter">
+                            	<field:select disableFormBinding="false" field="nom" id="noms" label="Nom" items="${userNoms}" multiple="false" path="/admin/users" required="false"/>
+                            </div>
                             <input name="sortFieldName" type="hidden" value="actionDate"/>
                             <input name="sortOrder" type="hidden" value="desc"/>
                         </form:find>

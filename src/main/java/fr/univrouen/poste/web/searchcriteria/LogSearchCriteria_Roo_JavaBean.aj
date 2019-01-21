@@ -23,12 +23,12 @@ privileged aspect LogSearchCriteria_Roo_JavaBean {
         this.userId = userId;
     }
     
-    public String LogSearchCriteria.getUserName() {
-        return this.userName;
+    public String LogSearchCriteria.getNom() {
+        return this.nom;
     }
     
-    public void LogSearchCriteria.setUserName(String userName) {
-        this.userName = userName;
+    public void LogSearchCriteria.setNom(String nom) {
+        this.nom = nom;
     }
     
 }

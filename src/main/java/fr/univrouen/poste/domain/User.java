@@ -263,6 +263,11 @@ public class User {
         return entityManager().createQuery(jpaQuery, String.class);
 	}
 	
+	public static TypedQuery<String> findAllUserNoms() {
+    	String jpaQuery = "SELECT distinct o.nom FROM User AS o ORDER BY nom";
+        return entityManager().createQuery(jpaQuery, String.class);
+	}
+	
 	public static List<String> findAllCandidatsIds() {
     	String jpaQuery = "SELECT o.emailAddress FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' ORDER BY emailAddress";
         return entityManager().createQuery(jpaQuery, String.class).getResultList();

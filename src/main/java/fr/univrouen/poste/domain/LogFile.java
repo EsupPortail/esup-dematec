@@ -43,7 +43,7 @@ import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(finders = { "findLogFilesByNumEmploi", "findLogFilesByNumCandidat", "findLogFilesByActionEquals", "findLogFilesByActionEqualsAndEmailEquals", "findLogFilesByEmailEquals"})
+@RooJpaActiveRecord
 public class LogFile {
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -117,6 +117,9 @@ public class LogFile {
         }
         if (logSearchCriteria.getStatus() != null && !logSearchCriteria.getStatus().isEmpty()) {
 			predicates.add(c.get("action").in(logSearchCriteria.getStatus()));
+        }
+        if (logSearchCriteria.getNom() != null && !logSearchCriteria.getNom().isEmpty()) {
+			predicates.add(c.get("nom").in(logSearchCriteria.getNom()));
         }
         return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
 	}

@@ -48,11 +48,17 @@ public class LogFileController {
 		return userIds;
 	}
 	
+	@ModelAttribute("userNoms")
+	public List<String> getUserNoms() {
+		List<String> userNoms = User.findAllUserNoms().getResultList();
+		if(!userNoms.contains("")) {
+			userNoms.add(0, "");
+		}
+		return userNoms;
+	}
+	
     @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
     public String findLogFilesByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-    	if("".equals(searchCriteria.getStatus()) && "".equals(searchCriteria.getUserId())) {
-    		return this.list(page, size, sortFieldName, sortOrder, uiModel);
-    	}
     	if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
