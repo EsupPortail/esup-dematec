@@ -247,7 +247,6 @@ public class DbToolService {
 				"delete from posteapourvoir_poste_files;" +
 				"delete from posteapourvoir_file;" +
 				"delete from posteapourvoir;" +
-				"delete from template_file;" +
 				"delete from c_user where is_admin=false and is_manager=false and is_super_manager=false;" +
 				"-- ne pas faire de truncate sur big_file pour appel du trigger et suppression effective du blob\n" +
 				"delete from big_file where id not in (select big_file from template_file);" +
