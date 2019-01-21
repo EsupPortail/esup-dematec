@@ -56,11 +56,11 @@ public class LogFileController {
     	if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logfiles", LogFile.findLogFiles(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) LogFile.countFindLogFiles(searchCriteria.getStatus(), searchCriteria.getUserId()) / sizeNo;
+            uiModel.addAttribute("logfiles", LogFile.findLogFiles(searchCriteria, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
+            float nrOfPages = (float) LogFile.countFindLogFiles(searchCriteria) / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("logfiles", LogFile.findLogFiles(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).getResultList());
+            uiModel.addAttribute("logfiles", LogFile.findLogFiles(searchCriteria, sortFieldName, sortOrder).getResultList());
         }
     	
         uiModel.addAttribute("command", searchCriteria);
