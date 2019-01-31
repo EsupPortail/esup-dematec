@@ -88,6 +88,7 @@
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender">
         <property name="host" value="${email.host}"/>
         <property name="protocol" value="${email.protocol}"/>
+        <property name="port" value="${email.port:25}"/>
     </bean>
     <bean class="fr.univrouen.poste.services.EmailService" id="emailService">
         <property name="mailSender" ref="mailSender"/>
