@@ -298,7 +298,7 @@ public class PosteAPourvoirController {
     }
 	
 	@RequestMapping(value = "/{id}", params = {"export"})
-	@PreAuthorize("hasPermission(#id, 'review')")
+	@PreAuthorize("hasPermission(#id, 'viewposte')")
 	public String exportPosteFiles(@PathVariable("id") Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			
