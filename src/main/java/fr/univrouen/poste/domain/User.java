@@ -264,7 +264,7 @@ public class User {
 	}
 	
 	public static TypedQuery<String> findAllUserNoms() {
-    	String jpaQuery = "SELECT distinct o.nom FROM User AS o ORDER BY nom";
+    	String jpaQuery = "SELECT distinct o.nom FROM User AS o WHERE o.nom IS NOT NULL ORDER BY nom";
         return entityManager().createQuery(jpaQuery, String.class);
 	}
 	
