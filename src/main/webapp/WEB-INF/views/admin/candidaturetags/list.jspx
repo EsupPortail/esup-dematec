@@ -2,6 +2,23 @@
 <div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
+    
+    <div class="well help">
+		<p>Si vous le souhaitez vous pouvez utiliser des 'tags' qui pourront être appliqués sur les candidatures.</p>
+		<p>Ces tags sont à ajouter par vous-même (admin ou super-manager) via le bouton 'Créer un nouveau "Tag"' donné ci-dessous.</p>
+		<p>Chaque tag a un nom et plusieurs valeurs possibles.</p>
+		<p>Une candidature pourra ainsi être 'tagué' par un gestionnaire (admin, super-manager ou manager) en utilisant une de valeurs associées au tag</p>
+		<p>Ces tags 
+			<ul>
+				<li>sont affichés sur les candidatures,</li>
+				<li>ils sont également disponibles dans le moteur de recherche sur les candidatures,</li>
+				<li>ainsi que dans les exports CSV,</li>
+				<li> et on peut également les utiliser dans la génération des documents word via le système de 'templates'.</li>
+			</ul>
+		</p>
+		<p>Ces tags seront visibles également par les membres de commission (mais non modificables par eux).</p>
+	</div>
+    
     <page:list id="pl_fr_univrouen_poste_domain_PosteCandidatureTag" items="${postecandidaturetags}" z="O29H+07G9IxdhG5ph/QZFc4qQ6I=">
         <table:table data="${postecandidaturetags}" id="l_fr_univrouen_poste_domain_PosteCandidatureTag" path="/admin/candidaturetags" z="CPXS7IDSn4pB/OS6XFdscgSQIkc=" view="false">
             <table:column id="c_fr_univrouen_poste_domain_PosteCandidatureTag_name" property="name" z="3Q4Hjwy6A19yLA6te4h49jwYb6Q="/>

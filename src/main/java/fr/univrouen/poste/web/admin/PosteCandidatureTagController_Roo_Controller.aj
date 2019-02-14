@@ -51,16 +51,6 @@ privileged aspect PosteCandidatureTagController_Roo_Controller {
         return "admin/candidaturetags/list";
     }
     
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String PosteCandidatureTagController.update(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, posteCandidatureTag);
-            return "admin/candidaturetags/update";
-        }
-        uiModel.asMap().clear();
-        posteCandidatureTag.merge();
-        return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(posteCandidatureTag.getId().toString(), httpServletRequest);
-    }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
     public String PosteCandidatureTagController.delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {

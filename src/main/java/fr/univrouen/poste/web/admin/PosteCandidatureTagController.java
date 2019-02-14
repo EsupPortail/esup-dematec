@@ -47,5 +47,18 @@ public class PosteCandidatureTagController {
         return "redirect:/admin/candidaturetags/" + id + "?form";
     }
     
+    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
+    public String update(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, posteCandidatureTag);
+            return "admin/candidaturetags/update";
+        }
+        uiModel.asMap().clear();
+        PosteCandidatureTag posteCandidatureTagOld = PosteCandidatureTag.findPosteCandidatureTag(posteCandidatureTag.getId());
+        posteCandidatureTag.setValues(posteCandidatureTagOld.getValues());
+        posteCandidatureTag.merge();
+        return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(posteCandidatureTag.getId().toString(), httpServletRequest);
+    }
+    
 }
 
