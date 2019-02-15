@@ -429,4 +429,26 @@ public class PosteCandidature {
         return sortedCandidatureFiles;
     }
     
+    public static Long countFindPosteCandidaturesByTag(PosteCandidatureTag tag, PosteCandidatureTagValue tagValue) {
+    	EntityManager em = entityManager();
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+		Root<PosteCandidature> c = query.from(PosteCandidature.class);
+		
+		final List<Predicate> predicates = new ArrayList<Predicate>();
+
+	    MapJoin<PosteCandidature, PosteCandidatureTag, PosteCandidatureTagValue> t = c.joinMap("tags");
+	    if(tag != null) {
+	    	predicates.add(criteriaBuilder.equal(t.key(), tag));
+	    }
+	    if(tagValue != null) {
+	    	predicates.add(criteriaBuilder.equal(t.value(), tagValue));
+	    }
+		
+        query.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));	
+		
+		query.select(criteriaBuilder.count(c));
+		return em.createQuery(query).getSingleResult();
+    }
+    
 }

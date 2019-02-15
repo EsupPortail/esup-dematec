@@ -10,7 +10,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureTag;
 import fr.univrouen.poste.domain.PosteCandidatureTagValue;
 
@@ -58,6 +61,21 @@ public class PosteCandidatureTagController {
         posteCandidatureTag.setValues(posteCandidatureTagOld.getValues());
         posteCandidatureTag.merge();
         return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(posteCandidatureTag.getId().toString(), httpServletRequest);
+    }
+    
+    
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, final RedirectAttributes redirectAttributes, Model uiModel) {
+        PosteCandidatureTag posteCandidatureTag = PosteCandidatureTag.findPosteCandidatureTag(id);
+        if(PosteCandidature.countFindPosteCandidaturesByTag(posteCandidatureTag, null) == 0) {
+        	posteCandidatureTag.remove();
+        } else {
+        	redirectAttributes.addFlashAttribute("deleteFailed", "deleteFailed");
+        }
+        redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
+        redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
+        uiModel.asMap().clear();
+        return "redirect:/admin/candidaturetags";
     }
     
 }

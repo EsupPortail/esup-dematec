@@ -51,17 +51,6 @@ privileged aspect PosteCandidatureTagController_Roo_Controller {
         return "admin/candidaturetags/list";
     }
     
-    
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String PosteCandidatureTagController.delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
-        PosteCandidatureTag posteCandidatureTag = PosteCandidatureTag.findPosteCandidatureTag(id);
-        posteCandidatureTag.remove();
-        uiModel.asMap().clear();
-        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
-        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/admin/candidaturetags";
-    }
-    
     void PosteCandidatureTagController.populateEditForm(Model uiModel, PosteCandidatureTag posteCandidatureTag) {
         uiModel.addAttribute("posteCandidatureTag", posteCandidatureTag);
         uiModel.addAttribute("postecandidaturetagvalues", PosteCandidatureTagValue.findAllPosteCandidatureTagValues());
