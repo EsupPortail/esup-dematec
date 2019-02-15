@@ -20,7 +20,9 @@ package fr.univrouen.poste.web;
 import java.io.IOException;
 import java.util.Date;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -35,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.web.HiddenHttpMethodFilter.HttpMethodRequestWrapper;
 
 
 @Service
@@ -76,6 +79,7 @@ public class ExceptionController implements HandlerExceptionResolver {
 	    	//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	        ModelAndView modelAndview = new ModelAndView("uncaughtException");
 	        modelAndview.addObject("exception", ex);
+	        avoid405Error(request);
 	        return modelAndview;
 		}
     }
@@ -85,18 +89,37 @@ public class ExceptionController implements HandlerExceptionResolver {
         String ip = request.getRemoteAddr();	
 	    log.warn("Access Denied for " + ip);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        avoid405Error(request);
 		return new ModelAndView("accessDeniedException");
     }
 
 	
+
+
 	@RequestMapping("/uncaughtException")
     public ModelAndView uncaughtExceptionView(HttpServletRequest request) {
 	    Throwable exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
 	    ModelAndView modelAndview = new ModelAndView("uncaughtException");
 	    modelAndview.addObject("uncaughtException", true);
-	    modelAndview.addObject("exception", exception);
+	    modelAndview.addObject("exception", exception);	    
+	    avoid405Error(request);
 		return modelAndview;
     }
    
+	/**
+	 * Try to avoid 405 - JSPs only permit GET POST or HEAD with exceptions on put/delete/patch
+	 * @param request
+	 */
+	private void avoid405Error(HttpServletRequest request) {		
+		ServletRequest servletRequest = (ServletRequest) request;
+	    while(servletRequest!= null && !(servletRequest instanceof HttpMethodRequestWrapper)) {	    	
+	    	servletRequest = ((HttpServletRequestWrapper)servletRequest).getRequest();
+	    }
+	    if(servletRequest instanceof HttpMethodRequestWrapper) {
+	    	((HttpMethodRequestWrapper) servletRequest).setMethod("GET");
+	    }
+	    org.springframework.web.filter.HiddenHttpMethodFilter a;
+	}
+	
 }
 

@@ -52,7 +52,7 @@
 
     <filter>
         <filter-name>HttpMethodFilter</filter-name>
-        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+        <filter-class>fr.univrouen.poste.web.HiddenHttpMethodFilter</filter-class>
     </filter>
     
     <filter>
