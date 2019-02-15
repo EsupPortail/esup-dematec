@@ -112,7 +112,7 @@ public class ExceptionController implements HandlerExceptionResolver {
 	 */
 	private void avoid405Error(HttpServletRequest request) {		
 		ServletRequest servletRequest = (ServletRequest) request;
-	    while(servletRequest!= null && !(servletRequest instanceof HttpMethodRequestWrapper)) {	    	
+	    while(servletRequest!= null && !(servletRequest instanceof HttpMethodRequestWrapper)  && (servletRequest instanceof HttpServletRequestWrapper)) {	    	
 	    	servletRequest = ((HttpServletRequestWrapper)servletRequest).getRequest();
 	    }
 	    if(servletRequest instanceof HttpMethodRequestWrapper) {
