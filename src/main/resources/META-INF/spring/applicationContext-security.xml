@@ -20,7 +20,11 @@
 -->
 <beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+    
     <!-- HTTP security configurations -->
+        
+    <http security="none" pattern="/resources/**" />
+    
     <http auto-config="true" use-expressions="true">
         <form-login login-page="/login"/>
         <logout/>
@@ -29,7 +33,6 @@
         <intercept-url access="isAuthenticated()" pattern="/"/>
         <intercept-url access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" pattern="/admin/**"/>
         <intercept-url access="hasRole('ROLE_MEMBRE') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" pattern="/membre/**"/>
-        <intercept-url access="permitAll" pattern="/resources/**"/>
         <intercept-url access="permitAll" pattern="/login"/>
         <intercept-url access="permitAll" pattern="/forgotpassword/**"/>
         <intercept-url access="permitAll" pattern="/signup"/>
@@ -43,6 +46,7 @@
         <custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
         <custom-filter ref="checkProfilFilter" after="SWITCH_USER_FILTER"/>
     </http>
+
 
     <!-- Configure Authentication mechanism -->
     <beans:bean class="fr.univrouen.poste.provider.DatabaseAuthenticationProvider" id="databaseAuthenticationProvider"/>
