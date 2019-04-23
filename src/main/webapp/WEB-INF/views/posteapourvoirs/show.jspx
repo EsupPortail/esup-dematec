@@ -44,6 +44,7 @@
     </sec:authorize>
     
     <div class="well">
+      <c:if test="${not empty posteapourvoir.posteFiles}">
 	    <h4>Fichiers internes au poste / comité de sélection : </h4>
 	    <table class="table  table-bordered table-striped">
 	                <thead>
@@ -98,6 +99,7 @@
 	                    </tr>
 	                </tfoot>
 	            </table>
+	        </c:if>
 	        <c:if test="${manageposte}">
 	            <form:create id="fc_fr_univrouen_poste_domain_PosteAPourvoirFile" modelAttribute="posteFile" multipart="true" path="${posteapourvoir.id}/addFile" save_button="Envoyer" label="Fichier">
 	               <fieldset>
