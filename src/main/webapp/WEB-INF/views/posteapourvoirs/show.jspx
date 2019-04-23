@@ -44,8 +44,9 @@
     </sec:authorize>
     
     <div class="well">
-      <c:if test="${not empty posteapourvoir.posteFiles}">
+      
 	    <h4>Fichiers internes au poste / comité de sélection : </h4>
+	    <c:if test="${not empty posteapourvoir.posteFiles}">
 	    <table class="table  table-bordered table-striped">
 	                <thead>
 	                    <tr>
