@@ -87,8 +87,13 @@ public class GalaxieExcelParser {
 			GalaxieEntry dbGalaxyEntrie = dbGalaxyEntries.get(getList4Id(galaxieEntry));
 			
 			if (dbGalaxyEntrie == null) {
-				galaxieEntry.persist();
-				dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
+				if(galaxieEntry.getNumCandidat() == null || galaxieEntry.getNumCandidat().isEmpty() || 
+						galaxieEntry.getNumEmploi() == null || galaxieEntry.getNumEmploi().isEmpty()) {
+					logger.error("Cette ligne du fichier Excel Galaxie présente un numéro de candidat ou d'emploi vide, elle est donc ignorée : " + row);
+				} else {
+					galaxieEntry.persist();
+					dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
+				}
 			} else {
 				// This GalaxyEntry exists already, we merge it if needed
 				if(!fieldsEquals(dbGalaxyEntrie, galaxieEntry)) {
