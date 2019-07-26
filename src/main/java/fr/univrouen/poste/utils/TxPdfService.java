@@ -7,9 +7,9 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFMergerUtility;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,8 +58,8 @@ public class TxPdfService {
 			ut.addSource(pdfFile);
 		}
 		try {
-			ut.mergeDocuments();
-		} catch (COSVisitorException | IOException e) {
+			ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+		} catch (IOException e) {
 			throw new EsupDematEcException("Error merging pdf files- " + filename, e);
 		}	
 	}
