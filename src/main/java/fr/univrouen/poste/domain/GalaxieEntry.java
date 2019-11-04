@@ -18,6 +18,7 @@
 package fr.univrouen.poste.domain;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -53,6 +54,7 @@ public class GalaxieEntry {
 
     private String localisation = "";
 
+    @Column(length=300)
     private String profil = "";
 
     private String etatDossier = "";
