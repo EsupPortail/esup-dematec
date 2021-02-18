@@ -51,7 +51,8 @@ public class GalaxieEntry {
     private String prenom = "";
 
     private String email;
-
+    
+    @Column(length=300)
     private String localisation = "";
 
     @Column(length=300)

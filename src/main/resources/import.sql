@@ -36,7 +36,7 @@
 insert into c_user (id, activation_date, activation_key, email_address, enabled, is_admin, is_manager, is_super_manager, password, version, login_failed_nb, login_failed_time) 
 values (nextval('hibernate_sequence'), NULL, NULL, 'admin', TRUE, TRUE, FALSE, FALSE, '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, 0, 0);
 
-insert into appli_version values (nextval('hibernate_sequence'), '1.6.x', 1);
+insert into appli_version values (nextval('hibernate_sequence'), '1.7.x', 1);
 
 --  appli_config
 INSERT INTO appli_config (
