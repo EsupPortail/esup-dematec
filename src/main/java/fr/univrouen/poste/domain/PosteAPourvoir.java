@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -43,8 +44,10 @@ public class PosteAPourvoir {
 
 	private String numEmploi;
 
+    @Column(length=300)
     private String profil;
 
+    @Column(length=300)
     private String localisation;
 
     @ManyToMany

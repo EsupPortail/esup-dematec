@@ -22,7 +22,7 @@ public class DbToolService {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.7.x";
+	final static String currentEsupDematEcVersion = "1.8.x";
 	
 	@Resource
 	DataSource dataSource;
@@ -224,7 +224,22 @@ public class DbToolService {
 				statement.execute();
 				connection.close();	
 				
-			}  else {
+			} 
+			if("1.7.x".equals(esupDematEcVersion)) { 
+				
+				logger.info("\n\nMaj depuis 1.7.x ...\n\n");
+				
+				String sqlUpdate = "alter table posteapourvoir alter column profil type varchar(300);";
+				sqlUpdate += "alter table posteapourvoir alter column localisation type varchar(300);";
+
+				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
+				
+				Connection connection = dataSource.getConnection();
+				CallableStatement statement = connection.prepareCall(sqlUpdate);
+				statement.execute();
+				connection.close();	
+				
+			} else {
 				logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +
 	    				"\n#####\n");
