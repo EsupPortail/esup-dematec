@@ -42,6 +42,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(finders = { "findPosteAPourvoirsByNumEmploi", "findPosteAPourvoirsByDateEndSignupCandidatGreaterThan" })
 public class PosteAPourvoir {
 
+	@Column(nullable = false, unique = true)
 	private String numEmploi;
 
     @Column(length=300)

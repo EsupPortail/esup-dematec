@@ -231,7 +231,9 @@ public class DbToolService {
 				
 				String sqlUpdate = "alter table posteapourvoir alter column profil type varchar(300);";
 				sqlUpdate += "alter table posteapourvoir alter column localisation type varchar(300);";
-
+				sqlUpdate += "alter table posteapourvoir add constraint posteapourvoir_num_emploi_unique unique (num_emploi);";
+				sqlUpdate += "alter table posteapourvoir alter column num_emploi set not null;";
+				
 				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
 				
 				Connection connection = dataSource.getConnection();
