@@ -17,15 +17,12 @@
  */
 package fr.univrouen.poste.web;
 
-import java.util.Random;
-
-import javax.annotation.Resource;
-import javax.persistence.TypedQuery;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.EmailService;
+import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -35,10 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.EmailService;
-import fr.univrouen.poste.services.LogService;
+import javax.annotation.Resource;
+import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RequestMapping("/forgotpassword/**")
 @Controller
@@ -52,12 +49,13 @@ public class ForgotPasswordController {
     private transient EmailService emailService;
 
 	@Autowired
-	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private ForgotChangePasswordValidator validator;
 	
-	private Random random = new Random(System.currentTimeMillis());  
+	@Autowired
+	PasswordService passwordService;
 
     @ModelAttribute("forgotpasswordForm")
     public ForgotPasswordForm formBackingObject() {
@@ -77,38 +75,14 @@ public class ForgotPasswordController {
         	TypedQuery<User> userQuery = User.findUsersByEmailAddressAndActivationDateIsNotNull(form.getEmailAddress(), null, null);
         	if(null!=userQuery && !userQuery.getResultList().isEmpty()){
         		User user = userQuery.getSingleResult();
-        		
-        		String activationKey = generateActivationKey();
-        		user.setActivationKey(activationKey);
-        		user.merge();
-
-        		String mailTo = form.getEmailAddress();
-        	    String mailFrom = AppliConfig.getCacheMailFrom();
-        	    String mailSubject = AppliConfig.getCacheMailSubject();
-        	    
-        	    String mailMessage = AppliConfig.getCacheTexteMailPasswordOublie();
-        	    mailMessage = mailMessage.replaceAll("@@activationKey@@", activationKey);        
-        		
-				logService.logActionAuth(LogService.AUTH_PASSWORD_FORGOT_SENT, user.getEmailAddress(), request.getRemoteAddr());
-        		
-        		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
-        	} else {
+				passwordService.sendPasswordActivationKeyMail(user, request.getRemoteAddr());
+			} else {
         		logService.logActionAuth(LogService.AUTH_PASSWORD_FORGOT_FAILED, form.getEmailAddress(), request.getRemoteAddr());
         	}
 
             return "forgotpassword/thanks";
         }
     }
-
-    
-	private String generateActivationKey() {  
-		String activationKey = "activationKey" + Math.abs(this.random.nextInt());
-		while(User.countFindUsersByActivationKey(activationKey) > 0) {
-			activationKey = "activationKey" + Math.abs(this.random.nextInt());
-		}
-		return activationKey;
-	}
-
 
     @RequestMapping(value = "/forgotpassword/formChange", method = RequestMethod.GET)
     public String modifyPasswordFormWithActivationKey(@RequestParam String activationKey, Model model) {
@@ -132,12 +106,12 @@ public class ForgotPasswordController {
         TypedQuery<User> userQuery = User.findUsersByActivationKey(form.getActivationKey());
         if(null!=userQuery && !userQuery.getResultList().isEmpty()){
         	User user = userQuery.getSingleResult();
-        	user.setPassword(messageDigestPasswordEncoder.encodePassword(form.getNewPassword(), null));
+        	user.setPassword(passwordEncoder.encode(form.getNewPassword()));
         	user.setActivationKey(null);
         	user.merge();
         }
         return "redirect:/";
     }
-    
+
 
 }

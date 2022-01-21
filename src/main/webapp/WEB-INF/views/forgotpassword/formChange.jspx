@@ -30,8 +30,7 @@
 	<div id="_title_div">
 		<h4>Modification du password</h4>
 		<spring:url value="/forgotpassword/change" var="form_url" />
-		<form:form action="${form_url}" method="POST"
-			commandName="changePasswordForm">
+		<form:form action="${form_url}" method="POST" modelAttribute="changePasswordForm" >
 			<div class="password-container">
 				<form:hidden
 						id="_changepassword_activationKey" maxlength="30" path="activationKey"/>

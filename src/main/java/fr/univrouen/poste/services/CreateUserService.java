@@ -17,17 +17,16 @@
  */
 package fr.univrouen.poste.services;
 
-import java.util.Random;
-
-import org.apache.commons.lang3.text.WordUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.web.UserRegistrationForm;
+import org.apache.commons.lang3.text.WordUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 @Service
 public class CreateUserService {
@@ -35,7 +34,7 @@ public class CreateUserService {
 	private final Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
-	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	EmailService emailService;
@@ -64,7 +63,7 @@ public class CreateUserService {
 	    user.setActivationDate(null);
 	    user.setEmailAddress(userRegistration.getEmailAddress());
 	    if(userRegistration.getPassword() != null) {
-	    	user.setPassword(messageDigestPasswordEncoder.encodePassword(userRegistration.getPassword(), null));
+	    	user.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
 	    }
 	    if(userRegistration.getLastName() != null) {
 	    	user.setNom(userRegistration.getLastName());

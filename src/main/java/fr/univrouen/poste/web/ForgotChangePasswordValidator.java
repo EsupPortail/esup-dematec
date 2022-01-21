@@ -20,24 +20,17 @@
  */
 package fr.univrouen.poste.web;
 
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
+import fr.univrouen.poste.domain.User;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import fr.univrouen.poste.domain.User;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 
 @Service("forgotChangePasswordValidator")
 public class ForgotChangePasswordValidator implements Validator {
-
-	@Autowired
-	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
-
 
 	@Override
 	public boolean supports(Class<?> clazz) {

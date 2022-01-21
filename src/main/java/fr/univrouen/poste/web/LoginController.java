@@ -17,17 +17,21 @@
  */
 package fr.univrouen.poste.web;
 
-import java.util.Date;
-
+import fr.univrouen.poste.domain.AppliConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import fr.univrouen.poste.domain.AppliConfig;
+import java.util.Date;
 
 @RequestMapping("/login")
 @Controller
 public class LoginController {
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
     @RequestMapping
     public String login(Model model) {

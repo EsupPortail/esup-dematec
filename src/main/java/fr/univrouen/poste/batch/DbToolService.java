@@ -1,35 +1,32 @@
 package fr.univrouen.poste.batch;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.AppliConfigFileType;
 import fr.univrouen.poste.domain.AppliVersion;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.utils.TxPdfService;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.util.List;
 
 @Service
 public class DbToolService {
 
 	private final Logger logger = Logger.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.8.x";
+	final static String currentEsupDematEcVersion = "1.9.x";
 	
 	@Resource
 	DataSource dataSource;
 	
 	@Resource 
 	TxPdfService txPdfService;
-	
+
 	@Transactional
 	public void upgrade() {
 		AppliVersion appliVersion = null;
@@ -225,22 +222,24 @@ public class DbToolService {
 				connection.close();	
 				
 			} 
-			if("1.7.x".equals(esupDematEcVersion)) { 
-				
+			if("1.7.x".equals(esupDematEcVersion)) {
+
 				logger.info("\n\nMaj depuis 1.7.x ...\n\n");
-				
+
 				String sqlUpdate = "alter table posteapourvoir alter column profil type varchar(300);";
 				sqlUpdate += "alter table posteapourvoir alter column localisation type varchar(300);";
 				sqlUpdate += "alter table posteapourvoir add constraint posteapourvoir_num_emploi_unique unique (num_emploi);";
 				sqlUpdate += "alter table posteapourvoir alter column num_emploi set not null;";
-				
+
 				logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
-				
+
 				Connection connection = dataSource.getConnection();
 				CallableStatement statement = connection.prepareCall(sqlUpdate);
 				statement.execute();
-				connection.close();	
-				
+				connection.close();
+			}
+			if("1.8.x".equals(esupDematEcVersion)) {
+				// ... pas de màj de BD ici
 			} else {
 				logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +

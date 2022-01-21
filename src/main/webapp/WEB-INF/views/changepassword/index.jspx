@@ -31,7 +31,7 @@
 		<h4>Modification du mot de passe</h4>
 		<spring:url value="/changepassword" var="form_url" />
 		<form:form action="update" method="POST"
-			commandName="changePasswordForm">
+			modelAttribute="changePasswordForm">
 			<div class="password-container">
 				<br />
 				<div id="changepassword_oldpassword">

@@ -27,7 +27,7 @@
   <div id="_title_div">
     <spring:url value="/forgotpassword" var="form_url"/>
     <h4>Password Oubli&amp;eacute;</h4>
-    <form:form action="update" method="POST" commandName="forgotpasswordForm">
+    <form:form action="update" method="POST" modelAttribute="forgotpasswordForm">
       <br/>
       <div id="forgotpassword_emailaddress">
         <label for="_emailaddress_id">Entrez votre adresse email:</label>

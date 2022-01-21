@@ -20,26 +20,24 @@
  */
 package fr.univrouen.poste.web;
 
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-
+import fr.univrouen.poste.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import fr.univrouen.poste.domain.User;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 
 @Service("changePasswordValidator")
 public class ChangePasswordValidator implements Validator {
 
 	@Autowired
-	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
+	private PasswordEncoder passwordEncoder;
 
 	/*
 	 * (non-Javadoc)
@@ -72,7 +70,7 @@ public class ChangePasswordValidator implements Validator {
 					User person = (User) query.getSingleResult();
 					String storedPassword = person.getPassword();
 					String currentPassword = form.getOldPassword();
-					if (!messageDigestPasswordEncoder.isPasswordValid(storedPassword, currentPassword, null)) {
+					if (!passwordEncoder.matches(currentPassword, storedPassword)) {
 						errors.rejectValue("oldPassword",
 								"changepassword.invalidpassword");
 					}

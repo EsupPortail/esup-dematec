@@ -17,21 +17,20 @@
  */
 package fr.univrouen.poste.web;
 
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-
+import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.LogService;
+import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 
 @RequestMapping("/changepassword/**")
 @Controller
@@ -44,7 +43,7 @@ public class ChangePasswordController {
 	private ChangePasswordValidator validator;
 
 	@Autowired
-	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
+	private PasswordEncoder passwordEncoder;
 
 	@ModelAttribute("changePasswordForm")
 	public ChangePasswordForm formBackingObject() {
@@ -77,7 +76,7 @@ public class ChangePasswordController {
 				Query query = User
 						.findUsersByEmailAddress(userDetails.getUsername(), null, null);
 				User person = (User) query.getSingleResult();
-				person.setPassword(messageDigestPasswordEncoder.encodePassword(newPassword, null));
+				person.setPassword(passwordEncoder.encode(newPassword));
 				person.merge();
 				logService.logActionAuth(LogService.AUTH_PASSWORD_CHANGED, userDetails.getUsername(), request.getRemoteAddr());
 				return "changepassword/thanks";

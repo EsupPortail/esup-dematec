@@ -20,16 +20,10 @@
  */
 package fr.univrouen.poste.provider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
-
+import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.PasswordService;
+import fr.univrouen.poste.utils.DateClotureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,20 +31,22 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.utils.DateClotureChecker;
+import javax.annotation.Resource;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Service("databaseAuthenticationProvider")
@@ -62,13 +58,16 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 	private LogService logService;
 
 	@Resource
-	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
-	
+	private PasswordEncoder passwordEncoder;
+
 	@Resource
 	private DatabaseUserDetailsService databaseUserDetailsService;
 	
 	@Resource
 	DateClotureChecker dateClotureChecker;
+
+	@Autowired
+	PasswordService passwordService;
 
 	private List<String> ipsStart4AdminManagerAuthList;
 
@@ -123,7 +122,6 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
 			throw new BadCredentialsException("Merci de saisir votre email et mot de passe");
 		}
-		String encryptedPassword = messageDigestPasswordEncoder.encodePassword(password, null);
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		Boolean enabled;
 
@@ -143,8 +141,15 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 				throw new BadCredentialsException("Aucun mot de passe pour " + username
 				        + " n'est enregistré dans la base, merci d'activer votre compte via le lien d'activation envoyé par email. Contactez un administrateur si problème.");
 			}
-			if (!encryptedPassword.equals(expectedPassword)) {
+			if (!passwordEncoder.matches(password, expectedPassword)) {
 				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
+				if(!expectedPassword.startsWith("$")) {
+					// Hack : En 1.9 les mots de passes sont maintenant chiffrés avec bcrypt et non plus en sha256
+					// -> pour supporter une migration simple, on envoie un lien de changement de mot de passe si le format n'est pas du bcrypt
+					// le password en bcrypt est préfixé par $ - sha256 est en hexa
+					passwordService.sendPasswordActivationKeyMail(targetUser, null);
+					throw new BadCredentialsException("Votre mot de passe doit être mis à jour, un mail de changement de mot de passe vient de vous être envoyé.");
+				}
 				throw new BadCredentialsException("Email utilisateur ou mot de passe invalide.");
 			}
 			

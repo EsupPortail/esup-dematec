@@ -17,30 +17,22 @@
  */
 package fr.univrouen.poste.web;
 
-import java.util.Date;
-import java.util.List;
+import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.CreateUserService;
+import fr.univrouen.poste.services.PosteAPourvoirService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.CreateUserService;
-import fr.univrouen.poste.services.PosteAPourvoirService;
+import java.util.Date;
 
 @RequestMapping("/signup")
 @Controller
@@ -58,7 +50,7 @@ public class SignUpController {
 	private PosteAPourvoirService posteAPourvoirService;
 
 	@Autowired
-	private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
     @ModelAttribute("User")
     public UserRegistrationForm formBackingObject() {
@@ -123,7 +115,7 @@ public class SignUpController {
         	if(User.getPassword() == null) {
         		User.setActivationDate(new Date());
         		User.setEnabled(true);
-        		User.setPassword(messageDigestPasswordEncoder.encodePassword(userRegistration.getPassword(), null));
+        		User.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
         		User.merge();
         	} 
     		return "login";

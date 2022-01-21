@@ -17,27 +17,22 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.domain.User;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.web.mvc.controller.finder.RooWebFinder;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import fr.univrouen.poste.domain.GalaxieEntry;
-import fr.univrouen.poste.domain.User;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.Date;
 
 @RooWebScaffold(path = "admin/users", formBackingObject = User.class)
 @RequestMapping("/admin/users")
@@ -48,7 +43,7 @@ public class UserController {
 	private final Logger logger = Logger.getLogger(getClass());
 	
     @Autowired
-    private MessageDigestPasswordEncoder messageDigestPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid User user, BindingResult result, Model model, HttpServletRequest request) {
@@ -60,13 +55,13 @@ public class UserController {
         if (user.getId() != null) {
             User savedUser = User.findUser(user.getId());
             if (!savedUser.getPassword().equals(user.getPassword())) {
-                user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
                 	user.setActivationDate(new Date());
                 }
             }
         } else {
-            user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             if(user.getActivationDate() == null) {
             	user.setActivationDate(new Date());
             }
@@ -86,13 +81,13 @@ public class UserController {
         if (user.getId() != null) {
             User savedUser = User.findUser(user.getId());
             if (!user.getPassword().equals(savedUser.getPassword())) {
-                user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
                 	user.setActivationDate(new Date());
                 }
             }
         } else {
-            user.setPassword(messageDigestPasswordEncoder.encodePassword(user.getPassword(), null));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             if(user.getActivationDate() == null) {
             	user.setActivationDate(new Date());
             }

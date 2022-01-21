@@ -82,9 +82,7 @@
     <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
-    <bean class="org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder" id="messageDigestPasswordEncoder">
-        <constructor-arg value="sha-256"/>
-    </bean>
+    <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="passwordEncoder"/>
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender">
         <property name="host" value="${email.host}"/>
         <property name="protocol" value="${email.protocol}"/>
