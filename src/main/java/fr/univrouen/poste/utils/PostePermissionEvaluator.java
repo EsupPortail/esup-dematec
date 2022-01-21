@@ -115,7 +115,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         		return user.getIsAdmin() || user.getIsManager() || user.getIsMembre() && poste.getMembres().contains(user) && pc.isRecevable();
 	        }
 	        
-	        if(isCandidat) {
+	        if(isCandidat && pc.getCandidat().equals(user)) {
 	        	
 	        	if(AppliConfig.getCacheCandidatCanSignup()) {
 	        		Date currentTime = new Date();
