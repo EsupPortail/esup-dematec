@@ -21,6 +21,7 @@
 <div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:menu="urn:jsptagdir:/WEB-INF/tags/menu" 
     xmlns:sec="http://www.springframework.org/security/tags"
     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:form="http://www.springframework.org/tags/form"
 	xmlns:spring="http://www.springframework.org/tags" class="navbar navbar-inverse navbar-fixed-top">
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
@@ -50,7 +51,12 @@
 	<sec:authorize access="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')">
 		<spring:url value="/logout/impersonate" var="su_exit_url" />
 		<ul class="nav navbar-nav navbar-right multipass-supervisor-nav">
-			<li><a href="${su_exit_url}" class="btn btn-warning">SORTIR DU SU !</a></li>
+		  <li class="nav navbar-nav">
+                    <form:form action="${su_exit_url}" method="POST">
+                      <button class="btn btn-warning"
+                              type="submit">SORTIR DU SU !</button>
+                    </form:form>
+		  </li>
 		</ul>
 	</sec:authorize>
 

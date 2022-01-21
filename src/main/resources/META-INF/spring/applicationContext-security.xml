@@ -30,6 +30,7 @@
         <logout/>
         <!-- Configure these elements to secure URIs in your application -->
         <intercept-url pattern="/login/impersonate" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')"/>
+        <intercept-url pattern="/logout/impersonate" access="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')"/>
         <intercept-url access="isAuthenticated()" pattern="/"/>
         <intercept-url access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" pattern="/admin/**"/>
         <intercept-url access="hasRole('ROLE_MEMBRE') or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" pattern="/membre/**"/>
@@ -70,6 +71,8 @@
 	<beans:bean id="switchUserProcessingFilter"
 		class="org.springframework.security.web.authentication.switchuser.SwitchUserFilter">
 		<beans:property name="userDetailsService" ref="databaseUserDetailsService" />
+        <beans:property name="switchUserUrl" value="/login/impersonate"/>
+        <beans:property name="exitUserUrl" value="/logout/impersonate"/>
 		<beans:property name="targetUrl" value="/" />
 	</beans:bean>
 

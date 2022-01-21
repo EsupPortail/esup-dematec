@@ -144,11 +144,14 @@ padding-right: 20px;
 background: url("images/sort_desc.png") no-repeat center right;
 }
 
-.multipass-supervisor-nav {
+.navbar ul.multipass-supervisor-nav {
 position:relative;
 float:right;
 right:10px;
 width:100%;
+}
+.navbar ul.multipass-supervisor-nav li {
+	float:right;
 }
 .multipass-supervisor-nav li a.btn-warning {
 color: black;
