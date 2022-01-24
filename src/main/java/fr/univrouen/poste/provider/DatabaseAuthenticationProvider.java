@@ -42,6 +42,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
@@ -176,7 +177,7 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 	        
 	        userDetails = databaseUserDetailsService.loadUserByUser(targetUser);
 
-		} catch (EmptyResultDataAccessException e) {
+		} catch (EmptyResultDataAccessException | NoResultException e) {
 			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
 			throw new BadCredentialsException("Compte utilisateur et/ou mot de passe invalide");
 		} catch (EntityNotFoundException e) {

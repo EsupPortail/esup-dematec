@@ -20,11 +20,7 @@
  */
 package fr.univrouen.poste.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-
+import fr.univrouen.poste.domain.User;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,7 +31,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fr.univrouen.poste.domain.User;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -55,7 +54,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 		try {
 			User targetUser = (User) query.getSingleResult();		
 			return loadUserByUser(targetUser);
-		} catch(EmptyResultDataAccessException e) {
+		} catch(EmptyResultDataAccessException | NoResultException e) {
 			throw new RuntimeException(username + " not found in the Database.", e);
 		}				
 	}
