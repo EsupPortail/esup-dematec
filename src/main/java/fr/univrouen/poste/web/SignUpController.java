@@ -135,7 +135,7 @@ public class SignUpController {
 	    	// be sure that there is no password sent by the web form
 	    	userRegistration.setPassword(null);
 	        if (result.hasErrors()) {
-	        	log.error(result.toString());
+	        	log.warn(result.toString());
 	            return "signup/index";
 	        } else {
 	        	if(User.countFindUsersByEmailAddress(userRegistration.getEmailAddress())>0) {
