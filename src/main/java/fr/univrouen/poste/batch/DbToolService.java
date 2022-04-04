@@ -179,7 +179,7 @@ public class DbToolService {
 		    				"Base de données à jour en 1.5.x" +
 		    				"\n#####\n");
 				}
-	    		
+				esupDematEcVersion = "1.5.x";
 			} 
 			
 			if("1.5.x".equals(esupDematEcVersion)) { 
@@ -203,8 +203,8 @@ public class DbToolService {
 				Connection connection = dataSource.getConnection();
 				CallableStatement statement = connection.prepareCall(sqlUpdate);
 				statement.execute();
-				connection.close();	
-				
+				connection.close();
+				esupDematEcVersion = "1.6.x";
 			} 
 					
 			if("1.6.x".equals(esupDematEcVersion)) { 
@@ -219,8 +219,8 @@ public class DbToolService {
 				Connection connection = dataSource.getConnection();
 				CallableStatement statement = connection.prepareCall(sqlUpdate);
 				statement.execute();
-				connection.close();	
-				
+				connection.close();
+				esupDematEcVersion = "1.7.x";
 			} 
 			if("1.7.x".equals(esupDematEcVersion)) {
 
@@ -237,9 +237,11 @@ public class DbToolService {
 				CallableStatement statement = connection.prepareCall(sqlUpdate);
 				statement.execute();
 				connection.close();
+				esupDematEcVersion = "1.8.x";
 			}
 			if("1.8.x".equals(esupDematEcVersion)) {
 				// ... pas de màj de BD ici
+				esupDematEcVersion = "1.9.x";
 			} else {
 				logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +
