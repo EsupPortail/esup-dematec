@@ -72,7 +72,7 @@ public class ForgotPasswordController {
         if (result.hasErrors()) {
         	return "forgotpassword/index";
         } else {
-        	TypedQuery<User> userQuery = User.findUsersByEmailAddressAndActivationDateIsNotNull(form.getEmailAddress(), null, null);
+        	TypedQuery<User> userQuery = User.findUsersByEmailAddressAndActivationDateIsNotNull(form.getEmailAddress().trim(), null, null);
         	if(null!=userQuery && !userQuery.getResultList().isEmpty()){
         		User user = userQuery.getSingleResult();
 				passwordService.sendPasswordActivationKeyMail(user, request.getRemoteAddr());
