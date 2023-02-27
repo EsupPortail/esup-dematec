@@ -17,15 +17,9 @@
  */
 package fr.univrouen.poste.services;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidatureTag;
 import org.apache.log4j.Logger;
-import org.apache.tiles.jsp.taglib.GetAsStringTag;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.cellprocessor.FmtDate;
@@ -35,8 +29,12 @@ import org.supercsv.io.dozer.CsvDozerBeanWriter;
 import org.supercsv.io.dozer.ICsvDozerBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureTag;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class CsvService {
@@ -49,7 +47,7 @@ public class CsvService {
 
 		log.info("Generate CSV for " + posteCandidatures.size() + " posteCandidatures");
 		
-		List<String> header = new ArrayList<String>(Arrays.asList(new String[] { "poste", "nom", "email", "prenom", "galaxie", "recevable", "auditionnable", "vue", "creation", "modification", "gestionnaire", "dateGestion"}));
+		List<String> header = new ArrayList<String>(Arrays.asList(new String[] { "poste", "nom", "email", "prenom", "galaxie", "recevable", "auditionnable", "vue", "creation", "modification", "gestionnaire", "dateGestion", "civilite"}));
 		List<String> fieldMapping = new ArrayList<String>(header);
 		int i = 0;
 		for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
@@ -125,6 +123,10 @@ public class CsvService {
 		public Date getModification() {
 			return posteCandidature.getModification();
 		}
+
+		public String getCivilite() {
+			return posteCandidature.getCandidat().getCivilite();
+		}
 		
 		public String getGestionnaire() {
 			try {
@@ -171,7 +173,8 @@ public class CsvService {
 				new Optional(new FmtDate("dd/MM/yyyy - HH:mm")),
 				new Optional(new FmtDate("dd/MM/yyyy - HH:mm")),
 				null,
-				new Optional(new FmtDate("dd/MM/yyyy - HH:mm"))
+				new Optional(new FmtDate("dd/MM/yyyy - HH:mm")),
+				null
 		}));
 		
 		for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
