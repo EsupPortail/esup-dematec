@@ -20,13 +20,16 @@
  */
 package fr.univrouen.poste.web;
 
+import org.springframework.roo.addon.javabean.RooJavaBean;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
 @RooJavaBean
 public class UserRegistrationForm {
+	@NotNull
+	@Size(min = 1, message="Merci de saisir votre civilité")
+	private String civilite;
 
 	@NotNull
 	@Size(min = 1, message="Merci de saisir votre prénom")
@@ -58,7 +61,12 @@ public class UserRegistrationForm {
     public void setLastName(String lastName) {
         this.lastName = lastName.trim();
     }
-    
-	
 
+	public String getCivilite() {
+		return civilite;
+	}
+
+	public void setCivilite(String civilite) {
+		this.civilite = civilite;
+	}
 }

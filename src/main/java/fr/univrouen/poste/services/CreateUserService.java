@@ -71,6 +71,9 @@ public class CreateUserService {
 		if(userRegistration.getFirstName() != null) {
 		    user.setPrenom(userRegistration.getFirstName());
 		}
+		if(userRegistration.getCivilite() != null) {
+			user.setCivilite(userRegistration.getCivilite());
+		}
 	    user.setActivationKey(activationKey);
 	    user.setEnabled(true);
 	    user.persist();

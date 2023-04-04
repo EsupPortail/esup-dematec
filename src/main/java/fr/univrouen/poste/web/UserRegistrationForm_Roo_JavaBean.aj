@@ -3,10 +3,8 @@
 
 package fr.univrouen.poste.web;
 
-import fr.univrouen.poste.web.UserRegistrationForm;
-
 privileged aspect UserRegistrationForm_Roo_JavaBean {
-    
+
     public String UserRegistrationForm.getFirstName() {
         return this.firstName;
     }

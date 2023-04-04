@@ -27,12 +27,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @RequestMapping("/signup")
 @Controller
@@ -57,6 +63,10 @@ public class SignUpController {
         return new UserRegistrationForm();
     }
 
+	@ModelAttribute("civilitesEnum")
+	public List<String> civilitesEnum() {
+		return Arrays.asList("", "Mme", "M.");
+	}
     
     @RequestMapping(method = RequestMethod.GET)
     public String createForm(Model model) {

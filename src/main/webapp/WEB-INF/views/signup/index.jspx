@@ -38,8 +38,8 @@
 		    </c:if>
 		    
 		    <form:create id="fc_com_training_spring_roo_model_User" modelAttribute="User" path="signup" render="${empty dependencies}" z="YNTiVLwXp22CNiPqmEgdy1d/84Q=">
+				<field:select  field="civilite" path="civilite" id="c_fr_univrouen_poste_domain_candidat_civilite" items="${civilitesEnum}" size="1" required="required"/>
 		        <field:input field="firstName" id="c_com_training_spring_roo_model_User_firstName" min="1" required="true" z="GZYqRDV261EfLKuDhEsvm9ahxQE="/>
-		        
 		        <field:input field="lastName" id="c_com_training_spring_roo_model_User_lastName" min="1" required="true" z="hTY2m8OG6Q/QddJ9nO+0ew6Y9Xo="/>
 		        <field:input field="emailAddress" id="c_com_training_spring_roo_model_User_emailAddress" min="1" required="true" validationMessageCode="field_invalid_email" z="TGUZZAO/bcy8+d/SrMBtV3A7ZKs="/>
 		        ${captcha_form}
