@@ -50,10 +50,10 @@
     <div id="_${fn:escapeXml(id)}_id">
       <c:choose>
         <c:when test="${not empty items}">
-          <h4>
+          <label for="_${sec_field}_id">
             <c:out value="${fn:escapeXml(label)}" />
             :
-          </h4>
+          </label>
           <c:choose>
             <c:when test="${empty itemValue}">
               <c:choose>
