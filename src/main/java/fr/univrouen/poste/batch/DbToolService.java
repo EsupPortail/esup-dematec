@@ -285,6 +285,7 @@ public class DbToolService {
 				"delete from c_user where is_admin=false and is_manager=false and is_super_manager=false;" +
 				"-- ne pas faire de truncate sur big_file pour appel du trigger et suppression effective du blob\n" +
 				"delete from big_file where id not in (select big_file from template_file);" +
+				"COMMIT;" +
 				"VACUUM FULL;";
 		logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
 		Connection connection = dataSource.getConnection();
