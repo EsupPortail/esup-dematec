@@ -73,6 +73,7 @@ host    all             all             127.0.0.1/32            password
 create database esupdematec;
 create USER esupdematec with password 'esup';
 grant ALL ON DATABASE esupdematec to esupdematec;
+ALTER DATABASE esupdematec OWNER TO esupdematec;
 ```
 
 ### Paramétrage mémoire JVM :
