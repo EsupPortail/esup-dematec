@@ -46,8 +46,11 @@
         <access-denied-handler error-page="/denied"/>
         <custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
         <custom-filter ref="checkProfilFilter" after="SWITCH_USER_FILTER"/>
+        <custom-filter ref="resourceUrlEncodingFilter" position="LAST"/>
     </http>
 
+    <beans:bean id="resourceUrlEncodingFilter"
+                class="org.springframework.web.servlet.resource.ResourceUrlEncodingFilter"/>
 
     <!-- Configure Authentication mechanism -->
     <beans:bean class="fr.univrouen.poste.provider.DatabaseAuthenticationProvider" id="databaseAuthenticationProvider"/>
