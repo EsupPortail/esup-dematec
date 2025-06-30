@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import fr.univrouen.poste.dao.GalaxieEntryDao;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,13 +20,16 @@ import fr.univrouen.poste.exceptions.EsupDematEcWarnException;
 @Service
 public class GalaxieEntriesService {
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Autowired 
+	@Resource
 	GalaxieEntryService galaxieEntryService;
 	
-	@Autowired 
-    private LogService logService;
+	@Resource
+    LogService logService;
+
+	@Resource
+	GalaxieEntryDao galaxieEntryDao;
 
     public synchronized void generateCandidatsPostes() {
     	
@@ -42,9 +47,9 @@ public class GalaxieEntriesService {
     }
 
 
-    private void generateCandidatures() {
+    void generateCandidatures() {
 		List<GalaxieEntry> galaxieEntrys;
-		galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatureIsNull().getResultList();
+		galaxieEntrys = galaxieEntryDao.findGalaxieEntrysByCandidatureIsNull();
     	Set<User> candidatureUsers = new HashSet<User>();
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
         	if(galaxieEntry.getCandidat() != null) {
@@ -63,9 +68,8 @@ public class GalaxieEntriesService {
 	}
 
 
-    private void generatePostes() {
-		List<GalaxieEntry> galaxieEntrys;
-		galaxieEntrys = GalaxieEntry.findGalaxieEntrysByPosteIsNull().getResultList();
+    void generatePostes() {
+		List<GalaxieEntry> galaxieEntrys = galaxieEntryDao.findGalaxieEntrysByPosteIsNull();
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
         	String galaxyEntryStr = galaxieEntry.toString();
         	try{
@@ -78,8 +82,8 @@ public class GalaxieEntriesService {
 	}
 
 
-    private void generateCandidats() {
-		List<GalaxieEntry> galaxieEntrys = GalaxieEntry.findGalaxieEntrysByCandidatIsNull().getResultList();
+    void generateCandidats() {
+		List<GalaxieEntry> galaxieEntrys = galaxieEntryDao.findGalaxieEntrysByCandidatIsNull();
         for(GalaxieEntry  galaxieEntry : galaxieEntrys) {	
         	String galaxyEntryStr = galaxieEntry.toString();
         	try{

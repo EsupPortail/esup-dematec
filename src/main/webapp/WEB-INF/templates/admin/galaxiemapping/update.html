@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Mapping Galaxie - Modification</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Modifier Mapping Galaxie</h2>
+    
+    <form th:action="@{/admin/galaxiemapping}" th:object="${galaxieMapping}" method="post">
+      <input type="hidden" name="_method" value="put"/>
+
+      <input type="hidden" th:field="*{id}"/>
+
+
+      <div>
+        <label for="id_email">ID email</label>
+        <div>
+          <input type="text" th:field="*{id_email}" id="id_email"/>
+        </div>
+      </div>
+
+      <div>
+        <label for="id_numemploi">ID numéro emploi</label>
+        <div>
+          <input type="text" th:field="*{id_numemploi}" id="id_numemploi"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="id_numCandidat">ID numéro candidat</label>
+        <div>
+          <input type="text" th:field="*{id_numCandidat}" id="id_numCandidat"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="id_civilite">ID civilité</label>
+        <div>
+          <input type="text" th:field="*{id_civilite}" id="id_civilite"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="id_nom">ID nom</label>
+        <div>
+          <input type="text" th:field="*{id_nom}" id="id_nom"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="id_prenom">ID prénom</label>
+        <div>
+          <input type="text" th:field="*{id_prenom}" id="id_prenom"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="id_localisation">ID localisation</label>
+        <div>
+          <input type="text" th:field="*{id_localisation}" id="id_localisation"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="id_profil">ID profil</label>
+        <div>
+          <input type="text" th:field="*{id_profil}" id="id_profil"/>
+        </div>
+      </div>
+
+      <div>
+        <label for="id_etat_dossier">ID état dossier</label>
+        <div>
+          <input type="text" th:field="*{id_etat_dossier}" id="id_etat_dossier"/>
+        </div>
+      </div>
+      
+      <div>
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        <a th:href="@{/admin/galaxiemapping}" class="btn">Annuler</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

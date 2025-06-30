@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Postes à Pourvoir</title>
+</head>
+<body>
+  <div layout:fragment="body">
+  <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+    <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p th:if="!${candidatCanSignup}">Les différents postes donnés ici ont été générés depuis le menu Importation. Vous pouvez ici vérifier que l'ensemble des postes a bien été créé.</p>
+      <p>Pour chacun des postes, vous pouvez éditer leurs membres, pour ce faire, cliquez sur le bouton "Modifier" du poste voulu.</p>
+      <p>Vous pouvez saisir une "Date Fin Candidat Auditionnable" correspondant à la date à partir de laquelle les candidats retenus pour audition n'ont plus accès à l'application.</p>
+      <div th:if="${candidatCanSignup}" class="alert">
+        <p>Votre instance d'EsupDematEC a été configurée pour laisser la possibilité aux candidats de s'inscrire directement dans l'application (sans passer par l'import d'un fichier Excel), aussi vous pouvez ici créer un poste depuis un formulaire web.</p>
+        <p>Attention, "Date Fin Candidature" doit être renseigné pour que le poste puisse effectivement être affiché disponible à la candidature.</p>
+        <p>"Date Fin Candidature" correspond à la date à partir de laquelle les candidats (non retenus pour audition) n'ont plus accès au poste (candidature et dépôt).</p>
+      </div>
+    </div>
+    </div>
+  </th:block>
+  
+  <div th:utext="${textePostesMenu4Members}" sec:authorize="hasRole('ROLE_MEMBRE')"></div>
+
+  <table class="table table-striped table-bordered" th:if="${posteapourvoirs != null and !#lists.isEmpty(posteapourvoirs)}">
+    <thead>
+      <tr>
+          <th><a sd:pagination-sort="numEmploi">Num Emploi</a></th>
+        <th>Profil</th>
+          <th><a sd:pagination-sort="localisation">Localisation</a></th>
+        <th>Membres</th>
+        <th>Date Fin Candidat Auditionnable</th>
+        <th>Présidents</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="poste : ${posteapourvoirs}">
+        <td th:text="${poste.numEmploi}"></td>
+        <td th:text="${poste.profil}"></td>
+        <td th:text="${poste.localisation}"></td>
+        <td>
+            <th:block th:each="membre, iter : ${poste.membres}">
+                <th:block th:text="${membre.emailAddress}"/><th:block th:text="${iter.last ? '' : ', '}"/>
+            </th:block>
+        </td>
+        <td th:text="${#dates.format(poste.dateEndCandidatAuditionnable, 'dd/MM/yyyy')}"></td>
+        <td>
+            <th:block th:each="president, iter : ${poste.presidents}">
+                <th:block th:text="${president.emailAddress}"/><th:block th:text="${iter.last ? '' : ', '}"/>
+            </th:block>
+        </td>
+        <td>
+          <a th:href="@{/posteapourvoirs/{id}(id=${poste.id})}" class="btn btn-small btn-info">Voir</a>
+          <a th:href="@{/posteapourvoirs/{id}/edit(id=${poste.id})}" class="btn btn-small btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+        <div class="pagination-container">
+            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+            <div class="pagination pagination-centered" sd:pagination="full"></div>
+        </div>
+  </div>
+</body>
+</html>

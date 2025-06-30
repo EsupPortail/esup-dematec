@@ -17,22 +17,22 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.dao.BigFileDao;
+import fr.univrouen.poste.dao.GalaxieExcelDao;
+import fr.univrouen.poste.domain.GalaxieExcel;
+import fr.univrouen.poste.services.ExcelParser;
+import fr.univrouen.poste.services.GalaxieExcelParser;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -41,30 +41,38 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
 
-import fr.univrouen.poste.domain.GalaxieExcel;
-import fr.univrouen.poste.services.ExcelParser;
-import fr.univrouen.poste.services.GalaxieExcelParser;
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.List;
 
 @RequestMapping("/admin/galaxieexcels")
 @Controller
-@RooWebScaffold(path = "admin/galaxieexcels", formBackingObject = GalaxieExcel.class)
-@Transactional
 public class GalaxieExcelController {
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Autowired 
+	@Resource
 	GalaxieExcelParser galaxieExcelParser;
 	
-	@Autowired 	
+	@Resource
 	ExcelParser excelParser;
-	
+
+    @Resource
+    GalaxieExcelDao galaxieExcelDao;
+
+    @Resource
+    BigFileDao bigFileDao;
 
     @RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
     public String addFile(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws IOException, SQLException {
         if (bindingResult.hasErrors()) {
-        	logger.warn(bindingResult.getAllErrors());
+        	logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
             return "redirect:/admin/galaxieexcels";
         }
         uiModel.asMap().clear();
@@ -76,15 +84,15 @@ public class GalaxieExcelController {
         byte[] bytes = IOUtils.toByteArray(inputStream);
 
         galaxieExcel.setFilename(filename);
-        galaxieExcel.getBigFile().setBinaryFile(new SerialBlob(bytes)); 
-        galaxieExcel.getBigFile().persist();
+        galaxieExcel.getBigFile().setBinaryFile(new SerialBlob(bytes));
+        bigFileDao.saveBigFile( galaxieExcel.getBigFile());
         
         // set current date 
         Calendar cal = Calendar.getInstance();
         galaxieExcel.setCreation(cal.getTime());    
         
         // persist
-        galaxieExcel.persist();
+        galaxieExcelDao.saveGalaxieExcel(galaxieExcel);
         
         // process : generate GalaxieEntries
     	galaxieExcelParser.process(galaxieExcel);
@@ -92,11 +100,12 @@ public class GalaxieExcelController {
         return "redirect:/admin/galaxieexcels";
     }
 
-    @RequestMapping(value = "/{id}", produces = "text/html")
-    public String show(@PathVariable("id") Long id, Model uiModel) throws SQLException, IOException {
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    @Transactional(readOnly = true)
+    public String show(@PathVariable Long id, Model uiModel) throws SQLException, IOException {
         addDateTimeFormatPatterns(uiModel);
         
-        GalaxieExcel galaxieExcel = GalaxieExcel.findGalaxieExcel(id);
+        GalaxieExcel galaxieExcel = galaxieExcelDao.findGalaxieExcel(id);
     	List<List<String>> cells = excelParser.getCells(galaxieExcel);
     	galaxieExcel.setCells(cells);
        
@@ -104,11 +113,12 @@ public class GalaxieExcelController {
         uiModel.addAttribute("itemId", id);
         return "admin/galaxieexcels/show";
     }
-    
+
+    @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}/file")
-    public void downloadFile(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+    public void downloadFile(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
     	try {
-    		GalaxieExcel galaxieExcel = GalaxieExcel.findGalaxieExcel(id);
+    		GalaxieExcel galaxieExcel = galaxieExcelDao.findGalaxieExcel(id);
     		String filename = galaxieExcel.getFilename();
     		String contentType = "application/vnd.ms-office";
     		response.setContentType(contentType);
@@ -126,4 +136,42 @@ public class GalaxieExcelController {
         addDateTimeFormatPatterns(uiModel);
     }
 
+
+	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String create(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, galaxieExcel);
+            return "admin/galaxieexcels/create";
+        }
+        uiModel.asMap().clear();
+        galaxieExcelDao.saveGalaxieExcel(galaxieExcel);
+        return "redirect:/admin/galaxieexcels/" + encodeUrlPathSegment(galaxieExcel.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new GalaxieExcel());
+        return "admin/galaxieexcels/create";
+    }
+
+	@RequestMapping(produces = "text/html")
+    public String list(@PageableDefault(size = 10, direction = Sort.Direction.DESC, sort = "creation") Pageable pageable, Model uiModel) {
+        Page<GalaxieExcel> page = galaxieExcelDao.findGalaxieExcelEntries(pageable);
+        uiModel.addAttribute("galaxieexcels", page);
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/galaxieexcels/list";
+    }
+
+	void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("galaxieExcel_creation_date_format", "dd/MM/yyyy HH:mm");
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+        }
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
+    }
 }

@@ -1,19 +1,6 @@
 package fr.univrouen.poste.services;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.dao.*;
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
@@ -22,19 +9,47 @@ import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.exceptions.EsupDematEcException;
 import fr.univrouen.poste.exceptions.EsupDematEcWarnException;
 import fr.univrouen.poste.web.UserRegistrationForm;
+import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class GalaxieEntryService {
 
-	@Autowired 
-	private CreateUserService createUserService;
+	@Resource
+	CreateUserService createUserService;
 	
-	@Autowired 
-    private LogService logService;
+	@Resource
+    LogService logService;
 	
-	@Autowired
+	@Resource
 	EmailService emailService;
-	
+
+	@Resource
+	AppliConfigDao appliConfigDao;
+
+	@Resource
+	AppliConfigService appliConfigService;
+
+	@Resource
+	GalaxieEntryDao galaxieEntryDao;
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
 	/**
 	 * 	IMPORTANT : le galaxieEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (galaxieEntry.merge())
 	 */
@@ -42,19 +57,16 @@ public class GalaxieEntryService {
 	public void generateCandidat(GalaxieEntry galaxieEntry) {
 		
 		if(galaxieEntry.getCandidat() == null) {
-			User candidat = null;
-			TypedQuery<User> query = User.findUsersByNumCandidat(galaxieEntry.getNumCandidat(), null, null);
-			if(query.getResultList().isEmpty()) {
+			User candidat = userDao.findUserByNumCandidat(galaxieEntry.getNumCandidat());
+			if(candidat == null) {
 				if(galaxieEntry.getEmail() == null || galaxieEntry.getEmail().isEmpty()) {
 					String message = "Le candidat " + galaxieEntry.getNumCandidat() + " n'a pas de mail de renseigné";
 					throw new EsupDematEcWarnException(message);
 				} else {
-					List<User> usersSameEmail = User.findUsersByEmailAddress(galaxieEntry.getEmail(), null, null).getResultList();
-					if(!usersSameEmail.isEmpty()) {
-						String message = "Le candidat " + galaxieEntry.getNumCandidat() + " a le même mail que le(s) utilisateur(s)";
-						for(User u : usersSameEmail) {
-							message = message + " " + u.getEmailAddress() + "(n° candidat : " + u.getNumCandidat() + ")";
-						}
+					User userSameEmail = userDao.findUserByEmailAddress(galaxieEntry.getEmail());
+					if(userSameEmail != null) {
+						String message = "Le candidat " + galaxieEntry.getNumCandidat() + " a le même mail que l'utilisateur suivant :";
+						message = message + " " + userSameEmail.getEmailAddress() + "(n° candidat : " + userSameEmail.getNumCandidat() + ")";
 						throw new EsupDematEcException(message);
 					} else {
 		        		// new User 
@@ -80,15 +92,11 @@ public class GalaxieEntryService {
 		    		}
 				}
 				
-			} else {
-				candidat = query.getSingleResult();
 			}
-			
-			if(candidat != null) {
-				galaxieEntry.setCandidat(candidat);
-			}
-			
-			galaxieEntry.merge();
+
+			galaxieEntry.setCandidat(candidat);
+
+			galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
 		}
 		
 	}
@@ -102,24 +110,24 @@ public class GalaxieEntryService {
 		
 		if(galaxieEntry.getCandidat() != null && galaxieEntry.getPoste() == null) {
 			PosteAPourvoir poste = null;
-			TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(galaxieEntry.getNumEmploi(), null, null);
-			if(query.getResultList().isEmpty()) {
-				
+			List<PosteAPourvoir> postes = posteAPourvoirDao.findPosteAPourvoirsByNumEmplois(List.of(galaxieEntry.getNumEmploi()));
+			if(postes.isEmpty()) {
+
 				// new Poste
 				poste = new PosteAPourvoir();
 				poste.setLocalisation(galaxieEntry.getLocalisation());
 				poste.setNumEmploi(galaxieEntry.getNumEmploi());
 				poste.setProfil(galaxieEntry.getProfil());
-				poste.persist();
-				
+				posteAPourvoirDao.savePosteAPourvoir(poste);
+
 				logService.logImportGalaxie("Poste " + poste.getNumEmploi() + " créé.", LogService.IMPORT_SUCCESS);
 				
 			} else {
-				poste = query.getSingleResult();
+				poste = postes.get(0);
 			}
 			galaxieEntry.setPoste(poste);
-			
-			galaxieEntry.merge();
+
+			galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
 		}
 		
 	}
@@ -132,7 +140,7 @@ public class GalaxieEntryService {
 
 		List<String> postes = new ArrayList<String>();
 		
-		List<GalaxieEntry> galaxieEntries = GalaxieEntry.findGalaxieEntrysByCandidat(candidat).getResultList();
+		List<GalaxieEntry> galaxieEntries = galaxieEntryDao.findGalaxieEntrysByCandidat(candidat);
 		
 		String nom = "";
 		String prenom = "";
@@ -151,15 +159,15 @@ public class GalaxieEntryService {
 			    Date currentTime = cal.getTime();
 			    candidature.setCreation(currentTime);
 			    
-			    RecevableEnum recevableEnum = AppliConfig.getCacheCandidatureRecevableEnumDefault();
+			    RecevableEnum recevableEnum = appliConfigService.getCacheCandidatureRecevableEnumDefault();
 			    candidature.setRecevableEnum(recevableEnum);
-			    
-				candidature.persist();
+
+				posteCandidatureDao.savePosteCandidature(candidature);
 				galaxieEntry.setCandidature(candidature);   
 				
 				logService.logImportGalaxie("Candidature " + candidature.getPoste().getNumEmploi() + "/" + candidature.getCandidat().getNumCandidat() + " créé.", LogService.IMPORT_SUCCESS);
-				
-				galaxieEntry.merge();
+
+				galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
 				
 				postes.add(candidature.getPoste().getNumEmploi());
 				
@@ -171,9 +179,9 @@ public class GalaxieEntryService {
 		
 		// send email notification    
 	    String mailTo = candidat.getEmailAddress();
-	    String mailFrom = AppliConfig.getCacheMailFrom();
-	    String mailSubject = AppliConfig.getCacheMailSubject();	    
-	    String mailMessage = AppliConfig.getCacheTexteMailNewCandidatures();
+	    String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
+	    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();	    
+	    String mailMessage = appliConfigDao.getAppliConfig().getTexteMailNewCandidatures();
 	    
 	    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
 	    mailMessage = mailMessage.replaceAll("@@nom@@",  WordUtils.capitalizeFully(nom));

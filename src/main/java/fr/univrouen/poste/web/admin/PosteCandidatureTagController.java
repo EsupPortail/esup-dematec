@@ -1,8 +1,16 @@
 package fr.univrouen.poste.web.admin;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
+import fr.univrouen.poste.dao.PosteCandidatureTagDao;
+import fr.univrouen.poste.dao.PosteCandidatureTagValueDao;
+import fr.univrouen.poste.domain.PosteCandidatureTag;
+import fr.univrouen.poste.domain.PosteCandidatureTagValue;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -10,43 +18,48 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureTag;
-import fr.univrouen.poste.domain.PosteCandidatureTagValue;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
 
 @RequestMapping("/admin/candidaturetags")
 @Controller
-@RooWebScaffold(path = "admin/candidaturetags", formBackingObject = PosteCandidatureTag.class)
 public class PosteCandidatureTagController {
+
+	@Resource
+	PosteCandidatureTagDao posteCandidatureTagDao;
 	
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	PosteCandidatureTagValueDao posteCandidatureTagValueDao;
+
 	@Transactional
-    @RequestMapping(value = "/{id}", params={"create=value"}, method = RequestMethod.POST, produces = "text/html")
-    public String createValue(@PathVariable("id") Long id, @Valid PosteCandidatureTagValue posteCandidatureTagValue, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-    	PosteCandidatureTag posteCandidatureTag = PosteCandidatureTag.findPosteCandidatureTag(id);
+    @RequestMapping(value = "/{tagId}", params={"create=value"}, method = RequestMethod.POST, produces = "text/html")
+    public String createValue(@PathVariable Long tagId, @Valid PosteCandidatureTagValue posteCandidatureTagValue, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    	PosteCandidatureTag posteCandidatureTag = posteCandidatureTagDao.findPosteCandidatureTag(tagId);
     	if (bindingResult.hasErrors()) {
     		uiModel.addAttribute("posteCandidatureTag", posteCandidatureTag);
             uiModel.addAttribute("posteCandidatureTagValue", posteCandidatureTagValue);
             return "admin/candidaturevaluetags/create";
         }
         uiModel.asMap().clear();
-        posteCandidatureTagValue.persist();
+        posteCandidatureTagValueDao.savePosteCandidatureTagValue(posteCandidatureTagValue);
         posteCandidatureTag.getValues().add(posteCandidatureTagValue);
-        return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(id.toString(), httpServletRequest);
+        return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(tagId.toString(), httpServletRequest);
     }
     
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
-    public String updateForm(@PathVariable("id") Long id, Model uiModel) {
-        populateEditForm(uiModel, PosteCandidatureTag.findPosteCandidatureTag(id));
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, posteCandidatureTagDao.findPosteCandidatureTag(id));
         uiModel.addAttribute("posteCandidatureTagValue", new PosteCandidatureTagValue());
         return "admin/candidaturetags/update";
     }
     
-    @RequestMapping(value = "/{id}", produces = "text/html")
-    public String show(@PathVariable("id") Long id, Model uiModel) {
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String show(@PathVariable Long id, Model uiModel) {
         return "redirect:/admin/candidaturetags/" + id + "?form";
     }
     
@@ -57,26 +70,61 @@ public class PosteCandidatureTagController {
             return "admin/candidaturetags/update";
         }
         uiModel.asMap().clear();
-        PosteCandidatureTag posteCandidatureTagOld = PosteCandidatureTag.findPosteCandidatureTag(posteCandidatureTag.getId());
+        PosteCandidatureTag posteCandidatureTagOld = posteCandidatureTagDao.findPosteCandidatureTag(posteCandidatureTag.getId());
         posteCandidatureTag.setValues(posteCandidatureTagOld.getValues());
-        posteCandidatureTag.merge();
+        posteCandidatureTagDao.savePosteCandidatureTag(posteCandidatureTag);
         return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(posteCandidatureTag.getId().toString(), httpServletRequest);
     }
     
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, final RedirectAttributes redirectAttributes, Model uiModel) {
-        PosteCandidatureTag posteCandidatureTag = PosteCandidatureTag.findPosteCandidatureTag(id);
-        if(PosteCandidature.countFindPosteCandidaturesByTag(posteCandidatureTag, null) == 0) {
-        	posteCandidatureTag.remove();
+    public String delete(@PathVariable Long id, final RedirectAttributes redirectAttributes, Model uiModel) {
+        PosteCandidatureTag posteCandidatureTag = posteCandidatureTagDao.findPosteCandidatureTag(id);
+        if(posteCandidatureDao.countFindPosteCandidaturesByTag(posteCandidatureTag, null) == 0) {
+        	posteCandidatureTagDao.deletePosteCandidatureTag(posteCandidatureTag);
         } else {
         	redirectAttributes.addFlashAttribute("deleteFailed", "deleteFailed");
         }
-        redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
-        redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
         uiModel.asMap().clear();
         return "redirect:/admin/candidaturetags";
     }
     
-}
 
+	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String create(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, posteCandidatureTag);
+            return "admin/candidaturetags/create";
+        }
+        uiModel.asMap().clear();
+        posteCandidatureTagDao.savePosteCandidatureTag(posteCandidatureTag);
+        return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(posteCandidatureTag.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new PosteCandidatureTag());
+        return "admin/candidaturetags/create";
+    }
+
+	@RequestMapping(produces = "text/html")
+    public String list(@PageableDefault(size = 10) Pageable pageable, Model uiModel) {
+        Page<PosteCandidatureTag> page = posteCandidatureTagDao.findPosteCandidatureTagEntries(pageable);
+        uiModel.addAttribute("candidaturetags", page);
+        return "admin/candidaturetags/list";
+    }
+
+	void populateEditForm(Model uiModel, PosteCandidatureTag posteCandidatureTag) {
+        uiModel.addAttribute("posteCandidatureTag", posteCandidatureTag);
+        uiModel.addAttribute("postecandidaturetagvalues", posteCandidatureTagValueDao.findAllPosteCandidatureTagValues());
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+        }
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
+    }
+}

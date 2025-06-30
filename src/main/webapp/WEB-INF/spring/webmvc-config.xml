@@ -18,18 +18,35 @@
     limitations under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd     http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+	    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	                        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!-- The controllers are autodetected POJOs labeled with the @Controller annotation. -->
-	<context:component-scan base-package="fr.univrouen.poste.web" use-default-filters="false">
+	<context:component-scan base-package="fr.univrouen.poste">
 		<context:include-filter expression="org.springframework.stereotype.Controller" type="annotation" />
+        <context:include-filter expression="org.springframework.web.bind.annotation.ControllerAdvice" type="annotation"/>
 	</context:component-scan>
 
+    <tx:annotation-driven/>
+
 	<!-- Turns on support for mapping requests to Spring MVC @Controller methods Also registers default Formatters and Validators for use across all @Controllers -->
-	<mvc:annotation-driven conversion-service="applicationConversionService" />
+    <mvc:annotation-driven conversion-service="applicationConversionService">
+        <mvc:argument-resolvers>
+            <bean class="fr.univrouen.poste.web.PrefAwarePageableResolver" scope="session">
+                <property name="pageSize" value="20"/>
+            </bean>
+        </mvc:argument-resolvers>
+    </mvc:annotation-driven>
 
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources -->
@@ -76,28 +93,37 @@
 		</property>
 	</bean-->
 
-	<!-- enable this for integration of file upload functionality -->
-	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" id="tilesViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
-	</bean>
-	<bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer" id="tilesConfigurer">
-		<property name="definitions">
-			<list>
-				<value>/WEB-INF/layouts/layouts.xml</value>
-				<!-- Scan views directory for Tiles configurations -->
-				<value>/WEB-INF/views/**/views.xml</value>
-			</list>
-		</property>
-	</bean>
 	<bean class="fr.univrouen.poste.web.ApplicationConversionServiceFactoryBean" id="applicationConversionService" />
 
-	<!-- enable support for Expression-based annotations in Spring Security -->
-	<sec:global-method-security pre-post-annotations="enabled">
-		<sec:expression-handler ref="expressionHandler" />
-	</sec:global-method-security>
-
     <mvc:interceptors>
-        <bean class="fr.univrouen.poste.utils.ConfigInterceptor" autowire="constructor" />
+        <ref bean="configInterceptor"/>
     </mvc:interceptors>
+
+    <!-- Snippet à insérer dans WEB-INF/spring/webmvc-config.xml : configuration Thymeleaf -->
+    <bean id="templateResolver" class="org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver">
+      <property name="prefix" value="/WEB-INF/templates/" />
+      <property name="suffix" value=".html" />
+      <property name="templateMode" value="HTML" />
+      <property name="characterEncoding" value="UTF-8" />
+      <property name="cacheable" value="false" />
+    </bean>
+
+    <bean id="templateEngine" class="org.thymeleaf.spring6.SpringTemplateEngine">
+      <property name="templateResolver" ref="templateResolver" />
+      <property name="additionalDialects">
+        <set>
+          <bean class="nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect" />
+          <bean class="org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect" />
+          <bean class="org.thymeleaf.dialect.springdata.SpringDataDialect"/>
+        </set>
+      </property>
+    </bean>
+
+    <bean id="thymeleafViewResolver" class="org.thymeleaf.spring6.view.ThymeleafViewResolver">
+      <property name="templateEngine" ref="templateEngine" />
+      <property name="order" value="0" />
+      <property name="characterEncoding" value="UTF-8" />
+    </bean>
+
 
 </beans>

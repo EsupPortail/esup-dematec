@@ -17,29 +17,26 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
+import fr.univrouen.poste.web.candidat.MyPosteCandidatureController;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
-import fr.univrouen.poste.web.candidat.MyPosteCandidatureController;
+import java.util.List;
 
 @RequestMapping("admin/multipostecandidatures")
 @Controller
 public class PosteCandidatureMultiManageController {
 
-	private final Logger log = Logger.getLogger(getClass());
+	final Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
+	@Resource
 	MyPosteCandidatureController myPosteCandidatureController;
 
 	

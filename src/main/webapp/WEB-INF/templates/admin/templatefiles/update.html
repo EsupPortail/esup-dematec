@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Fichiers templates - Création</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    
+    <form th:action="@{/admin/templatefiles/addFile}" th:object="${templateFile}" method="post" enctype="multipart/form-data">
+
+      <input type="hidden" th:field="*{id}" th:if="${templateFile.id != null}"/>
+      
+      <div>
+        <label for="file">Fichier</label>
+        <div>
+          <input type="file" id="file" name="file"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="templateFileType">Type de fichier template</label>
+        <div>
+          <select th:field="*{templateFileType}" id="templateFileType">
+            <option th:each="type : ${templateFileTypes}" th:value="${type}" th:text="${type}"></option>
+          </select>
+        </div>
+      </div>
+      
+      <div>
+        <button type="submit" class="btn btn-primary">Créer</button>
+        <a th:href="@{/admin/templatefiles}" class="btn">Annuler</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

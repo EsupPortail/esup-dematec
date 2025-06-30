@@ -17,19 +17,18 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.io.IOException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import fr.univrouen.poste.dao.AppliConfigDao;
+import fr.univrouen.poste.domain.AppliConfig;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
-import org.hibernate.cfg.Settings;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import fr.univrouen.poste.domain.AppliConfig;
+import java.io.IOException;
 
 @RequestMapping("/")
 @Controller
@@ -37,12 +36,16 @@ public class IndexController {
 
     @PersistenceContext
     transient EntityManager entityManager;
+
+	@Resource
+	AppliConfigDao appliConfigDao;
     
 	@RequestMapping
 	public String index(Model uiModel) throws IOException {
 
-		String textePremierePageCandidat = AppliConfig.getCacheTextePremierePageCandidat();
-		String textePremierePageMembre = AppliConfig.getCacheTextePremierePageMembre();
+		AppliConfig config = appliConfigDao.getAppliConfig();
+		String textePremierePageCandidat = config != null ? config.getTextePremierePageCandidat() : "";
+		String textePremierePageMembre = config != null ? config.getTextePremierePageMembre() : "";
 
 		uiModel.addAttribute("textePremierePageCandidat", textePremierePageCandidat);
 		uiModel.addAttribute("textePremierePageMembre", textePremierePageMembre);
@@ -53,12 +56,12 @@ public class IndexController {
 		return "index";
 	}
 
-	private String getHbm2ddlAuto() {
+	String getHbm2ddlAuto() {
 		Session session = entityManager.unwrap(Session.class);
 		SessionFactoryImpl sessionImpl = (SessionFactoryImpl)session.getSessionFactory();
-		Settings setting = sessionImpl.getSettings();
-		String hbm2ddlAuto = setting.isAutoCreateSchema() ? "create" : "update";
-		return hbm2ddlAuto;
+		// Dans Hibernate 6, on accède directement à la propriété de configuration
+		Object hbm2ddlProperty = sessionImpl.getProperties().get("hibernate.hbm2ddl.auto");
+		return hbm2ddlProperty != null ? hbm2ddlProperty.toString() : "none";
 	}
 
 }

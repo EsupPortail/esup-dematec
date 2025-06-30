@@ -17,10 +17,20 @@
  */
 package fr.univrouen.poste.web.candidat;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import fr.univrouen.poste.dao.AppliConfigDao;
+import fr.univrouen.poste.dao.PosteAPourvoirDao;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
+import fr.univrouen.poste.dao.UserDao;
+import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.domain.PosteAPourvoir;
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.services.PosteAPourvoirAvailableBean;
+import fr.univrouen.poste.services.PosteAPourvoirService;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,41 +41,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.services.PosteAPourvoirAvailableBean;
-import fr.univrouen.poste.services.PosteAPourvoirService;
+import java.util.List;
 
 @RequestMapping("addpostecandidatures")
 @Controller
 @Transactional
 public class CandidatAddPosteCandidatureController {
 
-	private final Logger log = Logger.getLogger(getClass());
+	final Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	LogService logService;
+	@Resource
+	UserDao userDao;
 
-	@Autowired
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
 	PosteAPourvoirService posteAPourvoirService;
+
+	@Resource
+	AppliConfigDao appliConfigDao;
 
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
     public String postesForm(Model uiModel) {   	
 		
-    	if(!AppliConfig.getCacheCandidatCanSignup()) {
+    	AppliConfig config = appliConfigDao.getAppliConfig();
+    	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
+    	if(!candidatCanSignup) {
     		return "redirect:/postecandidatures";
     	}
     	
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     	String emailAddress = auth.getName();
-		User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		User candidat = userDao.findUserByEmailAddress(emailAddress);
 		
-    	List<PosteAPourvoirAvailableBean> posteapourvoirs = posteAPourvoirService.getPosteAPourvoirAvailables(candidat);
-    	uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
+		if(candidat != null) {
+			List<PosteAPourvoirAvailableBean> posteapourvoirs = posteAPourvoirService.getPosteAPourvoirAvailables(candidat);
+			uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
+		}
         return "addpostecandidatures/index";
     }
     
@@ -73,7 +90,9 @@ public class CandidatAddPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
     public String addCandidature(@RequestParam(required=false) List<Long> posteIds, Model uiModel) {   	
     			
-    	if(!AppliConfig.getCacheCandidatCanSignup()) {
+    	AppliConfig config = appliConfigDao.getAppliConfig();
+    	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
+    	if(!candidatCanSignup) {
     		return "redirect:/postecandidatures";
     	}
     	
@@ -81,10 +100,12 @@ public class CandidatAddPosteCandidatureController {
     	
 	    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    	String emailAddress = auth.getName();
-			User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+			User candidat = userDao.findUserByEmailAddress(emailAddress);
 			
-	    	log.info("Candidatures sur les postes : " + posteIds + " pour le candidat " + candidat);
-	    	posteAPourvoirService.updateCandidatures(candidat, posteIds);
+			if(candidat != null) {
+				log.info("Candidatures sur les postes : " + posteIds + " pour le candidat " + candidat);
+				posteAPourvoirService.updateCandidatures(candidat, posteIds);
+			}
     	}
     	
     	return "redirect:/addpostecandidatures";
@@ -94,7 +115,9 @@ public class CandidatAddPosteCandidatureController {
 	@PreAuthorize("hasRole('ROLE_CANDIDAT')")
     public String delCandidature(@RequestParam(required=false) List<Long> posteIds, Model uiModel) {   	
     			
-    	if(!AppliConfig.getCacheCandidatCanSignup()) {
+    	AppliConfig config = appliConfigDao.getAppliConfig();
+    	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
+    	if(!candidatCanSignup) {
     		return "redirect:/postecandidatures";
     	}
     	
@@ -102,20 +125,23 @@ public class CandidatAddPosteCandidatureController {
     	
 	    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    	String emailAddress = auth.getName();
-			User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+			User candidat = userDao.findUserByEmailAddress(emailAddress);
 			
-    		for(Long posteId : posteIds) {   			
-    			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(posteId);
-    			PosteCandidature candidature = PosteCandidature.findPosteCandidaturesByCandidatAndPoste(candidat, poste).getSingleResult();
-    			if(candidature.getModification() == null) {
-    				candidature.remove();
-    				log.info("Candidatures annulées sur les postes : " + posteIds + " pour le candidat " + candidat);
-    			}
-    		}
+			if(candidat != null) {
+				for(Long posteId : posteIds) {   			
+					PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(posteId);
+					Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndPoste(candidat, poste);
+					if(!candidatures.isEmpty()) {
+						PosteCandidature candidature = candidatures.getContent().get(0);
+						if(candidature.getModification() == null) {
+							posteCandidatureDao.deletePosteCandidature(candidature);
+							log.info("Candidatures annulées sur les postes : " + posteIds + " pour le candidat " + candidat);
+						}
+					}
+				}
+			}
     	}
     	
     	return "redirect:/addpostecandidatures";
     }
-    
-    
 }

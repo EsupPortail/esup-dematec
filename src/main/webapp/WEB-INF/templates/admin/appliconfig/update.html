@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Configuration - Modification</title>
+  <link rel="stylesheet" th:href="@{/resources/css/bootstrap-wysihtml5.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/jquery.minicolors.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/jquery.datetimepicker-2.5.1.css}" />
+</head>
+<body>
+  <div layout:fragment="body" id="dematconfig">
+
+      <div class="well help">
+        <p>Ce formulaire vous permet de personnaliser votre application, notamment les différents textes et messages adressés à l'utilisateur final (candidat et/ou membre).</p>
+        <p>Concernant les éléments en HTML, on vous propose un éditeur WYSIWYG assez sommaire.</p>
+        <p>Cependant vous pouvez également :
+          <ul>
+            <li>éditer en HTML le source HTML via le bouton <a class="btn"><i class="icon-pencil"><!--  --></i></a></li>
+            <li>utiliser des éléments issus de bootstrap (technologie utilisée par l'application) notamment en faisant des copier/coller des composants et autres directement dans l'éditeur wysiwyg et ce depuis la documentation boostrap : <a href="http://twitter.github.com/bootstrap/base-css.html">http://twitter.github.com/bootstrap/base-css.html</a></li>
+          </ul>
+      </div>
+
+
+    <form id="fu_fr_univrouen_poste_domain_AppliConfig" th:action="@{/admin/appliconfig}" th:object="${appliConfig}" method="post">
+      <input type="hidden" name="_method" value="put"/>
+
+      <input type="hidden" th:field="*{id}"/>
+
+      
+      <div class="well">
+        <div id="_c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup_id">
+          <label for="c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup">
+            Laisser la possibilité à un anonyme de se créer un compte en tant que candidat (fonctionnement sans Galaxie):
+            <input type="checkbox" th:field="*{candidatCanSignup}" id="c_fr_univrouen_poste_domain_AppliConfig_candidatCanSignup"/>
+          </label>
+        </div>
+        <br/>
+        <div class="alert">En permettant aux candidats de s'inscrire directement dans EsupDematEC, vous changez le comportement de l'application : 
+          <ul>
+            <li>Les imports des fichiers Galaxie ne sont plus nécessaires.</li>
+            <li>La création de postes se fait via l'interface par formulaire web et vous devez positionner pour chaque poste une date de fin de déclaration de candidature (qui remplace 'Date fin candidat' et 'Date fin candidat actif') ; la 'Date de fin candidat' ne doit pas être dépassée pour que le bouton 'Créer un compte' soit disponible aux anonymes sur la page d'accueil de l'application.</li>
+            <li>Les anonymes ont donc la possibilité de se créer un compte dans l'application pour candidater sur les postes ouverts (avec des dates de fin de déclaration de candidature strictement plus grandes que la date du jour).</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Les différentes dates à paramétrer ci-dessous permettent d'interdire l'accès aux candidats et membres à partir d'une date donnée (incluse).
+          <ul>
+            <li><strong>Date fin candidat :</strong> date à partir de laquelle les candidats (non actifs) n'ont plus accès à l'application.</li>
+            <li><strong>Date fin candidat actif :</strong> date à partir de laquelle les candidats actifs n'ont plus accès à l'application (un candidat actif est un candidat qui a procédé à au moins un envoi de fichier - même si il a ensuite supprimé celui-ci).</li>
+            <li><strong>Date fin membre :</strong> date à partir de laquelle les membres n'ont plus accès à l'application.</li>
+          </ul>
+          Notez que pour les candidats retenus pour audition, la "Date fin candidat auditionnable" est quand à elle à paramétrer sur chaque poste (menu "Liste des postes").
+        </p>
+      </div>
+    </div>
+      
+      <div class="row-fluid">
+        <div class="span4">
+          <div>
+            <label for="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_dateendcandidat}"></span> :</label>
+            <input type="text" th:field="*{dateEndCandidat}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat_id"/>
+            <br/>
+          </div>
+        </div>
+        <div class="span4">
+          <div>
+            <label for="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_dateendcandidatactif}"></span> :</label>
+            <input type="text" th:field="*{dateEndCandidatActif}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif_id"/>
+            <br/>
+          </div>
+        </div>
+        <div class="span4">
+          <div>
+            <label for="_c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_dateendmembre}"></span> :</label>
+            <input type="text" th:field="*{dateEndMembre}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre_id"/>
+            <br/>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_titre_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_titre}"></span> :</label>
+        <textarea th:field="*{titre}" id="_c_fr_univrouen_poste_domain_AppliConfig_titre_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_imageUrl_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_imageurl}"></span> :</label>
+        <input type="text" th:field="*{imageUrl}" id="_c_fr_univrouen_poste_domain_AppliConfig_imageUrl_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_piedPage_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_piedpage}"></span> :</label>
+        <textarea th:field="*{piedPage}" id="_c_fr_univrouen_poste_domain_AppliConfig_piedPage_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_textePremierePageAnonyme_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textepremierepageanonyme}"></span> :</label>
+        <textarea th:field="*{textePremierePageAnonyme}" id="_c_fr_univrouen_poste_domain_AppliConfig_textePremierePageAnonyme_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_textePremierePageCandidat_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textepremierepagecandidat}"></span> :</label>
+        <textarea th:field="*{textePremierePageCandidat}" id="_c_fr_univrouen_poste_domain_AppliConfig_textePremierePageCandidat_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteCandidatAideCandidatures_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textecandidataidecandidatures}"></span> :</label>
+        <textarea th:field="*{texteCandidatAideCandidatures}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteCandidatAideCandidatures_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteCandidatAideCandidatureDepot_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textecandidataidecandidaturedepot}"></span> :</label>
+        <textarea th:field="*{texteCandidatAideCandidatureDepot}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteCandidatAideCandidatureDepot_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_textePremierePageMembre_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textepremierepagemembre}"></span> :</label>
+        <textarea th:field="*{textePremierePageMembre}" id="_c_fr_univrouen_poste_domain_AppliConfig_textePremierePageMembre_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMembreAideCandidatures_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemembreaidecandidatures}"></span> :</label>
+        <textarea th:field="*{texteMembreAideCandidatures}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMembreAideCandidatures_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_mailFrom_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_mailfrom}"></span> :</label>
+        <input type="text" th:field="*{mailFrom}" id="_c_fr_univrouen_poste_domain_AppliConfig_mailFrom_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_mailSubject_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_mailsubject}"></span> :</label>
+        <input type="text" th:field="*{mailSubject}" id="_c_fr_univrouen_poste_domain_AppliConfig_mailSubject_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMailActivation_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemailactivation}"></span> :</label>
+        <textarea th:field="*{texteMailActivation}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMailActivation_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCandidatures_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemailnewcandidatures}"></span> :</label>
+        <textarea th:field="*{texteMailNewCandidatures}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCandidatures_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_mailSubjectMembre_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_mailsubjectmembre}"></span> :</label>
+        <input type="text" th:field="*{mailSubjectMembre}" id="_c_fr_univrouen_poste_domain_AppliConfig_mailSubjectMembre_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMailActivationMembre_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemailactivationmembre}"></span> :</label>
+        <textarea th:field="*{texteMailActivationMembre}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMailActivationMembre_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCommissions_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemailnewcommissions}"></span> :</label>
+        <textarea th:field="*{texteMailNewCommissions}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMailNewCommissions_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemailpasswordoublie}"></span> :</label>
+        <textarea th:field="*{texteMailPasswordOublie}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMailPasswordOublie_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_mailreturnreceiptmodetype}"></span> :</label>
+        <select th:field="*{mailReturnReceiptModeType}" id="_c_fr_univrouen_poste_domain_AppliConfig_mailReturnReceiptModeType_id" size="10" required="required">
+          <option th:each="type : ${receiptModeTypes}" th:value="${type}" th:text="${type}">Type</option>
+        </select>
+        <br/>
+      </div>
+      
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Avec l'option précédente positionnée à <i>Each_UPLOAD</i>, vous avez la possibilité d'utiliser dans le texte du mail les variables <b>@@numEmploi@@</b> et <b>@@filename@@</b> ; votre texte pourra ainsi être du type: </p>
+        <pre>Bonjour.
+Votre fichier @@fileName@@ a bien été chargé dans l'application de l'Université ESUP pour le poste @@numEmploi@@.
+--
+Université ESUP - Direction des Ressources Humaines</pre>
+        <p>Avec l'option précédente positionnée à <i>Each_SESSION</i>, vous avez la possibilité d'utiliser la variable <b>@@messageBody@@</b> simplement, EsupDematEC se chargeant d'un formattage texte pour énumérer tous les postes et tous les fichiers s'y rattachant : </p>
+        <pre>Bonjour.
+Merci d'avoir utilisé l'application de l'Université ESUP pour le dépôt de vos candidatures.
+Voici l'état actuel de vos dépôts : 
+@@messageBody@@
+--
+Université ESUP - Direction des Ressources Humaines</pre>
+      </div>
+    </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemailcandidatreturnreceipt}"></span> :</label>
+        <textarea th:field="*{texteMailCandidatReturnReceipt}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatReturnReceipt_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_texteentetemailcandidatauditionnable}"></span> :</label>
+        <textarea th:field="*{texteEnteteMailCandidatAuditionnable}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteEnteteMailCandidatAuditionnable_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textepiedpagemailcandidatauditionnable}"></span> :</label>
+        <textarea th:field="*{textePiedpageMailCandidatAuditionnable}" id="_c_fr_univrouen_poste_domain_AppliConfig_textePiedpageMailCandidatAuditionnable_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Les codes couleurs ci-dessous permettent aux managers et admins (uniquement) de distinguer les candidatures marquées comme Vue, Vue_Incomplet, etc.</p>
+      </div>
+    </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturenonvue}"></span> :</label>
+        <input type="text" th:field="*{colorCandidatureNonVue}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevue}"></span> :</label>
+        <input type="text" th:field="*{colorCandidatureVue}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevueincomplet}"></span> :</label>
+        <input type="text" th:field="*{colorCandidatureVueIncomplet}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevuemodifiedepuis}"></span> :</label>
+        <input type="text" th:field="*{colorCandidatureVueModifieDepuis}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevueincompletmodifiedepuis}"></span> :</label>
+        <input type="text" th:field="*{colorCandidatureVueIncompletModifieDepuis}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Par défaut, les membres ne peuvent pas supprimer les rapports de commission qui sont uniquement en lecture seul.</p>
+        <p>On peut cependant les autoriser à supprimer leur propre rapport en activant l'option ci-dessous.</p>
+      </div>
+    </div>
+      
+      <div>
+        <label for="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile">
+          Membre peut supprimer fichier review :
+          <input type="checkbox" th:field="*{membreSupprReviewFile}" id="c_fr_univrouen_poste_domain_AppliConfig_membreSupprReviewFile"/>
+        </label>
+      </div>
+      <br/>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableEnumDefault_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_candidaturerecevableenumdefault}"></span> :</label>
+        <select th:field="*{candidatureRecevableEnumDefault}" id="_c_fr_univrouen_poste_domain_AppliConfig_candidatureRecevableEnumDefault_id" size="3">
+          <option th:each="recevable : ${recevableEnumList}" th:value="${recevable}" th:text="${recevable}">Type</option>
+        </select>
+        <br/>
+      </div>
+      
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>L'option ci-dessous permet aux membres de commission d'accéder à des documents partagés à l'ensemble de la commission pour un poste donné.</p>
+        <p>Les présidents de commission, tout comme les gestionnaires de l'application, ont la possibilité d'ajouter des documents dans ces espaces.</p>
+      </div>
+    </div>
+      
+      <div>
+        <label for="c_fr_univrouen_poste_domain_AppliConfig_postesMenu4Members">
+          Menu postes pour membres :
+          <input type="checkbox" th:field="*{postesMenu4Members}" id="c_fr_univrouen_poste_domain_AppliConfig_postesMenu4Members"/>
+        </label>
+      </div>
+      <br/>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_textePostesMenu4Members_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textepostesmenu4members}"></span> :</label>
+        <textarea th:field="*{textePostesMenu4Members}" id="_c_fr_univrouen_poste_domain_AppliConfig_textePostesMenu4Members_id" class="wysiwyg" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Vous avez la possibilité de permettre aux gestionnaires et présidents de poste d'affecter des rapporteurs à une candidature.</p>
+        <p>Si cette option est activée, le code couleur ci-dessous permet aux membres de commissions de distinguer les candidatures pour lesquelles ils ont été nommés rapporteurs</p>
+      </div>
+    </div>
+      
+      <div>
+        <label for="c_fr_univrouen_poste_domain_AppliConfig_presidentReportersView">
+          Vue rapporteurs président :
+          <input type="checkbox" th:field="*{presidentReportersView}" id="c_fr_univrouen_poste_domain_AppliConfig_presidentReportersView"/>
+        </label>
+      </div>
+      <br/>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorreportertag}"></span> :</label>
+        <input type="text" th:field="*{colorReporterTag}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Vous avez la possibilité de permettre aux gestionnaires de marquer comme laureats des candidatures. Lors de cette action, un mail peut ainsi leur être envoyé pour leur informer de cela.</p>
+      </div>
+    </div>
+      
+      <div>
+        <label for="c_fr_univrouen_poste_domain_AppliConfig_laureatEnable">
+          Lauréat activé :
+          <input type="checkbox" th:field="*{laureatEnable}" id="c_fr_univrouen_poste_domain_AppliConfig_laureatEnable"/>
+        </label>
+      </div>
+      <br/>
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatLaureat_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_textemailcandidatlaureat}"></span> :</label>
+        <textarea th:field="*{texteMailCandidatLaureat}" id="_c_fr_univrouen_poste_domain_AppliConfig_texteMailCandidatLaureat_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div class="submit" id="fu_fr_univrouen_poste_domain_AppliConfig_submit">
+        <input id="proceed" type="submit" value="Mettre à jour" class="btn btn-success"/>
+      </div>
+    </form>
+  
+  <!-- Scripts pour WYSIWYG et color picker -->
+  <th:block layout:fragment="scripts">
+    <script th:src="@{/resources/js/wysihtml5-0.3.0.js}"></script>
+    <script th:src="@{/resources/js/bootstrap-wysihtml5.js}"></script>
+    <script th:src="@{/resources/js/bootstrap-wysihtml5.fr-FR.js}"></script>
+    <script th:src="@{/resources/js/jquery.minicolors.min.js}"></script>
+    <script th:src="@{/resources/js/jquery.datetimepicker-2.5.1.full.min.js}"></script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      $(document).ready(function(){
+        var bootstrapCssUrl = [[@{/resources/css/bootstrap.min.css}]]
+        var docsCssUrl = [[@{/resources/css/docs.css}]]
+        var dematCssUrl = [[@{/resources/css/demat.css}]]
+        
+        $('textarea.wysiwyg').wysihtml5({
+          locale: "fr-FR",
+          stylesheets: [bootstrapCssUrl, docsCssUrl, dematCssUrl],
+          parser: function(x) {return x;},
+          image: false,
+          lists: true,
+          color: true,
+          html: true
+        });
+        
+        $.datetimepicker.setLocale('fr');
+        $("#_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat_id").datetimepicker({format:'d/m/Y H:i'});
+        $("#_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif_id").datetimepicker({format:'d/m/Y H:i'});
+        $("#_c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre_id").datetimepicker({format:'d/m/Y H:i'});
+        
+        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue_id').minicolors();
+        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet_id').minicolors();
+        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis_id').minicolors();
+        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis_id').minicolors();
+        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue_id').minicolors();
+        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag_id').minicolors();
+      });
+      /*]]>*/
+    </script>
+  </th:block>
+  </div>
+</body>
+</html>

@@ -17,24 +17,31 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.util.List;
-
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import fr.univrouen.poste.dao.LogAuthDao;
+import fr.univrouen.poste.dao.UserDao;
+import fr.univrouen.poste.domain.LogAuth;
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
+import jakarta.annotation.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import fr.univrouen.poste.domain.LogAuth;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequestMapping("/admin/logauths")
 @Controller
-@RooWebScaffold(path = "admin/logauths", formBackingObject = LogAuth.class, create=false, update=false)
 public class LogAuthController {
+
+    @Resource
+    LogAuthDao logAuthDao;
+
+    @Resource
+    UserDao userDao;
 	
     @ModelAttribute("command") 
     public LogSearchCriteria getLogSearchCriteria() {
@@ -43,31 +50,63 @@ public class LogAuthController {
 
 	@ModelAttribute("users")
 	public List<String> getUserIds() {
-		List<String> userIds = User.findAllUserIds().getResultList();
+		List<String> userIds = new java.util.ArrayList<>(userDao.findAllUserIds());
 		userIds.add(0, "");
 		return userIds;
 	}
     
     @RequestMapping(params = "find=ByActionEqualsAndUserIdEquals", method = RequestMethod.GET)
-    public String findLogAuthsByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String findLogAuthsByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
     	if("".equals(searchCriteria.getStatus()) && "".equals(searchCriteria.getUserId())) {
-    		return this.list(page, size, sortFieldName, sortOrder, uiModel);
+    		return this.list(pageable, sortFieldName, sortOrder, uiModel);
     	}
-    	if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logauths", LogAuth.findLogAuths(searchCriteria, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) LogAuth.countFindLogAuths(searchCriteria) / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+    	if (pageable.isPaged()) {
+            List<LogAuth> results = logAuthDao.findLogAuths(searchCriteria, sortFieldName, sortOrder);
+            int start = (int) pageable.getOffset();
+            int end = Math.min(start + pageable.getPageSize(), results.size());
+            List<LogAuth> sub = start <= end ? results.subList(start, end) : new ArrayList<>();
+            uiModel.addAttribute("logauths", new PageImpl<>(sub, pageable, results.size()));
         } else {
-            uiModel.addAttribute("logauths", LogAuth.findLogAuths(searchCriteria, sortFieldName, sortOrder).getResultList());
+            uiModel.addAttribute("logauths", logAuthDao.findLogAuths(searchCriteria, sortFieldName, sortOrder));
         }    
-        
         uiModel.addAttribute("command", searchCriteria);
         uiModel.addAttribute("finderview", true);
-        
         addDateTimeFormatPatterns(uiModel);
         return "admin/logauths/list";
     }
     
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String show(@PathVariable Long id, Model uiModel) {
+        addDateTimeFormatPatterns(uiModel);
+        uiModel.addAttribute("logauth", logAuthDao.findLogAuth(id));
+        uiModel.addAttribute("itemId", id);
+        return "admin/logauths/show";
+    }
+
+	@RequestMapping(produces = "text/html")
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+        if (pageable.isPaged()) {
+            Page<LogAuth> result = logAuthDao.findLogAuthEntries(pageable, sortFieldName, sortOrder);
+            uiModel.addAttribute("logauths", result);
+        } else {
+            uiModel.addAttribute("logauths", logAuthDao.findAllLogAuths(sortFieldName, sortOrder));
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/logauths/list";
+    }
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        LogAuth logAuth = logAuthDao.findLogAuth(id);
+        logAuthDao.deleteLogAuth(logAuth);
+        uiModel.asMap().clear();
+        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
+        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        return "redirect:/admin/logauths";
+    }
+
+	void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("logAuth_actiondate_date_format", "dd/MM/yyyy HH:mm");
+    }
 }

@@ -17,6 +17,7 @@
  */
 package fr.univrouen.poste.web;
 
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.EmailService;
 import fr.univrouen.poste.services.LogService;
@@ -32,30 +33,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
-import javax.persistence.TypedQuery;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import java.util.List;
 
 @RequestMapping("/forgotpassword/**")
 @Controller
 @Transactional
 public class ForgotPasswordController {
 
-	@Autowired
-	private LogService logService;
+	@Resource
+	LogService logService;
 	
     @Resource
-    private transient EmailService emailService;
+    transient EmailService emailService;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	@Resource
+	PasswordEncoder passwordEncoder;
 	
-	@Autowired
-	private ForgotChangePasswordValidator validator;
+	@Resource
+	ForgotChangePasswordValidator validator;
 	
-	@Autowired
+	@Resource
 	PasswordService passwordService;
+
+	@Resource
+	UserDao userDao;
 
     @ModelAttribute("forgotpasswordForm")
     public ForgotPasswordForm formBackingObject() {
@@ -72,9 +76,9 @@ public class ForgotPasswordController {
         if (result.hasErrors()) {
         	return "forgotpassword/index";
         } else {
-        	TypedQuery<User> userQuery = User.findUsersByEmailAddressAndActivationDateIsNotNull(form.getEmailAddress().trim(), null, null);
-        	if(null!=userQuery && !userQuery.getResultList().isEmpty()){
-        		User user = userQuery.getSingleResult();
+        	List<User> users = userDao.findUsersByEmailAddressAndActivationDateIsNotNull(form.getEmailAddress().trim());
+        	if(users != null && !users.isEmpty()){
+        		User user = users.get(0);
 				passwordService.sendPasswordActivationKeyMail(user, request.getRemoteAddr());
 			} else {
         		logService.logActionAuth(LogService.AUTH_PASSWORD_FORGOT_FAILED, form.getEmailAddress(), request.getRemoteAddr());
@@ -86,8 +90,8 @@ public class ForgotPasswordController {
 
     @RequestMapping(value = "/forgotpassword/formChange", method = RequestMethod.GET)
     public String modifyPasswordFormWithActivationKey(@RequestParam String activationKey, Model model) {
-        TypedQuery<User> userQuery = User.findUsersByActivationKey(activationKey);
-        if(null!=userQuery && !userQuery.getResultList().isEmpty()){
+        List<User> users = userDao.findUsersByActivationKey(activationKey);
+        if(users != null && !users.isEmpty()){
         	ForgotChangePasswordForm changePasswordForm = new ForgotChangePasswordForm();
         	changePasswordForm.setActivationKey(activationKey);
         	model.addAttribute("changePasswordForm", changePasswordForm);
@@ -101,14 +105,14 @@ public class ForgotPasswordController {
 			BindingResult result, HttpServletRequest request) {
 		validator.validate(form, result);
 		if (result.hasErrors()) {
-			return "changepassword/index"; // back to form
+			return "changepassword/index";
 		}
-        TypedQuery<User> userQuery = User.findUsersByActivationKey(form.getActivationKey());
-        if(null!=userQuery && !userQuery.getResultList().isEmpty()){
-        	User user = userQuery.getSingleResult();
+        List<User> users = userDao.findUsersByActivationKey(form.getActivationKey());
+        if(users != null && !users.isEmpty()){
+        	User user = users.get(0);
         	user.setPassword(passwordEncoder.encode(form.getNewPassword()));
         	user.setActivationKey(null);
-        	user.merge();
+        	userDao.saveUser(user);
         }
         return "redirect:/";
     }

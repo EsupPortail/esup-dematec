@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Imports Excel Commission - Détails</title>
+</head>
+<body>
+<div layout:fragment="body">
+
+  <div class="mb-3">
+    <a th:href="@{/admin/commissionexcels/{id}/file(id=${commissionexcel.id})}" class="btn btn-primary">
+      Fichier original
+    </a>
+  </div>
+
+  <hr/>
+
+  <table class="table table-bordered table-striped">
+    <thead th:if="${not #lists.isEmpty(commissionexcel.cells)}">
+    <tr>
+      <th th:each="cell : ${commissionexcel.cells[0]}" th:text="${cell}"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cellRow, iterStat : ${commissionexcel.cells}" th:if="${not iterStat.first}">
+      <td th:each="cell : ${cellRow}" th:text="${cell}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <hr/>
+  <div>
+    <a th:href="@{/admin/commissionexcels}" class="btn btn-default">Retour</a>
+  </div>
+</div>
+</body>
+</html>

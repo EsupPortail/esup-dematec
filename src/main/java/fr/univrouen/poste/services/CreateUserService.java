@@ -17,11 +17,14 @@
  */
 package fr.univrouen.poste.services;
 
-import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.dao.AppliConfigDao;
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.web.UserRegistrationForm;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.text.WordUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,31 +34,37 @@ import java.util.Random;
 @Service
 public class CreateUserService {
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	@Resource
+	PasswordEncoder passwordEncoder;
 	
-	@Autowired
+	@Resource
 	EmailService emailService;
 
+	@Resource
+	AppliConfigDao appliConfigDao;
+
+	@Resource
+	UserDao userDao;
+
 	public User createCandidatUser(UserRegistrationForm userRegistration) {
-	    String mailSubject = AppliConfig.getCacheMailSubject();
-	    String mailMessage = AppliConfig.getCacheTexteMailActivation();
+	    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
+	    String mailMessage = appliConfigDao.getAppliConfig().getTexteMailActivation();
 	    User user = this.createUser(userRegistration, mailSubject, mailMessage);
 	    // default numCandidat == email
 	    user.setNumCandidat(user.getEmailAddress());
-	    user.merge();
+		userDao.saveUser(user);
 	    return user;
     }
 
 	public User createMembreUser(UserRegistrationForm userRegistration) {
-	    String mailSubject = AppliConfig.getCacheMailSubjectMembre();
-	    String mailMessage = AppliConfig.getCacheTexteMailActivationMembre();
+	    String mailSubject = appliConfigDao.getAppliConfig().getMailSubjectMembre();
+	    String mailMessage = appliConfigDao.getAppliConfig().getTexteMailActivationMembre();
 	    return this.createUser(userRegistration, mailSubject, mailMessage);
     }
 
-	private User createUser(UserRegistrationForm userRegistration, String mailSubject, String mailMessage) {
+	User createUser(UserRegistrationForm userRegistration, String mailSubject, String mailMessage) {
 	    Random random = new Random(System.currentTimeMillis());
 	    String activationKey = "activationKey" + Math.abs(random.nextInt());
 
@@ -76,10 +85,10 @@ public class CreateUserService {
 		}
 	    user.setActivationKey(activationKey);
 	    user.setEnabled(true);
-	    user.persist();
+	    userDao.saveUser(user);
 	    
 	    String mailTo = user.getEmailAddress();
-	    String mailFrom = AppliConfig.getCacheMailFrom();
+	    String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
 
 	    mailMessage = mailMessage.replaceAll("@@mailAddress@@", mailTo);
 	    mailMessage = mailMessage.replaceAll("@@activationKey@@", activationKey);
@@ -89,7 +98,7 @@ public class CreateUserService {
 	    if(emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage)) {
 	    	logger.warn("User with email " + user.getEmailAddress() + " is created and we sent him an email");
 	    } else {
-	    	user.remove();
+			userDao.deleteUser(user);
 	    	return null;
 	    }    	
 	    

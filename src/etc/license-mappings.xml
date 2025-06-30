@@ -13,25 +13,25 @@
 	<license>Apache License, Version 2.0</license>
     </artifact>
     <artifact>
-        <groupId>org.esupportail</groupId>
+        <groupId>fr.univrouen</groupId>
         <artifactId>EsupTwitter</artifactId>
         <version>0.6</version>
 	<license>Apache License, Version 2.0</license>
     </artifact>
     <artifact>
-        <groupId>org.esupportail</groupId>
+        <groupId>fr.univrouen</groupId>
         <artifactId>esup-commons2-core</artifactId>
         <version>0.2.8</version>
 	<license>GNU General Public License</license>
     </artifact>
     <artifact>
-        <groupId>org.esupportail</groupId>
+        <groupId>fr.univrouen</groupId>
         <artifactId>esup-commons2-springmvc-portlet</artifactId>
         <version>0.2.8</version>
 	<license>GNU General Public License</license>
     </artifact>
     <artifact>
-        <groupId>org.esupportail</groupId>
+        <groupId>fr.univrouen</groupId>
         <artifactId>esup-commons2-web</artifactId>
         <version>0.2.8</version>
 	<license>GNU General Public License</license>

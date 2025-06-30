@@ -1,19 +1,20 @@
 package fr.univrouen.poste.web.searchcriteria;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
 import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
-import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.PosteCandidatureTag;
 import fr.univrouen.poste.domain.PosteCandidatureTagValue;
+import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.TemplateFile;
 import fr.univrouen.poste.domain.User;
+import lombok.Getter;
+import lombok.Setter;
 
-@RooJavaBean
+import java.util.List;
+import java.util.Map;
+
+@Getter
+@Setter
 public class PosteCandidatureSearchCriteria {
 
 	RecevableEnum recevable;
@@ -25,7 +26,11 @@ public class PosteCandidatureSearchCriteria {
 	List<String> numEmploiPostes;
 	
 	List<String> emailCandidats;
-	
+
+	List<PosteAPourvoir> postes;
+
+	List<User> candidats;
+
 	List<ReviewStatusTypes> reviewStatus;
 	
 	String searchText;
@@ -33,21 +38,5 @@ public class PosteCandidatureSearchCriteria {
 	TemplateFile templateFile;
 	
     Map<PosteCandidatureTag, PosteCandidatureTagValue> tags;
-
-	public List<PosteAPourvoir> getPostes() {
-		List<PosteAPourvoir> postes = null;
-		if(numEmploiPostes!=null && !numEmploiPostes.isEmpty()) {
-			postes = PosteAPourvoir.findPosteAPourvoirsByNumEmplois(numEmploiPostes);
-		}
-		return postes;
-	}
-
-	public List<User> getCandidats() {
-		List<User> candidats = null;
-		if(emailCandidats!=null && !emailCandidats.isEmpty()) {
-			candidats = User.findUsersByEmailAddresses(emailCandidats);
-		}
-		return candidats;
-	}
 
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header id="overview" class="subhead page-header" th:fragment="header">
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span3 span-demat-left">
+        <a th:href="@{/}" th:title="#{button_home}">
+          <img th:src="@{${imageUrl}}" alt="Logo"/>
+        </a>
+      </div>
+      <div class="span9 span-demat-right">
+        <h2 th:text="${title}">Title</h2>
+        <h4 th:text="${subTitle}">Subtitle</h4>
+      </div>
+    </div>
+  </div>
+</header>
+</body>
+</html>

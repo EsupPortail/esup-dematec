@@ -1,53 +1,59 @@
 package fr.univrouen.poste.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord
+@Entity
+@Getter
+@Setter
 public class AppliConfigFileType {
 	
 	public static final List<String> fieldNames4OrderClauseFilter = Arrays.asList("typeTitle", "typeDescription", "candidatureFileMoSizeMax", "candidatureNbFileMax", "candidatureContentTypeRestrictionRegexp", "candidatureFilenameRestrictionRegexp", "id", "listIndex", "listIndex, id");
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
+
+    @Column(columnDefinition="TEXT")
+	String typeTitle;
 	
 	@Column(columnDefinition="TEXT")
-	private String typeTitle;
-	
-	@Column(columnDefinition="TEXT")
-	private String typeDescription;
+	String typeDescription;
 	
     @Column
     @NotNull
-	private Long candidatureFileMoSizeMax = new Long(-1); 
+	Long candidatureFileMoSizeMax = Long.valueOf(-1);
 	
     @Column
     @NotNull
-	private Long candidatureNbFileMax = new Long(-1); 
+	Long candidatureNbFileMax = Long.valueOf(-1);
 	
     @Column(columnDefinition="TEXT")
-	private String candidatureContentTypeRestrictionRegexp = ".*"; 
+	String candidatureContentTypeRestrictionRegexp = ".*"; 
     
     @Column(columnDefinition="TEXT")
-	private String candidatureFilenameRestrictionRegexp = ".*";
+	String candidatureFilenameRestrictionRegexp = ".*";
 
     @Column
     @NotNull
-	private Long listIndex = new Long(0); 
-    
-	public static AppliConfigFileType getDefaultFileType() {
-		return AppliConfigFileType.findAllAppliConfigFileTypes().get(0);
-	} 
-	
-	public Long getListIndex() {
-		return listIndex == null ? Long.valueOf(0) : listIndex;
-	}
-	
+	Long listIndex = Long.valueOf(0);
+
+	public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
 }
 

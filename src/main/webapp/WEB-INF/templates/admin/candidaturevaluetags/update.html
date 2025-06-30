@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Valeurs tags - Modification</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Modifier Valeurs tags</h2>
+    
+    <form id="fu_fr_univrouen_poste_domain_PosteCandidatureTagValue" th:action="@{/admin/candidaturevaluetags/{id}(id=${posteCandidatureTagValue.id})}" th:object="${posteCandidatureTagValue}" method="post">
+      <input type="hidden" name="_method" value="put"/>
+
+      <input type="hidden" th:field="*{id}"/>
+
+      
+      <div id="_c_fr_univrouen_poste_domain_PosteCandidatureTagValue_value_id">
+        <label for="_c_fr_univrouen_poste_domain_PosteCandidatureTagValue_value_id"><span th:text="#{label_fr_univrouen_poste_domain_postecandidaturetagvalue_value}"></span> :</label>
+        <input type="text" th:field="*{value}" id="_c_fr_univrouen_poste_domain_PosteCandidatureTagValue_value_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div class="submit" id="fu_fr_univrouen_poste_domain_PosteCandidatureTagValue_submit">
+        <input id="proceed" type="submit" value="Mettre à jour" class="btn btn-success"/>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

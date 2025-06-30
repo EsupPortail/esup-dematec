@@ -17,22 +17,39 @@
  */
 package fr.univrouen.poste.utils;
 
+import fr.univrouen.poste.dao.*;
+import fr.univrouen.poste.domain.*;
+import fr.univrouen.poste.services.AppliConfigService;
+import jakarta.annotation.Resource;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.stereotype.Service;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-import org.springframework.security.access.PermissionEvaluator;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
-
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.MemberReviewFile;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
-import fr.univrouen.poste.domain.User;
-
+@Service
 public class PostePermissionEvaluator implements PermissionEvaluator {
+
+	@Resource
+	AppliConfigService appliConfigService;
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
+	@Resource
+	PosteCandidatureFileDao posteCandidatureFileDao;
+
+	@Resource
+	MemberReviewFileDao memberReviewFileDao;
 
 	@Override
 	public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
@@ -58,39 +75,39 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 		
 		if("delFile".equals(permissionKey)) {
         	Long id = (Long) targetDomainObject;
-        	PosteCandidatureFile pcFile = PosteCandidatureFile.findPosteCandidatureFile(id);
+        	PosteCandidatureFile pcFile = posteCandidatureFileDao.findPosteCandidatureFile(id);
 			return pcFile.getWriteable();
 		}
 		
 		if("delMemberReviewFile".equals(permissionKey)) {
-			Boolean confSupprReviewFile = AppliConfig.getCacheMembreSupprReviewFile();
+			Boolean confSupprReviewFile = appliConfigService.getCacheMembreSupprReviewFile();
 			if(!confSupprReviewFile) {
 				return false;
 			}
         	Long id = (Long) targetDomainObject;
-        	MemberReviewFile reviewFile = MemberReviewFile.findMemberReviewFile(id);
-        	User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+        	MemberReviewFile reviewFile = memberReviewFileDao.findMemberReviewFile(id);
+        	User user = userDao.findUsersByEmailAddress(email);
 			return reviewFile.getMember().equals(user);
 		}
 		
 		if("manageReporters".equals(permissionKey)) {
 			Long id = (Long) targetDomainObject;
-        	PosteCandidature pc = PosteCandidature.findPosteCandidature(id);
-        	User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+        	PosteCandidature pc = posteCandidatureDao.findPosteCandidature(id);
+        	User user = userDao.findUsersByEmailAddress(email);
 			return pc.getPoste().getPresidents()!=null && pc.getPoste().getPresidents().contains(user);
 		}
 		
 		if("viewposte".equals(permissionKey)) {
 			Long id = (Long) targetDomainObject;
-			PosteAPourvoir posteAPourvoir = PosteAPourvoir.findPosteAPourvoir(id);
-        	User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+			PosteAPourvoir posteAPourvoir = posteAPourvoirDao.findPosteAPourvoir(id);
+        	User user = userDao.findUsersByEmailAddress(email);
 			return posteAPourvoir!= null && posteAPourvoir.getMembres()!=null &&  posteAPourvoir.getMembres().contains(user);
 		}
 		
 		if("manageposte".equals(permissionKey)) {
 			Long id = (Long) targetDomainObject;
-			PosteAPourvoir posteAPourvoir = PosteAPourvoir.findPosteAPourvoir(id);
-        	User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+			PosteAPourvoir posteAPourvoir = posteAPourvoirDao.findPosteAPourvoir(id);
+        	User user = userDao.findUsersByEmailAddress(email);
 			return posteAPourvoir!= null && posteAPourvoir.getPresidents()!=null &&  posteAPourvoir.getPresidents().contains(user);
 		}
 		
@@ -104,11 +121,11 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         }
         else {
         	Long id = (Long) targetDomainObject;
-        	pc = PosteCandidature.findPosteCandidature(id);
+        	pc = posteCandidatureDao.findPosteCandidature(id);
         }
         
         if(pc != null) {
-	        User user = User.findUsersByEmailAddress(email, null, null).getSingleResult();
+	        User user = userDao.findUsersByEmailAddress(email);
 	        
 	        if("review".equals(permissionKey)) {
         		PosteAPourvoir poste = pc.getPoste();
@@ -117,21 +134,17 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        
 	        if(isCandidat && pc.getCandidat().equals(user)) {
 	        	
-	        	if(AppliConfig.getCacheCandidatCanSignup()) {
+	        	if(appliConfigService.getCacheCandidatCanSignup()) {
 	        		Date currentTime = new Date();
-	        		if((pc.getAuditionnable() || (pc.getPoste().getDateEndSignupCandidat() == null || currentTime.compareTo(pc.getPoste().getDateEndSignupCandidat()) > 0)) && 
-	        				(!pc.getAuditionnable() || (pc.getPoste().getDateEndCandidatAuditionnable() == null || currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) > 0))) {
-	        			return false;
-	        		} else {
-	        			return true;
-	        		}
+                    return (!pc.getAuditionnable() && (pc.getPoste().getDateEndSignupCandidat() != null && currentTime.compareTo(pc.getPoste().getDateEndSignupCandidat()) <= 0)) ||
+                            (pc.getAuditionnable() && (pc.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) <= 0));
 	        	} else {
 	        	
 		        	if(pc.getCandidat().equals(user)) {
 		        		// restrictions si phase auditionnable
 		        		Date currentTime = new Date();     
-		    			if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 && 
-		    				currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) {
+		    			if(currentTime.compareTo(appliConfigService.getCacheDateEndCandidat()) > 0 &&
+		    				currentTime.compareTo(appliConfigService.getCacheDateEndCandidatActif()) > 0) {
 		    				return pc.getAuditionnable() && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;
 		    			} else {
 		    				return true;

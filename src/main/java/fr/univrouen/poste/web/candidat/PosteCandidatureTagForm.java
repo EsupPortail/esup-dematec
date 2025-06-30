@@ -7,7 +7,7 @@ import fr.univrouen.poste.domain.PosteCandidatureTagValue;
 
 public class PosteCandidatureTagForm {
 	
-	 private Map<PosteCandidatureTag, PosteCandidatureTagValue> tags;
+	 Map<PosteCandidatureTag, PosteCandidatureTagValue> tags;
 
 	public Map<PosteCandidatureTag, PosteCandidatureTagValue> getTags() {
 		return tags;

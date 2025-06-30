@@ -17,22 +17,21 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.dao.BigFileDao;
+import fr.univrouen.poste.dao.CommissionExcelDao;
+import fr.univrouen.poste.domain.CommissionExcel;
+import fr.univrouen.poste.services.CommissionExcelParser;
+import fr.univrouen.poste.services.ExcelParser;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -40,26 +39,38 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
 
-import fr.univrouen.poste.domain.CommissionExcel;
-import fr.univrouen.poste.services.CommissionExcelParser;
-import fr.univrouen.poste.services.ExcelParser;
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.List;
 
 @RequestMapping("/admin/commissionexcels")
 @Controller
-@RooWebScaffold(path = "admin/commissionexcels", formBackingObject = CommissionExcel.class)
 @Transactional
 public class CommissionExcelController {
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Autowired 
+	@Resource
 	ExcelParser excelParser;
 	
-	@Autowired 
+	@Resource
 	CommissionExcelParser commissionExcelParser;
-	
+
+	@Resource
+	CommissionExcelDao commissionExcelDao;
+
+	@Resource
+	BigFileDao bigFileDao;
+
     void populateEditForm(Model uiModel, CommissionExcel commissionExcel) {
         uiModel.addAttribute("commissionExcel", commissionExcel);
         addDateTimeFormatPatterns(uiModel);
@@ -68,7 +79,7 @@ public class CommissionExcelController {
     @RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
     public String addFile(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws IOException, SQLException {
         if (bindingResult.hasErrors()) {
-        	logger.warn(bindingResult.getAllErrors());
+        	logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
             return "redirect:/admin/commissionexcels";
         }
         uiModel.asMap().clear();
@@ -81,26 +92,26 @@ public class CommissionExcelController {
 
         commissionExcel.setFilename(filename);
         commissionExcel.getBigFile().setBinaryFile(new SerialBlob(bytes)); 
-        commissionExcel.getBigFile().persist();
-        
+        bigFileDao.saveBigFile(commissionExcel.getBigFile());
+
         // set current date 
         Calendar cal = Calendar.getInstance();
         commissionExcel.setCreation(cal.getTime());    
         
         // persist
-        commissionExcel.persist();
-        
+        commissionExcelDao.saveCommissionExcel(commissionExcel);
+
         // process : generate CommissionEntries
     	commissionExcelParser.process(commissionExcel);
         
         return "redirect:/admin/commissionexcels";
     }
 
-    @RequestMapping(value = "/{id}", produces = "text/html")
-    public String show(@PathVariable("id") Long id, Model uiModel) throws SQLException, IOException {
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String show(@PathVariable Long id, Model uiModel) throws SQLException, IOException {
         addDateTimeFormatPatterns(uiModel);
         
-        CommissionExcel commissionExcel = CommissionExcel.findCommissionExcel(id);
+        CommissionExcel commissionExcel = commissionExcelDao.findCommissionExcel(id);
     	InputStream xslInputStream = commissionExcel.getBigFile().getBinaryFile().getBinaryStream();
     	
     	// hack : transform getBinaryStream from postgresql as ByteArrayInputStream
@@ -118,9 +129,9 @@ public class CommissionExcelController {
     }
     
     @RequestMapping(value = "/{id}/file")
-    public void downloadFile(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+    public void downloadFile(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
     	try {
-    		CommissionExcel commissionExcel = CommissionExcel.findCommissionExcel(id);
+    		CommissionExcel commissionExcel = commissionExcelDao.findCommissionExcel(id);
     		String filename = commissionExcel.getFilename();
     		String contentType = "application/vnd.ms-office";
     		response.setContentType(contentType);
@@ -133,4 +144,72 @@ public class CommissionExcelController {
     	}
     }
     
+
+	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String create(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, commissionExcel);
+            return "admin/commissionexcels/create";
+        }
+        uiModel.asMap().clear();
+        commissionExcelDao.saveCommissionExcel(commissionExcel);
+        return "redirect:/admin/commissionexcels/" + encodeUrlPathSegment(commissionExcel.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new CommissionExcel());
+        return "admin/commissionexcels/create";
+    }
+
+
+	@RequestMapping(produces = "text/html")
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+        if (pageable.isPaged()) {
+            Page<CommissionExcel> page = commissionExcelDao.findCommissionExcelEntries(pageable, sortFieldName, sortOrder);
+            uiModel.addAttribute("commissionexcels", page);
+        } else {
+            uiModel.addAttribute("commissionexcels", commissionExcelDao.findAllCommissionExcels(sortFieldName, sortOrder));
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/commissionexcels/list";
+    }
+
+	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
+    public String update(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, commissionExcel);
+            return "admin/commissionexcels/update";
+        }
+        uiModel.asMap().clear();
+        commissionExcelDao.saveCommissionExcel(commissionExcel);
+        return "redirect:/admin/commissionexcels/" + encodeUrlPathSegment(commissionExcel.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(value = "/{id}", params = "form", produces = "text/html")
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, commissionExcelDao.findCommissionExcel(id));
+        return "admin/commissionexcels/update";
+    }
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable Long id, @PageableDefault(size = 10) Pageable pageable, Model uiModel) {
+        CommissionExcel commissionExcel = commissionExcelDao.findCommissionExcel(id);
+        commissionExcelDao.deleteCommissionExcel(commissionExcel);
+        uiModel.asMap().clear();
+        return "redirect:/admin/commissionexcels";
+    }
+
+	void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("commissionExcel_creation_date_format", "dd/MM/yyyy HH:mm");
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+        }
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
+    }
 }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Entrées commission - Création</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Créer Entrées commission</h2>
+    
+    <form id="fc_fr_univrouen_poste_domain_CommissionEntry" th:action="@{/admin/commissionentrys}" th:object="${commissionEntry}" method="post">
+
+      
+      <div id="_c_fr_univrouen_poste_domain_CommissionEntry_email_id">
+        <label for="_c_fr_univrouen_poste_domain_CommissionEntry_email_id"><span th:text="#{label_fr_univrouen_poste_domain_commissionentry_email}"></span> :</label>
+        <input type="text" th:field="*{email}" id="_c_fr_univrouen_poste_domain_CommissionEntry_email_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_CommissionEntry_nom_id">
+        <label for="_c_fr_univrouen_poste_domain_CommissionEntry_nom_id"><span th:text="#{label_fr_univrouen_poste_domain_commissionentry_nom}"></span> :</label>
+        <input type="text" th:field="*{nom}" id="_c_fr_univrouen_poste_domain_CommissionEntry_nom_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_CommissionEntry_prenom_id">
+        <label for="_c_fr_univrouen_poste_domain_CommissionEntry_prenom_id"><span th:text="#{label_fr_univrouen_poste_domain_commissionentry_prenom}"></span> :</label>
+        <input type="text" th:field="*{prenom}" id="_c_fr_univrouen_poste_domain_CommissionEntry_prenom_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_CommissionEntry_poste_id">
+        <label for="_c_fr_univrouen_poste_domain_CommissionEntry_poste_id"><span th:text="#{label_fr_univrouen_poste_domain_commissionentry_poste}"></span> :</label>
+        <select th:field="*{poste}" id="_c_fr_univrouen_poste_domain_CommissionEntry_poste_id" size="10">
+          <option></option>
+          <option th:each="poste : ${posteapourvoirs}" th:value="${poste.id}" th:text="${poste}"></option>
+        </select>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_CommissionEntry_numPoste_id">
+        <label for="_c_fr_univrouen_poste_domain_CommissionEntry_numPoste_id"><span th:text="#{label_fr_univrouen_poste_domain_commissionentry_numposte}"></span> :</label>
+        <input type="text" th:field="*{numPoste}" id="_c_fr_univrouen_poste_domain_CommissionEntry_numPoste_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_CommissionEntry_membre_id">
+        <label for="_c_fr_univrouen_poste_domain_CommissionEntry_membre_id"><span th:text="#{label_fr_univrouen_poste_domain_commissionentry_membre}"></span> :</label>
+        <select th:field="*{membre}" id="_c_fr_univrouen_poste_domain_CommissionEntry_membre_id" size="10">
+          <option></option>
+          <option th:each="user : ${users}" th:value="${user.id}" th:text="${user}"></option>
+        </select>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_CommissionEntry_president_id">
+        <label for="c_fr_univrouen_poste_domain_CommissionEntry_president">
+          <input type="checkbox" th:field="*{president}" id="c_fr_univrouen_poste_domain_CommissionEntry_president"/>
+          <span th:text="#{label_fr_univrouen_poste_domain_commissionentry_president}"></span>
+        </label>
+      </div>
+      <br/>
+      
+      <div class="submit" id="fc_fr_univrouen_poste_domain_CommissionEntry_submit">
+        <input id="proceed" type="submit" value="Créer" class="btn btn-success"/>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

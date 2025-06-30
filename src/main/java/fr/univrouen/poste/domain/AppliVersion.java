@@ -1,32 +1,30 @@
 package fr.univrouen.poste.domain;
 
-import java.util.List;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord
+@Entity
+@Getter
+@Setter
 public class AppliVersion {
 
-	private static String cacheVersion;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
 	
 	String esupDematEcVersion;
-	
 
-	public static String getCacheVersion() {
-		if(cacheVersion == null) {
-			AppliVersion appliVersion = null;
-			List<AppliVersion> appliVersions = AppliVersion.findAllAppliVersions();
-			if(appliVersions.isEmpty()) {
-				cacheVersion = "?!";
-			} else {
-				cacheVersion = appliVersions.get(0).getEsupDematEcVersion();
-			}
-		}
-		return cacheVersion;
-	}
+	public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 
 }

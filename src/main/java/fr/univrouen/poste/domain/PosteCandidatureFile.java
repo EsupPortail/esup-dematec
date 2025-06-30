@@ -16,99 +16,69 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Query;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
+import fr.univrouen.poste.dao.PosteCandidatureFileDao;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.web.multipart.MultipartFile;
 
-@RooJavaBean
-@RooToString(excludeFields = { "bigFile", "file" })
-@RooJpaActiveRecord(finders = { "findPosteCandidatureFilesByFileType" })
+import java.util.Date;
+
+@Entity
+@Getter
+@Setter
 public class PosteCandidatureFile implements DematFile {
 
-    private String filename;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "posteCandidature")
+    PosteCandidature posteCandidature;
+
+    String filename;
 
     @Transient
-    private MultipartFile file;
+    MultipartFile file;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private Date sendTime;
+    Date sendTime;
 
-    private Long fileSize;
+    Long fileSize;
 
-    private Long nbPages;
+    Long nbPages;
 
-    private Boolean writeable = true;
+    
+    Boolean writeable = true;
 
-    private String contentType;
+    String contentType;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private BigFile bigFile = new BigFile();
+    @JoinColumn(name = "bigfile")
+    BigFile bigFile = new BigFile();
 
     @ManyToOne
-    private AppliConfigFileType fileType;
+    @JoinColumn(name = "filetype")
+    AppliConfigFileType fileType;
 
     @Transient
     public String getFileSizeFormatted() {
-        return readableFileSize(fileSize.longValue());
+        return PosteCandidatureFileDao.readableFileSize(fileSize.longValue());
     }
 
-    public static String readableFileSize(long size) {
-        if (size <= 0) return "0";
-        final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+	public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("bigFile", "file").toString();
     }
 
-    public static String getMaxFileSize() {
-        List<PosteCandidatureFile> files = entityManager().createQuery("SELECT o FROM PosteCandidatureFile o order by o.fileSize desc ", PosteCandidatureFile.class).setMaxResults(1).getResultList();
-        if (!files.isEmpty()) return files.get(0).getFileSizeFormatted(); else return "Nan";
-    }
-    
-    public static Long getSumFileSize() {
-    	String sql = "SELECT SUM(file_size) FROM poste_candidature_file";
-		Query q = entityManager().createNativeQuery(sql);
-		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
-		if(bigValue != null) {
-			return bigValue.longValue();
-		} else {
-			return new Long(0);
-		}
-    }
-    
-    public static Long getSumNbPages() {
-    	String sql = "SELECT SUM(nb_pages) FROM poste_candidature_file";
-		Query q = entityManager().createNativeQuery(sql);
-		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
-		if(bigValue != null) {
-			return bigValue.longValue();
-		} else {
-			return new Long(0);
-		}
-    }
-    
-	public static List<Object[]> sumPosteCandidatureFileSizeByDate() {
-    	String sql = "SELECT date_part('year', send_time) as year, date_part('month', send_time) as month, date_part('day', send_time) as day, "
-    			+ "sum(sum(file_size)) over(order by date_part('year', send_time), date_part('month', send_time), date_part('day', send_time)) as file_size_sum "
-    			+ "from poste_candidature_file GROUP BY year, month, day";
-		Query q = entityManager().createNativeQuery(sql);
-        return q.getResultList();
-    }
-	
 }

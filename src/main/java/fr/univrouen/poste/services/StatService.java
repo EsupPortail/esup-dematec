@@ -1,45 +1,62 @@
 package fr.univrouen.poste.services;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
+import fr.univrouen.poste.dao.*;
+import fr.univrouen.poste.domain.*;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import fr.univrouen.poste.domain.LogAuth;
-import fr.univrouen.poste.domain.LogFile;
-import fr.univrouen.poste.domain.MemberReviewFile;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteAPourvoirFile;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
-import fr.univrouen.poste.domain.User;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StatService {
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	LogAuthDao logAuthDao;
+
+	@Resource
+	LogFileDao logFileDao;
+
+	@Resource
+	PosteCandidatureFileDao posteCandidatureFileDao;
+
+	@Resource
+	MemberReviewFileDao memberReviewFileDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
+	@Resource
+	PosteAPourvoirFileDao posteAPourvoirFileDao;
 	
 	public StatBean stats() {
 
+		Long posteNumber = posteAPourvoirDao.countPosteAPourvoirs();
+		Long userNumber = userDao.countUsers();
+		Long adminNumber = userDao.countAdmins();
+		Long supermanagerNumber = userDao.countSupermanagers();
+		Long managerNumber = userDao.countManagers();
+		Long membreNumber = userDao.countMembres();
+		Long candidatNumber = userDao.countCandidats();
+		Long userActifNumber = userDao.countActifCUsers();
+		Long candidatActifNumber = userDao.countActifCandidats();
+		Long posteCandidatureNumber = posteCandidatureDao.countPosteCandidatures();
+		Long posteCandidatureActifNumber = posteCandidatureDao.countPosteActifCandidatures();
+		Long posteCandidatureFileNumber = posteCandidatureFileDao.countPosteCandidatureFiles();
 
-		Long posteNumber = PosteAPourvoir.countPosteAPourvoirs();
-		Long userNumber = User.countUsers();
-		Long adminNumber = User.countAdmins();
-		Long supermanagerNumber = User.countSupermanagers();
-		Long managerNumber = User.countManagers();
-		Long membreNumber = User.countMembres();
-		Long candidatNumber = User.countCandidats();
-		Long userActifNumber = User.countActifCUsers();
-		Long candidatActifNumber = User.countActifCandidats();
-		Long posteCandidatureNumber = PosteCandidature.countPosteCandidatures();
-		Long posteCandidatureActifNumber = PosteCandidature.countPosteActifCandidatures();
-		Long posteCandidatureFileNumber = PosteCandidatureFile.countPosteCandidatureFiles();
+		long totalFileSize = posteCandidatureFileDao.getSumFileSize();
+		long nbPages = posteCandidatureFileDao.getSumNbPages();
+		String totalFileSizeFormatted = posteCandidatureFileDao.readableFileSize(totalFileSize);
 
-		long totalFileSize = PosteCandidatureFile.getSumFileSize();
-		long nbPages = PosteCandidatureFile.getSumNbPages();
-		String totalFileSizeFormatted = PosteCandidatureFile.readableFileSize(totalFileSize);
-
-		String maxFileSize = PosteCandidatureFile.getMaxFileSize();
+		String maxFileSize = posteCandidatureFileDao.getMaxFileSize();
 
 		Double pagesKilo = nbPages*0.005;
 		long nbRames = (long)Math.floor(nbPages/500.0);
@@ -50,13 +67,13 @@ public class StatService {
 			moyPagesGr = (long)Math.floor(pagesKilo/posteCandidatureActifNumber*1000.0);
 		}
 		
-		Long memberReviewFileNumber = MemberReviewFile.countMemberReviewFiles();
-		long totalMemberReviewFileSize = MemberReviewFile.getSumFileSize();
-		String totalMemberReviewFileSizeFormatted =  PosteCandidatureFile.readableFileSize(totalMemberReviewFileSize);
+		Long memberReviewFileNumber = memberReviewFileDao.countMemberReviewFiles();
+		long totalMemberReviewFileSize = memberReviewFileDao.getSumFileSize();
+		String totalMemberReviewFileSizeFormatted =  posteCandidatureFileDao.readableFileSize(totalMemberReviewFileSize);
 		
-		Long posteAPourvoirFileNumber = PosteAPourvoirFile.countPosteAPourvoirFiles();
-		long totalposteAPourvoirFileSize = PosteAPourvoirFile.getSumFileSize();
-		String totalposteAPourvoirFileSizeFormatted  =  PosteCandidatureFile.readableFileSize(totalposteAPourvoirFileSize);
+		Long posteAPourvoirFileNumber = posteAPourvoirFileDao.countPosteAPourvoirFiles();
+		long totalposteAPourvoirFileSize = posteAPourvoirFileDao.getSumFileSize();
+		String totalposteAPourvoirFileSizeFormatted  =  posteCandidatureFileDao.readableFileSize(totalposteAPourvoirFileSize);
 
 		return new StatBean(posteNumber, userNumber, adminNumber, supermanagerNumber, managerNumber, membreNumber, 
 				candidatNumber, userActifNumber, candidatActifNumber, posteCandidatureNumber, posteCandidatureActifNumber, 
@@ -65,44 +82,44 @@ public class StatService {
 	}
 	
 	
-	public List<List<Object>> countUploadLogFilesBydate() {
-		List<Object[]> logfilesCounts = LogFile.countUploadLogFilesBydate();
+	public List<List<String>> countUploadLogFilesBydate() {
+		List<Object[]> logfilesCounts = logFileDao.countUploadLogFilesBydate();
 		return map4chart(logfilesCounts);
 	}
 
-	public List<List<Object>> countSuccessLogAuthsByDate() {
-		List<Object[]> logfilesCounts = LogAuth.countSuccessLogAuthsByDate();
+	public List<List<String>> countSuccessLogAuthsByDate() {
+		List<Object[]> logfilesCounts = logAuthDao.countSuccessLogAuthsByDate();
 		return map4chart(logfilesCounts);
 	}
 	
-	public List<List<Object>> sumPosteCandidatureFileSizeByDate() {
-		List<Object[]> logFilesSizes = PosteCandidatureFile.sumPosteCandidatureFileSizeByDate();
+	public List<List<String>> sumPosteCandidatureFileSizeByDate() {
+		List<Object[]> logFilesSizes = posteCandidatureFileDao.sumPosteCandidatureFileSizeByDate();
 		return map4chart(logFilesSizes);
 	}
 	
-	public List<List<Object>> sumMemberReviewFileSizeByDate() {
-		List<Object[]> logFilesSizes = MemberReviewFile.sumMemberReviewFileSizeByDate();
+	public List<List<String>> sumMemberReviewFileSizeByDate() {
+		List<Object[]> logFilesSizes = memberReviewFileDao.sumMemberReviewFileSizeByDate();
 		return map4chart(logFilesSizes);
 	}
 	
-	public List<List<Object>> sumPosteAPourvoirFileSizeByDate() {
-		List<Object[]> logFilesSizes = PosteAPourvoirFile.sumPosteAPourvoirFileSizeByDate();
+	public List<List<String>> sumPosteAPourvoirFileSizeByDate() {
+		List<Object[]> logFilesSizes = posteAPourvoirFileDao.sumPosteAPourvoirFileSizeByDate();
 		return map4chart(logFilesSizes);
 	}
 
-	private List<List<Object>> map4chart(List<Object[]> logfilesCounts) {
-		List<List<Object>> labelsValues = new ArrayList<List<Object>>();
-		List<Object> labels = new ArrayList<Object>();
-		List<Object> values = new ArrayList<Object>();
-		for(Object[] logfilesCount : logfilesCounts) {
+	List<List<String>> map4chart(List<Object[]> logfilesCountsAsObjects) {
+		List<String[]> logfilesCounts = logfilesCountsAsObjects.stream()
+				.map(row -> Arrays.stream(row)
+						.map(obj -> obj != null ? obj.toString() : null)
+						.toArray(String[]::new))
+				.collect(Collectors.toList());
+		List<List<String>> labelsValues = new ArrayList<List<String>>();
+		List<String> labels = new ArrayList<String>();
+		List<String> values = new ArrayList<String>();
+		for(String[] logfilesCount : logfilesCounts) {
 			String label = logfilesCount[2] + "/" + logfilesCount[1] + "/" + logfilesCount[0];
 			label = label.replaceAll("\\.0", "");
-			Long value = null;
-			if(logfilesCount[3] instanceof BigDecimal) {
-				value = ((BigDecimal)logfilesCount[3]).longValue();
-			} else {
-				value = ((BigInteger)logfilesCount[3]).longValue();
-			}
+			String value = logfilesCount[3];
 			labels.add(label);
 			values.add(value);
 		}

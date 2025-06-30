@@ -1,8 +1,6 @@
 package fr.univrouen.poste.web.searchcriteria;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
 
-@RooJavaBean
 public class LogSearchCriteria {
 
 	String status = "";
@@ -11,4 +9,28 @@ public class LogSearchCriteria {
 	
 	String nom = "";
 	
+
+	public String getStatus() {
+        return this.status;
+    }
+
+	public void setStatus(String status) {
+        this.status = status;
+    }
+
+	public String getUserId() {
+        return this.userId;
+    }
+
+	public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+	public String getNom() {
+        return this.nom;
+    }
+
+	public void setNom(String nom) {
+        this.nom = nom;
+    }
 }

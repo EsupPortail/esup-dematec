@@ -3,8 +3,8 @@ package fr.univrouen.poste.batch;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.EntityManagerHolder;

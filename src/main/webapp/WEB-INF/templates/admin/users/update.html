@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Utilisateur - Modification</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    
+    <h2>Modifier l'utilisateur</h2>
+    
+    <form th:action="@{/admin/users/{id}(id=${user.id})}" th:object="${user}" method="post">
+      <input type="hidden" name="_method" value="put"/>
+
+      <input type="hidden" th:field="*{id}"/>
+
+      
+      <div>
+        <label for="emailAddress">Email *</label>
+        <div>
+          <input type="email" th:field="*{emailAddress}" id="emailAddress" required="required"/>
+          <span th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}" class="help-inline">Error</span>
+        </div>
+      </div>
+      
+      <div>
+        <label for="password">Mot de passe (laisser vide pour ne pas changer)</label>
+        <div>
+          <input type="password" th:field="*{password}" id="password"/>
+          <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="help-inline">Error</span>
+        </div>
+      </div>
+      
+      <div>
+        <label for="civilite">Civilité</label>
+        <div>
+          <input type="text" th:field="*{civilite}" id="civilite"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="nom">Nom</label>
+        <div>
+          <input type="text" th:field="*{nom}" id="nom"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="prenom">Prénom</label>
+        <div>
+          <input type="text" th:field="*{prenom}" id="prenom"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="numCandidat">Numéro candidat</label>
+        <div>
+          <input type="text" th:field="*{numCandidat}" id="numCandidat"/>
+        </div>
+      </div>
+      
+      <div>
+        <label for="loginFailedNb">Échecs de connexion</label>
+        <div>
+          <input type="number" th:field="*{loginFailedNb}" id="loginFailedNb"/>
+        </div>
+      </div>
+      
+      <div>
+        <label>Rôles</label>
+        <div>
+          <label class="checkbox">
+            <input type="checkbox" th:field="*{enabled}"/> Compte activé
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" th:field="*{isAdmin}"/> Admin
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" th:field="*{isSuperManager}"/> Super Manager
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" th:field="*{isManager}"/> Manager
+          </label>
+        </div>
+      </div>
+      
+      <div>
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        <a th:href="@{/admin/users}" class="btn">Annuler</a>
+      </div>
+    </form>
+    
+  </div>
+</body>
+</html>

@@ -17,131 +17,55 @@
  */
 package fr.univrouen.poste.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
-import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
+import java.util.Date;
 
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord
+@Entity
+@Getter
+@Setter
 public class LogFile {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private Date actionDate;
+    Date actionDate;
 
-    private String userId;
+    String userId;
 
-    private String numEmploi;
+    String numEmploi;
 
-    private String numCandidat;
+    String numCandidat;
 
-    private String civilite;
+    String civilite;
 
-    private String nom;
+    String nom;
 
-    private String prenom;
+    String prenom;
 
-    private String email;
+    String email;
 
-    private String ip;
+    String ip;
 
-    private String action;
+    String action;
 
-    private String filename;
+    String filename;
 
-    private String fileSize;
+    String fileSize;
 
     @Column(length=512)
-    private String userAgent;
+    String userAgent;
 
-	public static TypedQuery<LogFile>  findLogFiles(LogSearchCriteria logSearchCriteria,
-			String sortFieldName, String sortOrder) {
-		EntityManager em = entityManager();
-		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-		CriteriaQuery<LogFile> query = criteriaBuilder.createQuery(LogFile.class);
-		Root<LogFile> c = query.from(LogFile.class);
-		Expression<Boolean> logSearchCriteriaRestriction = computeLogSearchCriteriaRestriction(logSearchCriteria, c, criteriaBuilder);
-		
-		final List<Order> orders = new ArrayList<Order>();
-		
-		if(sortFieldName != null && !sortFieldName.isEmpty()) {
-			String[] sortFieldNameSplit = sortFieldName.split("\\.");
-			if("DESC".equalsIgnoreCase(sortOrder)) {	
-				if(sortFieldNameSplit.length<2) {
-					orders.add(criteriaBuilder.desc(c.get(sortFieldName)));   
-				} else {
-					orders.add(criteriaBuilder.desc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
-				}
-			} else {
-				if(sortFieldNameSplit.length<2) {
-					orders.add(criteriaBuilder.asc(c.get(sortFieldName)));   
-				} else {
-					orders.add(criteriaBuilder.asc(c.join(sortFieldNameSplit[0]).get(sortFieldNameSplit[1])));   
-				}
-			}
-		}
-        
-		query.where(logSearchCriteriaRestriction);	
-		query.orderBy(orders);
-		
-		query.select(c);
-		return em.createQuery(query);
-	}
-	
-	private static Expression<Boolean> computeLogSearchCriteriaRestriction(LogSearchCriteria logSearchCriteria,
-			Root<LogFile> c, CriteriaBuilder criteriaBuilder) {
-		final List<Predicate> predicates = new ArrayList<Predicate>();
-        if (logSearchCriteria.getUserId() != null && !logSearchCriteria.getUserId().isEmpty()) {
-			predicates.add(c.get("email").in(logSearchCriteria.getUserId()));
-        }
-        if (logSearchCriteria.getStatus() != null && !logSearchCriteria.getStatus().isEmpty()) {
-			predicates.add(c.get("action").in(logSearchCriteria.getStatus()));
-        }
-        if (logSearchCriteria.getNom() != null && !logSearchCriteria.getNom().isEmpty()) {
-			predicates.add(c.get("nom").in(logSearchCriteria.getNom()));
-        }
-        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-	}
-
-
-	public static Long countFindLogFiles(LogSearchCriteria logSearchCriteria) {
-	   	EntityManager em = entityManager();
-		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-		CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
-		Root<LogFile> c = query.from(LogFile.class);
-		Expression<Boolean> logSearchCriteriaRestriction = computeLogSearchCriteriaRestriction(logSearchCriteria, c, criteriaBuilder);
-
-		query.where(logSearchCriteriaRestriction);	
-		
-		query.select(criteriaBuilder.count(c));
-		return em.createQuery(query).getSingleResult();
-	}
-
-	public static List<Object[]>  countUploadLogFilesBydate() {
-    	String sql = "SELECT date_part('year', action_date) as year, date_part('month', action_date) as month, date_part('day', action_date) as day, count(*) as count FROM log_file WHERE action='UPLOAD' GROUP BY year, month, day ORDER BY year, month, day";
-		Query q = entityManager().createNativeQuery(sql);
-        return q.getResultList();
+	public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
-    
 }

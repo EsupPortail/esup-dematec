@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modifier un Poste à Pourvoir</title>
+  <link th:href="@{/resources/css/bootstrap-wysihtml5.css}" rel="stylesheet" type="text/css"/>
+  <link th:href="@{/resources/css/jquery.datetimepicker-2.5.1.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+  <div layout:fragment="body">
+
+    <div class="well help">
+        <p>
+            <strong>Sélectionner un utilisateur comme membre d'un poste donne le droit à l'utilisateur concerné de visualiser l'ensemble des
+                candidatures (et fichiers attachés) liées à ce poste.</strong>
+        </p>
+    </div>
+
+    <form th:method="PUT" th:action="@{/posteapourvoirs}" th:object="${posteapourvoir}">
+
+      <input type="hidden" th:field="*{id}" />
+
+      <div>
+        <label for="_numEmploi_id">Num Emploi</label>
+        <div>
+          <input id="_numEmploi_id" type="text" th:field="*{numEmploi}" required="required" />
+        </div>
+      </div>
+
+      <div>
+        <label for="_profil_id">Profil</label>
+        <div>
+          <input id="_profil_id" type="text" th:field="*{profil}" />
+        </div>
+      </div>
+
+      <div>
+        <label for="_localisation_id">Localisation</label>
+        <div>
+          <input id="_localisation_id" type="text" th:field="*{localisation}" />
+        </div>
+      </div>
+
+      <div>
+        <label for="_membres_id">Membres</label>
+        <div>
+          <select id="_membres_id" th:field="*{membres}" multiple="multiple" size="15">
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.emailAddress}">User</option>
+          </select>
+        </div>
+      </div>
+
+      <div th:if="${candidatCanSignup}">
+        <label for="_dateEndSignupCandidat_id">Date End Signup Candidat</label>
+        <div>
+          <input id="_dateEndSignupCandidat_id" type="text" th:field="*{dateEndSignupCandidat}" />
+        </div>
+      </div>
+
+      <div>
+        <label for="_dateEndCandidatAuditionnable_id">Date End Candidat Auditionnable</label>
+        <div>
+          <input id="_dateEndCandidatAuditionnable_id" type="text" th:field="*{dateEndCandidatAuditionnable}" />
+        </div>
+      </div>
+
+      <div>
+        <label for="_presidents_id">Présidents</label>
+        <div>
+          <select id="_presidents_id" th:field="*{presidents}" multiple="multiple">
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.emailAddress}">User</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <div>
+          <button type="submit" class="btn btn-primary">Modifier</button>
+          <button type="reset" class="btn">Annuler</button>
+        </div>
+      </div>
+    </form>
+
+    <script th:src="@{/resources/js/wysihtml5-0.3.0.js}"></script>
+    <script th:src="@{/resources/js/bootstrap-wysihtml5.js}"></script>
+    <script th:src="@{/resources/js/bootstrap-wysihtml5.fr-FR.js}"></script>
+    <script th:src="@{/resources/js/jquery.datetimepicker-2.5.1.full.min.js}"></script>
+    <script>
+      $(document).ready(function(){
+          $.datetimepicker.setLocale('fr');
+          $("#_dateEndCandidatAuditionnable_id").datetimepicker({format:'d/m/Y H:i'});
+          $("#_dateEndSignupCandidat_id").datetimepicker({format:'d/m/Y H:i'});
+      });
+    </script>
+  </div>
+</body>
+</html>

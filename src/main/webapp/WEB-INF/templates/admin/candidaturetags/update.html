@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Tags candidatures - Modification</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Modifier Tags candidatures</h2>
+
+    <script type="text/javascript" th:if="${param.deleteFailed}" th:inline="text">
+      alert("Suppression impossible, ce tag doit être encore utilisé dans au moins 1 candidature.");
+    </script>
+    
+    <form id="fu_fr_univrouen_poste_domain_PosteCandidatureTag" th:action="@{/admin/candidaturetags}" th:object="${posteCandidatureTag}" method="post">
+      <input type="hidden" name="_method" value="put"/>
+
+      <input type="hidden" th:field="*{id}"/>
+
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_PosteCandidatureTag_name_id"><span th:text="#{label_fr_univrouen_poste_domain_postecandidaturetag_name}"></span> :</label>
+        <input type="text" th:field="*{name}" id="_c_fr_univrouen_poste_domain_PosteCandidatureTag_name_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div class="submit" id="fu_fr_univrouen_poste_domain_PosteCandidatureTag_submit">
+        <input id="proceed" type="submit" value="Mettre à jour" class="btn btn-success"/>
+      </div>
+    </form>
+
+    <ul th:unless="${#lists.isEmpty(posteCandidatureTag.values)}">
+      <li th:each="val : ${posteCandidatureTag.values}">
+        <span th:text="${val.value}"/>
+        <form th:action="@{/admin/candidaturevaluetags/{valueId}(valueId=${val.id})}" method="post" style="display:inline;">
+          <input type="hidden" name="_method" value="delete"/>
+          <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+        </form>
+      </li>
+    </ul>
+
+    <form th:action="@{/admin/candidaturetags/{tagId}?create=value(tagId=${posteCandidatureTag.id})}" method="post">
+      <input type="text" name="value" placeholder="Nouvelle valeur"/>
+      <button type="submit" class="btn btn-primary btn-sm">Ajouter Valeur</button>
+    </form>
+
+
+  </div>
+</body>
+</html>

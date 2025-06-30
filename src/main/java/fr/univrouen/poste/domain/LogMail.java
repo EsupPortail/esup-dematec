@@ -17,62 +17,43 @@
  */
 package fr.univrouen.poste.domain;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(finders = { "findLogMailsByStatusEquals", "findLogMailsByStatusEqualsAndMailToEquals", "findLogMailsByMailToEquals"})
+import java.util.Date;
+
+@Entity
+@Getter
+@Setter
 public class LogMail {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private Date actionDate;
+    Date actionDate;
 
-    private String mailTo;
+    String mailTo;
 
     @Column(columnDefinition = "TEXT")
-    private String message;
+    String message;
 
-    private String status;
-    
-	
-    public static Long countFindLogMails(String status, String mailTo) {
-    	if("".equals(mailTo)) {
-			return countFindLogMailsByStatusEquals(status);
-		}
-		if("".equals(status)) {
-			return countFindLogMailsByMailToEquals(mailTo);
-		}
-		return countFindLogMailsByStatusEqualsAndMailToEquals(status, mailTo);	
-    }
-    
-    
-    public static TypedQuery<LogMail> findLogMails(String status, String mailTo, String sortFieldName, String sortOrder) {
-    	if("".equals(mailTo)) {
-			return findLogMailsByStatusEquals(status, sortFieldName, sortOrder);
-		}
-		if("".equals(status)) {
-			return findLogMailsByMailToEquals(mailTo, sortFieldName, sortOrder);
-		}
-		return findLogMailsByStatusEqualsAndMailToEquals(status, mailTo, sortFieldName, sortOrder);	
-    }
-    
-    public static List<String> getAllMailTo() {
-    	EntityManager em = entityManager();
-    	TypedQuery<String> q = em.createQuery("select distinct(o.mailTo) FROM LogMail o ORDER BY o.mailTo", String.class);
-    	return q.getResultList();
+    String status;
+
+	public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
 }

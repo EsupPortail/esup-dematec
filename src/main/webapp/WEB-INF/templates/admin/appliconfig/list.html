@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Configuration - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    
+    <div th:if="${appliconfigs == null or #lists.isEmpty(appliconfigs)}">
+      <p>Aucune configuration trouvée.</p>
+    </div>
+    
+    <table th:if="${appliconfigs != null and !#lists.isEmpty(appliconfigs)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfig_titre}">Titre</th>
+          <th>Modifier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="config : ${appliconfigs}">
+          <td th:text="${config.titre}">Titre</td>
+          <td>
+            <a th:href="@{/admin/appliconfig/{id}(id=${config.id},form)}" class="btn btn-sm btn-warning">Modifier</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

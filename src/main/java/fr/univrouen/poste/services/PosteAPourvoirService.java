@@ -1,30 +1,36 @@
 package fr.univrouen.poste.services;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.dao.PosteAPourvoirDao;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.User;
+import jakarta.annotation.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Service
 @Transactional
 public class PosteAPourvoirService {
 
+	@Resource
+	AppliConfigService appliConfigService;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
 	public List<PosteAPourvoirAvailableBean>  getPosteAPourvoirAvailables(User candidat) {
 		
-		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
+		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
 
-		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(candidat).getResultList();
+		Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(candidat);
 		Set<PosteAPourvoir> postesAlreadyCandidated = new HashSet<PosteAPourvoir>();
 		Set<PosteAPourvoir> postesAlreadyCandidatedWithNoModifications = new HashSet<PosteAPourvoir>();
 		for(PosteCandidature candidature: candidatures) {
@@ -48,16 +54,16 @@ public class PosteAPourvoirService {
 
 	public void updateCandidatures(User candidat, List<Long> posteIds) {
 
-		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(candidat).getResultList();
+		Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(candidat);
 		Set<PosteAPourvoir> postesAlreadyCandidated = new HashSet<PosteAPourvoir>();
 		for(PosteCandidature candidature: candidatures) {
 			postesAlreadyCandidated.add(candidature.getPoste());
 		}
 
-		List<PosteAPourvoir> postesAPourvoir = PosteAPourvoir.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
+		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
 		
 		for(Long posteId: posteIds) {
-			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(posteId);
+			PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(posteId);
 			if(!postesAlreadyCandidated.contains(poste) && postesAPourvoir.contains(poste)) {
 				
 				// new Candidature
@@ -69,10 +75,10 @@ public class PosteAPourvoirService {
 				Date currentTime = cal.getTime();
 				candidature.setCreation(currentTime);
 
-				RecevableEnum recevableEnum = AppliConfig.getCacheCandidatureRecevableEnumDefault();
+				RecevableEnum recevableEnum = appliConfigService.getCacheCandidatureRecevableEnumDefault();
 				candidature.setRecevableEnum(recevableEnum);
 
-				candidature.persist();
+				posteCandidatureDao.savePosteCandidature(candidature);
 			}
 		} 
 

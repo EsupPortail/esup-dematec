@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Graphiques</title>
+  <script th:src="@{/resources/js/Chart.min.js}"></script>
+</head>
+<body>
+  <div layout:fragment="body">
+    
+    <div class="row-fluid">
+      
+      <div class="span4">
+        <canvas id="uploadChart" width="400" height="400"><!--  --></canvas>
+        <script th:inline="javascript">
+          var dataUpload = {
+            labels: [[${uploadStatsLabels}]],
+            datasets: [{
+              backgroundColor: "rgba(0,0,136,0.5)",
+              data: [[${uploadStatsValues}]]
+            }]
+          };
+          
+          var optionsUpload = {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: "Fichiers de candidatures envoyés",
+              fontSize: 20
+            }
+          };
+          
+          var ctxUpload = document.getElementById("uploadChart").getContext("2d");
+          var chartUpload = new Chart(ctxUpload, {type: 'line', data: dataUpload, options: optionsUpload});
+        </script>
+      </div>
+      
+      <div class="span4">
+        <canvas id="authChart" width="400" height="400"><!--  --></canvas>
+        <script th:inline="javascript">
+          var dataAuth = {
+            labels: [[${authStatsLabels}]],
+            datasets: [{
+              backgroundColor: "rgba(136, 0, 0, 0.5)",
+              data: [[${authStatsValues}]]
+            }]
+          };
+          
+          var optionsAuth = {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: "Authentifications",
+              fontSize: 20
+            }
+          };
+          
+          var ctxAuth = document.getElementById("authChart").getContext("2d");
+          var chartAuth = new Chart(ctxAuth, {type: 'line', data: dataAuth, options: optionsAuth});
+        </script>
+      </div>
+      
+    </div>
+    
+    <hr/>
+    
+    <div class="row-fluid">
+      
+      <div class="span4">
+        <canvas id="sizeChart" width="400" height="400"><!--  --></canvas>
+        <script th:inline="javascript">
+          var dataSize = {
+            labels: [[${sumFilesSizeStatsLabels}]],
+            datasets: [{
+              backgroundColor: "rgba(0, 136, 0, 0.5)",
+              data: [[${sumFilesSizeStatsValues}]]
+            }]
+          };
+          
+          var optionsSize = {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: "Volume total des candidatures",
+              fontSize: 20
+            },
+            scales: {
+              yAxes: [{
+                ticks: { 
+                  callback: function(value, index, values) { return humanFileSize(value); }
+                }
+              }]
+            },
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) { 
+                  return humanFileSize(tooltipItem.yLabel); 
+                }
+              }
+            }
+          };
+          
+          var ctxSize = document.getElementById("sizeChart").getContext("2d");
+          var chartSize = new Chart(ctxSize, {type: 'line', data: dataSize, options: optionsSize});
+        </script>
+      </div>
+      
+      <div class="span4">
+        <canvas id="sizeMemberChart" width="400" height="400"><!--  --></canvas>
+        <script th:inline="javascript">
+          var dataSizeMember = {
+            labels: [[${sumMemberReviewFilesSizeStatsLabels}]],
+            datasets: [{
+              backgroundColor: "rgba(0, 136, 0, 0.5)",
+              data: [[${sumMemberReviewFilesSizeStatsValues}]]
+            }]
+          };
+          
+          var optionsSizeMember = {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: "Volume total des rapports de commission",
+              fontSize: 20
+            },
+            scales: {
+              yAxes: [{
+                ticks: { 
+                  callback: function(value, index, values) { return humanFileSize(value); }
+                }
+              }]
+            },
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) { 
+                  return humanFileSize(tooltipItem.yLabel); 
+                }
+              }
+            }
+          };
+          
+          var ctxSizeMember = document.getElementById("sizeMemberChart").getContext("2d");
+          var chartSizeMember = new Chart(ctxSizeMember, {type: 'line', data: dataSizeMember, options: optionsSizeMember});
+        </script>
+      </div>
+      
+      <div class="span4">
+        <canvas id="sizePosteChart" width="400" height="400"><!--  --></canvas>
+        <script>
+          var dataSizePoste = {
+            labels: [[${sumPosteAPourvoirFilesSizeStatsLabels}]],
+            datasets: [{
+              backgroundColor: "rgba(0, 136, 0, 0.5)",
+              data: [[${sumPosteAPourvoirFilesSizeStatsValues}]]
+            }]
+          };
+          
+          var optionsSizePoste = {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: "Volume total des fichiers des comités de sélection",
+              fontSize: 20
+            },
+            scales: {
+              yAxes: [{
+                ticks: { 
+                  callback: function(value, index, values) { return humanFileSize(value); }
+                }
+              }]
+            },
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) { 
+                  return humanFileSize(tooltipItem.yLabel); 
+                }
+              }
+            }
+          };
+          
+          var ctxSizePoste = document.getElementById("sizePosteChart").getContext("2d");
+          var chartSizePoste = new Chart(ctxSizePoste, {type: 'line', data: dataSizePoste, options: optionsSizePoste});
+        </script>
+      </div>
+      
+    </div>
+    
+  </div>
+</body>
+</html>

@@ -17,35 +17,37 @@
  */
 package fr.univrouen.poste.services;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
-
+import fr.univrouen.poste.dao.GalaxieEntryDao;
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
 import fr.univrouen.poste.domain.User;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.*;
 
 @Service
 public class GalaxieExcelParser {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
+	@Resource
 	ExcelParser excelParser;
 
-	@Autowired	
+	@Resource
 	GalaxieMappingService galaxieMappingService;
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	GalaxieEntryDao galaxieEntryDao;
 
 	public void process(GalaxieExcel galaxieExcel) throws SQLException {
 		
@@ -59,12 +61,12 @@ public class GalaxieExcelParser {
 		int p = 0;
 		List<String> cellsHead = cells.remove(0);
 		for (String cellName : cellsHead) {
-			cellsPosition.put(cellName, new Long(p++));
+			cellsPosition.put(cellName, Long.valueOf(p++));
 		}
 		galaxieMappingService.checkCellsHead(cellsPosition);
         
 		Map<List<String>, GalaxieEntry>  dbGalaxyEntries = new HashMap<List<String>, GalaxieEntry>();
-		for(GalaxieEntry galaxieEntry : GalaxieEntry.findAllGalaxieEntrys()) {
+		for(GalaxieEntry galaxieEntry : galaxieEntryDao.findAllGalaxieEntrys()) {
 			dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
 		}
 		
@@ -83,7 +85,7 @@ public class GalaxieExcelParser {
 			}
 			
 			// Récupération d'un GalaxieEntry à chaque fois trop gourmand, même avec l'index ...
-			//TypedQuery<GalaxieEntry> query = GalaxieEntry.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat(), null, null);
+			//TypedQuery<GalaxieEntry> query = galaxieEntryDao.findGalaxieEntrysByNumEmploiAndNumCandidat(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat(), null, null);
 			GalaxieEntry dbGalaxyEntrie = dbGalaxyEntries.get(getList4Id(galaxieEntry));
 			
 			if (dbGalaxyEntrie == null) {
@@ -91,7 +93,7 @@ public class GalaxieExcelParser {
 						galaxieEntry.getNumEmploi() == null || galaxieEntry.getNumEmploi().isEmpty()) {
 					logger.error("Cette ligne du fichier Excel Galaxie présente un numéro de candidat ou d'emploi vide, elle est donc ignorée : " + row);
 				} else {
-					galaxieEntry.persist();
+					galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
 					dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
 				}
 			} else {
@@ -109,18 +111,18 @@ public class GalaxieExcelParser {
 					// si email différent et si le candidat n'a pas activé son compte - on réinitialise le compte == on le supprime et on le récréé avec cette nvelle adresse mail
 					else if(!dbGalaxyEntrie.getEmail().equals(galaxieEntry.getEmail())) {
 						try {
-							User user = User.findUsersByEmailAddress(dbGalaxyEntrie.getEmail()).getSingleResult();
-							if(user.getActivationDate() == null && !user.isCandidatActif()) {
+							User user = userDao.findUsersByEmailAddress(dbGalaxyEntrie.getEmail());
+							if(user.getActivationDate() == null && !userDao.isCandidatActif(user)) {
 								logger.info("Le candidat " + dbGalaxyEntrie.getNumCandidat() + " a changé d'email alors qu'il n'avait pas encore activé son compte - on relance la procédure de création de son compte/candidature.");
 								
 								// cas où le candidat postule à plusieurs postes pris en compte ainsi
-								List<GalaxieEntry> userGalaxieEntries = GalaxieEntry.findGalaxieEntrysByCandidat(user).getResultList();
+								List<GalaxieEntry> userGalaxieEntries = galaxieEntryDao.findGalaxieEntrysByCandidat(user);
 								for(GalaxieEntry userGalaxieEntry: userGalaxieEntries) {
 									dbGalaxyEntries.remove(getList4Id(userGalaxieEntry));
 								}
 								
-								user.remove();
-								galaxieEntry.persist();
+								userDao.deleteUser(user);
+								galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
 								dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
 								continue;
 							}
@@ -132,7 +134,7 @@ public class GalaxieExcelParser {
 					dbGalaxyEntrie.setLocalisation(galaxieEntry.getLocalisation());
 					dbGalaxyEntrie.setProfil(galaxieEntry.getProfil());
 					dbGalaxyEntrie.setEtatDossier(galaxieEntry.getEtatDossier());
-					dbGalaxyEntrie.merge();
+					galaxieEntryDao.saveGalaxieEntry(dbGalaxyEntrie);
 				}
 			}		
 		}
@@ -142,7 +144,7 @@ public class GalaxieExcelParser {
 
 	}
 	
-	private boolean fieldsEquals(GalaxieEntry dbGalaxyEntrie,
+	boolean fieldsEquals(GalaxieEntry dbGalaxyEntrie,
 			GalaxieEntry galaxieEntry) {
 		return dbGalaxyEntrie.getCivilite().equals(galaxieEntry.getCivilite())
 				&& dbGalaxyEntrie.getNom().equals(galaxieEntry.getNom())
@@ -154,8 +156,8 @@ public class GalaxieExcelParser {
 				;
 	}
 	
-	private List<String> getList4Id(GalaxieEntry galaxieEntry) {
-		return Arrays.asList(new String [] {galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat()});
+	List<String> getList4Id(GalaxieEntry galaxieEntry) {
+		return Arrays.asList(galaxieEntry.getNumEmploi(), galaxieEntry.getNumCandidat());
 	}
 	
 	public Map<String, String> getCells4GalaxieEntry(GalaxieExcel galaxieExcel, GalaxieEntry galaxieEntry) throws SQLException, IOException {

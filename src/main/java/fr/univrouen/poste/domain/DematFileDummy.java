@@ -1,5 +1,10 @@
 package fr.univrouen.poste.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class DematFileDummy implements DematFile {
 
 	String filename;
@@ -9,22 +14,6 @@ public class DematFileDummy implements DematFile {
 	public DematFileDummy(String filename, String fileSizeFormatted) {
 		super();
 		this.filename = filename;
-		this.fileSizeFormatted = fileSizeFormatted;
-	}
-
-	public String getFilename() {
-		return filename;
-	}
-
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
-
-	public String getFileSizeFormatted() {
-		return fileSizeFormatted;
-	}
-
-	public void setFileSizeFormatted(String fileSizeFormatted) {
 		this.fileSizeFormatted = fileSizeFormatted;
 	}
 

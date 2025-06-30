@@ -1,5 +1,23 @@
 package fr.univrouen.poste.batch;
 
+import fr.univrouen.poste.dao.BigFileDao;
+import fr.univrouen.poste.dao.GalaxieExcelDao;
+import fr.univrouen.poste.domain.GalaxieExcel;
+import fr.univrouen.poste.services.GalaxieEntriesService;
+import fr.univrouen.poste.services.GalaxieExcelParser;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.EntityManagerHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,45 +25,28 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.EntityManagerFactoryUtils;
-import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import fr.univrouen.poste.domain.GalaxieExcel;
-import fr.univrouen.poste.services.ExcelParser;
-import fr.univrouen.poste.services.GalaxieEntriesService;
-import fr.univrouen.poste.services.GalaxieExcelParser;
-
 @Service
 public class GalaxieImportService {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Autowired 
+	@Resource
 	GalaxieExcelParser galaxieExcelParser;
-	
-	@Autowired 	
-	ExcelParser excelParser;
-	
-	@Autowired
+
+	@Resource
 	GalaxieEntriesService galaxieEntriesService;
 	
-	@Autowired
+	@Resource
 	EntityManagerFactory entityManagerFactory;
 
+    @Resource
+    GalaxieExcelDao galaxieExcelDao;
+
+	@Resource
+	BigFileDao bigFileDao;
+
 	@Transactional
-	public void importGalaxie(String galaxieFilePath) throws IOException, SerialException, SQLException {
+	public void importGalaxie(String galaxieFilePath) throws IOException, SQLException {
 		
 		File file = new File(galaxieFilePath);
         String filename = file.getName();
@@ -54,15 +55,15 @@ public class GalaxieImportService {
 
         GalaxieExcel galaxieExcel = new GalaxieExcel();
         galaxieExcel.setFilename(filename);
-        galaxieExcel.getBigFile().setBinaryFile(new SerialBlob(bytes)); 
-        galaxieExcel.getBigFile().persist();
+        galaxieExcel.getBigFile().setBinaryFile(new SerialBlob(bytes));
+		bigFileDao.saveBigFile(galaxieExcel.getBigFile());
         
         // set current date 
         Calendar cal = Calendar.getInstance();
         galaxieExcel.setCreation(cal.getTime());    
         
         // persist
-        galaxieExcel.persist();
+        galaxieExcelDao.saveGalaxieExcel(galaxieExcel);
         
         // process : generate GalaxieEntries
     	galaxieExcelParser.process(galaxieExcel);

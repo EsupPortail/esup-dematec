@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div id="menu" th:fragment="menu">
+  <ul class="nav nav-list bs-docs-sidenav" id="_menu">
+    
+    <!-- Menu Admin : Mapping Galaxie, Configuration, Tags, Types de fichiers, Templates -->
+    <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+      <li th:classappend="${activeMenu == 'admingalaxiemapping' ? 'active' : ''}">
+        <a th:href="@{/admin/galaxiemapping}"
+           th:text="'Mapping Galaxie'">Mapping Galaxie</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminappliconfig' ? 'active' : ''}">
+        <a th:href="@{/admin/appliconfig}">Configuration</a>
+      </li>
+      <li th:classappend="${activeMenu == 'admincandidaturetags' or activeMenu == 'admincandidaturevaluetags' ? 'active' : ''}">
+        <a th:href="@{/admin/candidaturetags}"
+           th:text="'Tags'">Tags</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminappliconfigfiletype' ? 'active' : ''}">
+        <a th:href="@{/admin/appliconfigfiletype}"
+           th:text="'Types de fichiers'">Types de fichiers</a>
+      </li>
+      <li th:classappend="${activeMenu == 'admintemplatefiles' ? 'active' : ''}">
+        <a th:href="@{/admin/templatefiles}"
+           th:text="'Templates'">Templates</a>
+      </li>
+    </th:block>
+    
+    <!-- Menu Admin/Manager : Users -->
+    <li th:classappend="${activeMenu == 'adminusers' ? 'active' : ''}" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+      <a th:href="@{/admin/users}"
+         th:text="#{menu_item_user_list_label}">Liste</a>
+    </li>
+    
+    <!-- Catégorie Galaxie -->
+    <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+      <li class="nav-header">Galaxie</li>
+      <li th:classappend="${activeMenu == 'admingalaxieexcels' ? 'active' : ''}">
+        <a th:href="@{/admin/galaxieexcels}"
+           th:text="#{menu_item_galaxieexcel_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'admingalaxieentrys' ? 'active' : ''}">
+        <a th:href="@{/admin/galaxieentrys}"
+           th:text="#{menu_item_galaxieentry_list_label}">Liste</a>
+      </li>
+    </th:block>
+    
+    <!-- Catégorie Commissions -->
+    <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+      <li class="nav-header">Commissions</li>
+      <li th:classappend="${activeMenu == 'admincommissionexcels' ? 'active' : ''}">
+        <a th:href="@{/admin/commissionexcels}"
+           th:text="#{menu_item_commissionexcel_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'admincommissionentrys' ? 'active' : ''}">
+        <a th:href="@{/admin/commissionentrys}"
+           th:text="#{menu_item_commissionentry_list_label}">Liste</a>
+      </li>
+    </th:block>
+    
+    <!-- Catégorie Statistiques -->
+    <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+      <li class="nav-header">Statistiques</li>
+      <li th:classappend="${activeMenu == 'admin' ? 'active' : ''}">
+        <a th:href="@{/admin}">Résumé</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminchart' ? 'active' : ''}">
+        <a th:href="@{/admin/chart}">Graphes</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminlogimportgalaxies' ? 'active' : ''}">
+        <a th:href="@{/admin/logimportgalaxies}"
+           th:text="#{menu_item_logimportgalaxie_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminlogimportcommissions' ? 'active' : ''}">
+        <a th:href="@{/admin/logimportcommissions}"
+           th:text="#{menu_item_logimportcommission_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminlogfiles' ? 'active' : ''}">
+        <a th:href="@{/admin/logfiles}"
+           th:text="#{menu_item_logfile_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminlogauths' ? 'active' : ''}">
+        <a th:href="@{/admin/logauths}"
+           th:text="#{menu_item_logauth_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminlogmails' ? 'active' : ''}">
+        <a th:href="@{/admin/logmails}"
+           th:text="#{menu_item_logmail_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'adminlogpostefiles' ? 'active' : ''}">
+        <a th:href="@{/admin/logpostefiles}"
+           th:text="#{menu_item_logpostefile_list_label}">Liste</a>
+      </li>
+      <li th:classappend="${activeMenu == 'admincurrentsessions' ? 'active' : ''}">
+        <a th:href="@{/admin/currentsessions}">Utilisateurs connectés</a>
+      </li>
+    </th:block>
+    
+    <!-- Catégorie Candidatures -->
+    <li class="nav-header">Candidatures</li>
+    <li th:if="${candidatCanSignup}" th:classappend="${activeMenu == 'addpostecandidatures' ? 'active' : ''}" sec:authorize="hasRole('ROLE_CANDIDAT')">
+      <a th:href="@{/addpostecandidatures}">Ajout de candidatures</a>
+    </li>
+    <li th:classappend="${activeMenu == 'postecandidatures' ? 'active' : ''}">
+      <a th:href="@{/postecandidatures}"
+         th:text="#{menu_item_postecandidature_list_label}">Liste</a>
+    </li>
+    
+    <!-- Postes pour admin/manager ou membres selon config -->
+    <th:block sec:authorize="isAuthenticated()"
+            th:with="isAdminOrManager=${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_MANAGER'')')},
+                       isMembre=${#authorization.expression('hasRole(''ROLE_MEMBRE'')')}">
+      <li th:if="${isAdminOrManager or (isMembre and postesMenu4Members)}" 
+          th:classappend="${activeMenu == 'posteapourvoirs' ? 'active' : ''}">
+        <a th:href="@{/posteapourvoirs}"
+           th:text="#{menu_item_posteapourvoir_list_label}">Liste</a>
+      </li>
+    </th:block>
+    
+  </ul>
+</div>
+</body>
+</html>

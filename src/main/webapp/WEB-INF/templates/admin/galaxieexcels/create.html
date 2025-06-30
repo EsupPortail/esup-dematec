@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Imports Excel Galaxie - Création</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Merci de sélectionner un fichier Excel Galaxie puis de valider votre sélection pour l'envoi effectif.</p>
+      </div>
+    </div>
+    
+    <h2>Importer fichier Excel Galaxie</h2>
+    
+    <form th:action="@{/admin/galaxieexcels/addFile}" th:object="${galaxieExcel}" method="post" enctype="multipart/form-data">
+
+      
+      <div>
+        <label for="file">Sélectionner fichier Excel</label>
+        <div>
+          <input type="file" name="file" id="file" required="required"/>
+        </div>
+      </div>
+      
+      <div>
+        <button type="submit" class="btn btn-primary">Importer</button>
+        <a th:href="@{/admin/galaxieexcels}" class="btn">Annuler</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

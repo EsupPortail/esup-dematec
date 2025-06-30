@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title th:text="#{welcome_h3(${application_name})}">Index</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    
+    <!-- Alerte admin : hbm2ddl.auto = create -->
+    <div th:if="${hbm2ddlAuto == 'create'}" class="alert alert-error" sec:authorize="hasRole('ROLE_ADMIN')">
+      <p>Votre fichier persistence.xml présente la propriété hibernate.hbm2ddl.auto à <span class="label label-important">create</span>.</p>
+      <p>Si vous ne modifiez pas cette propriété à <span class="label label-important">update</span>, votre base de données sera écrasée au prochain redémarrage de l'application !</p>
+    </div>
+    
+    <!-- Alerte utilisateur admin par défaut -->
+    <div th:if="${#authentication.principal.username == 'admin'}" class="alert alert-error" sec:authorize="isAuthenticated()">
+      <p>Si vous venez d'installer l'application EsupDematec, nous vous conseillons de modifier dès maintenant le login(mail)/password de l'utilisateur administrateur par défaut 'admin'.</p>
+      <p>Pour ce faire, vous pouvez modifier ces 2 champs (email+password) directement via le menu <a th:href="@{/admin/users}">Utilisateurs</a> ; déconnectez-vous et reconnectez-vous alors de suite avec ce nouvel identifiant.</p>
+    </div>
+    
+    <!-- Contenu pour Admin/Manager -->
+    <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+      <h3>
+        <img th:src="@{/resources/images/logo-esup-dematec.png}" alt="EsupDematEC" />
+      </h3>
+      <div class="hero-unit">
+        <h4>Application de dématérialisation des recrutements des enseignants chercheurs et ATER liés à l'application nationale Galaxie.</h4>
+        <p>Cette application permet une gestion des authentifications des candidats et autres utilisateurs (administrateur, gestionnaire, président, membre de commission).</p>
+        <p>Elle ingère des fichiers Excel Galaxie pour générer ensuite les comptes utilisateurs, postes, candidatures liés.</p>
+        <p>Elle permet aux candidats de déposer des fichiers pour chacune de ses candidatures.</p>
+      </div>
+      <div>
+        <p>En tant qu'administrateur, manager ou super-manager, vous trouverez sur le menu de gauche un ensemble de pages permettant de mettre en place cette dématérialisation des candidatures.</p>
+        <p>Sur la plupart de ces pages, vous trouverez un petit texte d'<b>Aide</b> vous permettant de mieux comprendre le fonctionnement de l'outil.</p>
+      </div>
+    </th:block>
+    
+    <!-- Contenu pour Candidat -->
+    <div th:utext="${textePremierePageCandidat}" sec:authorize="hasRole('ROLE_CANDIDAT')"></div>
+    
+    <!-- Contenu pour Membre -->
+    <div th:utext="${textePremierePageMembre}" sec:authorize="hasRole('ROLE_MEMBRE')"></div>
+    
+    <br />
+    
+    <!-- Boutons pour membres -->
+    <th:block sec:authorize="hasRole('ROLE_MEMBRE')">
+      <a th:href="@{/postecandidatures}" class="btn btn-primary btn-large">Liste des candidatures</a>
+      <span></span>
+      <a th:if="${postesMenu4Members}" th:href="@{/posteapourvoirs}" class="btn btn-primary btn-large">Liste des postes</a>
+    </th:block>
+    
+    <!-- Boutons pour candidats -->
+    <a th:href="@{/postecandidatures}" class="btn btn-primary btn-large" sec:authorize="hasRole('ROLE_CANDIDAT')">Liste de mes candidatures</a>
+    
+  </div>
+</body>
+</html>

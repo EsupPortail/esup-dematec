@@ -17,33 +17,44 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import fr.univrouen.poste.dao.PosteAPourvoirDao;
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.finder.RooWebFinder;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.Date;
 
-@RooWebScaffold(path = "admin/users", formBackingObject = User.class)
 @RequestMapping("/admin/users")
 @Controller
-@RooWebFinder
 public class UserController {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
 	
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Resource
+    PasswordEncoder passwordEncoder;
 
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid User user, BindingResult result, Model model, HttpServletRequest request) {
@@ -53,7 +64,7 @@ public class UserController {
             return "admin/users/create";
         }
         if (user.getId() != null) {
-            User savedUser = User.findUser(user.getId());
+            User savedUser = userDao.findUser(user.getId());
             if (!savedUser.getPassword().equals(user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
@@ -66,7 +77,7 @@ public class UserController {
             	user.setActivationDate(new Date());
             }
         }
-        user.persist();
+        userDao.saveUser(user);
         return "redirect:/admin/users/" + user.getId().toString();
     }
     
@@ -79,7 +90,7 @@ public class UserController {
         }
         uiModel.asMap().clear();
         if (user.getId() != null) {
-            User savedUser = User.findUser(user.getId());
+            User savedUser = userDao.findUser(user.getId());
             if (!user.getPassword().equals(savedUser.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
@@ -92,82 +103,63 @@ public class UserController {
             	user.setActivationDate(new Date());
             }
         }
-        user.merge();
+        userDao.saveUser(user);
         return "redirect:/admin/users/" + encodeUrlPathSegment(user.getId().toString(), httpServletRequest);
     }
-    
-    @RequestMapping(params = "find=ByStatus", method = RequestMethod.GET)
-    public String findUsersByStatus(
-    		@RequestParam(value = "status", required=false) String status, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-    	
-    	if("Admin".equals(status))
-    		return this.findUsersByIsAdmin(true, page, size, sortFieldName, sortOrder, uiModel);
-    	
-    	else if("SuperManager".equals(status))
-    		return this.findUsersByIsSuperManager(true, page, size, sortFieldName, sortOrder, uiModel);
-    	
-    	else if("Manager".equals(status))
-    		return this.findUsersByIsManager(true, page, size, sortFieldName, sortOrder, uiModel);
-    	
-    	else if("Membre".equals(status))
-    		return this.findUsersByMembre(true, page, size, sortFieldName, sortOrder, uiModel);
-    	
-    	else if("Candidat".equals(status))
-    		return this.findUsersByCandidat(true, page, size, sortFieldName, sortOrder, uiModel);
-    	
-    	else
-    		return this.list(page, size, sortFieldName, sortOrder, uiModel);
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new User());
+        return "admin/users/create";
     }
 
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String show(@PathVariable Long id, Model uiModel) {
+        uiModel.addAttribute("user", userDao.findUser(id));
+        uiModel.addAttribute("itemId", id);
+        return "admin/users/show";
+    }
 
-	private String findUsersByCandidat(boolean b, Integer page, Integer size,
-			String sortFieldName, String sortOrder, Model uiModel) {
-        if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findAllCandidats(sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) User.countCandidats() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            uiModel.addAttribute("users", User.findAllCandidats(sortFieldName, sortOrder).getResultList());
-        }
-        addDateTimeFormatPatterns(uiModel);
+	@RequestMapping(produces = "text/html")
+    public String list(@PageableDefault Pageable pageable, Model uiModel,
+                       @RequestParam(value="status", required = false) String status,
+                       @RequestParam(value="nomOrPrenomOrEmailAddress", required = false) String nomOrPrenomOrEmailAddress
+        ) {
+        Page<User> result = userDao.findUserEntries(status, nomOrPrenomOrEmailAddress, pageable);
+        uiModel.addAttribute("users", result);
+        uiModel.addAttribute("status", status);
+        uiModel.addAttribute("nomOrPrenomOrEmailAddress", nomOrPrenomOrEmailAddress);
         return "admin/users/list";
-	}
+    }
 
+	@RequestMapping(value = "/{id}", params = "form", produces = "text/html")
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, userDao.findUser(id));
+        return "admin/users/update";
+    }
 
-	private String findUsersByMembre(boolean b, Integer page, Integer size,
-			String sortFieldName, String sortOrder, Model uiModel) {
-        if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findAllMembres(sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) User.countMembres() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            uiModel.addAttribute("users", User.findAllMembres(sortFieldName, sortOrder).getResultList());
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        User user = userDao.findUser(id);
+        userDao.deleteUser(user);
+        uiModel.asMap().clear();
+        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
+        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        return "redirect:/admin/users";
+    }
+
+	void populateEditForm(Model uiModel, User user) {
+        uiModel.addAttribute("user", user);
+        uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirs());
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
         }
-        addDateTimeFormatPatterns(uiModel);
-        return "admin/users/list";
-	}
-	
-    @RequestMapping(params = "find=ByNomLikeOrEmailAddressLikeOrPrenomLike", method = RequestMethod.GET)
-    public String findUsersByNomLikeOrEmailAddressLike(@RequestParam("nomOrPrenomOrEmailAddress") String nomOrPrenomOrEmailAddress, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-    	if(nomOrPrenomOrEmailAddress == null || nomOrPrenomOrEmailAddress.length()==0) {
-    		return "redirect:/admin/users";
-    	}
-    	nomOrPrenomOrEmailAddress = "%" + nomOrPrenomOrEmailAddress + "%";
-        if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("users", User.findUsersByNomLikeOrEmailAddressLikeOrPrenomLike(nomOrPrenomOrEmailAddress, nomOrPrenomOrEmailAddress, nomOrPrenomOrEmailAddress, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) User.countFindUsersByNomLikeOrEmailAddressLikeOrPrenomLike(nomOrPrenomOrEmailAddress, nomOrPrenomOrEmailAddress, nomOrPrenomOrEmailAddress) / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            uiModel.addAttribute("users", User.findUsersByNomLikeOrEmailAddressLikeOrPrenomLike(nomOrPrenomOrEmailAddress, nomOrPrenomOrEmailAddress, nomOrPrenomOrEmailAddress, sortFieldName, sortOrder).getResultList());
-        }
-        addDateTimeFormatPatterns(uiModel);
-        return "admin/users/list";
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
     }
 
 }

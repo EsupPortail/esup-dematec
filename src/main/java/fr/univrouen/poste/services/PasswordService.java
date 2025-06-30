@@ -17,10 +17,12 @@
  */
 package fr.univrouen.poste.services;
 
-import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.dao.AppliConfigDao;
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,29 +31,35 @@ import java.util.Random;
 @Service
 public class PasswordService {
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	@Resource
+	PasswordEncoder passwordEncoder;
 	
-	@Autowired
+	@Resource
 	EmailService emailService;
 
-	@Autowired
-	private LogService logService;
+	@Resource
+	LogService logService;
 
-	private Random random = new Random(System.currentTimeMillis());
+	@Resource
+	AppliConfigDao appliConfigDao;
+
+	@Resource
+	UserDao userDao;
+
+	final Random random = new Random(System.currentTimeMillis());
 
 	public void sendPasswordActivationKeyMail(User user, String remoteAdress) {
 		String activationKey = generateActivationKey();
 		user.setActivationKey(activationKey);
-		user.merge();
+		userDao.saveUser(user);
 
 		String mailTo = user.getEmailAddress();
-		String mailFrom = AppliConfig.getCacheMailFrom();
-		String mailSubject = AppliConfig.getCacheMailSubject();
+		String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
+		String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
 
-		String mailMessage = AppliConfig.getCacheTexteMailPasswordOublie();
+		String mailMessage = appliConfigDao.getAppliConfig().getTexteMailPasswordOublie();
 		mailMessage = mailMessage.replaceAll("@@activationKey@@", activationKey);
 
 		logService.logActionAuth(LogService.AUTH_PASSWORD_FORGOT_SENT, user.getEmailAddress(), remoteAdress);
@@ -61,7 +69,7 @@ public class PasswordService {
 
 	String generateActivationKey() {
 		String activationKey = "activationKey" + Math.abs(this.random.nextInt());
-		while(User.countFindUsersByActivationKey(activationKey) > 0) {
+		while(userDao.countFindUsersByActivationKey(activationKey) > 0) {
 			activationKey = "activationKey" + Math.abs(this.random.nextInt());
 		}
 		return activationKey;

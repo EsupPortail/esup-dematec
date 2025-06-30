@@ -17,29 +17,33 @@
  */
 package fr.univrouen.poste.services;
 
+import fr.univrouen.poste.dao.CommissionEntryDao;
+import fr.univrouen.poste.domain.CommissionEntry;
+import fr.univrouen.poste.domain.CommissionExcel;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import fr.univrouen.poste.domain.CommissionEntry;
-import fr.univrouen.poste.domain.CommissionExcel;
-
 @Service
 public class CommissionExcelParser {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
+	@Resource
 	ExcelParser excelParser;
 	
-	@Autowired	
+	@Resource
 	CommissionMappingService commissionMappingService;
+
+	@Resource
+	CommissionEntryDao commissionEntryDao;
 
 	public void process(CommissionExcel commissionExcel) throws SQLException {
 
@@ -50,11 +54,11 @@ public class CommissionExcelParser {
 		int p = 0;
 		List<String> cellsHead = cells.remove(0);
 		for (String cellName : cellsHead) {
-			cellsPosition.put(cellName, new Long(p++));
+			cellsPosition.put(cellName, Long.valueOf(p++));
 		}
 
 		Map<List<String>, CommissionEntry>  dbcommissionEntries = new HashMap<List<String>, CommissionEntry>();
-		for(CommissionEntry commissionEntry : CommissionEntry.findAllCommissionEntrys()) {
+		for(CommissionEntry commissionEntry : commissionEntryDao.findAllCommissionEntrys()) {
 			dbcommissionEntries.put(getList4Id(commissionEntry), commissionEntry);
 		}
         
@@ -77,18 +81,18 @@ public class CommissionExcelParser {
 					&& commissionEntry.getEmail() != null && !commissionEntry.getEmail().isEmpty()) {
 				
 				// Récupération d'un CommissionEntry à chaque fois trop gourmand, même avec l'index ...
-				//TypedQuery<CommissionEntry> query = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail(), null, null);
+				//TypedQuery<CommissionEntry> query = commissionEntryDao.findCommissionEntrysByNumPosteAndEmail(commissionEntry.getNumPoste(), commissionEntry.getEmail(), null, null);
 				CommissionEntry dbCommissionEntry = dbcommissionEntries.get(getList4Id(commissionEntry));
 				
 				if (dbCommissionEntry == null) {
-					commissionEntry.persist();
+					commissionEntryDao.saveCommissionEntry(commissionEntry);
 				} else {
 					// This GalaxyEntry exists already, we merge it if needed
 					if(!fieldsEquals(dbCommissionEntry, commissionEntry)) {
 						dbCommissionEntry.setNom(commissionEntry.getNom());
 						dbCommissionEntry.setPrenom(commissionEntry.getPrenom());
 						dbCommissionEntry.setPresident(commissionEntry.getPresident());
-						dbCommissionEntry.merge();
+						commissionEntryDao.saveCommissionEntry(dbCommissionEntry);
 					}
 				}
 			}
@@ -97,15 +101,15 @@ public class CommissionExcelParser {
 
 	}
 	
-	private boolean fieldsEquals(CommissionEntry dbCommissionEntry,
+	boolean fieldsEquals(CommissionEntry dbCommissionEntry,
 			CommissionEntry commissionEntry) {
 		return dbCommissionEntry.getNom().equals(commissionEntry.getNom()) 
 				&& dbCommissionEntry.getPrenom().equals(commissionEntry.getPrenom())
 				&& dbCommissionEntry.getPresident().equals(commissionEntry.getPresident());
 	}
 
-	private List<String> getList4Id(CommissionEntry commissionEntry) {
-		return Arrays.asList(new String [] {commissionEntry.getNumPoste(), commissionEntry.getEmail()});
+	List<String> getList4Id(CommissionEntry commissionEntry) {
+		return Arrays.asList(commissionEntry.getNumPoste(), commissionEntry.getEmail());
 	}
 
 

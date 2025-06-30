@@ -17,34 +17,34 @@
  */
 package fr.univrouen.poste.provider;
 
-import javax.persistence.TypedQuery;
-
+import fr.univrouen.poste.dao.UserDao;
+import fr.univrouen.poste.domain.User;
+import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import fr.univrouen.poste.domain.User;
-
 @Component
 public class AuthenticationFailureListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
+
+	@Resource
+	UserDao userDao;
 
 	@Override
 	@Transactional
 	public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent ev) {
 
 	    try {
-		String username = ev.getAuthentication().getName();
+			String username = ev.getAuthentication().getName();
+			User targetUser =  userDao.findUsersByEmailAddress(username);
+			if (targetUser != null) { // only for existing users
+				targetUser.reportLoginFailure();
+				userDao.saveUser(targetUser);
+			}
+	    } catch(Exception e) {
 
-		TypedQuery<User> query = User.findUsersByEmailAddress(username, null, null);
-		User targetUser = (User) query.getSingleResult();
-
-	    if (targetUser != null) { // only for existing users
-	    	targetUser.reportLoginFailure();
-	    	targetUser.persist();
-	    }
-
-	    } catch(Exception e) { }    
+		}
 
 	}
 

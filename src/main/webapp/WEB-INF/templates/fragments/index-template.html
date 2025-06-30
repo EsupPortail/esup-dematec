@@ -1,0 +1,8 @@
+<div th:fragment="indexTemplate">
+  <div th:with="title=${#messages.msg('application_name')}">
+    <div class="panel">
+      <h3 th:text="#{welcome_titlepane(${application_name})}">Welcome</h3>
+    </div>
+  </div>
+</div>
+

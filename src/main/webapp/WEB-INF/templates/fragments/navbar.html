@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top" th:fragment="navbar">
+  <div class="navbar-inner">
+    <ul class="nav" id="_navbar">
+      
+      <li id="home">
+        <a th:href="@{/}" th:text="#{navbar_home_label}">Accueil</a>
+      </li>
+      
+      <li id="password" sec:authorize="isAuthenticated()">
+        <a th:href="@{/changepassword/index}" th:text="#{navbar_password_label}">Mot de passe</a>
+      </li>
+      
+      <li id="su" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+        <a th:href="@{/admin/su}" th:text="#{navbar_su_label}">SU</a>
+      </li>
+      
+      <li id="logout" sec:authorize="isAuthenticated()" class="navbar-right">
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+          <input type="submit" th:value="|#{navbar_logout_label} [${#authentication.name}]|" class="btn-link" />
+        </form>
+      </li>
+      
+    </ul>
+  </div>
+
+    <ul class="nav navbar-nav navbar-right multipass-supervisor-nav" sec:authorize="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')">
+      <li class="nav navbar-nav">
+        <form th:action="@{/logout/impersonate}" method="POST" style="display: inline;">
+          <button class="btn btn-warning" type="submit">SORTIR DU SU !</button>
+        </form>
+      </li>
+    </ul>
+  
+</nav>
+</body>
+</html>

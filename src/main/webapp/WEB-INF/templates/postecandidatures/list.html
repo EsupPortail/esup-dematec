@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Candidatures</title>
+</head>
+<body>
+  <div layout:fragment="body">
+
+    <!-- Aide pour Admin / Manager -->
+    <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+      <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+        <div class="help-content">
+          <p>En tant que gestionnaire (ou administrateur) de l'application, vous avez la liste complète des candidatures donnée ici.</p>
+          <p>Pour chacune d'entre elles, vous pouvez visualiser, ajouter ou supprimer des fichiers</p>
+          <p>Vous avez également la possibilité de filtrer (trouver) les candidatures par poste ou recevable/non-recevable.</p>
+          <p><i>Pour sélectionner/déselectionner plusieurs postes/candidats dans le formulaire "Filtrer", vous pouvez utiliser la combinaison Ctrl‑Clique</i>.</p>
+        </div>
+      </div>
+
+      <!-- Filtre (accordion) -->
+      <div class="demat-finder-candidatures">
+        <div class="accordion help" id="accordionfilter">
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
+            </div>
+            <div th:classappend="${finderview} ? 'in' : ''" class="accordion-body collapse" id="collapseFilter">
+              <div class="accordion-inner">
+                <div class="row-fluid">
+                  <form th:action="@{/postecandidatures}" method="get" id="filterForm">
+                    <div class="span4 demat-filter">
+                      <input class="input-large" type="text" th:name="searchText" th:id="f_searchText" th:value="${searchText}" placeholder="Recherche libre sur le nom, prénom, email, n°galaxie"/>
+                      <label for="posteSelect">Postes</label>
+                      <select multiple="multiple" size="15" th:name="numEmploiPostes" id="posteSelect" class="input-block-level">
+                        <option th:each="p : ${posteapourvoirs}" th:value="${p}" th:text="${p}">Poste</option>
+                      </select>
+                    </div>
+
+                    <div class="span5 demat-filter">
+                      <label for="candidatSelect">Candidats</label>
+                      <select multiple="multiple" size="15" id="candidatSelect" th:name="emailCandidats" class="input-block-level">
+                        <option th:each="u : ${candidats}" th:value="${u}" th:text="${u}">Candidat</option>
+                      </select>
+                      <input id="textbox" type="text" placeholder="Filtrer candidats"/>
+                    </div>
+
+                    <div class="span3 demat-filter">
+                      <label for="reviewStatusSelect">Vue</label>
+                      <select multiple="multiple" size="5" id="reviewStatusSelect" th:name="reviewStatus" class="input-block-level">
+                        <option th:each="s : ${reviewStatusList}" th:value="${s}" th:text="${s}">Vue</option>
+                      </select>
+
+                      <div>
+                        <label for="recevable">Recevable</label>
+                        <select id="recevable" name="recevable">
+                          <option value="">--</option>
+                          <option value="RECEVABLE" th:selected="${recevable == 'RECEVABLE'}">Recevable</option>
+                          <option value="NON_RECEVABLE" th:selected="${recevable == 'NON_RECEVABLE'}">Non recevable</option>
+                          <option value="NON_DEFINI" th:selected="${recevable == 'NON_DEFINI'}">Non défini</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label for="auditionnable">Auditionnable</label>
+                        <select id="auditionnable" name="auditionnable">
+                          <option value="">--</option>
+                          <option value="true" th:selected="${auditionnable == 'true'}">Auditionnable</option>
+                          <option value="false" th:selected="${auditionnable == 'false'}">Non Auditionnable</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label for="modification">Activité</label>
+                        <select id="modification" name="modification">
+                          <option value="">--</option>
+                          <option value="true" th:selected="${modification == 'true'}">Au moins 1 modification</option>
+                          <option value="false" th:selected="${modification == 'false'}">Aucune modification</option>
+                        </select>
+                      </div>
+
+                      <div th:if="${allPosteCandidatureTag != null}">
+                        <div th:each="tag : ${allPosteCandidatureTag}">
+                          <label th:text="${tag.name}">Tag</label>
+                          <select th:name="${'tags[' + tag.id + ']'}">
+                            <option value="">--</option>
+                            <option th:each="v : ${tag.values}" th:value="${v.id}" th:text="${v.value}" th:selected="${command != null and command.tags != null and command.tags[tag.id] != null and command.tags[tag.id].id == v.id}"></option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="row-fluid" style="margin-top:10px;">
+                        <div class="span4"><label><input type="checkbox" name="zip" th:checked="${zip}"/> Zip</label></div>
+                        <div class="span4"><label><input type="checkbox" name="mails" th:checked="${mails}"/> Liste mails</label></div>
+                        <div class="span4"><label><input type="checkbox" name="csv" th:checked="${csv}"/> csv</label></div>
+                      </div>
+
+                      <div th:if="${templateFiles != null}">
+                        <label for="templateFile">Export Word via un modèle</label>
+                        <select id="templateFile" name="templateFile">
+                          <option value="">--</option>
+                          <option th:each="tf : ${templateFiles}" th:value="${tf.id}" th:text="${tf.filename}"></option>
+                        </select>
+                      </div>
+
+                      <input type="hidden" name="sortOrder" th:value="${sortOrder}"/>
+                      <input type="hidden" name="sortFieldName" th:value="${sortFieldName}"/>
+                      <div style="margin-top:10px;">
+                        <button type="submit" class="btn btn-success">Trouver</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> <!-- /filter -->
+    </th:block>
+
+    <!-- Aide pour Membres -->
+    <th:block sec:authorize="hasRole('ROLE_MEMBRE')">
+      <div th:utext="${texteMembreAideCandidatures}"></div>
+
+      <div th:if="${#lists.size(membresPostes) > 0}" class="accordion help" id="accordionfilter">
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilterMembre"> Filtrer </a>
+          </div>
+          <div th:classappend="${finderview} ? 'in' : ''" class="accordion-body collapse" id="collapseFilterMembre">
+            <div class="accordion-inner">
+              <div class="row-fluid">
+                <div class="span4">
+                  <form th:action="@{/postecandidatures}" method="get">
+                    <label for="membresPostesSelect">Postes</label>
+                    <select multiple="multiple" th:name="numEmploiPostes" id="membresPostesSelect">
+                      <option th:each="p : ${membresPostes}" th:value="${p.numEmploi}" th:text="${p}"></option>
+                    </select>
+                    <div>
+                      <label for="auditionnable_membre">Auditionnable</label>
+                      <select id="auditionnable_membre" name="auditionnable">
+                        <option value="">--</option>
+                        <option value="true">Auditionnable</option>
+                        <option value="false">Non Auditionnable</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label><input type="checkbox" name="zip"/> Zip</label>
+                    </div>
+                    <div style="margin-top:10px;">
+                      <button class="btn btn-success" type="submit">Trouver</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+
+    <!-- Aide pour Candidats -->
+    <th:block sec:authorize="hasRole('ROLE_CANDIDAT')">
+      <div th:utext="${texteCandidatAideCandidatures}"></div>
+    </th:block>
+
+    <!-- Formulaire de gestion multiple -->
+    <form th:action="@{/admin/multipostecandidatures/manage}" method="post" id="manageForm">
+      <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+
+      <style sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
+          .table-striped tbody > tr:nth-child(odd) > td,
+          .table-striped tbody > tr:nth-child(odd) > th {
+            background-color: rgba(249, 249, 249, 0.2);
+          }
+      </style>
+
+      <style sec:authorize="hasRole('ROLE_MEMBRE')">
+          .table-striped tbody > tr:nth-child(odd) > td,
+          .table-striped tbody > tr:nth-child(odd) > th {
+            background-color: rgba(200, 200, 200, 0.2);
+          }
+      </style>
+
+      <!-- table and controls -->
+      <div th:if="${postecandidatures != null}">
+        <i><span th:text="${nbResultsTotal}"/> candidature<th:block th:if="${nbResultsTotal>1}">s</th:block></i>
+        <table class="table table-striped table-bordered" id="_title_pl_fr_univrouen_poste_domain_PosteCandidature_id">
+          <thead>
+            <tr>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}">
+                <input type="checkbox" id="selectAll" onclick="$('.candidature-checkbox').prop('checked', this.checked);"/>
+              </th>
+              <th><a sd:pagination-sort="poste">Poste</a></th>
+              <th><a sd:pagination-sort="candidat.nom">Nom</a></th>
+              <th><a sd:pagination-sort="candidat.emailAddress">Email</a></th>
+              <th>Prénom</th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="candidat.numCandidat">N°Galaxie</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="recevableEnum">Recevable</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'') or hasRole(''ROLE_MEMBRE'')')}"><a sd:pagination-sort="auditionnable">Auditionnable</a></th>
+              <th th:if="${laureatEnable and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="laureat">Lauréat</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="managerReview.reviewStatus">Vue</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="creation">Création</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="modification">Modification</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="managerReview.manager">Gestionnaire</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="managerReview.reviewDate">Date gestion</a></th>
+              <th th:if="${not candidatCanSignup and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="galaxieEntry.etatDossier">Etat Dossier Galaxie</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}">Com.</th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')') and not #lists.isEmpty(allPosteCandidatureTag)}">Tag</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr th:each="candidature : ${postecandidatures}"
+              th:styleappend="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')
+                ? 'background-color:' + legendColorMap?.get(candidature.managerReview?.reviewStatus) + ';'
+                : #authorization.expression('hasRole(''ROLE_MEMBRE'')')
+                ? 'background-color:' + reporterTagColor + ';'
+                : 'background-color:#fafafa'}">
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}">
+                <input type="checkbox" class="candidature-checkbox" name="candidatureId" th:value="${candidature.id}"/>
+              </td>
+              <td th:text="${candidature.poste.numEmploi}">Poste</td>
+              <td th:text="${candidature.nom}">Nom</td>
+              <td th:text="${candidature.email}">Email</td>
+              <td th:text="${candidature.prenom}">Prénom</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.numCandidat}">N°Galaxie</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.recevableEnum}">Recevable</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'') or hasRole(''ROLE_MEMBRE'')')}" th:text="${candidature.auditionnable}">Auditionnable</td>
+              <td th:if="${laureatEnable and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.laureat}">Lauréat</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReviewState}">Vue</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${#dates.format(candidature.creation, posteCandidature_creation_date_format)}">Création</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${#dates.format(candidature.modification, posteCandidature_modification_date_format)}">Modification</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReview != null ? candidature.managerReview.manager : ''}">Gestionnaire</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReview != null ? #dates.format(candidature.managerReview.reviewDate, posteCandidature_modification_date_format) : ''}">Date gestion</td>
+              <td th:if="${not candidatCanSignup and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.galaxieEntryEtatDossier}">Etat Dossier Galaxie</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerComment4Members}" class="demat-popover" th:attrappend="title=${candidature.managerComment4Members}">Com.</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')') and not #lists.isEmpty(allPosteCandidatureTag)}" th:utext="${candidature.tagsAsHtmlString}" class="demat-popover demat-star">Tags</td>
+              <td>
+                <a th:href="@{/postecandidatures/{id}(id=${candidature.id})}" class="btn btn-small btn-info">Voir</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Contrôles multi-gestion visibles aux rôles -->
+        <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+          <script>
+            $(document).ready(function(){
+              $("#demat-pc-multi-manage").hide();
+              $("#manageForm input.candidature-checkbox").change(function(){
+                if($("#manageForm input.candidature-checkbox:checked").length>0) {
+                  $("#demat-pc-multi-manage").show();
+                } else {
+                  $("#demat-pc-multi-manage").hide();
+                }
+              });
+              $("#selectAll").click(function(){ $("#manageForm input.candidature-checkbox").trigger('change'); });
+
+              var img_true = "[[@{/images/accept.png}]]";
+              var img_false = "[[@{/images/cross.png}]]";
+
+              // Convertir colonnes texte en icônes simple (ex : true/false)
+              $("td").filter(function(){ return $(this).text().trim() === "false"; }).text("");
+              $(".demat-popover").filter(function(){ return !$(this).text().trim(); }).removeClass();
+              $('#_emailCandidats_id').filterByText($('#textbox'), true);
+            });
+          </script>
+
+          <div id="demat-pc-multi-manage" class="demat-fluid">
+            <div class="demat6 demat-pc-manage">
+              <h4>Gestion des candidatures</h4>
+              <div class="well">
+                <input type="submit" class="btn btn-danger" name="non_recevable" value="Non Recevables" onclick="return confirm('Candidatures  non recevables ?');"/>
+                &nbsp;
+                <input type="submit" class="btn btn-warning" name="recevable" value="Recevables" onclick="return confirm('Candidatures recevables ?');"/>
+                &nbsp;
+                <input type="submit" class="btn btn-danger" name="non_auditionnable" value="Non retenues pour audition" onclick="return confirm('Candidat non auditionnable sur cette candidature ? Aucun mail ne sera envoyé automatiquement au candidat pour lui informer de ce changement ... !');"/>
+                &nbsp;
+
+                <!-- Modal auditionnable -->
+                <a class="btn btn-danger" data-toggle="modal" href="#auditionnableDialog" role="button">Retenus pour auditions ?</a>
+                <div class="modal hide fade" id="auditionnableDialog" tabindex="-1" role="dialog" aria-hidden="true">
+                  <div class="modal-header">
+                    <button class="close" data-dismiss="modal" type="button">×</button>
+                    <h3>Candidats retenus pour audition sur ces candidatures ?</h3>
+                  </div>
+                  <div class="modal-body">
+                    <p>Si vous confirmez, ces candidats seront considérés comme <b>retenus pour audition</b>.</p>
+                    <p>Ils recevront de fait un mail (que vous pouvez 'modifier' ci‑dessous en y insérant du texte supplémentaire) et ils pourront compléter leur candidature dans l'application.</p>
+                    <h4>Mail :</h4>
+                    <pre th:text="${mailAuditionnableEntete}"></pre>
+                    <textarea cols="100" name="mailCorps" rows="8"></textarea>
+                    <pre th:text="${mailAuditionnablePiedPage}"></pre>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal">Annuler</button>
+                    <input type="submit" class="btn btn-danger" name="auditionnable" value="Confirmer" onclick="return confirm('Êtes-vous sûr ?');"/>
+                  </div>
+                </div>
+
+                <th:block th:if="${laureatEnable}">
+                  <a class="btn btn-danger" data-toggle="modal" href="#laureatDialog" role="button">Candidatures lauréates ?</a>
+                  <div class="modal hide fade" id="laureatDialog" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-header">
+                      <button class="close" data-dismiss="modal" type="button">×</button>
+                      <h3>Candidatures lauréates ?</h3>
+                    </div>
+                    <div class="modal-body">
+                      <p>Si vous confirmez, cette candidature sera considérée comme <b>lauréate</b>.</p>
+                      <p>Il recevra de fait un mail (que vous pouvez 'modifier' ci‑dessous).</p>
+                      <h4>Mail :</h4>
+                      <textarea cols="100" name="mailCorpsLaureat" rows="8" th:text="${texteMailCandidatLaureat}"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                      <button class="btn" data-dismiss="modal">Annuler</button>
+                      <input type="submit" class="btn btn-danger" name="laureat" value="Confirmer" onclick="return confirm('Êtes-vous sûr ?');"/>
+                    </div>
+                  </div>
+                </th:block>
+              </div>
+            </div>
+
+            <div class="demat6 demat-pc-manage">
+              <h4>Status : <span th:text="${postecandidature != null ? postecandidature.managerReviewState : ''}"></span></h4>
+              <div class="well">
+                <input type="submit" class="btn btn-warning" name="reviewstatus_vue" value="Marquer comme Vues" onclick="return confirm('Vous allez marquer ces candidatures comme vues.');"/>
+                &nbsp;
+                <input type="submit" class="btn btn-warning" name="reviewstatus_incomplet" value="Marquer comme Vues mais incomplètes" onclick="return confirm('Vous allez marquer ces candidatures comme vues mais incomplètes.');"/>
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </th:block>
+
+        <!-- Légende et conversion d'icônes -->
+        <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER') or hasRole('ROLE_MANAGER')">
+          <div id="demat-legende" style="margin-top:20px;">
+            <hr/>
+            <i>Légende :</i>
+            <div id="legendColor">
+              <table class="table table-striped table-bordered">
+                <tr>
+                  <td th:each="lc : ${legendColors}" th:style="${'background-color:' + lc.color}" th:text="${lc.reviewStatus}">Légende</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <script>
+            $(document).ready(function(){
+              var img_true_url = "[[@{/images/accept.png}]]";
+              var img_false_url = "[[@{/images/cross.png}]]";
+
+              var html_img_true = '<img src="' + img_true_url + '"/>';
+              var html_img_false = '<img src="' + img_false_url + '"/>';
+
+              $("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
+                return $(this).text() === "true";
+              }).css("font-weight", "bold").css("color", "green").css("text-align", "center").html(html_img_true);
+
+              /*[# th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"]*/
+              /* pour colonne recevable uniquement (colonne 7) */
+              $("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td + td + td").filter(function() {
+                return $(this).text() === "NON_RECEVABLE";
+              }).css("font-weight", "bold").css("color", "red").css("text-align", "center").html(html_img_false);
+
+              $("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td + td + td").filter(function() {
+                return $(this).text() === "RECEVABLE";
+              }).css("font-weight", "bold").css("color", "green").css("text-align", "center").html(html_img_true);
+
+              $("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td:first-child + td + td + td + td + td + td").filter(function() {
+                return $(this).text() === "NON_DEFINI";
+              }).html("");
+              /*[/]*/
+
+              $("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
+                return $(this).text() === "false";
+              }).text("");
+
+              $(".demat-popover").filter(function() {
+                return !$(this).text().trim();
+              }).removeClass();
+
+              $('#_emailCandidats_id').filterByText($('#textbox'), true);
+            });
+          </script>
+
+        </th:block>
+      </div>
+    </form>
+
+    <!-- Pagination -->
+    <div class="pagination-container" th:if="${postecandidatures != null}">
+      <div class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+      <div class="pagination pagination-centered" sd:pagination="full"></div>
+    </div>
+
+  </div>
+</body>
+</html>

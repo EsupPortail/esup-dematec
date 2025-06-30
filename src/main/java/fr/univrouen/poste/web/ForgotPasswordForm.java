@@ -17,16 +17,22 @@
  */
 package fr.univrouen.poste.web;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
 
-@RooJavaBean
 public class ForgotPasswordForm {
 
 	@NotNull
 	@Size(min = 1, message = "Merci de saisir votre email")
-	private String emailAddress;
+	String emailAddress;
 
+
+	public String getEmailAddress() {
+        return this.emailAddress;
+    }
+
+	public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 }

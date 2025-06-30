@@ -17,10 +17,14 @@
  */
 package fr.univrouen.poste.web;
 
+import fr.univrouen.poste.dao.AppliConfigDao;
 import fr.univrouen.poste.domain.AppliConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -30,17 +34,27 @@ import java.util.Date;
 @Controller
 public class LoginController {
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	final Logger logger = LoggerFactory.getLogger(getClass());
+
+	@Resource
+	PasswordEncoder passwordEncoder;
+
+	@Resource
+	AppliConfigDao appliConfigDao;
 
     @RequestMapping
+	@Transactional
     public String login(Model model) {
-    	String textePremierePageAnonyme = AppliConfig.getCacheTextePremierePageAnonyme();
+    	AppliConfig config = appliConfigDao.getAppliConfig();
+    	String textePremierePageAnonyme = config != null ? config.getTextePremierePageAnonyme() : "";
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
-    	Boolean candidatCanSignup = AppliConfig.getCacheCandidatCanSignup();
-    	Date currentTime = new Date();     	    
-    	candidatCanSignup = candidatCanSignup && currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) < 0;
+    	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
+    	Date currentTime = new Date();
+    	if (candidatCanSignup && config != null) {
+    		candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
+    	}
     	model.addAttribute("candidatCanSignup", candidatCanSignup);
+
         return "login";
     }
    

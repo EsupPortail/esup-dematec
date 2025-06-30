@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Entrées Galaxie - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>L'ensemble des données importées depuis l'ensemble des fichiers galaxie déposés dans l'application est listé ici.</p>
+      <p>Si de nouvelles données issues des fichiers Excel Galaxie sont présentes, l'application vous propose alors de générer différents éléments liés à cette application.</p>
+      <p>Ces éléments sont :
+      <ul>
+        <li>Des comptes utilisateurs permettant aux candidats de s'authentifier dans l'application. Dans le même temps que la création du compte, un email est également envoyé au candidat afin de lui présenter ses paramètres de connexion.</li>
+        <li>Des références aux postes encore non connus de l'application.</li>
+        <li>Et enfin les candidatures à proprement parlées, qui pourront être alimentées par les candidats et visualisées par les membres.</li>
+      </ul>
+      </p>
+      </div>
+    </div>
+    
+    <div class="well" th:unless="${#lists.isEmpty(unknowCandidatures) and  #lists.isEmpty(unknowPostes) and  #lists.isEmpty(unknowCandidats)}">
+      <div th:unless="${#lists.isEmpty(unknowCandidatures)}">
+        <strong>Les éléments correspondants à ces candidatures sont manquants : </strong>
+        <span th:each="candidature : ${unknowCandidatures}">
+          <a th:href="@{/admin/galaxieentrys/{id}(id=${candidature[2]})}" th:text="${'[' + candidature[0] + ', ' + candidature[1] + ']'}"></a><span th:unless="${candidatureStat.last}">, </span>
+        </span>
+      </div>
+      <div>
+        <a th:href="@{/admin/galaxieentrys/generatecandidatspostes}" class="btn btn-large btn-danger">
+          <i class="icon-play-circle"></i>Générer
+        </a>
+      </div>
+    </div>
+    
+    <a th:href="@{/admin/galaxieentrys(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <br/><br/>
+    
+    <div th:if="${galaxieentrys == null or #lists.isEmpty(galaxieentrys)}">
+      <p>Aucun élément trouvé.</p>
+    </div>
+    
+    <table th:if="${galaxieentrys != null and !#lists.isEmpty(galaxieentrys)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>
+              <a sd:pagination-sort="numEmploi">
+                Num Emploi
+              </a>
+          </th>
+          <th>
+              <a sd:pagination-sort="numCandidat">Num Candidat</a>
+          </th>
+          <th>Civilité</th>
+          <th>
+              <a sd:pagination-sort="nom">Nom</a>
+          </th>
+          <th>Prénom</th>
+          <th>
+              <a sd:pagination-sort="email">Email</a>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="entry : ${galaxieentrys}">
+          <td th:text="${entry.numEmploi}"></td>
+          <td th:text="${entry.numCandidat}"></td>
+          <td th:text="${entry.civilite}"></td>
+          <td th:text="${entry.nom}"></td>
+          <td th:text="${entry.prenom}"></td>
+          <td th:text="${entry.email}"></td>
+          <td class="btn-group">
+            <a th:href="@{/admin/galaxieentrys/{id}(id=${entry.id})}" class="btn btn-sm btn-info">Voir</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="pagination-container">
+            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+            <div class="pagination pagination-centered" sd:pagination="full"></div>
+        </div>
+  </div>
+</body>
+</html>

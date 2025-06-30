@@ -17,43 +17,53 @@
  */
 package fr.univrouen.poste.services;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import fr.univrouen.poste.dao.AppliConfigDao;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
+import fr.univrouen.poste.dao.UserDao;
+import fr.univrouen.poste.domain.AppliConfig.MailReturnReceiptModeTypes;
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.PosteCandidatureFile;
+import fr.univrouen.poste.domain.User;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.AppliConfig.MailReturnReceiptModeTypes;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
-import fr.univrouen.poste.domain.User;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Set;
 
 @Service
 public class ReturnReceiptService {
 
-	private static final long serialVersionUID = 1L;
+	static final long serialVersionUID = 1L;
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
+	@Resource
 	EmailService emailService;
+
+	@Resource
+	AppliConfigDao appliConfigDao;
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
 	
 
 	DateFormatter dateFormatter = new DateFormatter("dd/MM/yyyy HH:mm");
 
 	public void logActionFile(String action, PosteCandidature postecandidature, PosteCandidatureFile postecandidatureFile, HttpServletRequest request, Date currentTime) {
 
-		MailReturnReceiptModeTypes mailReturnReceiptMode = AppliConfig.getCacheMailReturnReceiptModeType();
+		MailReturnReceiptModeTypes mailReturnReceiptMode = appliConfigDao.getAppliConfig().getMailReturnReceiptModeType();
 		
 		synchronized (this) {
 
@@ -73,12 +83,12 @@ public class ReturnReceiptService {
 
 	}
 
-	private void sendEmail(String fileName, String numEmploi) {	
+	void sendEmail(String fileName, String numEmploi) {	
 		String mailTo = SecurityContextHolder.getContext().getAuthentication().getName();
-		String mailFrom = AppliConfig.getCacheMailFrom();
-		String mailSubject = AppliConfig.getCacheMailSubject();
+		String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
+		String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
 
-		String mailMessage = AppliConfig.getCacheTexteMailCandidatReturnReceipt();
+		String mailMessage = appliConfigDao.getAppliConfig().getTexteMailCandidatReturnReceipt();
 		mailMessage = mailMessage.replaceAll("@@fileName@@", fileName);       
 		mailMessage = mailMessage.replaceAll("@@numEmploi@@", numEmploi);      
 		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
@@ -93,11 +103,11 @@ public class ReturnReceiptService {
 		boolean isCandidat = roles.contains("ROLE_CANDIDAT");
 		
 		if(isCandidat) {
-			MailReturnReceiptModeTypes mailReturnReceiptMode = AppliConfig.getCacheMailReturnReceiptModeType();
+			MailReturnReceiptModeTypes mailReturnReceiptMode = appliConfigDao.getAppliConfig().getMailReturnReceiptModeType();
 			if(MailReturnReceiptModeTypes.EACH_SESSION.equals(mailReturnReceiptMode)) {
 				String messageBody = "";
-				User candidat = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
-				List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(candidat).getResultList();
+				User candidat = userDao.findUsersByEmailAddress(emailAddress);
+				Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(candidat);
 				for(PosteCandidature candidature: candidatures) {
 					messageBody = messageBody + "\n*Poste n°" + candidature.getPoste().getNumEmploi() + "*";
 					for(PosteCandidatureFile candidatureFile : candidature.getCandidatureFiles()) {
@@ -107,10 +117,10 @@ public class ReturnReceiptService {
 						messageBody = messageBody + "\n - " + filename + " - " + fileSize + " [" + sentDate + "]";
 					}
 				}
-				String mailFrom = AppliConfig.getCacheMailFrom();
-				String mailSubject = AppliConfig.getCacheMailSubject();
+				String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
+				String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
 
-				String mailMessage = AppliConfig.getCacheTexteMailCandidatReturnReceipt();
+				String mailMessage = appliConfigDao.getAppliConfig().getTexteMailCandidatReturnReceipt();
 				mailMessage = mailMessage.replaceAll("@@messageBody@@", messageBody);           
 				emailService.sendMessage(mailFrom, emailAddress, mailSubject, mailMessage);
 			}

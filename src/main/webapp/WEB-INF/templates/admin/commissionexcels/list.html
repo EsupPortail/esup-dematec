@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Imports Excel commission - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Afin de pouvoir faciliter l'affectation des membres à une commission (poste), vous pouvez ajouter ici de nouveaux fichiers Excel (avec format particulier : exemple <a th:href="@{/resources/doc/COMMISSION.xls}">ici</a>).</p>
+      <p>Une fois un nouveau fichier ajouté, vous pourrez effectivement importer et générer les différents éléments depuis le menu <a th:href="@{/admin/commissionentrys}">Importation Commission</a>.</p>
+      </div>
+    </div>
+    
+    <a th:href="@{/admin/commissionexcels(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <br/><br/>
+    
+    <div th:if="${commissionexcels == null or #lists.isEmpty(commissionexcels)}">
+      <p>Aucun élément trouvé.</p>
+    </div>
+    
+    <table th:if="${commissionexcels != null and !#lists.isEmpty(commissionexcels)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Fichier</th>
+          <th>
+              <a sd:pagination-sort="creation">Création</a>
+          </th>
+           <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="excel : ${commissionexcels}">
+          <td th:text="${excel.filename}"></td>
+          <td th:text="${excel.creation}"></td>
+            <td class="btn-group">
+                <a th:href="@{/admin/commissionexcels/{id}(id=${excel.id})}" class="btn btn-sm btn-info">Voir</a>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="pagination-container">
+            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+            <div class="pagination pagination-centered" sd:pagination="full"></div>
+        </div>
+  </div>
+</body>
+</html>

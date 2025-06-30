@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" th:href="@{/resources/css/bootstrap.min.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/bootstrap-responsive.min.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/docs.css}" />
+  <link rel="stylesheet" th:href="@{/resources/js/pschecker/style/style.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/demat.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/demat-print.css}" media="print"/>
+  <link rel="SHORTCUT ICON" th:href="@{/resources/images/favicon.ico}" />
+
+  <!-- JavaScript -->
+  <script th:src="@{/resources/js/jquery-1.9.0.min.js}"></script>
+  <script th:src="@{/resources/js/bootstrap.min.js}"></script>
+  <script th:src="@{/resources/js/pschecker/js/pschecker.js}"></script>
+  <script th:src="@{/resources/js/demat.js}"></script>
+
+  <title th:text="#{welcome_h3(${application_name})}">Application</title>
+</head>
+
+<body data-target=".bs-docs-sidebar" data-spy="scroll" data-twttr-rendered="true">
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <div id="main" class="container-fluid">
+    <div class="row-fluid">
+      <div class="span-demat-left" id="demat-left">
+        <div th:replace="~{fragments/menu :: menu}"></div>
+      </div>
+      <a id="toggleSidebar" href="#" class="toggles" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"><i class="icon-chevron-left"><!--  --></i></a>
+      <div id="demat-right">
+        <div layout:fragment="body">
+          <!-- Page content will be inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+
+</body>
+</html>

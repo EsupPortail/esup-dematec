@@ -1,50 +1,86 @@
 package fr.univrouen.poste.web.admin;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+
+import fr.univrouen.poste.dao.AppliConfigFileTypeDao;
+import fr.univrouen.poste.dao.PosteCandidatureFileDao;
+import fr.univrouen.poste.domain.AppliConfigFileType;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import fr.univrouen.poste.domain.AppliConfigFileType;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
 
 @RequestMapping("/admin/appliconfigfiletype")
 @Controller
-@RooWebScaffold(path = "admin/appliconfigfiletype", formBackingObject = AppliConfigFileType.class)
-public class AppliConfigFileTypeController {	
+public class AppliConfigFileTypeController {
+
+	@Resource
+	AppliConfigFileTypeDao appliConfigFileTypeDao;
+	
+	@Resource
+	PosteCandidatureFileDao posteCandidatureFileDao;
 	
     @RequestMapping(produces = "text/html")
-    public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-        if(sortFieldName == null || sortFieldName.isEmpty()) {
-        	sortFieldName = "listIndex, id";
-        	sortOrder = "asc";
-        }
-    	if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("appliconfigfiletypes", AppliConfigFileType.findAppliConfigFileTypeEntries(firstResult, sizeNo, sortFieldName, sortOrder));
-            float nrOfPages = (float) AppliConfigFileType.countAppliConfigFileTypes() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            uiModel.addAttribute("appliconfigfiletypes", AppliConfigFileType.findAllAppliConfigFileTypes(sortFieldName, sortOrder));
-        }
+    public String list(@PageableDefault(size = 10) Pageable pageable, Model uiModel) {
+        Page<AppliConfigFileType> page = appliConfigFileTypeDao.findAllAppliConfigFileTypes(pageable);
+        uiModel.addAttribute("appliconfigfiletypes", page);
         return "admin/appliconfigfiletype/list";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String delete(@PathVariable Long id, Model uiModel) {
     	uiModel.asMap().clear();
-    	AppliConfigFileType appliConfigFileType = AppliConfigFileType.findAppliConfigFileType(id);
-        if(PosteCandidatureFile.countFindPosteCandidatureFilesByFileType(appliConfigFileType)>0) {
+    	AppliConfigFileType appliConfigFileType = appliConfigFileTypeDao.findAppliConfigFileType(id);
+        if(posteCandidatureFileDao.countFindPosteCandidatureFilesByFileType(appliConfigFileType)>0) {
         	uiModel.addAttribute("deleteErrorCandidaturesExist", "true");
         } else {
-        	appliConfigFileType.remove();
+        	appliConfigFileTypeDao.delete(appliConfigFileType);
         }
-        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
-        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/admin/appliconfigfiletype";
     }
     
+
+	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String create(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, appliConfigFileType);
+            return "admin/appliconfigfiletype/create";
+        }
+        uiModel.asMap().clear();
+        appliConfigFileTypeDao.saveAppliConfigFileType(appliConfigFileType);
+        return "redirect:/admin/appliconfigfiletype";
+    }
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new AppliConfigFileType());
+        return "admin/appliconfigfiletype/create";
+    }
+
+	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
+    public String update(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, appliConfigFileType);
+            return "admin/appliconfigfiletype/update";
+        }
+        uiModel.asMap().clear();
+        appliConfigFileTypeDao.saveAppliConfigFileType(appliConfigFileType);
+        return "redirect:/admin/appliconfigfiletype";
+    }
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, appliConfigFileTypeDao.findAppliConfigFileType(id));
+        return "admin/appliconfigfiletype/update";
+    }
+
+	void populateEditForm(Model uiModel, AppliConfigFileType appliConfigFileType) {
+        uiModel.addAttribute("appliConfigFileType", appliConfigFileType);
+    }
 }

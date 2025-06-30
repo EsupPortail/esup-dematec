@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Imports Excel commission - Création</title>
+</head>
+<body>
+  <div layout:fragment="body">
+
+      <div class="well">
+<p>Merci de sélectionner un fichier Excel Commission puis de valider votre sélection pour l'envoi effectif.</p>
+      </div>
+
+    <form id="fc_fr_univrouen_poste_domain_CommissionExcel" th:action="@{/admin/commissionexcels/addFile}" th:object="${commissionExcel}" method="post" enctype="multipart/form-data">
+
+      <div id="_c_fr_univrouen_poste_domain_CommissionExcel_file_id">
+        <input type="file" name="file" id="_c_fr_univrouen_poste_domain_CommissionExcel_file_id" required="required"/>
+        <br/>
+      </div>
+      
+      <div class="submit" id="fc_fr_univrouen_poste_domain_CommissionExcel_submit">
+        <input id="proceed" type="submit" value="Importer" class="btn btn-success"/>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

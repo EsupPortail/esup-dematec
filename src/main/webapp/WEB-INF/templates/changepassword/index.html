@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modification du mot de passe</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <div id="_title_div">
+      <h4>Modification du mot de passe</h4>
+    <form method="POST" th:action="@{/changepassword/update}" th:object="${changePasswordForm}">
+      <div class="password-container">
+        <br />
+        <div id="changepassword_oldpassword">
+          <label for="_oldpassword_id">Mot de passe actuel:</label>
+          <input type="password" style="width:250px" id="_changepassword_oldpassword" maxlength="30" th:field="*{oldPassword}" />
+          <br />
+          <span th:if="${#fields.hasErrors('oldPassword')}" class="errors" th:errors="*{oldPassword}"></span>
+        </div>
+        <br />
+        <div id="changepassword_newpassword">
+          <label for="_newpassword_id">Nouveau mot de passe:</label>
+          <input type="password" style="width:250px" id="_changepassword_newpassword" maxlength="30" th:field="*{newPassword}" class="strong-password" />
+          <br />
+          <span th:if="${#fields.hasErrors('newPassword')}" class="errors" th:errors="*{newPassword}"></span>
+        </div>
+        <br />
+        <div id="changepassword_newpasswordagain">
+          <label for="_newpasswordagain_id">Nouveau mot de passe (répéter):</label>
+          <input type="password" style="width:250px" id="_changepassword_newpasswordagain" maxlength="30" th:field="*{newPasswordAgain}" />
+          <br />
+          <span th:if="${#fields.hasErrors('newPasswordAgain')}" class="errors" th:errors="*{newPasswordAgain}"></span>
+        </div>
+        <br />
+        <br />
+        <div class="submit" id="changepassword_submit">
+          <input id="proceed" type="submit" value="Enregistrer" class="btn btn-success" />
+        </div>
+        <br />
+        <div class="strength-indicator">
+          <span id="password-robust">Robustesse du mot de passe</span>
+          <div class="meter"><!--  --></div>
+          Un mot de passe robuste doit contenir entre 8 et 16 caractères et proposer des majuscules, minuscules, chiffres et caractères spéciaux.
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+</body>
+</html>

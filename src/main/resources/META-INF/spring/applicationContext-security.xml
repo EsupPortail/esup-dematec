@@ -18,8 +18,11 @@
     limitations under the License.
 
 -->
-<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                                 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
     
     <!-- HTTP security configurations -->
         
@@ -52,24 +55,16 @@
     <beans:bean id="resourceUrlEncodingFilter"
                 class="org.springframework.web.servlet.resource.ResourceUrlEncodingFilter"/>
 
-    <!-- Configure Authentication mechanism -->
-    <beans:bean class="fr.univrouen.poste.provider.DatabaseAuthenticationProvider" id="databaseAuthenticationProvider"/>
+    <beans:bean id="webSecurityExpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
+
 
     <authentication-manager alias="authenticationManager">
         <!-- SHA-256 values can be produced using 'echo -n your_desired_password | sha256sum' (using normal *nix environments) -->
         <authentication-provider ref="databaseAuthenticationProvider"/>
     </authentication-manager>
- 
- 	<beans:bean id="expressionHandler" class=
- 		"org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
- 		<beans:property name="permissionEvaluator">
- 		     <beans:bean class="fr.univrouen.poste.utils.PostePermissionEvaluator"/>
- 		</beans:property>
-	</beans:bean>
 	
 	<!-- Automatically receives AuthenticationEvent messages -->
     <beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/>
-
 
 	<beans:bean id="switchUserProcessingFilter"
 		class="org.springframework.security.web.authentication.switchuser.SwitchUserFilter">

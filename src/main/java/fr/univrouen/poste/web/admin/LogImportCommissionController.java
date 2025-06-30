@@ -17,48 +17,44 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import org.springframework.roo.addon.web.mvc.controller.finder.RooWebFinder;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import fr.univrouen.poste.dao.LogImportCommissionDao;
+import fr.univrouen.poste.domain.LogImportCommission;
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
+import jakarta.annotation.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import fr.univrouen.poste.domain.LogImportCommission;
-import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 
 @RequestMapping("/admin/logimportcommissions")
 @Controller
-@RooWebScaffold(path = "admin/logimportcommissions", formBackingObject = LogImportCommission.class)
 public class LogImportCommissionController {
-	
-    @ModelAttribute("command") 
-    public LogSearchCriteria getLogSearchCriteria() {
-    	return new LogSearchCriteria();
-    }
-    
-    @RequestMapping(params = "find=ByStatusEquals", method = RequestMethod.GET)
-    public String findLogImportCommissionsByStatusEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-    	if("".equals(searchCriteria.getStatus())) {
-    		return this.list(page, size, sortFieldName, sortOrder, uiModel);
-    	}
-    	if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logimportcommissions", LogImportCommission.findLogImportCommissionsByStatusEquals(searchCriteria.getStatus(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) LogImportCommission.countFindLogImportCommissionsByStatusEquals(searchCriteria.getStatus()) / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            uiModel.addAttribute("logimportcommissions", LogImportCommission.findLogImportCommissionsByStatusEquals(searchCriteria.getStatus(), sortFieldName, sortOrder).getResultList());
-        }  
-    	
-        uiModel.addAttribute("command", searchCriteria);
-        uiModel.addAttribute("finderview", true);
 
+    @Resource
+    LogImportCommissionDao logImportCommissionDao;
+
+    @ModelAttribute("command")
+    public LogSearchCriteria getLogSearchCriteria() {
+        return new LogSearchCriteria();
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String list(@ModelAttribute("command") LogSearchCriteria searchCriteria, @PageableDefault(size = 10, sort = "actionDate", direction = Sort.Direction.DESC) Pageable pageable, Model uiModel) {
+        Page<LogImportCommission> logimportcommissions = logImportCommissionDao.findLogImportCommissions(searchCriteria, pageable);
+        uiModel.addAttribute("logimportcommissions", logimportcommissions);
+        uiModel.addAttribute("command", searchCriteria);
         addDateTimeFormatPatterns(uiModel);
         return "admin/logimportcommissions/list";
     }
-    
+
+    void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("logImportCommission_actiondate_date_format", "dd/MM/yyyy HH:mm");
+    }
+
+
 }

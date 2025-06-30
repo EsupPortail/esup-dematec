@@ -20,8 +20,11 @@
  */
 package fr.univrouen.poste.web;
 
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NonUniqueResultException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,15 +32,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-
 @Service("changePasswordValidator")
 public class ChangePasswordValidator implements Validator {
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	@Resource
+	PasswordEncoder passwordEncoder;
+
+	@Resource
+	UserDao userDao;
 
 	/*
 	 * (non-Javadoc)
@@ -64,10 +66,8 @@ public class ChangePasswordValidator implements Validator {
 					.isAuthenticated()) {
 				UserDetails userDetails = (UserDetails) SecurityContextHolder
 						.getContext().getAuthentication().getPrincipal();
-				Query query = User
-						.findUsersByEmailAddress(userDetails.getUsername(), null, null);
-				if(null!=query){
-					User person = (User) query.getSingleResult();
+				User person = userDao.findUsersByEmailAddress(userDetails.getUsername());
+				if(person!=null){
 					String storedPassword = person.getPassword();
 					String currentPassword = form.getOldPassword();
 					if (!passwordEncoder.matches(currentPassword, storedPassword)) {

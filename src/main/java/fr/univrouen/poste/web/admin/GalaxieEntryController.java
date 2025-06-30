@@ -17,78 +17,88 @@
  */
 package fr.univrouen.poste.web.admin;
 
+import fr.univrouen.poste.dao.GalaxieEntryDao;
+import fr.univrouen.poste.dao.PosteAPourvoirDao;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
+import fr.univrouen.poste.dao.UserDao;
+import fr.univrouen.poste.domain.GalaxieEntry;
+import fr.univrouen.poste.services.GalaxieEntriesService;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
+
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import fr.univrouen.poste.domain.GalaxieEntry;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.exceptions.EsupDematEcWarnException;
-import fr.univrouen.poste.services.GalaxieEntriesService;
-import fr.univrouen.poste.services.GalaxieEntryService;
-import fr.univrouen.poste.services.LogService;
 
 @RequestMapping("/admin/galaxieentrys")
 @Controller
-@RooWebScaffold(path = "admin/galaxieentrys", formBackingObject = GalaxieEntry.class)
+@Transactional
 public class GalaxieEntryController {
 	
-	@Autowired 
+	@Resource
 	GalaxieEntriesService galaxieEntriesService;
-	
-	@Autowired 
-	GalaxieEntryService galaxieEntryService;
+
+	@Resource
+	GalaxieEntryDao galaxieEntryDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	UserDao userDao;
 
     @RequestMapping(produces = "text/html")
-    public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
     	if(sortFieldName==null)
         	sortFieldName = "numEmploi,numCandidat";
-        if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("galaxieentrys", GalaxieEntry.findGalaxieEntryEntries(firstResult, sizeNo, sortFieldName, sortOrder));
-            float nrOfPages = (float) GalaxieEntry.countGalaxieEntrys() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        if (pageable.isPaged()) {
+            Page<GalaxieEntry> page = galaxieEntryDao.findGalaxieEntryEntries(pageable, sortFieldName, sortOrder);
+            uiModel.addAttribute("galaxieentrys", page);
         } else {
-            uiModel.addAttribute("galaxieentrys", GalaxieEntry.findAllGalaxieEntrys(sortFieldName, sortOrder));
+            uiModel.addAttribute("galaxieentrys", galaxieEntryDao.findAllGalaxieEntrys(sortFieldName, sortOrder));
         }
         
         Map<String, String> unknowCandidats = new HashMap<String, String>();
         Map<String, String> unknowPostes = new HashMap<String, String>();
         Map<List<String>, String> unknowCandidatures = new HashMap<List<String>, String>();
         
-        List<GalaxieEntry> galaxieEntrysWithCandidatNull = GalaxieEntry.findAllGalaxieEntrysWithCandidatNull();
+        List<GalaxieEntry> galaxieEntrysWithCandidatNull = galaxieEntryDao.findAllGalaxieEntrysWithCandidatNull();
         for(GalaxieEntry  galaxieEntry : galaxieEntrysWithCandidatNull) {
         	unknowCandidats.put(galaxieEntry.getNumCandidat(), "dummy");
-       		List<String> candidatureKey = new Vector<String>();
-       		candidatureKey.add(galaxieEntry.getNumEmploi());
-       		candidatureKey.add(galaxieEntry.getNumCandidat());
-       		candidatureKey.add(galaxieEntry.getId().toString());
-       		unknowCandidatures.put(candidatureKey, "dummy");
         }
         
-        List<GalaxieEntry> galaxieEntrysWithPosteNull = GalaxieEntry.findAllGalaxieEntrysWithPosteNull();
+        List<GalaxieEntry> galaxieEntrysWithPosteNull = galaxieEntryDao.findAllGalaxieEntrysWithPosteNull();
         for(GalaxieEntry  galaxieEntry : galaxieEntrysWithPosteNull) {
-        	unknowCandidats.put(galaxieEntry.getNumCandidat(), "dummy");
+            unknowPostes.put(galaxieEntry.getNumEmploi(), "dummy");
+        }
+
+        List<GalaxieEntry> galaxieEntrysWithCandidatureNull = galaxieEntryDao.findGalaxieEntrysByCandidatureIsNull();
+        for(GalaxieEntry  galaxieEntry : galaxieEntrysWithCandidatureNull) {
        		List<String> candidatureKey = new Vector<String>();
        		candidatureKey.add(galaxieEntry.getNumEmploi());
        		candidatureKey.add(galaxieEntry.getNumCandidat());
        		candidatureKey.add(galaxieEntry.getId().toString());
        		unknowCandidatures.put(candidatureKey, "dummy");
         }
-        
+
         uiModel.addAttribute("unknowCandidats", unknowCandidats.keySet());
         uiModel.addAttribute("unknowPostes", unknowPostes.keySet());
         uiModel.addAttribute("unknowCandidatures", unknowCandidatures.keySet());
@@ -98,10 +108,72 @@ public class GalaxieEntryController {
     
     @RequestMapping("/generatecandidatspostes")
     public String generateCandidatsPostes () {
-    	
     	galaxieEntriesService.generateCandidatsPostes();
-    	
-        return "redirect:/admin/logimportgalaxies?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
+        return "redirect:/admin/logimportgalaxies";
     }
     
+
+	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String create(@Valid GalaxieEntry galaxieEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, galaxieEntry);
+            return "admin/galaxieentrys/create";
+        }
+        uiModel.asMap().clear();
+        galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
+        return "redirect:/admin/galaxieentrys/" + encodeUrlPathSegment(galaxieEntry.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new GalaxieEntry());
+        return "admin/galaxieentrys/create";
+    }
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String show(@PathVariable Long id, Model uiModel) {
+        uiModel.addAttribute("galaxieentry", galaxieEntryDao.findGalaxieEntry(id));
+        uiModel.addAttribute("itemId", id);
+        return "admin/galaxieentrys/show";
+    }
+
+	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
+    public String update(@Valid GalaxieEntry galaxieEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, galaxieEntry);
+            return "admin/galaxieentrys/update";
+        }
+        uiModel.asMap().clear();
+        galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
+        return "redirect:/admin/galaxieentrys/" + encodeUrlPathSegment(galaxieEntry.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(value = "/{id}", params = "form", produces = "text/html")
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, galaxieEntryDao.findGalaxieEntry(id));
+        return "admin/galaxieentrys/update";
+    }
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable Long id, @PageableDefault(size = 10) Pageable pageable, Model uiModel) {
+        galaxieEntryDao.deleteGalaxieEntry(id);
+        uiModel.asMap().clear();
+        return "redirect:/admin/galaxieentrys";
+    }
+
+	void populateEditForm(Model uiModel, GalaxieEntry galaxieEntry) {
+        uiModel.addAttribute("galaxieEntry", galaxieEntry);
+        uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirs());
+        uiModel.addAttribute("postecandidatures", posteCandidatureDao.findAllPosteCandidatures());
+        uiModel.addAttribute("users", userDao.findAllUsers());
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+        }
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
+    }
 }

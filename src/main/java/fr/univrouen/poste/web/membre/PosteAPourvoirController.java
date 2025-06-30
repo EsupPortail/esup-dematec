@@ -17,23 +17,20 @@
  */
 package fr.univrouen.poste.web.membre;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.dao.*;
+import fr.univrouen.poste.domain.*;
+import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.ZipService;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,39 +43,56 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.CommissionEntry;
-import fr.univrouen.poste.domain.DematFileDummy;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteAPourvoirFile;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.services.ZipService;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @RequestMapping("/posteapourvoirs")
 @Controller
-@RooWebScaffold(path = "posteapourvoirs", formBackingObject = PosteAPourvoir.class, create=true, update=true, delete=false)
 @Transactional
 public class PosteAPourvoirController {
 
-	private final Logger logger = Logger.getLogger(getClass());	
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
+	@Resource
+	PosteAPourvoirFileDao posteAPourvoirFileDao;
+
+	@Resource
+	CommissionEntryDao commissionEntryDao;
+
+	@Resource
+	AppliConfigDao appliConfigDao;
+
+	@Resource
 	LogService logService;
 	
 	@Resource
 	ZipService zipService;
+
+	@Resource
+	BigFileDao bigFileDao;
     
 	protected User getCurrentUser() {
 		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
-		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
-		return currentUser;
+		return userDao.findUserByEmailAddress(emailAddress);
 	}
 	
     void populateEditForm(Model uiModel, PosteAPourvoir posteAPourvoir) {
-        uiModel.addAttribute("posteAPourvoir", posteAPourvoir);
-        uiModel.addAttribute("users", User.findAllNoCandidatsAndNoManagers());
+        uiModel.addAttribute("posteapourvoir", posteAPourvoir);
+        uiModel.addAttribute("users", userDao.findAllNoCandidatsAndNoManagers());
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
@@ -89,15 +103,15 @@ public class PosteAPourvoirController {
             return "posteapourvoirs/create";
         }
         uiModel.asMap().clear();
-        posteAPourvoir.persist();
+        posteAPourvoirDao.savePosteAPourvoir(posteAPourvoir);
         return "redirect:/posteapourvoirs/" + encodeUrlPathSegment(posteAPourvoir.getId().toString(), httpServletRequest);
     }
     
-    @RequestMapping(value = "/{id}", produces = "text/html")
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
     @PreAuthorize("hasPermission(#id, 'viewposte')")
-    public String show(@PathVariable("id") Long id, Model uiModel) {
+    public String show(@PathVariable Long id, Model uiModel) {
         addDateTimeFormatPatterns(uiModel);
-        PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
+        PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
         uiModel.addAttribute("posteapourvoir", poste);
         uiModel.addAttribute("itemId", id);
         uiModel.addAttribute("posteFile", new PosteAPourvoirFile());
@@ -108,7 +122,7 @@ public class PosteAPourvoirController {
     
     @RequestMapping(produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_MEMBRE')")
-    public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, 
+    public String list(@PageableDefault(size = 10) Pageable pageable,
     		@RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel,
     		HttpServletRequest request) {
 
@@ -117,19 +131,20 @@ public class PosteAPourvoirController {
     	
     	if(isMembre) {
     		String emailAddress = auth.getName();
-    		User user = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
-    		List<PosteAPourvoir> posteapourvoirs = PosteAPourvoir.findPosteAPourvoirsByMembre(user);
-    		uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
-    	} else if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findPosteAPourvoirEntries(firstResult, sizeNo, sortFieldName, sortOrder));
-            float nrOfPages = (float) PosteAPourvoir.countPosteAPourvoirs() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+    		User user = userDao.findUserByEmailAddress(emailAddress);
+    		if (user != null) {
+    			List<PosteAPourvoir> posteapourvoirs = posteAPourvoirDao.findPosteAPourvoirsByMembre(user);
+    			uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
+    		}
+    	} else if (pageable.isPaged()) {
+            Page<PosteAPourvoir> page = posteAPourvoirDao.findPosteAPourvoirEntries(pageable, sortFieldName, sortOrder);
+            uiModel.addAttribute("posteapourvoirs", page);
         } else {
-            uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirs(sortFieldName, sortOrder));
+            uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirs(sortFieldName, sortOrder));
         }
-    	uiModel.addAttribute("textePostesMenu4Members", AppliConfig.getCacheTextePostesMenu4Members());
+    	AppliConfig config = appliConfigDao.getAppliConfig();
+    	String textePostesMenu4Members = config != null ? config.getTextePostesMenu4Members() : "";
+    	uiModel.addAttribute("textePostesMenu4Members", textePostesMenu4Members);
         addDateTimeFormatPatterns(uiModel);
         return "posteapourvoirs/list";
     }
@@ -144,46 +159,46 @@ public class PosteAPourvoirController {
         uiModel.asMap().clear();
         
         // attention de preserver les fichiers ...
-        PosteAPourvoir oldPoste = PosteAPourvoir.findPosteAPourvoir(posteAPourvoir.getId());
+        PosteAPourvoir oldPoste = posteAPourvoirDao.findPosteAPourvoir(posteAPourvoir.getId());
         posteAPourvoir.setPosteFiles(oldPoste.getPosteFiles());
         
         // update poste par formulaire -> attention à ce que les CommissionEntry soient cohérents 
         // sinon la modification sera écrasée au prochain 'import/génération' d'un Excel de commissions
         for(User membre : oldPoste.getMembres()) {
         	if(posteAPourvoir.getMembres()== null || !posteAPourvoir.getMembres().contains(membre)) {
-        		List<CommissionEntry> commissionEntriesForThisAffectation = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(oldPoste.getNumEmploi(), membre.getEmailAddress()).getResultList();
+        		List<CommissionEntry> commissionEntriesForThisAffectation = commissionEntryDao.findCommissionEntrysByNumPosteAndEmail(oldPoste.getNumEmploi(), membre.getEmailAddress());
         		for(CommissionEntry commissionEntry : commissionEntriesForThisAffectation) {
-        			commissionEntry.remove();
+        			commissionEntryDao.deleteCommissionEntry(commissionEntry);
         		}
         	}
         }
         for(User president : oldPoste.getPresidents()) {
         	if(posteAPourvoir.getPresidents()== null || !posteAPourvoir.getPresidents().contains(president)) {
-        		List<CommissionEntry> commissionEntriesForThisAffectation = CommissionEntry.findCommissionEntrysByNumPosteAndEmail(oldPoste.getNumEmploi(), president.getEmailAddress()).getResultList();
+        		List<CommissionEntry> commissionEntriesForThisAffectation = commissionEntryDao.findCommissionEntrysByNumPosteAndEmail(oldPoste.getNumEmploi(), president.getEmailAddress());
         		for(CommissionEntry commissionEntry : commissionEntriesForThisAffectation) {
-        			commissionEntry.remove();
+        			commissionEntryDao.deleteCommissionEntry(commissionEntry);
         		}
         	}
         }
         
-        posteAPourvoir.merge();
+        posteAPourvoirDao.savePosteAPourvoir(posteAPourvoir);
         return "redirect:/posteapourvoirs/" + encodeUrlPathSegment(posteAPourvoir.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateForm(@PathVariable("id") Long id, Model uiModel) {
-        populateEditForm(uiModel, PosteAPourvoir.findPosteAPourvoir(id));
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, posteAPourvoirDao.findPosteAPourvoir(id));
         return "posteapourvoirs/update";
     }
     
     
 	@RequestMapping(value = "/{id}/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'viewposte')")
-	public void downloadPosteFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public void downloadPosteFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
-			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
-			PosteAPourvoirFile posteFile = PosteAPourvoirFile.findPosteAPourvoirFile(idFile);
+			PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
+			PosteAPourvoirFile posteFile = posteAPourvoirFileDao.findPosteAPourvoirFile(idFile);
 			String filename = posteFile.getFilename();
 			Long size = posteFile.getFileSize();
 			String contentType = posteFile.getContentType();
@@ -205,9 +220,9 @@ public class PosteAPourvoirController {
 	
 	@RequestMapping(value = "/{id}/delFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'manageposte')")
-	public String deletePosteFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
-		PosteAPourvoirFile posteFile = PosteAPourvoirFile.findPosteAPourvoirFile(idFile);
+	public String deletePosteFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
+		PosteAPourvoirFile posteFile = posteAPourvoirFileDao.findPosteAPourvoirFile(idFile);
 		poste.getPosteFiles().remove(posteFile);
 		
 		Calendar cal = Calendar.getInstance();
@@ -219,14 +234,14 @@ public class PosteAPourvoirController {
 
 	@RequestMapping(value = "/{id}/addFile", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'manageposte')")
-	public String addFile(@PathVariable("id") Long id, @Valid PosteAPourvoirFile posteFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
+	public String addFile(@PathVariable Long id, @Valid PosteAPourvoirFile posteFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
 		if (bindingResult.hasErrors()) {
-			logger.warn(bindingResult.getAllErrors());
+			logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/posteapourvoirs/" + id.toString();
 		}
 		uiModel.asMap().clear();
 
-		PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
+		PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
 
 		// upload file
 		MultipartFile file = posteFile.getFile();
@@ -259,25 +274,26 @@ public class PosteAPourvoirController {
 					
 					InputStream inputStream = file.getInputStream();
 					//byte[] bytes = IOUtils.toByteArray(inputStream);
-				
-					posteFile.setFilename(filename);
-					posteFile.setFileSize(fileSize);
-					posteFile.setContentType(contentType);
+
+					PosteAPourvoirFile newFile = new PosteAPourvoirFile();
+					newFile.setContentType(posteFile.getContentType());
+					newFile.setFilename(filename);
+					newFile.setFileSize(fileSize);
+					newFile.setContentType(contentType);
 					logger.info("Upload and set file in DB with filesize = " + fileSize);
-					posteFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
-					posteFile.getBigFile().persist();
+					bigFileDao.setBinaryFileStream(newFile.getBigFile(), inputStream, fileSize);
+					bigFileDao.saveBigFile(newFile.getBigFile());
 					
 					Calendar cal = Calendar.getInstance();
 					Date currentTime = cal.getTime();
-					posteFile.setSendTime(currentTime);
+					newFile.setSendTime(currentTime);
 					
 					User currentUser = getCurrentUser();
-					posteFile.setSender(currentUser);
+					newFile.setSender(currentUser);
 					
-					poste.getPosteFiles().add(posteFile);
-					poste.persist();
+					poste.getPosteFiles().add(newFile);
 				
-					logService.logActionPosteFile(LogService.UPLOAD_ACTION, poste, posteFile, request, currentTime);
+					logService.logActionPosteFile(LogService.UPLOAD_ACTION, poste, newFile, request, currentTime);
 				}
 			}
 		} else {
@@ -299,7 +315,7 @@ public class PosteAPourvoirController {
 	
 	@RequestMapping(value = "/{id}", params = {"export"})
 	@PreAuthorize("hasPermission(#id, 'viewposte')")
-	public String exportPosteFiles(@PathVariable("id") Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public String exportPosteFiles(@PathVariable Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			
 			Calendar cal = Calendar.getInstance();
@@ -307,7 +323,7 @@ public class PosteAPourvoirController {
 			SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 			String currentTimeFmt = dateFmt.format(currentTime);
 			
-			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
+			PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
 			String fileName = poste.getNumEmploi() + "-poste-" + currentTimeFmt + "." + export;
 			DematFileDummy dematFile = new DematFileDummy(fileName, "-");
 			
@@ -328,5 +344,19 @@ public class PosteAPourvoirController {
 	}
 
 	
+
+	void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("posteAPourvoir_dateendcandidatauditionnable_date_format", "dd/MM/yyyy HH:mm");
+        uiModel.addAttribute("posteAPourvoir_dateendsignupcandidat_date_format", "dd/MM/yyyy HH:mm");
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+        }
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
+    }
 }
 

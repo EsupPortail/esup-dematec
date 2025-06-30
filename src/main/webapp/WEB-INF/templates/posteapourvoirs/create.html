@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Créer un Poste à Pourvoir</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Créer un nouveau Poste à Pourvoir</h2>
+  <form method="POST" th:action="@{/posteapourvoirs}" th:object="${posteapourvoir}">
+    <div>
+      <label for="_numEmploi_id">Num Emploi</label>
+      <div>
+        <input id="_numEmploi_id" type="text" th:field="*{numEmploi}" required="required" />
+      </div>
+    </div>
+    <div>
+      <label for="_profil_id">Profil</label>
+      <div>
+        <input id="_profil_id" type="text" th:field="*{profil}" />
+      </div>
+    </div>
+    <div>
+      <label for="_localisation_id">Localisation</label>
+      <div>
+        <input id="_localisation_id" type="text" th:field="*{localisation}" />
+      </div>
+    </div>
+    <div>
+      <div>
+        <button type="submit" class="btn btn-primary">Créer</button>
+        <button type="reset" class="btn">Annuler</button>
+      </div>
+    </div>
+  </form>
+  </div>
+</body>
+</html>

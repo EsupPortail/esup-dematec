@@ -17,80 +17,81 @@
  */
 package fr.univrouen.poste.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import javax.persistence.ManyToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.text.WordUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.transaction.annotation.Transactional;
-
-@RooJavaBean
-@RooToString(excludeFields = "postes")
-@RooJpaActiveRecord(finders = { "findUsersByNomLikeOrEmailAddressLikeOrPrenomLike", "findUsersByEmailAddress", "findUsersByEmailAddressAndActivationDateIsNotNull", "findUsersByActivationKey", "findUsersByActivationKeyAndEmailAddress", "findUsersByNumCandidat",  "findUsersByIsAdmin", "findUsersByIsSuperManager", "findUsersByIsManager"}, table="cUser")
+@Entity
+@Table(name = "cUser")
+@Getter
+@Setter
 public class User {
 
-	private static final int MAX_LOGIN_ATTEMPTS_BEFORE_LOCK = 3;
+	static final int MAX_LOGIN_ATTEMPTS_BEFORE_LOCK = 3;
 	
-	private static final int MAX_MILISECONDS_LOCK = 10000;
+	static final int MAX_MILISECONDS_LOCK = 10000;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
 	
-    private String civilite = "";
+    String civilite = "";
 
-    private String nom = "";
+    String nom = "";
 
-    private String prenom = "";
+    String prenom = "";
 	
     @NotNull
     @Column(unique = true)
     @Size(min = 1)
-    private String emailAddress;
+    String emailAddress;
 
-    private String password;
+    String password;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
-    private Date activationDate;
+    Date activationDate;
 
-    private String activationKey;
+    String activationKey;
 
-    private Boolean enabled = true;
-
-    private Long loginFailedNb = new Long(0);
     
-    private Long loginFailedTime = new Long(0);
+    Boolean enabled = true;
+
+    Long loginFailedNb = Long.valueOf(0);
+    
+    Long loginFailedTime = Long.valueOf(0);
 
     @NotNull
-    @Value("false")
-    private Boolean isManager;
+    Boolean isManager = false;
 
     @NotNull
-    @Value("false")
-    private Boolean isSuperManager;
+    Boolean isSuperManager = false;
     
     @NotNull
-    @Value("false")
-    private Boolean isAdmin;
+    Boolean isAdmin = false;
     
 	// only for candidat
-    private String numCandidat;
+    String numCandidat;
     
 	// only for membre
     @ManyToMany(mappedBy="membres")
-    private Set<PosteAPourvoir> postes;
+    Set<PosteAPourvoir> postes;
     
       
     public Boolean getIsCandidat() {
@@ -110,10 +111,6 @@ public class User {
     	this.emailAddress = emailAddress.toLowerCase();
     }
     
-    public static long countActifCUsers() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.enabled=true", Long.class).getSingleResult();
-    }
-    
     public String getStatus() {
     	String status = "";
     	if(this.getIsAdmin())
@@ -129,61 +126,6 @@ public class User {
     	return status;
     }
 
-	public static Long countAdmins() {
-		return countFindUsersByIsAdmin(true);
-    }
-
-	public static Long countSupermanagers() {
-		return countFindUsersByIsSuperManager(true);
-	}
-
-	public static Long countManagers() {
-		return countFindUsersByIsManager(true);
-	}
-
-	public static Long countMembres() {
-		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.postes is not EMPTY", Long.class).getSingleResult();
-    }
-	
-	public static Long countCandidats() {
-		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.numCandidat is not NULL AND o.numCandidat <> ''", Long.class).getSingleResult();
-	}
-	
-	public static Long countActifCandidats() {
-		return entityManager().createQuery("SELECT COUNT(o) FROM User o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' AND o.activationDate is not NULL", Long.class).getSingleResult();
-    }
-
-    public static TypedQuery<User> findAllCandidats(String sortFieldName, String sortOrder) {
-    	String jpaQuery = "SELECT o FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> ''";  	
-    	if(sortFieldName == null) 
-    		sortFieldName = "emailAddress";
-
-        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
-            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
-            }
-        }
-        return entityManager().createQuery(jpaQuery, User.class);
-    }
-    
-    public static TypedQuery<User> findAllMembres(String sortFieldName, String sortOrder) {
-    	String jpaQuery = "SELECT o FROM User AS o WHERE o.postes is not EMPTY";
-    	if(sortFieldName == null) 
-    		sortFieldName = "emailAddress";
-    	
-        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
-            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
-            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
-                jpaQuery = jpaQuery + " " + sortOrder;
-            }
-        }
-        return entityManager().createQuery(jpaQuery, User.class);
-    }
-
-	public static List<User> findAllNoCandidatsAndNoManagers() {
-        return entityManager().createQuery("SELECT o FROM User AS o WHERE (o.numCandidat is NULL OR o.numCandidat = '') AND o.isManager = FALSE AND o.isSuperManager = FALSE AND o.isAdmin = FALSE order by o.emailAddress", User.class).getResultList();
-    }
 	
 	public void reportLoginFailure() {
 		if(!isLocked() && ++loginFailedNb >= MAX_LOGIN_ATTEMPTS_BEFORE_LOCK) {
@@ -194,8 +136,8 @@ public class User {
 	}
 
 	public void reportLoginOK() {
-		loginFailedNb = new Long(0);
-		loginFailedTime = new Long(0);
+		loginFailedNb = Long.valueOf(0);
+		loginFailedTime = Long.valueOf(0);
 	}
 
 	public Boolean isLocked() {
@@ -203,82 +145,14 @@ public class User {
         Date currentTime = cal.getTime();      
 		Long currentTimeMS = currentTime.getTime();
 		if(currentTimeMS < loginFailedTime + MAX_MILISECONDS_LOCK) {
-			loginFailedNb = new Long(0);
+			loginFailedNb = Long.valueOf(0);
 			return true;
 		}
 		return false;
 	}
 
-	/**
-	 * @return true if one of his candidatures has a modification date not nul
-	 */
-	public Boolean isCandidatActif() {
-		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(this, null, null).getResultList();
-		for(PosteCandidature candidature: candidatures) {
-			if(candidature.getModification() != null) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	
-	
-	@Transactional
-	public void remove() {
-		EntityManager entityManager = entityManager();
-		User user = this;
-		if (!entityManager.contains(this)) {
-			user = User.findUser(this.getId());
-		}
-		
-		// candidat
-		List<GalaxieEntry> galaxieEntries = GalaxieEntry.findGalaxieEntrysByCandidat(user).getResultList();
-		for(GalaxieEntry galaxieEntry: galaxieEntries) {
-			galaxieEntry.remove();
-		}
-		List<PosteCandidature> candidatures = PosteCandidature.findPosteCandidaturesByCandidat(user).getResultList();
-		for(PosteCandidature candidature : candidatures) {
-			candidature.remove();
-		}  
-		
-		// membre
-		List<CommissionEntry> commissionEntries = CommissionEntry.findCommissionEntrysByMembre(user).getResultList();
-		for(CommissionEntry commissionEntry: commissionEntries) {
-			commissionEntry.getPoste().getMembres().remove(user);
-			commissionEntry.remove();
-		}   
-		Set<PosteAPourvoir> postes = user.getPostes();
-		if(postes!=null) {
-			for(PosteAPourvoir poste: postes) {
-				poste.getMembres().remove(user);
-			}   
-		}
-		
-		entityManager.remove(user);
-	}
-
-	public static TypedQuery<String> findAllUserIds() {
-    	String jpaQuery = "SELECT o.emailAddress FROM User AS o ORDER BY emailAddress";
-        return entityManager().createQuery(jpaQuery, String.class);
-	}
-	
-	public static TypedQuery<String> findAllUserNoms() {
-    	String jpaQuery = "SELECT distinct o.nom FROM User AS o WHERE o.nom IS NOT NULL ORDER BY nom";
-        return entityManager().createQuery(jpaQuery, String.class);
-	}
-	
-	public static List<String> findAllCandidatsIds() {
-    	String jpaQuery = "SELECT o.emailAddress FROM User AS o WHERE o.numCandidat is not NULL AND o.numCandidat <> '' ORDER BY emailAddress";
-        return entityManager().createQuery(jpaQuery, String.class).getResultList();
-	}
-
-	public static List<User> findUsersByEmailAddresses(List<String> emails) {
-		if (emails == null) throw new IllegalArgumentException("The emails argument is required");
-		TypedQuery<User> q = entityManager().createQuery("SELECT o FROM User o WHERE o.emailAddress IN :emails ORDER BY o.emailAddress asc", User.class);
-		q.setParameter("emails", emails);
-		return q.getResultList();
-	}
-    
+	public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("postes").toString();
+    }
 }
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Tags candidatures - Création</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Créer Tags candidatures</h2>
+    
+    <form id="fc_fr_univrouen_poste_domain_PosteCandidatureTag" th:action="@{/admin/candidaturetags}" th:object="${posteCandidatureTag}" method="post">
+
+      
+      <div>
+        <label for="_c_fr_univrouen_poste_domain_PosteCandidatureTag_name_id"><span th:text="#{label_fr_univrouen_poste_domain_postecandidaturetag_name}"></span> :</label>
+        <input type="text" th:field="*{name}" id="_c_fr_univrouen_poste_domain_PosteCandidatureTag_name_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div class="submit" id="fc_fr_univrouen_poste_domain_PosteCandidatureTag_submit">
+        <input id="proceed" type="submit" value="Créer" class="btn btn-success"/>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

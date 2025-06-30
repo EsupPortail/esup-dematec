@@ -23,8 +23,9 @@
 -- SET escape_string_warning = off;
 -- SET search_path = public, pg_catalog;
 -- postgresql full text search
-ALTER TABLE poste_candidature ADD COLUMN textsearchable_index_col tsvector;
+ALTER TABLE poste_candidature ADD COLUMN IF NOT EXISTS textsearchable_index_col tsvector;
 UPDATE poste_candidature SET textsearchable_index_col = setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') FROM c_user where poste_candidature.candidat=c_user.id; 
-CREATE INDEX textsearch_idx ON poste_candidature USING gin(textsearchable_index_col); 
-CREATE FUNCTION textsearchable_poste_candidature_trigger() RETURNS trigger AS $$ begin new.textsearchable_index_col := setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') FROM c_user where new.candidat=c_user.id; return new; end $$ LANGUAGE plpgsql; 
+CREATE INDEX IF NOT EXISTS textsearch_idx ON poste_candidature USING gin(textsearchable_index_col);
+CREATE OR REPLACE FUNCTION textsearchable_poste_candidature_trigger() RETURNS trigger AS $$ begin new.textsearchable_index_col := setweight(to_tsvector('simple', replace(coalesce(c_user.nom,''),'-',' ')), 'A') || setweight(to_tsvector('simple', replace(coalesce(c_user.prenom,''),'-',' ')), 'B') || setweight(to_tsvector('simple', coalesce(c_user.email_address,'')), 'B') || setweight(to_tsvector('simple', coalesce(c_user.num_candidat,'')), 'B') FROM c_user where new.candidat=c_user.id; return new; end $$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS tsvectorupdate ON poste_candidature;
 CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON poste_candidature FOR EACH ROW EXECUTE PROCEDURE textsearchable_poste_candidature_trigger();

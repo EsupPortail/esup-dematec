@@ -17,30 +17,22 @@
  */
 package fr.univrouen.poste.services;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import fr.univrouen.poste.dao.LogAuthDao;
+import fr.univrouen.poste.dao.LogFileDao;
+import fr.univrouen.poste.dao.LogPosteFileDao;
+import fr.univrouen.poste.dao.LogMailDao;
+import fr.univrouen.poste.dao.LogImportGalaxieDao;
+import fr.univrouen.poste.dao.LogImportCommissionDao;
+import fr.univrouen.poste.domain.*;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import fr.univrouen.poste.domain.DematFile;
-import fr.univrouen.poste.domain.LogAuth;
-import fr.univrouen.poste.domain.LogFile;
-import fr.univrouen.poste.domain.LogImportCommission;
-import fr.univrouen.poste.domain.LogImportGalaxie;
-import fr.univrouen.poste.domain.LogMail;
-import fr.univrouen.poste.domain.LogPosteFile;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.User;
+import java.util.*;
 
 @Service
 public class LogService {
@@ -77,7 +69,24 @@ public class LogService {
 	
 	public static final String IMPORT_FAILED = "IMPORT FAILED";
 
-	
+	@Resource
+	LogAuthDao logAuthDao;
+
+	@Resource
+	LogFileDao logFileDao;
+
+	@Resource
+	LogPosteFileDao logPosteFileDao;
+
+	@Resource
+	LogMailDao logMailDao;
+
+	@Resource
+	LogImportGalaxieDao logImportGalaxieDao;
+
+	@Resource
+	LogImportCommissionDao logImportCommissionDao;
+
 	public void logActionFile(String action, List<PosteCandidature> postecandidatures, HttpServletRequest request, Date currentTime) {
 		
 		LogFile logFile = new LogFile();
@@ -110,7 +119,7 @@ public class LogService {
 	    logFile.setUserAgent(userAgent);
 	    
 
-	    logFile.persist();
+	    logFileDao.saveLogFile(logFile);
     }
 	
 	public void logActionFile(String action, PosteCandidature postecandidature, DematFile dematFile, HttpServletRequest request, Date currentTime) {
@@ -154,7 +163,7 @@ public class LogService {
 	    logFile.setUserAgent(userAgent);
 	    
 
-	    logFile.persist();
+	    logFileDao.saveLogFile(logFile);
     }
 	
 	public void logActionPosteFile(String action, PosteAPourvoir poste, DematFile dematFile, HttpServletRequest request, Date currentTime) {
@@ -188,7 +197,7 @@ public class LogService {
 	    logFile.setUserAgent(userAgent);
 	    
 
-	    logFile.persist();
+	    logPosteFileDao.saveLogPosteFile(logFile);
     }
 	
 	public void logActionAuth(String action, String userId, String ip) {
@@ -205,7 +214,7 @@ public class LogService {
 	    logAuth.setAction(action);
 	    logAuth.setActionDate(currentTime);
 
-	    logAuth.persist();
+		logAuthDao.saveLogAuth(logAuth);
     }
 	
 	public void logMail(String mailTo, String message, String status) {
@@ -221,7 +230,7 @@ public class LogService {
 	    
 		logMail.setActionDate(currentTime);
 
-		logMail.persist();
+		logMailDao.saveLogMail(logMail);
     }
 	
 	public void logImportGalaxie(String message, String status) {
@@ -236,7 +245,7 @@ public class LogService {
 	    
 		logImportGalaxie.setActionDate(currentTime);
 
-		logImportGalaxie.persist();
+		logImportGalaxieDao.saveLogImportGalaxie(logImportGalaxie);
     }
 	
 	public void logImportCommission(String message, String status) {
@@ -251,7 +260,7 @@ public class LogService {
 	    
         logImportCommission.setActionDate(currentTime);
 
-        logImportCommission.persist();
+        logImportCommissionDao.saveLogImportCommission(logImportCommission);
     }
 	
 }

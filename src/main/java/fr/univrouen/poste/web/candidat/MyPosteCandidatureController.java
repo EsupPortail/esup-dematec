@@ -17,33 +17,25 @@
  */
 package fr.univrouen.poste.web.candidat;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.dao.*;
+import fr.univrouen.poste.domain.*;
+import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
+import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
+import fr.univrouen.poste.services.*;
+import fr.univrouen.poste.utils.PdfService;
+import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,57 +44,34 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.AppliConfigFileType;
-import fr.univrouen.poste.domain.DematFileDummy;
-import fr.univrouen.poste.domain.ManagerReview;
-import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
-import fr.univrouen.poste.domain.ManagerReviewLegendColor;
-import fr.univrouen.poste.domain.MemberReviewFile;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
-import fr.univrouen.poste.domain.PosteCandidatureTag;
-import fr.univrouen.poste.domain.PosteCandidatureTagValue;
-import fr.univrouen.poste.domain.TemplateFile;
-import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
-import fr.univrouen.poste.services.CsvService;
-import fr.univrouen.poste.services.EmailService;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.services.ReturnReceiptService;
-import fr.univrouen.poste.services.TemplateService;
-import fr.univrouen.poste.services.ZipService;
-import fr.univrouen.poste.utils.PdfService;
-import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequestMapping("postecandidatures")
 @Controller
-@RooWebScaffold(path = "postecandidatures", formBackingObject = PosteCandidature.class, create = false, update = false, delete=false)
 @Transactional
 public class MyPosteCandidatureController {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	DatabaseAuthenticationProvider databaseAuthenticationProvider;
-
-	@Autowired
+	@Resource
 	LogService logService;
 
-	@Autowired
+	@Resource
 	ReturnReceiptService returnReceiptService;
-	
+
+	@Resource
+	ManagerReviewLegendColorService managerReviewLegendColorService;
+
 	@Resource
 	ZipService zipService;
 	
@@ -118,12 +87,45 @@ public class MyPosteCandidatureController {
     @Resource
     CsvService csvService;
 
+	@Resource
+	AppliConfigDao appliConfigDao;
+
+	@Resource
+	AppliConfigFileTypeDao appliConfigFileTypeDao;
+
+	@Resource
+	MemberReviewFileDao memberReviewFileDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	PosteCandidatureFileDao posteCandidatureFileDao;
+
+	@Resource
+	PosteCandidatureTagDao posteCandidatureTagDao;
+
+	@Resource
+	TemplateFileDao templateFileDao;
+
+	@Resource
+	UserDao userDao;
+
+    @Resource
+    BigFileDao bigFileDao;
+
+    @Resource
+    ManagerReviewDao managerReviewDao;
+    @Autowired
+    private AppliConfigService appliConfigService;
 
 	@ModelAttribute("currentUser")
 	public User getCurrentUser() {
 		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
-		User currentUser = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
-		return currentUser;
+		return userDao.findUserByEmailAddress(emailAddress);
 	}
 
 	@ModelAttribute("command")
@@ -133,10 +135,10 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'view')")
-	public void downloadCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public void downloadCandidatureFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
-			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-			PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
+			PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
+			PosteCandidatureFile postecandidatureFile = posteCandidatureFileDao.findPosteCandidatureFile(idFile);
 			String filename = postecandidatureFile.getFilename();
 			Long size = postecandidatureFile.getFileSize();
 			String contentType = postecandidatureFile.getContentType();
@@ -159,7 +161,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}", params = {"export"})
 	@PreAuthorize("hasPermission(#id, 'review')")
-	public String exportCandidatureFiles(@PathVariable("id") Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public String exportCandidatureFiles(@PathVariable Long id, @RequestParam String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			
 			Calendar cal = Calendar.getInstance();
@@ -167,12 +169,12 @@ public class MyPosteCandidatureController {
 			SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 			String currentTimeFmt = dateFmt.format(currentTime);
 			
-			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+			PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 			String fileName = postecandidature.getPoste().getNumEmploi() + "-" + postecandidature.getEmail() + "-" + currentTimeFmt + "." + export;
 			DematFileDummy dematFile = new DematFileDummy(fileName, "-");
 			
 			if("zip".equals(export)) {						
-				List<PosteCandidature> postecandidatures = Arrays.asList(new PosteCandidature[] {postecandidature});
+				List<PosteCandidature> postecandidatures = Arrays.asList(postecandidature);
 	    		String contentType = "application/zip";
 	    		response.setContentType(contentType);
 	    		response.setHeader("Content-Disposition","attachment; filename=\"" + fileName +"\"");
@@ -200,10 +202,10 @@ public class MyPosteCandidatureController {
 
 	@RequestMapping(value = "/{id}/reviewFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'review')")
-	public void downloadReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public void downloadReviewFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
-			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-			MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
+			PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
+			MemberReviewFile memberReviewFile = memberReviewFileDao.findMemberReviewFile(idFile);
 			// byte[] file = postecandidatureFile.getBigFile().getBinaryFile();
 			String filename = memberReviewFile.getFilename();
 			Long size = memberReviewFile.getFileSize();
@@ -227,11 +229,11 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/templateReviewFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'review')")
-	public void downloadTemplateReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public void downloadTemplateReviewFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
-			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+			PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 			
-			TemplateFile templateFile = TemplateFile.findTemplateFile(idFile);
+			TemplateFile templateFile = templateFileDao.findTemplateFile(idFile);
 			
 			String filename = postecandidature.getPoste().getNumEmploi() + 
 					"-" + 
@@ -253,9 +255,9 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/delFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'manage') and hasPermission(#idFile, 'delFile')")
-	public String deleteCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-		PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
+	public String deleteCandidatureFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
+		PosteCandidatureFile postecandidatureFile = posteCandidatureFileDao.findPosteCandidatureFile(idFile);
 		postecandidature.getCandidatureFiles().remove(postecandidatureFile);
 
 		Calendar cal = Calendar.getInstance();
@@ -268,9 +270,9 @@ public class MyPosteCandidatureController {
 
 	@RequestMapping(value = "/{id}/delMemberReviewFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'review') and hasPermission(#idFile, 'delMemberReviewFile')")
-	public String delMemberReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-		MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
+	public String delMemberReviewFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
+		MemberReviewFile memberReviewFile = memberReviewFileDao.findMemberReviewFile(idFile);
 		postecandidature.getMemberReviewFiles().remove(memberReviewFile);
 		
 		Calendar cal = Calendar.getInstance();
@@ -283,15 +285,15 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/addFile", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'manage')")
-	public String addFile(@PathVariable("id") Long id, @Valid PosteCandidatureFile posteCandidatureFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
+	public String addFile(@PathVariable Long id, @Valid PosteCandidatureFile posteCandidatureFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
 		if (bindingResult.hasErrors()) {
-			logger.warn(bindingResult.getAllErrors());
+			logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/postecandidatures/" + id.toString();
 		}
 		uiModel.asMap().clear();
 
 		// get PosteCandidature from id
-		PosteCandidature posteCandidature = PosteCandidature.findPosteCandidature(id);
+		PosteCandidature posteCandidature = posteCandidatureDao.findPosteCandidature(id);
 
 		// upload file
 		MultipartFile file = posteCandidatureFile.getFile();
@@ -339,28 +341,28 @@ public class MyPosteCandidatureController {
 					} else {			
 						InputStream inputStream = file.getInputStream();
 						//byte[] bytes = IOUtils.toByteArray(inputStream);
-				
-						posteCandidatureFile.setFilename(filename);
-						posteCandidatureFile.setFileSize(fileSize);
-						posteCandidatureFile.setContentType(contentType);
+
+					    PosteCandidatureFile newFile = new PosteCandidatureFile();
+					    newFile.setFileType(posteCandidatureFile.getFileType());
+					    newFile.setFilename(filename);
+					    newFile.setFileSize(fileSize);
+					    newFile.setContentType(contentType);
 						logger.info("Upload and set file in DB with filesize = " + fileSize);
-						posteCandidatureFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
-						posteCandidatureFile.getBigFile().persist();
+						bigFileDao.setBinaryFileStream(newFile.getBigFile(), inputStream, fileSize);
+						bigFileDao.saveBigFile(newFile.getBigFile());
 				
 						Calendar cal = Calendar.getInstance();
 						Date currentTime = cal.getTime();
-						posteCandidatureFile.setSendTime(currentTime);
-				
-						posteCandidature.getCandidatureFiles().add(posteCandidatureFile);
+						newFile.setSendTime(currentTime);
+
+						posteCandidature.getCandidatureFiles().add(newFile);
 				
 						posteCandidature.setModification(currentTime);
 				
-						posteCandidature.persist();
-				
-						logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
-						returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, posteCandidatureFile, request, currentTime);
+						logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, newFile, request, currentTime);
+						returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, newFile, request, currentTime);
 						
-						pdfService.updateNbPages(posteCandidatureFile.getId());
+						pdfService.updateNbPages(newFile.getId());
 					}
 				}
 			}
@@ -377,15 +379,15 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/addMemberReviewFile", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'review')")
-	public String addMemberReviewFile(@PathVariable("id") Long id, @Valid MemberReviewFile memberReviewFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
+	public String addMemberReviewFile(@PathVariable Long id, @Valid MemberReviewFile memberReviewFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
 		if (bindingResult.hasErrors()) {
-			logger.warn(bindingResult.getAllErrors());
+			logger.warn("Errors on addMemberReviewFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/postecandidatures/" + id.toString();
 		}
 		uiModel.asMap().clear();
 
 		// get PosteCandidature from id
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 
 		// upload file
 		MultipartFile file = memberReviewFile.getFile();
@@ -414,28 +416,28 @@ public class MyPosteCandidatureController {
 					
 					InputStream inputStream = file.getInputStream();
 					//byte[] bytes = IOUtils.toByteArray(inputStream);
-			
-					memberReviewFile.setFilename(filename);
-					memberReviewFile.setFileSize(fileSize);
-					memberReviewFile.setContentType(contentType);
+
+					MemberReviewFile newFile = new MemberReviewFile();
+					newFile.setContentType(memberReviewFile.getContentType());
+					newFile.setFilename(filename);
+					newFile.setFileSize(fileSize);
+					newFile.setContentType(contentType);
 					logger.info("Upload and set file in DB with filesize = " + fileSize);
-					memberReviewFile.getBigFile().setBinaryFileStream(inputStream, fileSize);
-					memberReviewFile.getBigFile().persist();
+					bigFileDao.setBinaryFileStream(newFile.getBigFile(), inputStream, fileSize);
+					bigFileDao.saveBigFile(newFile.getBigFile());
 			
 					Calendar cal = Calendar.getInstance();
 					Date currentTime = cal.getTime();
-					memberReviewFile.setSendTime(currentTime);
+					newFile.setSendTime(currentTime);
 					
 					User currentUser = getCurrentUser();
-					memberReviewFile.setMember(currentUser);
+					newFile.setMember(currentUser);
 			
-					postecandidature.getMemberReviewFiles().add(memberReviewFile);
+					postecandidature.getMemberReviewFiles().add(newFile);
 			
 					//postecandidature.setModification(currentTime);
 			
-					postecandidature.persist();
-			
-					logService.logActionFile(LogService.UPLOAD_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
+					logService.logActionFile(LogService.UPLOAD_REVIEW_ACTION, postecandidature, newFile, request, currentTime);
 				}
 			}
 		} else {
@@ -450,8 +452,8 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/modify", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyRecevableCandidature(@PathVariable("id") Long id, @RequestParam(required=true) RecevableEnum recevable) {
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+	public String modifyRecevableCandidature(@PathVariable Long id, @RequestParam(required=true) RecevableEnum recevable) {
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		postecandidature.setRecevableEnum(recevable);
 
@@ -460,21 +462,21 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/auditionnable", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyAuditionnableCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=false) String mailCorps) {
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+	public String modifyAuditionnableCandidatureFile(@PathVariable Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=false) String mailCorps) {
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		mailCorps = mailCorps == null ? "" : mailCorps;
 				
 		if(auditionnable) {
 			String mailTo = postecandidature.getEmail();
-    	    String mailFrom = AppliConfig.getCacheMailFrom();
-    	    String mailSubject = AppliConfig.getCacheMailSubject();
+    	    String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
+    	    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
     	    
-    	    String mailMessage = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable() + 
+    	    String mailMessage = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable() + 
     	    		"\n" +
     	    		mailCorps + 
     	    		"\n" +
-    	    		AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable(); 	    
+    	    		appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable(); 	    
     	    
     	    mailMessage = mailMessage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());        
     		    		
@@ -493,15 +495,15 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/laureat", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyLaureatCandidatureFile(@PathVariable("id") Long id, @RequestParam(required=true) Boolean laureat, @RequestParam(required=false) String mailCorps) {
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+	public String modifyLaureatCandidatureFile(@PathVariable Long id, @RequestParam(required=true) Boolean laureat, @RequestParam(required=false) String mailCorps) {
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		mailCorps = mailCorps == null ? "" : mailCorps;
 				
 		if(laureat) {
 			String mailTo = postecandidature.getEmail();
-    	    String mailFrom = AppliConfig.getCacheMailFrom();
-    	    String mailSubject = AppliConfig.getCacheMailSubject();
+    	    String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
+    	    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
     	    
     	    String mailMessage = mailCorps; 	    
     	    
@@ -517,8 +519,8 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/review", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyReviewCandidature(@PathVariable("id") Long id, @RequestParam(required=true) String reviewStatus) {
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+	public String modifyReviewCandidature(@PathVariable Long id, @RequestParam(required=true) String reviewStatus) {
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		User currentUser = getCurrentUser();
 		
@@ -528,7 +530,7 @@ public class MyPosteCandidatureController {
 			managerReview.setManager(currentUser);
 			managerReview.setReviewDate(new Date());
 			postecandidature.setManagerReview(managerReview);
-			managerReview.persist();
+			managerReviewDao.saveManagerReview(managerReview);
 		} else {	
 			managerReview.setManager(currentUser);
 			managerReview.setReviewDate(new Date());
@@ -568,27 +570,27 @@ public class MyPosteCandidatureController {
 	 */
 
 	@Transactional
-	@RequestMapping(value = "/{id}", produces = "text/html")
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'view')")
-	public String show(@PathVariable("id") Long id, Model uiModel) {
-		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+	public String show(@PathVariable Long id, Model uiModel) {
+		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		uiModel.addAttribute("postecandidature", postecandidature);
 		PosteCandidatureFile posteCandidatureFile = new PosteCandidatureFile();
-		posteCandidatureFile.setFileType(AppliConfigFileType.getDefaultFileType());
+		posteCandidatureFile.setFileType(appliConfigFileTypeDao.getDefaultFileType());
 		uiModel.addAttribute("posteCandidatureFile", posteCandidatureFile);
-		uiModel.addAttribute("fileTypes", AppliConfigFileType.findAllAppliConfigFileTypes("listIndex, id", "asc"));
-		uiModel.addAttribute("texteCandidatAideCandidatureDepot", AppliConfig.getCacheTexteCandidatAideCandidatureDepot());
+		uiModel.addAttribute("fileTypes", appliConfigFileTypeDao.findAllAppliConfigFileTypes().getContent());
+		uiModel.addAttribute("texteCandidatAideCandidatureDepot", appliConfigDao.getAppliConfig().getTexteCandidatAideCandidatureDepot());
 		
 		
-	    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
-	    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
+	    String mailAuditionnableEntete = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable();
+	    String mailAuditionnablePiedPage = appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable();	    
 	    mailAuditionnableEntete = mailAuditionnableEntete.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());  
 	    mailAuditionnablePiedPage = mailAuditionnablePiedPage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());  
 	    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
 	    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
 	    
 		uiModel.addAttribute("memberReviewFile", new MemberReviewFile());
-		uiModel.addAttribute("supprReview", AppliConfig.getCacheMembreSupprReviewFile());
+		uiModel.addAttribute("supprReview", appliConfigDao.getAppliConfig().getMembreSupprReviewFile());
 		
 		// Pour phase auditionnable, on ne compte que les fichiers supprimables (writeable).
 		int nbFiles = 0;
@@ -598,7 +600,7 @@ public class MyPosteCandidatureController {
 			}
 		}
 		
-		List<AppliConfigFileType> fileTypes = AppliConfigFileType.findAllAppliConfigFileTypes("listIndex, id", "asc");
+		List<AppliConfigFileType> fileTypes = appliConfigFileTypeDao.findAllAppliConfigFileTypes().getContent();
 		List<AppliConfigFileType> fileTypesAvailable = new ArrayList<AppliConfigFileType>(); 
 		for(AppliConfigFileType fileType: fileTypes) {
 			if(fileType.getCandidatureNbFileMax()<0) {
@@ -618,27 +620,27 @@ public class MyPosteCandidatureController {
 		}
 		uiModel.addAttribute("fileTypes", fileTypesAvailable);
 		
-		List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.CANDIDATURE, "id", "asc").getResultList();
+		List<TemplateFile> templateFiles = templateFileDao.findTemplateFilesByTemplateFileType(TemplateFileType.CANDIDATURE, "id", "asc");
 		uiModel.addAttribute("templateFiles", templateFiles);
 		
 		Boolean isPresident = postecandidature.getPoste().getPresidents() != null && postecandidature.getPoste().getPresidents().contains(getCurrentUser());
 		uiModel.addAttribute("isPresident", isPresident);
 		
-		uiModel.addAttribute("presidentReportersView", AppliConfig.getCachePresidentReportersView());
+		uiModel.addAttribute("presidentReportersView", appliConfigDao.getAppliConfig().getPresidentReportersView());
 		
-		uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
-		uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
+		uiModel.addAttribute("laureatEnable", appliConfigDao.getAppliConfig().getLaureatEnable());
+		uiModel.addAttribute("texteMailCandidatLaureat", appliConfigDao.getAppliConfig().getTexteMailCandidatLaureat());
 		
-		uiModel.addAttribute("allPosteCandidatureTag", PosteCandidatureTag.findAllPosteCandidatureTags());
+		uiModel.addAttribute("allPosteCandidatureTag", posteCandidatureTagDao.findAllPosteCandidatureTags());
 		
 		return "postecandidatures/show";
 	}
 	
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
-    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-    	postecandidature.remove();
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
+		posteCandidatureDao.deletePosteCandidature(postecandidature);
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
@@ -646,116 +648,88 @@ public class MyPosteCandidatureController {
     }
 
 	@RequestMapping(produces = "text/html")
-	public String list(@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
-			@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size,  
-			@RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, 
-			@RequestParam(value = "zip", required = false, defaultValue = "off") Boolean zip, HttpServletResponse response, HttpServletRequest request, 
+	public String list(@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria,
+			@PageableDefault(size = 10) Pageable pageable,
+			@RequestParam(value = "zip", required = false, defaultValue = "off") Boolean zip,
+			HttpServletResponse response, HttpServletRequest request,
 			Model uiModel) throws IOException, SQLException {
-
-		// uiModel.addAttribute("users", User.findUserEntries(firstResult,
-		// sizeNo));
 		
-		List<PosteCandidature> postecandidatures = null;
+		Page<PosteCandidature> postecandidatures = null;
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
 		String emailAddress = auth.getName();
-		User user = User.findUsersByEmailAddress(emailAddress, null, null).getSingleResult();
+		User user = userDao.findUserByEmailAddress(emailAddress);
 		
 		boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
 		boolean isManager = request.isUserInRole("ROLE_MANAGER");
 		boolean isSuperManager = isManager || request.isUserInRole("ROLE_SUPER_MANAGER");
 		boolean isMembre = request.isUserInRole("ROLE_MEMBRE");
 		boolean isCandidat = request.isUserInRole("ROLE_CANDIDAT");
-
-		uiModel.addAttribute("sortFieldName", sortFieldName);
-		uiModel.addAttribute("sortOrder", sortOrder);
-		
-    	if(sortFieldName == null) 
-            sortFieldName = "o.poste.numEmploi,o.candidat.nom";   
-		if("poste".equals(sortFieldName))
-    		sortFieldName = "poste.numEmploi";
-    	if("nom".equals(sortFieldName))
-    		sortFieldName = "candidat.nom";
-    	if("email".equals(sortFieldName))
-    		sortFieldName = "candidat.emailAddress";
-		if("numCandidat".equals(sortFieldName))
-			sortFieldName = "candidat.numCandidat";
-    	if("managerReviewState".equals(sortFieldName))
-    		sortFieldName = "managerReview.reviewStatus";
-    	if("galaxieEntryEtatDossier".equals(sortFieldName))
-    		sortFieldName = "galaxieEntry.etatDossier";
     		
     	// pagination only for admin / manager users ...
     	if (isAdmin || isManager) {
-    		
-			if (page != null || size != null) {
-				int sizeNo = size == null ? 10 : size.intValue();
-				int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-				long nbResultsTotal = PosteCandidature.countPosteCandidatures();
-				uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
-				float nrOfPages = (float) nbResultsTotal / sizeNo;
-				uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-				postecandidatures = PosteCandidature.findPosteCandidatureEntries(firstResult, sizeNo, sortFieldName, sortOrder);
-			} else {
-				postecandidatures = PosteCandidature.findAllPosteCandidatures(sortFieldName, sortOrder);
-				uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
-			}
+
+			Page<PosteCandidature> result = posteCandidatureDao.findPosteCandidatureEntries(pageable);
+			long nbResultsTotal = result.getTotalElements();
+			uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
+			uiModel.addAttribute("maxPages", result.getTotalPages());
+			postecandidatures = result;
 			
-			uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
-			uiModel.addAttribute("candidats", User.findAllCandidatsIds());
+			uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirNumEplois());
+			uiModel.addAttribute("candidats", userDao.findAllCandidatsIds());
 			uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
 			
-		    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
-		    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
+		    String mailAuditionnableEntete = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable();
+		    String mailAuditionnablePiedPage = appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable();	    
 		    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
 		    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
 		    
-			uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
-			uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
+			uiModel.addAttribute("laureatEnable", appliConfigDao.getAppliConfig().getLaureatEnable());
+			uiModel.addAttribute("texteMailCandidatLaureat", appliConfigDao.getAppliConfig().getTexteMailCandidatLaureat());
 			
-			List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES).getResultList();
+			List<TemplateFile> templateFiles = templateFileDao.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES);
 			uiModel.addAttribute("templateFiles", templateFiles);
 			
-			uiModel.addAttribute("allPosteCandidatureTag", PosteCandidatureTag.findAllPosteCandidatureTags());
+			uiModel.addAttribute("allPosteCandidatureTag", posteCandidatureTagDao.findAllPosteCandidatureTags());
 			
 		}
 
 		else if (isCandidat) {
 			
-			if(!AppliConfig.getCacheCandidatCanSignup()) {
+			if(!appliConfigDao.getAppliConfig().getCandidatCanSignup()) {
 				
-				postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList());
+				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(user);
 			
 				// restrictions si phase auditionnable
 		        Date currentTime = new Date();     
-				if(currentTime.compareTo(AppliConfig.getCacheDateEndCandidat()) > 0 && 
-					currentTime.compareTo(AppliConfig.getCacheDateEndCandidatActif()) > 0) { 
-					for(PosteCandidature postecandidature: PosteCandidature.findPosteCandidaturesByCandidat(user, null, null).getResultList()) {
+				if(currentTime.compareTo(appliConfigDao.getAppliConfig().getDateEndCandidat()) > 0 && 
+					currentTime.compareTo(appliConfigDao.getAppliConfig().getDateEndCandidatActif()) > 0) { 
+					for(PosteCandidature postecandidature: posteCandidatureDao.findPosteCandidaturesByCandidat(user)) {
 						if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) > 0) {
-							postecandidatures.remove(postecandidature);
+							postecandidatures.getContent().remove(postecandidature);
 						}
 					}
 				}
 			
 			} else {				
-				postecandidatures = new ArrayList<PosteCandidature>(PosteCandidature.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, new Date()).getResultList());					
+				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, new Date(), pageable);
 			}
 			
 		}
 
 		else if (isMembre) {
 			Set<PosteAPourvoir> membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
-			List<PosteAPourvoir> postes = searchCriteria.getPostes();
-			if(postes != null && !postes.isEmpty()) {
-				membresPostes.retainAll(postes);
+			List<String> numPostes = searchCriteria.getNumEmploiPostes();
+			if(numPostes != null && !numPostes.isEmpty()) {
+				membresPostes = membresPostes.stream().filter(p->numPostes.contains(p.getNumEmploi())).collect(Collectors.toSet());
 	    		uiModel.addAttribute("finderview", true);
 	    		uiModel.addAttribute("command", searchCriteria);
 			} 
 			if(membresPostes.isEmpty()) {
 				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			}
-			postecandidatures = PosteCandidature.findPosteCandidaturesRecevableByPostes(membresPostes, searchCriteria.getAuditionnable(), sortFieldName, sortOrder).getResultList();		
+			postecandidatures = posteCandidatureDao.findPosteCandidaturesRecevableByPostes(membresPostes, searchCriteria.getAuditionnable(), pageable);
 			if(zip) {
 	    		String contentType = "application/zip";
 	    		Calendar cal = Calendar.getInstance();
@@ -765,8 +739,8 @@ public class MyPosteCandidatureController {
 	    		String baseName = "demat-" + currentTimeFmt + ".zip";
 	    		response.setContentType(contentType);
 	    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-	    		zipService.writeZip(postecandidatures, response.getOutputStream());
-	    		logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidatures, request, currentTime);
+	    		zipService.writeZip(postecandidatures.getContent(), response.getOutputStream());
+	    		logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidatures.getContent(), request, currentTime);
 	    		return null;
 			}
 			
@@ -775,8 +749,7 @@ public class MyPosteCandidatureController {
 					pc.setReporterTag(true);
 				}
 			}
-			
-			uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
+
 			List<PosteAPourvoir> membresPostes2Display = new ArrayList<PosteAPourvoir>(user.getPostes());
 			
 			Collections.sort(membresPostes2Display, new Comparator<PosteAPourvoir>(){
@@ -790,12 +763,14 @@ public class MyPosteCandidatureController {
 		
 		uiModel.addAttribute("postecandidatures", postecandidatures);
 
-		uiModel.addAttribute("zip", new Boolean(false));
+		uiModel.addAttribute("zip", Boolean.FALSE);
 		
-		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
-		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
+		uiModel.addAttribute("texteMembreAideCandidatures", appliConfigDao.getAppliConfig().getTexteMembreAideCandidatures());
+		uiModel.addAttribute("texteCandidatAideCandidatures", appliConfigDao.getAppliConfig().getTexteCandidatAideCandidatures());
 		
-		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
+		uiModel.addAttribute("legendColors", managerReviewLegendColorService.getLegendColors());
+		uiModel.addAttribute("legendColorMap", managerReviewLegendColorService.getLegendColorsMap());
+		uiModel.addAttribute("reporterTagColor", appliConfigService.getCacheColorReporterTag());
 
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";
@@ -832,7 +807,7 @@ public class MyPosteCandidatureController {
     		sortFieldName = "galaxieEntry.etatDossier";
     	
     	if(zip) {
-    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
+    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
     		String contentType = "application/zip";
     		String baseName = "demat.zip";
     		response.setContentType(contentType);
@@ -840,7 +815,7 @@ public class MyPosteCandidatureController {
     		zipService.writeZip(postecandidatures, response.getOutputStream());
     		return null; 
     	} else if(searchCriteria.getTemplateFile() != null) {
-    		List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
+    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
 			String filename = searchCriteria.getTemplateFile().getFilename();
 			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
@@ -850,7 +825,7 @@ public class MyPosteCandidatureController {
     		
     		if(mails) {
     			
-    			List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, null, null).getResultList();
+    			List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, null, null).getResultList();
     			Set<String> mailAdresses = new HashSet<String>();
     			for(PosteCandidature pc: postecandidatures) {
     				mailAdresses.add(pc.getEmail());
@@ -876,7 +851,7 @@ public class MyPosteCandidatureController {
     			
     		} else if(csv) {
     			
-    			List<PosteCandidature> posteCandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, null, null).getResultList();
+    			List<PosteCandidature> posteCandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, null, null).getResultList();
     			
         		String contentType = "text/csv";
         		String baseName = "candidatures.csv";
@@ -893,41 +868,44 @@ public class MyPosteCandidatureController {
 	    		if (page != null || size != null) {
 	                int sizeNo = size == null ? 10 : size.intValue();
 	                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-	                uiModel.addAttribute("postecandidatures", PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-	                long nbResultsTotal = PosteCandidature.countFindPosteCandidatures(searchCriteria);
+	                List<PosteCandidature> allPosteCandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
+	                long nbResultsTotal = posteCandidatureDao.countFindPosteCandidatures(searchCriteria);
+	                int endResult = Math.min(firstResult + sizeNo, allPosteCandidatures.size());
+	                uiModel.addAttribute("postecandidatures", allPosteCandidatures.subList(firstResult, endResult));
 	                uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
 	                float nrOfPages = (float) nbResultsTotal / sizeNo;
 	                uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 	            } else {
-	            	List<PosteCandidature> postecandidatures = PosteCandidature.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
+	            	List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
 	                uiModel.addAttribute("postecandidatures", postecandidatures);
 	                uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
 	            }
 	    		
-	    		uiModel.addAttribute("texteMembreAideCandidatures", AppliConfig.getCacheTexteMembreAideCandidatures());
-	    		uiModel.addAttribute("texteCandidatAideCandidatures", AppliConfig.getCacheTexteCandidatAideCandidatures());
+	    		uiModel.addAttribute("texteMembreAideCandidatures", appliConfigDao.getAppliConfig().getTexteMembreAideCandidatures());
+	    		uiModel.addAttribute("texteCandidatAideCandidatures", appliConfigDao.getAppliConfig().getTexteCandidatAideCandidatures());
 	    		
-	    		uiModel.addAttribute("legendColors", ManagerReviewLegendColor.getLegendColors());
-	    		
-				uiModel.addAttribute("posteapourvoirs", PosteAPourvoir.findAllPosteAPourvoirNumEplois());
-				uiModel.addAttribute("candidats", User.findAllCandidatsIds());
+	    		uiModel.addAttribute("legendColors", managerReviewLegendColorService.getLegendColors());
+				uiModel.addAttribute("legendColorMap", managerReviewLegendColorService.getLegendColorsMap());
+
+				uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirNumEplois());
+				uiModel.addAttribute("candidats", userDao.findAllCandidatsIds());
 				uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
 				
 	    		uiModel.addAttribute("command", searchCriteria);
 	    		uiModel.addAttribute("finderview", true);
 	    		
-			    String mailAuditionnableEntete = AppliConfig.getCacheTexteEnteteMailCandidatAuditionnable();
-			    String mailAuditionnablePiedPage = AppliConfig.getCacheTextePiedpageMailCandidatAuditionnable();	    
+			    String mailAuditionnableEntete = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable();
+			    String mailAuditionnablePiedPage = appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable();	    
 			    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
 			    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
 			    
-				uiModel.addAttribute("laureatEnable", AppliConfig.getCacheLaureatEnable());
-				uiModel.addAttribute("texteMailCandidatLaureat", AppliConfig.getCacheTexteMailCandidatLaureat());
+				uiModel.addAttribute("laureatEnable", appliConfigDao.getAppliConfig().getLaureatEnable());
+				uiModel.addAttribute("texteMailCandidatLaureat", appliConfigDao.getAppliConfig().getTexteMailCandidatLaureat());
 	    		
-				List<TemplateFile> templateFiles = TemplateFile.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES).getResultList();
+				List<TemplateFile> templateFiles = templateFileDao.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES);
 				uiModel.addAttribute("templateFiles", templateFiles);
 				
-				uiModel.addAttribute("allPosteCandidatureTag", PosteCandidatureTag.findAllPosteCandidatureTags());
+				uiModel.addAttribute("allPosteCandidatureTag", posteCandidatureTagDao.findAllPosteCandidatureTags());
 				
 	            addDateTimeFormatPatterns(uiModel);       
 	            return "postecandidatures/list";           
@@ -937,45 +915,50 @@ public class MyPosteCandidatureController {
 	
     @RequestMapping(value = "/{id}/updateManagerComment", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateManagerComment(@PathVariable("id") Long id, @RequestParam String comment, Model uiModel) {
-    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+    public String updateManagerComment(@PathVariable Long id, @RequestParam String comment, Model uiModel) {
+    	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	postecandidature.setManagerComment4Members(comment);
-    	postecandidature.merge();
+		posteCandidatureDao.savePosteCandidature(postecandidature);
         uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     
     @RequestMapping(value = "/{id}/addReporter", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasPermission(#id, 'manageReporters')")
-    public String addReporter(@PathVariable("id") Long id, @RequestParam Long userId, Model uiModel) {
-    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-    	User user = User.findUser(userId);
+    public String addReporter(@PathVariable Long id, @RequestParam Long userId, Model uiModel) {
+    	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
+    	User user = userDao.findUser(userId);
     	postecandidature.getReporters().add(user);
-    	postecandidature.merge();
+		posteCandidatureDao.savePosteCandidature(postecandidature);
         uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     
     @RequestMapping(value = "/{id}/delReporter", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasPermission(#id, 'manageReporters')")
-    public String delReporter(@PathVariable("id") Long id, @RequestParam Long userId, Model uiModel) {
-    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
-    	User user = User.findUser(userId);
+    public String delReporter(@PathVariable Long id, @RequestParam Long userId, Model uiModel) {
+    	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
+    	User user = userDao.findUser(userId);
     	postecandidature.getReporters().remove(user);
-    	postecandidature.merge();
+    	posteCandidatureDao.savePosteCandidature(postecandidature);
         uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     
     @RequestMapping(value = "/{id}/updateTags", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateTags(@PathVariable("id") Long id, @Valid PosteCandidatureTagForm posteCandidatureTagForm, Model uiModel) {
-    	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
+    public String updateTags(@PathVariable Long id, @Valid PosteCandidatureTagForm posteCandidatureTagForm, Model uiModel) {
+    	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	postecandidature.setTags(posteCandidatureTagForm.getTags());
         uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     
     
+
+	void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("posteCandidature_creation_date_format", "dd/MM/yyyy HH:mm");
+        uiModel.addAttribute("posteCandidature_modification_date_format", "dd/MM/yyyy HH:mm");
+    }
 }
 

@@ -17,16 +17,17 @@
  */
 package fr.univrouen.poste.web;
 
-import java.io.IOException;
-import java.util.Date;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.web.HiddenHttpMethodFilter.HttpMethodRequestWrapper;
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -35,19 +36,26 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.web.HiddenHttpMethodFilter.HttpMethodRequestWrapper;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
 
 
 @Service
 @Controller
 public class ExceptionController implements HandlerExceptionResolver {
 	
-	private final Logger log = Logger.getLogger(getClass());
+	final Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
+	@Resource
 	LogService logService;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
+
+	@Resource
+	ConfigInterceptor configInterceptor;
 
 	
 	@Override
@@ -67,7 +75,7 @@ public class ExceptionController implements HandlerExceptionResolver {
 		// hack for logging uploads failed 
 		if(request.getServletPath().matches("/postecandidatures/[0-9]*/addFile")) {
 			String posteCandidatureId = request.getServletPath().replaceAll("/postecandidatures/([0-9]*)/addFile", "$1");
-			PosteCandidature posteCandidature = PosteCandidature.findPosteCandidature(Long.valueOf(posteCandidatureId));
+			PosteCandidature posteCandidature = posteCandidatureDao.findPosteCandidature(Long.valueOf(posteCandidatureId));
 			logService.logActionFile(LogService.UPLOAD_FAILED_ACTION, posteCandidature, null, request, new Date());
 		}
 		
@@ -79,6 +87,9 @@ public class ExceptionController implements HandlerExceptionResolver {
 	    	//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	        ModelAndView modelAndview = new ModelAndView("uncaughtException");
 	        modelAndview.addObject("exception", ex);
+			modelAndview.addObject("exception_stacktrace", getStackTrace(ex));
+			modelAndview.addObject("exception_message", ex.getMessage());
+			configInterceptor.completeModel(request.getServletPath(), modelAndview.getModelMap());
 	        avoid405Error(request);
 	        return modelAndview;
 		}
@@ -98,10 +109,13 @@ public class ExceptionController implements HandlerExceptionResolver {
 
 	@RequestMapping("/uncaughtException")
     public ModelAndView uncaughtExceptionView(HttpServletRequest request) {
-	    Throwable exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
+	    Throwable exception = (Throwable) request.getAttribute("jakarta.servlet.error.exception");
 	    ModelAndView modelAndview = new ModelAndView("uncaughtException");
 	    modelAndview.addObject("uncaughtException", true);
-	    modelAndview.addObject("exception", exception);	    
+	    modelAndview.addObject("exception", exception);
+		modelAndview.addObject("exception_stacktrace", getStackTrace(exception));
+		modelAndview.addObject("exception_message", exception.getMessage());
+		configInterceptor.completeModel(request.getServletPath(), modelAndview.getModelMap());
 	    avoid405Error(request);
 		return modelAndview;
     }
@@ -110,8 +124,8 @@ public class ExceptionController implements HandlerExceptionResolver {
 	 * Try to avoid 405 - JSPs only permit GET POST or HEAD with exceptions on put/delete/patch
 	 * @param request
 	 */
-	private void avoid405Error(HttpServletRequest request) {		
-		ServletRequest servletRequest = (ServletRequest) request;
+	void avoid405Error(HttpServletRequest request) {		
+		ServletRequest servletRequest = request;
 	    while(servletRequest!= null && !(servletRequest instanceof HttpMethodRequestWrapper)  && (servletRequest instanceof HttpServletRequestWrapper)) {	    	
 	    	servletRequest = ((HttpServletRequestWrapper)servletRequest).getRequest();
 	    }
@@ -120,6 +134,13 @@ public class ExceptionController implements HandlerExceptionResolver {
 	    }
 	    org.springframework.web.filter.HiddenHttpMethodFilter a;
 	}
-	
+
+
+	private String getStackTrace(Throwable t) {
+		StringWriter sw = new StringWriter();
+		t.printStackTrace(new PrintWriter(sw));
+		return sw.toString();
+	}
+
 }
 

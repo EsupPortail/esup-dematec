@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -38,7 +38,7 @@ import org.w3c.dom.Node;
 @Service
 public class WordParser {
 
-	private final Logger log = Logger.getLogger(getClass());
+	final Logger log = LoggerFactory.getLogger(getClass());
 
 	public void  modifyWord(InputStream docx, Map<String, String> textMap, List<Map<String, String>> textMaps, OutputStream out) {
 		try {

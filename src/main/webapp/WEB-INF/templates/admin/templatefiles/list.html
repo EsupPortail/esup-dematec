@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Fichiers templates - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Vous pouvez si vous le souhaitez proposer ici des modèles de rapports/documents pouvant intégrer dynamiquement des renseignements issus des fichiers Excel Galaxie importés.</p>
+      <p>Les modèles de rapports de type 'CANDIDATURE' seront proposés aux membres de commission sur chaque candidature. Ils peuvent permettre de constituer/initier les rapports de commission par exemple.</p>
+      <p>Les modèles de rapports de type 'MULTI_CANDIDATURE' seront proposés quant à eux aux admin et gestionnaires depuis la page listant les candidatures via le menu 'Filtrer'. Ils peuvent permettre de constituer les listes d'émargements par exemple.</p>
+      <p>Ces modèles peuvent donc utiliser les signets disponibles dans Microsoft Word (version docx) afin que ceux-ci soient informés automatiquement via les informations renseignées dans les fichiers Excel Galaxie.</p>
+      <p>Pour afficher les signets dans Microsoft Word :
+        <ul>
+          <li>Dans le menu Outils, cliquez sur Options, puis sur l'onglet Affichage.</li>
+          <li>Activez la case à cocher Indicateurs de signets.</li>
+        </ul>
+      </p>
+      <p>Les noms des signets doivent correspondre
+        <ul>
+          <li>aux "noms" des colonnes excel (1ère rangée de la feuille) Galaxie, sans les accents (é remplacé par e par exemple), les espaces remplacés par des _ et les caractères spéciaux supprimés: '(', '[', '°', ... :
+            <i th:text="${#strings.listJoin(galaxieKeys, ', ')}"></i>
+          </li>
+          <li>ou encore aux noms suivants qui correspondent à ce qu'on peut retrouver dans la base d'esup-dematec :
+            <i>candidature_candidat_nom, candidature_candidat_prenom, candidature_candidat_emailAddress, candidature_galaxieEntryEtatDossier, candidature_managerReviewState, candidature_candidat_numCandidat, candidature_poste_localisation, candidature_poste_numEmploi, candidature_poste_profil, candidature_auditionnable, candidature_recevable</i>
+          </li>
+          <li>ou encore les noms des tags (avec pour suffixe candidature_tag_) :
+            <i th:text="${'candidature_tag_' + #strings.listJoin(allPosteCandidatureTags, ', candidature_tag_')}"></i>
+          </li>
+        </ul>
+      </p>
+      <p>Un exemple d'un tel document est donné <a href="/resources/doc/template.docx">ici (EC)</a> ou encore <a href="/resources/doc/template-ater.docx">ici (ATER)</a>.</p>
+      <p>Un exemple d'un document à destination d'un rapport de type 'MULTI_CANDIDATURE' est donné <a href="/resources/doc/template-multi-candidatures.docx">ici</a>.</p>
+      <p>Vous noterez que les possibilités de répétition par candidature pour les rapports de type 'MULTI_CANDIDATURE' se limite à l'usage de ligne de tableaux dans un document Microsoft Word, ligne dans laquelle on trouvera au moins un signet. Les signets dans les tableaux pour les modèles de rapport de type 'CANDIDATURE' ne sont pas pris en compte.</p>
+      </div>
+    </div>
+    
+    <h2>Fichiers templates</h2>
+    
+    <a th:href="@{/admin/templatefiles(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <br/><br/>
+    
+    <div th:if="${templatefiles == null or #lists.isEmpty(templatefiles)}">
+      <p>Aucun élément trouvé.</p>
+    </div>
+    
+    <table th:if="${templatefiles != null and !#lists.isEmpty(templatefiles)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Actions</th>
+          <th>Nom fichier</th>
+          <th>Type template</th>
+          <th>Date envoi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="template : ${templatefiles}">
+          <td class="btn-group">
+            <a th:href="@{/admin/templatefiles/{id}(id=${template.id},form)}" class="btn btn-sm btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
+          </td>
+          <td th:text="${template.filename}"></td>
+          <td th:text="${template.templateFileType}"></td>
+          <td th:text="${#dates.format(template.sendTime, 'dd/MM/yyyy HH:mm')}"></td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="pagination-container">
+            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+            <div class="pagination pagination-centered" sd:pagination="full"></div>
+        </div>
+  </div>
+</body>
+</html>

@@ -22,11 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
@@ -43,7 +43,7 @@ import org.springframework.web.util.WebUtils;
  * @see ExceptionController
  * 
  * 
- * {@link javax.servlet.Filter} that converts posted method parameters into HTTP methods,
+ * {@link jakarta.servlet.Filter} that converts posted method parameters into HTTP methods,
  * retrievable via {@link HttpServletRequest#getMethod()}. Since browsers currently only
  * support GET and POST, a common technique - used by the Prototype library, for instance -
  * is to use a normal POST with an additional hidden form field ({@code _method})
@@ -65,14 +65,14 @@ import org.springframework.web.util.WebUtils;
  */
 public class HiddenHttpMethodFilter extends OncePerRequestFilter {
 
-	private static final List<String> ALLOWED_METHODS =
+	static final List<String> ALLOWED_METHODS =
 			Collections.unmodifiableList(Arrays.asList(HttpMethod.PUT.name(),
 					HttpMethod.DELETE.name(), HttpMethod.PATCH.name()));
 
 	/** Default method parameter: {@code _method} */
 	public static final String DEFAULT_METHOD_PARAM = "_method";
 
-	private String methodParam = DEFAULT_METHOD_PARAM;
+	String methodParam = DEFAULT_METHOD_PARAM;
 
 
 	/**
@@ -110,7 +110,7 @@ public class HiddenHttpMethodFilter extends OncePerRequestFilter {
 	 */
 	public static class HttpMethodRequestWrapper extends HttpServletRequestWrapper {
 
-		private String method;
+		String method;
 
 		public HttpMethodRequestWrapper(HttpServletRequest request, String method) {
 			super(request);

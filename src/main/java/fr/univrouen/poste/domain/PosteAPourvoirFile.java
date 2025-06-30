@@ -16,49 +16,48 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Query;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.web.multipart.MultipartFile;
 
-@RooJavaBean
-@RooToString(excludeFields = { "bigFile", "file" })
-@RooJpaActiveRecord
+import java.text.DecimalFormat;
+import java.util.Date;
+
+@Entity
+@Getter
+@Setter
 public class PosteAPourvoirFile implements DematFile {
 
-    private String filename;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    Long id;
+
+    String filename;
 
     @Transient
-    private MultipartFile file;
+    MultipartFile file;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private Date sendTime;
+    Date sendTime;
 
-    private Long fileSize;
+    Long fileSize;
     
-    private String contentType;
+    String contentType;
     
     @ManyToOne
-    private User sender;
+    @JoinColumn(name = "sender")
+    User sender;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private BigFile bigFile = new BigFile();
+    @JoinColumn(name = "bigfile")
+    BigFile bigFile = new BigFile();
 
     @Transient
     public String getFileSizeFormatted() {
@@ -71,24 +70,10 @@ public class PosteAPourvoirFile implements DematFile {
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
-
-	public static List<Object[]> sumPosteAPourvoirFileSizeByDate() {
-	    String sql = "SELECT date_part('year', send_time) as year, date_part('month', send_time) as month, date_part('day', send_time) as day, "
-	    		+ "sum(sum(file_size)) over(order by date_part('year', send_time), date_part('month', send_time), date_part('day', send_time)) as file_size_sum "
-	    		+ "from posteapourvoir_file GROUP BY year, month, day";
-		Query q = entityManager().createNativeQuery(sql);
-	    return q.getResultList();
-	}
-
-	public static long getSumFileSize() {
-    	String sql = "SELECT SUM(file_size) FROM posteapourvoir_file";
-		Query q = entityManager().createNativeQuery(sql);
-		BigDecimal bigValue = (BigDecimal)q.getSingleResult();
-		if(bigValue != null) {
-			return bigValue.longValue();
-		} else {
-			return new Long(0);
-		}
-	}
 	
+
+	public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("bigFile", "file").toString();
+    }
+
 }

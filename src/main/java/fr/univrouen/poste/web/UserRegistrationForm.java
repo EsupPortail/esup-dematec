@@ -20,34 +20,32 @@
  */
 package fr.univrouen.poste.web;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-@RooJavaBean
 public class UserRegistrationForm {
 	@NotNull
 	@Size(min = 1, message="Merci de saisir votre civilité")
-	private String civilite;
+	String civilite;
 
 	@NotNull
 	@Size(min = 1, message="Merci de saisir votre prénom")
-	private String firstName;
+	String firstName;
 	
 	@NotNull
 	@Size(min = 1, message="Merci de saisir votre nom de famille")
-	private String lastName;
+	String lastName;
 	
 	@NotNull
 	@Size(min = 1, message="Merci de saisir votre adresse email")
-	private String emailAddress;
+	String emailAddress;
 	
-	private String password;
+	String password;
 	
-	private String repeatPassword;
+	String repeatPassword;
 
-	private String activationKey;
+	String activationKey;
 
     // don't care of upper/lower case for authentication with email ...
 	public void setEmailAddress(String emailAddress) {
@@ -69,4 +67,40 @@ public class UserRegistrationForm {
 	public void setCivilite(String civilite) {
 		this.civilite = civilite;
 	}
+
+	public String getFirstName() {
+        return this.firstName;
+    }
+
+	public String getLastName() {
+        return this.lastName;
+    }
+
+	public String getEmailAddress() {
+        return this.emailAddress;
+    }
+
+	public String getPassword() {
+        return this.password;
+    }
+
+	public void setPassword(String password) {
+        this.password = password;
+    }
+
+	public String getRepeatPassword() {
+        return this.repeatPassword;
+    }
+
+	public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
+    }
+
+	public String getActivationKey() {
+        return this.activationKey;
+    }
+
+	public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
+    }
 }

@@ -16,46 +16,39 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.TypedQuery;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(finders = { "findPosteCandidatureTagsByValues", "findPosteCandidatureTagsByName" })
+@Entity
+@Getter
+@Setter
 public class PosteCandidatureTag {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
+
 	@Column(unique=true)
-    private String name;
+    String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "postcandidaturetag_values")
     @OrderBy("value ASC")
-    private Set<PosteCandidatureTagValue> values = new HashSet<PosteCandidatureTagValue>();
-    
-    public static PosteCandidatureTag findPosteCandidatureTagsByValue(PosteCandidatureTagValue value) {
-        if (value == null) throw new IllegalArgumentException("The value argument is required");
-        EntityManager em = entityManager();
-        StringBuilder queryBuilder = new StringBuilder("SELECT o FROM PosteCandidatureTag AS o WHERE :value MEMBER OF o.values");
-        TypedQuery<PosteCandidatureTag> q = em.createQuery(queryBuilder.toString(), PosteCandidatureTag.class);
-        q.setParameter("value", value);
-        return q.getSingleResult();
-    }
-    
-    public static List<PosteCandidatureTag> findAllPosteCandidatureTags() {
-        return entityManager().createQuery("SELECT o FROM PosteCandidatureTag o ORDER BY id", PosteCandidatureTag.class).getResultList();
-    }
+    Set<PosteCandidatureTagValue> values = new HashSet<PosteCandidatureTagValue>();
 
 	public String getCleanName() {
 		String cleanKey = StringUtils.stripAccents(getName());
@@ -63,5 +56,9 @@ public class PosteCandidatureTag {
 		cleanKey = cleanKey.replaceAll( "\\W", "");
 		return cleanKey;
 	}
+
+	public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 }
 

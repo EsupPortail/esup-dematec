@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+  <div th:fragment="accordion(content)">
+    <div th:with="ts=${#dates.format(#dates.createNow(),'yyyyMMddHHmmssSSS')}" 
+         class="accordion help" th:id="'accordion' + ${ts}">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse"
+             th:attr="data-parent=${'#accordion' + ts},href=${'#collapse' + ts}">
+            Aide
+          </a>
+        </div>
+        <div class="accordion-body collapse" th:id="'collapse' + ${ts}">
+          <div class="accordion-inner">
+            <th:block th:replace="${content}"></th:block>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

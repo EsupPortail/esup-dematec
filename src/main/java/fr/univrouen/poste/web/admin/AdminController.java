@@ -17,42 +17,40 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import flexjson.JSONSerializer;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.services.StatBean;
 import fr.univrouen.poste.services.StatService;
 import fr.univrouen.poste.services.ZipService;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 @RequestMapping("/admin")
 @Controller
 @Transactional
 public class AdminController {
 	
-	private final Logger log = Logger.getLogger(getClass());
+	final Logger log = LoggerFactory.getLogger(getClass());
 	
 	@Resource
 	ZipService zipService;
 	
 	@Resource 
 	StatService statService;
+
+	@Resource
+	PosteCandidatureDao posteCandidatureDao;
 	
 	
 	@RequestMapping
@@ -69,7 +67,7 @@ public class AdminController {
 	@Transactional
 	public void getZip(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		
-		List<PosteCandidature> postecandidatures = PosteCandidature.findAllPosteCandidatures();
+		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures();
 
 		String contentType = "application/zip";
 		String baseName = "demat.zip";
@@ -84,36 +82,35 @@ public class AdminController {
 	@Transactional
 	public String chart(Model uiModel) {
 	
-		List<List<Object>> countUploadLogFilesByDate = statService.countUploadLogFilesBydate();
-		List<List<Object>> countSuccessLogAuthsByDate = statService.countSuccessLogAuthsByDate();
-		List<List<Object>> sumPosteCandidatureFileSizeByDate = statService.sumPosteCandidatureFileSizeByDate();
-		List<List<Object>> sumMemberReviewFileSizeByDate = statService.sumMemberReviewFileSizeByDate();
-		List<List<Object>> sumPosteAPourvoirFileSizeByDate = statService.sumPosteAPourvoirFileSizeByDate();
-		
-		JSONSerializer serializer = new JSONSerializer();
-		
-		String uploadStatsLabels = serializer.deepSerialize(countUploadLogFilesByDate.get(0));
-		String uploadStatsValues = serializer.deepSerialize(countUploadLogFilesByDate.get(1));			
+		List<List<String>> countUploadLogFilesByDate = statService.countUploadLogFilesBydate();
+		List<List<String>> countSuccessLogAuthsByDate = statService.countSuccessLogAuthsByDate();
+		List<List<String>> sumPosteCandidatureFileSizeByDate = statService.sumPosteCandidatureFileSizeByDate();
+		List<List<String>> sumMemberReviewFileSizeByDate = statService.sumMemberReviewFileSizeByDate();
+		List<List<String>> sumPosteAPourvoirFileSizeByDate = statService.sumPosteAPourvoirFileSizeByDate();
+
+		List<String> uploadStatsLabels = countUploadLogFilesByDate.get(0);
+		List<String> uploadStatsValues = countUploadLogFilesByDate.get(1);
 		uiModel.addAttribute("uploadStatsLabels", uploadStatsLabels);
 		uiModel.addAttribute("uploadStatsValues", uploadStatsValues);
-		
-		String authStatsLabels = serializer.deepSerialize(countSuccessLogAuthsByDate.get(0));
-		String authStatsValues = serializer.deepSerialize(countSuccessLogAuthsByDate.get(1));			
+
+
+		List<String> authStatsLabels = countSuccessLogAuthsByDate.get(0);
+		List<String> authStatsValues = countSuccessLogAuthsByDate.get(1);
 		uiModel.addAttribute("authStatsLabels", authStatsLabels);
 		uiModel.addAttribute("authStatsValues", authStatsValues);
-	
-		String sumFilesSizeStatsLabels = serializer.deepSerialize(sumPosteCandidatureFileSizeByDate.get(0));
-		String sumFilesSizeStatsValues = serializer.deepSerialize(sumPosteCandidatureFileSizeByDate.get(1));			
+
+		List<String> sumFilesSizeStatsLabels = sumPosteCandidatureFileSizeByDate.get(0);
+		List<String> sumFilesSizeStatsValues = sumPosteCandidatureFileSizeByDate.get(1);
 		uiModel.addAttribute("sumFilesSizeStatsLabels", sumFilesSizeStatsLabels);
 		uiModel.addAttribute("sumFilesSizeStatsValues", sumFilesSizeStatsValues);
-		
-		String sumMemberReviewFilesSizeStatsLabels = serializer.deepSerialize(sumMemberReviewFileSizeByDate.get(0));
-		String sumMemberReviewFilesSizeStatsValues = serializer.deepSerialize(sumMemberReviewFileSizeByDate.get(1));			
+
+		List<String> sumMemberReviewFilesSizeStatsLabels = sumMemberReviewFileSizeByDate.get(0);
+		List<String> sumMemberReviewFilesSizeStatsValues = sumMemberReviewFileSizeByDate.get(1);
 		uiModel.addAttribute("sumMemberReviewFilesSizeStatsLabels", sumMemberReviewFilesSizeStatsLabels);
 		uiModel.addAttribute("sumMemberReviewFilesSizeStatsValues", sumMemberReviewFilesSizeStatsValues);
-		
-		String sumPosteAPourvoirFilesSizeStatsLabels = serializer.deepSerialize(sumPosteAPourvoirFileSizeByDate.get(0));
-		String sumPosteAPourvoirFilesSizeStatsValues = serializer.deepSerialize(sumPosteAPourvoirFileSizeByDate.get(1));			
+
+		List<String> sumPosteAPourvoirFilesSizeStatsLabels = sumPosteAPourvoirFileSizeByDate.get(0);
+		List<String> sumPosteAPourvoirFilesSizeStatsValues = sumPosteAPourvoirFileSizeByDate.get(1);
 		uiModel.addAttribute("sumPosteAPourvoirFilesSizeStatsLabels", sumPosteAPourvoirFilesSizeStatsLabels);
 		uiModel.addAttribute("sumPosteAPourvoirFilesSizeStatsValues", sumPosteAPourvoirFilesSizeStatsValues);
 		

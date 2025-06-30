@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Valeurs tags - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Valeurs tags</h2>
+    
+    <a th:href="@{/admin/candidaturevaluetags(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <br/><br/>
+    
+    <div th:if="${candidaturevaluetags == null or #lists.isEmpty(candidaturevaluetags)}">
+      <p>Aucun élément trouvé.</p>
+    </div>
+    
+    <table th:if="${candidaturevaluetags != null and !#lists.isEmpty(candidaturevaluetags)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Actions</th>
+          <th>Valeur</th>
+          <th>Tag</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="valuetag : ${candidaturevaluetags}">
+          <td class="btn-group">
+            <a th:href="@{/admin/candidaturevaluetags/{id}(id=${valuetag.id})}" class="btn btn-sm btn-info">Voir</a>
+            <a th:href="@{/admin/candidaturevaluetags/{id}(id=${valuetag.id},form)}" class="btn btn-sm btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
+          </td>
+          <td th:text="${valuetag.value}"></td>
+          <td th:text="${valuetag.candidatureTag}"></td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="pagination-container">
+            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+            <div class="pagination pagination-centered" sd:pagination="full"></div>
+        </div>
+  </div>
+</body>
+</html>

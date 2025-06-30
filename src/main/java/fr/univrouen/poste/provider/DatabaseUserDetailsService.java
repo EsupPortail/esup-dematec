@@ -16,13 +16,15 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package fr.univrouen.poste.provider;
 
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
-import org.apache.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,32 +33,29 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Service
-@Transactional
 public class DatabaseUserDetailsService implements UserDetailsService {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
+
+	@Resource
+	UserDao	userDao;
 
 	@Override
+	@Transactional
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 
 		username = username.trim().toLowerCase();
-
-		TypedQuery<User> query = User.findUsersByEmailAddress(username, null, null);
-
-		try {
-			User targetUser = (User) query.getSingleResult();		
-			return loadUserByUser(targetUser);
-		} catch(EmptyResultDataAccessException | NoResultException e) {
-			throw new RuntimeException(username + " not found in the Database.", e);
-		}				
+		User targetUser = userDao.findUsersByEmailAddress(username);
+		if(targetUser == null) {
+			throw new RuntimeException(username + " not found in the Database.");
+		}
+		return loadUserByUser(targetUser);
 	}
 
 	public UserDetails loadUserByUser(User targetUser)
@@ -64,7 +63,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		Boolean enabled;
-		
+
 		// Roles
 		if (targetUser.getIsAdmin()) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));

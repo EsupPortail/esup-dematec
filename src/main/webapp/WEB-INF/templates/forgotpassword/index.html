@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/public}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Password Oublié</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <div id="_title_div">
+      <h4>Password Oublié</h4>
+    <form method="POST" th:action="@{/forgotpassword/update}" th:object="${forgotpasswordForm}">
+      <br/>
+      <div id="forgotpassword_emailaddress">
+        <label for="_forgotpassword_emailaddress">Entrez votre adresse email:</label>
+        <input type="email" style="width:350px" id="_forgotpassword_emailaddress" maxlength="100" th:field="*{emailAddress}" />
+        <br/>
+        <span th:if="${#fields.hasErrors('emailAddress')}" class="errors" th:errors="*{emailAddress}"></span>
+      </div>
+      <br/>
+      <div class="submit" id="changepassword_submit">
+        <input id="proceed" type="submit" value="Envoyer" class="btn btn-success"/>
+      </div>
+      <br/>
+      <br/>
+    </form>
+    </div>
+  </div>
+</body>
+</html>

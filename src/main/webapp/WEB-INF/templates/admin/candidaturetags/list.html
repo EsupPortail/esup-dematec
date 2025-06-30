@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Tags candidatures - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+
+      <div class="well help">
+<p>Si vous le souhaitez vous pouvez utiliser des 'tags' qui pourront être appliqués sur les candidatures.</p>
+      <p>Ces tags sont à ajouter par vous-même (admin ou super-manager) via le bouton 'Créer un nouveau "Tag"' donné ci-dessous.</p>
+      <p>Chaque tag a un nom et plusieurs valeurs possibles.</p>
+      <p>Une candidature pourra ainsi être 'tagué' par un gestionnaire (admin, super-manager ou manager) en utilisant une de valeurs associées au tag</p>
+      <p>Ces tags
+        <ul>
+          <li>sont affichés sur les candidatures,</li>
+          <li>ils sont également disponibles dans le moteur de recherche sur les candidatures,</li>
+          <li>ainsi que dans les exports CSV,</li>
+          <li>et on peut également les utiliser dans la génération des documents word via le système de 'templates'.</li>
+        </ul>
+      </p>
+      <p>Ces tags seront visibles également par les membres de commission (mais non modificables par eux).</p>
+      </div>
+
+    
+    <script th:if="${deleteFailed}">
+      alert("Suppression impossible, ce tag doit être encore utilisé dans au moins 1 candidature.");
+    </script>
+    
+    <h2>Tags candidatures</h2>
+    
+    <a th:href="@{/admin/candidaturetags(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <br/><br/>
+    
+    <div th:if="${candidaturetags == null or #lists.isEmpty(candidaturetags)}">
+      <p>Aucun élément trouvé.</p>
+    </div>
+    
+    <table th:if="${candidaturetags != null and !#lists.isEmpty(candidaturetags)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Actions</th>
+          <th>Nom</th>
+          <th>Valeurs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="tag : ${candidaturetags}">
+          <td class="btn-group">
+            <a th:href="@{/admin/candidaturetags/{id}(id=${tag.id})}" class="btn btn-sm btn-info">Voir</a>
+            <a th:href="@{/admin/candidaturetags/{id}(id=${tag.id},form)}" class="btn btn-sm btn-warning">Modifier</a>
+            <form th:action="@{/admin/candidaturetags/{id}(id=${tag.id})}" method="post" style="display:inline;">
+              <input type="hidden" name="_method" value="delete"/>
+              <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+            </form>
+          </td>
+          <td th:text="${tag.name}"></td>
+          <td th:text="${tag.values}"></td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="pagination-container">
+            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+            <div class="pagination pagination-centered" sd:pagination="full"></div>
+        </div>
+  </div>
+</body>
+</html>

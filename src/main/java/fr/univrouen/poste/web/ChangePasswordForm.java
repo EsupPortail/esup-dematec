@@ -17,15 +17,37 @@
  */
 package fr.univrouen.poste.web;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
 
-@RooJavaBean
 public class ChangePasswordForm {
 
-	private String oldPassword;
+	String oldPassword;
 	
-	private String newPassword;
+	String newPassword;
 	
-	private String newPasswordAgain;
+	String newPasswordAgain;
 
+
+	public String getOldPassword() {
+        return this.oldPassword;
+    }
+
+	public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+	public String getNewPassword() {
+        return this.newPassword;
+    }
+
+	public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+	public String getNewPasswordAgain() {
+        return this.newPasswordAgain;
+    }
+
+	public void setNewPasswordAgain(String newPasswordAgain) {
+        this.newPasswordAgain = newPasswordAgain;
+    }
 }

@@ -1,5 +1,20 @@
 package fr.univrouen.poste.services;
 
+import fr.univrouen.poste.dao.GalaxieEntryDao;
+import fr.univrouen.poste.dao.GalaxieExcelDao;
+import fr.univrouen.poste.domain.GalaxieEntry;
+import fr.univrouen.poste.domain.GalaxieExcel;
+import fr.univrouen.poste.domain.PosteCandidature;
+import fr.univrouen.poste.domain.TemplateFile;
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletOutputStream;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,24 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import fr.univrouen.poste.domain.GalaxieEntry;
-import fr.univrouen.poste.domain.GalaxieExcel;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.TemplateFile;
-
 @Service
 public class TemplateService {
 
-	private final Logger log = Logger.getLogger(getClass());
+	final Logger log = LoggerFactory.getLogger(getClass());
 	
     @Resource
     GalaxieExcelParser galaxieExcelParser;
@@ -34,12 +35,18 @@ public class TemplateService {
     @Resource
     WordParser wordParser;
 
+	@Resource
+	GalaxieExcelDao galaxieExcelDao;
+
+	@Resource
+	GalaxieEntryDao galaxieEntryDao;
+
     public void generateTemplateFile(TemplateFile templateFile, PosteCandidature candidature, OutputStream out) throws SQLException, IOException {
     	
     	Map<String, String> textMap = null;
     	
-    	GalaxieEntry galaxieEntry = GalaxieEntry.findGalaxieEntrysByCandidature(candidature).getSingleResult();
-    	for(GalaxieExcel galaxieExcel: GalaxieExcel.findAllGalaxieExcels("creation", "desc")) {
+    	GalaxieEntry galaxieEntry = galaxieEntryDao.findGalaxieEntrysByCandidature(candidature);
+    	for(GalaxieExcel galaxieExcel: galaxieExcelDao.findAllGalaxieExcels("creation", "desc")) {
     		textMap = galaxieExcelParser.getCells4GalaxieEntry(galaxieExcel, galaxieEntry);
     		if(textMap != null) {
     			break;
@@ -60,8 +67,8 @@ public class TemplateService {
     	
     	for(PosteCandidature candidature : candidatures) {
     		Map<String, String> textMap = null;
-    		GalaxieEntry galaxieEntry = GalaxieEntry.findGalaxieEntrysByCandidature(candidature).getSingleResult();
-        	for(GalaxieExcel galaxieExcel: GalaxieExcel.findAllGalaxieExcels("creation", "desc")) {
+    		GalaxieEntry galaxieEntry = galaxieEntryDao.findGalaxieEntrysByCandidature(candidature);
+        	for(GalaxieExcel galaxieExcel: galaxieExcelDao.findAllGalaxieExcels("creation", "desc")) {
         		textMap = galaxieExcelParser.getCells4GalaxieEntry(galaxieExcel, galaxieEntry);
         		if(textMap != null) {
         			break;
@@ -81,8 +88,8 @@ public class TemplateService {
 	@Transactional
 	public List<String> getGalaxieKeys() {
 		List<String> galaxieKeys = new ArrayList<String>();
-		List<GalaxieExcel> galaxieExcels  = GalaxieExcel.findAllGalaxieExcels("creation", "desc");
-		List<GalaxieEntry> galaxieEntries = GalaxieEntry.findAllGalaxieEntrys("id", "desc");
+		List<GalaxieExcel> galaxieExcels  = galaxieExcelDao.findAllGalaxieExcels("creation", "desc");
+		List<GalaxieEntry> galaxieEntries = galaxieEntryDao.findAllGalaxieEntrys("id", "desc");
 		if(!galaxieExcels.isEmpty() && !galaxieEntries.isEmpty()) {
 			try {
 				Map<String, String> textMap = galaxieExcelParser.getCells4GalaxieEntry(galaxieExcels.get(0), galaxieEntries.get(0));
@@ -95,7 +102,7 @@ public class TemplateService {
 					}
 				}
 			} catch (SQLException | IOException e) {
-				log.debug(e);
+				log.debug("Exception getting galaxie keys", e);
 			}
 		}
 		return galaxieKeys;

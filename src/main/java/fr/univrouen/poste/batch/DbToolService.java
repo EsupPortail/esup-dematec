@@ -1,14 +1,17 @@
 package fr.univrouen.poste.batch;
 
-import fr.univrouen.poste.domain.AppliConfigFileType;
+import fr.univrouen.poste.dao.AppliConfigFileTypeDao;
+import fr.univrouen.poste.dao.AppliVersionDao;
+import fr.univrouen.poste.dao.PosteCandidatureFileDao;
 import fr.univrouen.poste.domain.AppliVersion;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.utils.TxPdfService;
-import org.apache.log4j.Logger;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -17,9 +20,9 @@ import java.util.List;
 @Service
 public class DbToolService {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	final static String currentEsupDematEcVersion = "1.9.x";
+	final static String currentEsupDematEcVersion = "2.0.x";
 	
 	@Resource
 	DataSource dataSource;
@@ -27,21 +30,30 @@ public class DbToolService {
 	@Resource 
 	TxPdfService txPdfService;
 
+	@Resource
+	AppliVersionDao appliVersionDao;
+
+	@Resource
+	AppliConfigFileTypeDao appliConfigFileTypeDao;
+
+	@Resource
+	PosteCandidatureFileDao posteCandidatureFileDao;
+
 	@Transactional
 	public void upgrade() {
 		AppliVersion appliVersion = null;
-		List<AppliVersion> appliVersions = AppliVersion.findAllAppliVersions();
+		List<AppliVersion> appliVersions = appliVersionDao.findAllAppliVersions();
 		if(appliVersions.isEmpty()) {
 			appliVersion = new AppliVersion();
 			appliVersion.setEsupDematEcVersion("1.1.x");
-			appliVersion.persist();
+			appliVersionDao.saveAppliVersion(appliVersion);
 		} else {
 			appliVersion = appliVersions.get(0);
 		}
 		upgradeIfNeeded(appliVersion);
 	}
 
-	private void upgradeIfNeeded(AppliVersion appliVersion) {
+	void upgradeIfNeeded(AppliVersion appliVersion) {
 		String esupDematEcVersion = appliVersion.getEsupDematEcVersion();
 		try{
 			if("1.0.x".equals(esupDematEcVersion)) {
@@ -65,7 +77,7 @@ public class DbToolService {
 			
 			if("1.1.x".equals(esupDematEcVersion)) {
 				
-				List<PosteCandidatureFile> pcFiles = PosteCandidatureFile.findAllPosteCandidatureFiles();
+				List<PosteCandidatureFile> pcFiles = posteCandidatureFileDao.findAllPosteCandidatureFiles();
 				for(PosteCandidatureFile pcFile: pcFiles) {
 					txPdfService.updateNbPages(pcFile.getId());
 				}
@@ -83,7 +95,7 @@ public class DbToolService {
 				
 				// oublie de mettre en 1.3.x la version 1.3.0 et 1.3.1 - on est donc peut-être déjà en 1.3.0 ici 
 				// -> on regarde si AppliConfigFileType est bien vide ... si non vide, on est déjà en 1.3.x
-				if(AppliConfigFileType.findAllAppliConfigFileTypes().size()==0) {
+				if(appliConfigFileTypeDao.findAllAppliConfigFileTypes().getTotalElements()==0) {
 					
 					String sqlUpdate = "insert into appli_config_file_type (id, type_title, type_description, " +
 							"candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, version) " +
@@ -97,9 +109,9 @@ public class DbToolService {
 					statement.execute();
 					connection.close();
 					
-					List<PosteCandidatureFile> pcFiles = PosteCandidatureFile.findAllPosteCandidatureFiles();
+					List<PosteCandidatureFile> pcFiles = posteCandidatureFileDao.findAllPosteCandidatureFiles();
 					for(PosteCandidatureFile pcFile: pcFiles) {
-						pcFile.setFileType(AppliConfigFileType.getDefaultFileType());
+						pcFile.setFileType(appliConfigFileTypeDao.getDefaultFileType());
 					}
 					
 		    		logger.warn("\n\n#####\n\t" +
@@ -249,7 +261,7 @@ public class DbToolService {
 			}
 			
 			appliVersion.setEsupDematEcVersion(currentEsupDematEcVersion);
-			appliVersion.merge();
+			appliVersionDao.saveAppliVersion(appliVersion);
 		} catch(Exception e) {
 			throw new RuntimeException("Erreur durant le mise à jour de la base de données", e);
 		}
@@ -258,8 +270,7 @@ public class DbToolService {
 	@Transactional
 	public void deleteData() {
 		try{
-		String sqlUpdate = "" +
-				"delete from galaxie_entry;" +
+		String sqlUpdate = "delete from galaxie_entry;" +
 				"delete from galaxie_excel;" +
 				"delete from commission_entry;" +
 				"delete from commission_excel;" +

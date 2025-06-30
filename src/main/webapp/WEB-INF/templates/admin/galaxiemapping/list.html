@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Mapping Galaxie - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+
+      <div class="well help">
+          <p>Cette page vous permet de configurer le mapping Excel Galaxie -&gt; EsupDematEC.</p>
+          <p>Ainsi si les exports Galaxie Excel ne sont pas formattés à chaque campagne de la même façon, nous pouvons reconfigurer notre mapping simplement ici.</p>
+          <p>Les exports Galaxie n'ont par exemple pas le même formattage entre les campagnes EC et celles ATER.</p>
+          <p>Les éléments id_email, id_numemploi et id_numCandidat doivent impérativement être bien renseignés pour qu'EsupDematEC puisse intégrer correctement les fichiers Excel d'export de Galaxie.</p>
+      </div>
+
+    <div th:if="${galaxiemappings == null or #lists.isEmpty(galaxiemappings)}">
+      <p>Aucun mapping trouvé.</p>
+    </div>
+
+    <table th:if="${galaxiemappings != null and !#lists.isEmpty(galaxiemappings)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>id_email</th>
+          <th>id_numemploi</th>
+          <th>id_numCandidat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="mapping : ${galaxiemappings}">
+          <td th:text="${mapping.id_email}"></td>
+          <td th:text="${mapping.id_numemploi}"></td>
+          <td th:text="${mapping.id_numCandidat}"></td>
+          <td><a th:href="@{/admin/galaxiemapping/{id}(id=${mapping.id})}" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')" class="btn btn-warning">Modifier</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr/>
+
+    <h3>Test du mapping par rapport à un fichier Excel Galaxie</h3>
+    <p>Ce test vérifie simplement la bonne présence des colonnes correspondant à id_email, id_numemploi et id_numCandidat dans le fichier Excel Galaxie que vous soumettez.</p>
+
+    <form th:action="@{/admin/galaxiemapping/testFile}" method="post" enctype="multipart/form-data">
+
+      <div>
+        <div>
+          <input type="file" name="file" id="file" required="required"/>
+        </div>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary">Tester le mapping</button>
+      </div>
+    </form>
+
+    <script th:if="${test == 'success'}">
+      alert("Test OK");
+    </script>
+    <script th:if="${test == 'failed'}">
+      var msg = "[(${errorMessage})]";
+      alert("Le test a échoué, le mapping est à revoir en fonction du fichier Excel Galaxie proposé.\n" + msg);
+    </script>
+  </div>
+</body>
+</html>

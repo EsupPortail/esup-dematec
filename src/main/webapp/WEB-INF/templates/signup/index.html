@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/public}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signup</title>
+</head>
+<body>
+  <div layout:fragment="body">
+  <div class="row-fluid">
+    <div class="span3"><!--  --></div>
+    <div class="span6 well">
+      <h4>Création d'un nouveau compte candidat</h4>
+      
+      <div th:if="${not #strings.isEmpty(errorMessage)}" class="errors">
+        <h4 class="form-signin-heading alert alert-danger" th:text="${errorMessage}"></h4>
+      </div>
+
+      <form method="POST" th:action="@{/signup}" th:object="${User}">
+        <div>
+          <label for="_civilite_id">Civilité</label>
+          <div>
+            <select id="_civilite_id" th:field="*{civilite}" required="required">
+              <option value="">Sélectionner...</option>
+              <option th:each="civTmp : ${civilitesEnum}" th:value="${civTmp}" th:text="${civTmp}">Monsieur</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="_firstName_id">Prénom</label>
+          <div>
+            <input id="_firstName_id" type="text" th:field="*{firstName}" required="required" />
+          </div>
+        </div>
+
+        <div>
+          <label for="_lastName_id">Nom</label>
+          <div>
+            <input id="_lastName_id" type="text" th:field="*{lastName}" required="required" />
+          </div>
+        </div>
+
+        <div>
+          <label for="_emailAddress_id">Email</label>
+          <div>
+            <input id="_emailAddress_id" type="email" th:field="*{emailAddress}" required="required" />
+          </div>
+        </div>
+
+        <div>
+          <div th:utext="${captcha_form}">
+            <!-- Captcha form -->
+          </div>
+        </div>
+
+        <div>
+          <div>
+            <button type="submit" class="btn btn-primary">Créer mon compte</button>
+            <button type="reset" class="btn">Annuler</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="span3"><!--  --></div>
+  </div>
+  </div>
+</body>
+</html>

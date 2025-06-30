@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Types de fichiers - Liste</title>
+</head>
+<body>
+  <div layout:fragment="body">
+
+      <div class="well help">
+<p>Vous pouvez si vous le souhaitez typer les fichiers demandés aux candidats.</p>
+      <p>Par défaut, on propose un simple type générique, sans restriction. Vous pouvez cependant modifier celà pour demander explicitement un fichier pdf pour le CV, une image JPEG pour le scan d'une pièce d'identité, etc.</p>
+      <p>Pour chaque type défini on peut ainsi contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain mime-type, d'un certain nom et avec une taille ne dépassant pas un certain seuil.</p>
+      <ul>
+        <li>La taille correspond à des Mo, <b>-1</b> correspond à ne fixer aucune limite.</li>
+        <li>Le mime-type peut être une expression régulière. <b>.*</b> revient à accepter tous les types de fichiers, <b>application/pdf</b> uniquement les pdf, <b>application/pdf|application/zip</b> les pdf ou zip, <b>application/pdf|image/.*</b> les pdf et tous types d'images, etc. <b>Attention</b> cependant, le mime-type est une information communiquée par le navigateur du client, et ce dernier ne le détectera pas forcément correctement. Aussi un pdf peut avoir un mime-type générique renseigné par le navigateur, comme <i>application/download</i> ou encore <i>application/binary</i> ...</li>
+        <li>Le nom du fichier suit la même règle. <b>.*</b> revient à accepter tous les noms de fichiers, <b>.*\.pdf</b> uniquement les noms de fichiers se terminant par <i>.pdf</i>, etc.</li>
+      </ul>
+      <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature. <b>-1</b> correspond à ne fixer aucune limite.</p>
+      </div>
+    
+    <div th:if="${param.deleteErrorCandidaturesExist}" class="alert alert-danger">
+      Un ou plusieurs fichiers de candidatures sont liés à ce type de fichier, aussi ce type de fichier ne peut pas être supprimé.
+    </div>
+    
+    <h2>Types de fichiers</h2>
+    
+    <a th:href="@{/admin/appliconfigfiletype(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <br/><br/>
+    
+    <div th:if="${appliconfigfiletypes == null or #lists.isEmpty(appliconfigfiletypes)}">
+      <p>Aucun élément trouvé.</p>
+    </div>
+    
+    <table th:if="${appliconfigfiletypes != null and !#lists.isEmpty(appliconfigfiletypes)}" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_typetitle}">Titre</th>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturefilemosizemax}">Taille max (Mo)</th>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturenbfilemax}">Nb fichiers max</th>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturecontenttyperestrictionregexp}">Type MIME (regex)</th>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturefilenamerestrictionregexp}">Nom fichier (regex)</th>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_typedescription}">Description</th>
+          <th th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_listindex}">Index</th>
+          <th>Modifier</th>
+          <th>Supprimer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="filetype : ${appliconfigfiletypes}">
+          <td th:text="${filetype.typeTitle}"></td>
+          <td th:text="${filetype.candidatureFileMoSizeMax}"></td>
+          <td th:text="${filetype.candidatureNbFileMax}"></td>
+          <td th:text="${filetype.candidatureContentTypeRestrictionRegexp}"></td>
+          <td th:text="${filetype.candidatureFilenameRestrictionRegexp}"></td>
+          <td th:text="${filetype.typeDescription}"></td>
+          <td th:text="${filetype.listIndex}"></td>
+            <td>
+                <a th:href="@{/admin/appliconfigfiletype/{id}(id=${filetype.id},form)}" class="btn btn-sm btn-warning">Modifier</a>
+            </td>
+            <td>
+                <form th:action="@{/admin/appliconfigfiletype/{id}(id=${filetype.id})}" method="post" style="display:inline;">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+        <div class="pagination-container">
+            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+            <div class="pagination pagination-centered" sd:pagination="full"></div>
+        </div>
+  </div>
+</body>
+</html>

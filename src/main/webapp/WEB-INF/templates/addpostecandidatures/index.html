@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ajouter une candidature</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Ajouter une nouvelle candidature</h2>
+  <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Sélectionnez le poste auquel vous souhaitez candidater.</p>
+      </div>
+    </div>
+
+  <div th:if="${not #lists.isEmpty(posteapourvoirs)}">
+    <ul>
+      <li th:each="poste : ${posteapourvoirs}">
+        <a th:href="@{/postecandidatures/new(posteId=${poste.id})}" 
+           th:text="${poste.numEmploi + ' - ' + poste.profil}"></a>
+      </li>
+    </ul>
+  </div>
+
+  <div th:if="${#lists.isEmpty(posteapourvoirs)}" class="alert alert-info">
+    <p>Aucun poste disponible pour candidature.</p>
+  </div>
+
+    <a href="/" class="btn btn-info">Retour</a>
+  </div>
+</body>
+</html>

@@ -1,3 +1,4 @@
+// java
 /**
  * Licensed to ESUP-Portail under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for
@@ -17,171 +18,123 @@
  */
 package fr.univrouen.poste.services;
 
+import fr.univrouen.poste.dao.PosteCandidatureTagDao;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureTag;
-import org.apache.log4j.Logger;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.supercsv.cellprocessor.FmtDate;
-import org.supercsv.cellprocessor.Optional;
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.io.dozer.CsvDozerBeanWriter;
-import org.supercsv.io.dozer.ICsvDozerBeanWriter;
-import org.supercsv.prefs.CsvPreference;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SequenceWriter;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 @Service
 public class CsvService {
-	
-	private final Logger log = Logger.getLogger(getClass());
 
-	
-	@Transactional(readOnly=true)
-	public void csvWrite(Writer writer, List<PosteCandidature> posteCandidatures) throws IOException {
+    final Logger log = LoggerFactory.getLogger(getClass());
 
-		log.info("Generate CSV for " + posteCandidatures.size() + " posteCandidatures");
-		
-		List<String> header = new ArrayList<String>(Arrays.asList(new String[] { "poste", "nom", "email", "prenom", "galaxie", "recevable", "auditionnable", "vue", "creation", "modification", "gestionnaire", "dateGestion", "civilite"}));
-		List<String> fieldMapping = new ArrayList<String>(header);
-		int i = 0;
-		for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
-			header.add(tag.getName());
-			fieldMapping.add(String.format("tagValues[%d]", i));
-			i++;
-		}
-		
-		List<CellProcessor> processors = getProcessors();
-		
-		ICsvDozerBeanWriter beanWriter =  new CsvDozerBeanWriter(writer, CsvPreference.STANDARD_PREFERENCE);
-		beanWriter.writeHeader(header.toArray(new String[header.size()]));
-		beanWriter.configureBeanMapping(CsvPosteCandidatureMetadataFileBean.class, fieldMapping.toArray(new String[fieldMapping.size()]));
-		
-		for (PosteCandidature posteCandidature : posteCandidatures) {
-			CsvPosteCandidatureMetadataFileBean csvMetadataFileBean = new CsvPosteCandidatureMetadataFileBean(posteCandidature);
-			beanWriter.write(csvMetadataFileBean, processors.toArray(new CellProcessor[processors.size()]));
-		}
-		beanWriter.close();
-		
-		log.info("Generate CSV OK");
-	}
-	
-	
-	public class CsvPosteCandidatureMetadataFileBean {
-		
-		PosteCandidature posteCandidature;
-		
-		List<String> tagValues = new ArrayList<String>();
+    @Resource
+    PosteCandidatureTagDao posteCandidatureTagDao;
 
-		public CsvPosteCandidatureMetadataFileBean(PosteCandidature posteCandidature) {
-			super();
-			this.posteCandidature = posteCandidature;
-			tagValues = getTagValues();
-		}
-		
-		public String getPoste() {
-			return posteCandidature.getPoste().getNumEmploi();
-		}
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
 
-		public String getNom() {
-			return posteCandidature.getNom();
-		}
+    @Transactional(readOnly = true)
+    public void csvWrite(Writer writer, List<PosteCandidature> posteCandidatures) throws IOException {
+        log.info("Generate CSV for " + posteCandidatures.size() + " posteCandidatures");
 
-		public String getEmail() {
-			return posteCandidature.getEmail();
-		}
+        // construire en-têtes
+        List<String> header = new ArrayList<>(Arrays.asList(
+                "poste", "nom", "email", "prenom", "galaxie", "recevable", "auditionnable",
+                "vue", "creation", "modification", "gestionnaire", "dateGestion", "civilite"));
 
-		public String getPrenom() {
-			return posteCandidature.getPrenom();
-		}
-		
-		public String getGalaxie() {
-			return posteCandidature.getNumCandidat();
-		}
-		
-		public String getRecevable() {
-			return posteCandidature.getRecevableEnum().name();
-		}
-		
-		public String getAuditionnable() {
-			return posteCandidature.getAuditionnable() ? "true" : "false";
-		}
-		
-		public String getVue() {
-			return posteCandidature.getManagerReviewState();
-		}
-		
-		public Date getCreation() {
-			return posteCandidature.getCreation();
-		}
-		
-		public Date getModification() {
-			return posteCandidature.getModification();
-		}
+        List<PosteCandidatureTag> allTags = posteCandidatureTagDao.findAllPosteCandidatureTags();
+        for (PosteCandidatureTag tag : allTags) {
+            header.add(tag.getName());
+        }
 
-		public String getCivilite() {
-			return posteCandidature.getCandidat().getCivilite();
-		}
-		
-		public String getGestionnaire() {
-			try {
-				return posteCandidature.getManagerReview().getManager().getEmailAddress();
-			} catch(NullPointerException npe) {
-				return "";
-			}
-		}
-		
-		public Date getDateGestion() {
-			try {
-				return posteCandidature.getManagerReview().getReviewDate();
-			} catch(NullPointerException npe) {
-				return null;
-			}
-		}
-		
-		public List<String> getTagValues() {
-			List<String> tagValues = new ArrayList<String>();
-			for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
-				String tagValue = "";
-				if(posteCandidature.getTags() != null && posteCandidature.getTags().get(tag) != null) {
-					tagValue = posteCandidature.getTags().get(tag).getValue();
-				}
-				tagValues.add(tagValue);
-			}
-			return tagValues;
-		}
-		
-		
-	}
+        // construire le schema CSV avec header (ordonné)
+        CsvMapper mapper = new CsvMapper();
+        CsvSchema.Builder schemaBuilder = CsvSchema.builder();
+        for (String col : header) {
+            schemaBuilder.addColumn(col);
+        }
+        CsvSchema schema = schemaBuilder.build().withHeader();
 
-	private static List<CellProcessor> getProcessors() {
+        ObjectWriter objWriter = mapper.writer(schema);
+        SequenceWriter seqWriter = objWriter.writeValues(writer);
 
-		List<CellProcessor> processors = new ArrayList<CellProcessor>(Arrays.asList(new CellProcessor[] {
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				new Optional(new FmtDate("dd/MM/yyyy - HH:mm")),
-				new Optional(new FmtDate("dd/MM/yyyy - HH:mm")),
-				null,
-				new Optional(new FmtDate("dd/MM/yyyy - HH:mm")),
-				null
-		}));
-		
-		for(PosteCandidatureTag tag : PosteCandidatureTag.findAllPosteCandidatureTags()) {
-			processors.add(null);
-		}
-		
-		return processors;
-	}
-	
+        try {
+            for (PosteCandidature p : posteCandidatures) {
+                Map<String, String> row = new LinkedHashMap<>();
+                row.put("poste", safe(() -> p.getPoste() != null ? p.getPoste().getNumEmploi() : null));
+                row.put("nom", safe(() -> p.getNom()));
+                row.put("email", safe(() -> p.getEmail()));
+                row.put("prenom", safe(() -> p.getPrenom()));
+                row.put("galaxie", safe(() -> p.getNumCandidat()));
+                row.put("recevable", safe(() -> p.getRecevableEnum() != null ? p.getRecevableEnum().name() : ""));
+                row.put("auditionnable", safe(() -> p.getAuditionnable() ? "true" : "false"));
+                row.put("vue", safe(() -> p.getManagerReviewState()));
+                row.put("creation", safeDate(() -> p.getCreation()));
+                row.put("modification", safeDate(() -> p.getModification()));
+                row.put("gestionnaire", safe(() -> p.getManagerReview().getManager().getEmailAddress()));
+                row.put("dateGestion", safeDate(() -> {
+                    Date d = p.getManagerReview().getReviewDate();
+                    return d;
+                }));
+                row.put("civilite", safe(() -> p.getCandidat() != null ? p.getCandidat().getCivilite() : null));
+
+                // tags, conserver l'ordre des en-têtes
+                for (PosteCandidatureTag tag : allTags) {
+                    String value = "";
+                    try {
+                        if (p.getTags() != null && p.getTags().get(tag) != null) {
+                            value = safe(() -> p.getTags().get(tag).getValue());
+                        }
+                    } catch (Exception e) {
+                        value = "";
+                    }
+                    row.put(tag.getName(), value);
+                }
+
+                seqWriter.write(row);
+            }
+        } finally {
+            seqWriter.close();
+        }
+
+        log.info("Generate CSV OK");
+    }
+
+    private String safe(Supplier<String> supplier) {
+        try {
+            String s = supplier.get();
+            return s == null ? "" : s;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private String safeDate(Supplier<Date> supplier) {
+        try {
+            Date d = supplier.get();
+            return d != null ? SDF.format(d) : "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }

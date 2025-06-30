@@ -20,17 +20,20 @@
  */
 package fr.univrouen.poste.web;
 
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
+import java.util.List;
 
 @Service("forgotChangePasswordValidator")
 public class ForgotChangePasswordValidator implements Validator {
+
+	@Resource
+	UserDao userDao;
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -43,21 +46,25 @@ public class ForgotChangePasswordValidator implements Validator {
 		ForgotChangePasswordForm form = (ForgotChangePasswordForm) target;
 
 		try {
-			Query query = User.findUsersByActivationKey(form.getActivationKey());
-			if(null!=query) {
-				query.getSingleResult(); // result not used but assert that there is one (and only) result for the query 
-				String newPassword = form.getNewPassword();
-				String newPasswordAgain = form.getNewPasswordAgain();
-				if (!newPassword.equals(newPasswordAgain)) {
-					errors.reject("changepassword.passwordsnomatch");
+			List<User> users = userDao.findUsersByActivationKey(form.getActivationKey());
+			if (users != null && !users.isEmpty()) {
+				if (users.size() > 1) {
+					errors.rejectValue("emailAddress",
+							"changepassword.duplicateemailaddress");
+				} else {
+					String newPassword = form.getNewPassword();
+					String newPasswordAgain = form.getNewPasswordAgain();
+					if (!newPassword.equals(newPasswordAgain)) {
+						errors.reject("changepassword.passwordsnomatch");
+					}
 				}
-			} 
-		} catch (EntityNotFoundException e) {
+			} else {
+				errors.rejectValue("emailAddress",
+						"changepassword.invalidemailaddress");
+			}
+		} catch (Exception e) {
 			errors.rejectValue("emailAddress",
 					"changepassword.invalidemailaddress");
-		} catch (NonUniqueResultException e) {
-			errors.rejectValue("emailAddress",
-					"changepassword.duplicateemailaddress");
 		}
 	}
 

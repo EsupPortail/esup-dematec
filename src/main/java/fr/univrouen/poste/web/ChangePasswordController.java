@@ -17,9 +17,11 @@
  */
 package fr.univrouen.poste.web;
 
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.LogService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,21 +31,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-
 @RequestMapping("/changepassword/**")
 @Controller
 public class ChangePasswordController {
 
-	@Autowired
-	private LogService logService;
+	@Resource
+	LogService logService;
 	
-	@Autowired
-	private ChangePasswordValidator validator;
+	@Resource
+	ChangePasswordValidator validator;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	@Resource
+	PasswordEncoder passwordEncoder;
+    @Resource
+    UserDao userDao;
 
 	@ModelAttribute("changePasswordForm")
 	public ChangePasswordForm formBackingObject() {
@@ -73,11 +74,9 @@ public class ChangePasswordController {
 				UserDetails userDetails = (UserDetails) SecurityContextHolder
 						.getContext().getAuthentication().getPrincipal();
 				String newPassword = form.getNewPassword();
-				Query query = User
-						.findUsersByEmailAddress(userDetails.getUsername(), null, null);
-				User person = (User) query.getSingleResult();
+				User person =  userDao.findUsersByEmailAddress(userDetails.getUsername());
 				person.setPassword(passwordEncoder.encode(newPassword));
-				person.merge();
+				userDao.saveUser(person);
 				logService.logActionAuth(LogService.AUTH_PASSWORD_CHANGED, userDetails.getUsername(), request.getRemoteAddr());
 				return "changepassword/thanks";
 			} else {

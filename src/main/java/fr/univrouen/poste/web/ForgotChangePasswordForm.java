@@ -17,15 +17,37 @@
  */
 package fr.univrouen.poste.web;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
 
-@RooJavaBean
 public class ForgotChangePasswordForm {
 
-	private String activationKey;
+	String activationKey;
 	
-	private String newPassword;
+	String newPassword;
 	
-	private String newPasswordAgain;
+	String newPasswordAgain;
 
+
+	public String getActivationKey() {
+        return this.activationKey;
+    }
+
+	public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
+    }
+
+	public String getNewPassword() {
+        return this.newPassword;
+    }
+
+	public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+	public String getNewPasswordAgain() {
+        return this.newPasswordAgain;
+    }
+
+	public void setNewPasswordAgain(String newPasswordAgain) {
+        this.newPasswordAgain = newPasswordAgain;
+    }
 }

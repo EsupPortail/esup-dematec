@@ -18,7 +18,22 @@
     limitations under the License.
 
 -->
-<beans xmlns:task="http://www.springframework.org/schema/task" xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd                              http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                              http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd                              http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd                              http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd  http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+<beans xmlns:task="http://www.springframework.org/schema/task" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+                           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- needed with spring 6 -->
+    <bean class="org.springframework.web.servlet.handler.HandlerMappingIntrospector" name="mvcHandlerMappingIntrospector"/>
     <!--
         This will automatically locate any and all property files you have
         within your classpath, provided they fall under the META-INF/spring
@@ -63,9 +78,12 @@
         dependency inject an object into your class.
     -->
     <context:component-scan base-package="fr.univrouen.poste">
-        <context:exclude-filter expression=".*_Roo_.*" type="regex"/>
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+        <context:exclude-filter expression="org.springframework.web.bind.annotation.ControllerAdvice" type="annotation" />
     </context:component-scan>
+
+    <aop:aspectj-autoproxy/>
+
     <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
         <property name="driverClassName" value="${database.driverClassName}"/>
         <property name="url" value="${database.url}"/>
@@ -79,9 +97,7 @@
         <property name="minEvictableIdleTimeMillis" value="1800000"/>
         <property name="validationQuery" value="SELECT version();"/>
     </bean>
-    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
+
     <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="passwordEncoder"/>
     <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender">
         <property name="host" value="${email.host}"/>
@@ -93,11 +109,19 @@
         <property name="logService" ref="logService"/>
         <property name="isEnabled" value="${email.isEnabled}"/>
     </bean>
-    <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+
+    <tx:annotation-driven/>
+
+    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
     <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
         <property name="persistenceUnitName" value="persistenceUnit"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <jpa:repositories base-package="fr.univrouen.poste.repository"/>
     
     <!-- Resolves localized messages*.properties and application.properties files in the application to allow for internationalization. The messages*.properties files translate Roo generated messages which 
 		are part of the admin interface, the application.properties resource bundle localizes all application specific messages such as entity names and menu items. -->
@@ -106,10 +130,8 @@
 		
 	
 	<!-- Task executor for async methods (@see fr.univrouen.poste.utils.PdfService) -->
-	<task:annotation-driven executor="defaultExecutor" mode="aspectj"/>
+	<task:annotation-driven executor="defaultExecutor"/>
 	<task:executor id="defaultExecutor" pool-size="10"/>
-	
-	<!-- enable this for integration of file upload functionality -->
-	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="filterMultipartResolver" />
+
 		
 </beans>

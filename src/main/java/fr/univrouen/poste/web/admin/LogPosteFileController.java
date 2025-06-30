@@ -17,24 +17,31 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.util.List;
-
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import fr.univrouen.poste.dao.LogPosteFileDao;
+import fr.univrouen.poste.dao.UserDao;
+import fr.univrouen.poste.domain.LogPosteFile;
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
+import jakarta.annotation.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import fr.univrouen.poste.domain.LogPosteFile;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequestMapping("/admin/logpostefiles")
 @Controller
-@RooWebScaffold(path = "admin/logpostefiles", formBackingObject = LogPosteFile.class, create=false, update=false, delete=false)
 public class LogPosteFileController {
+
+    @Resource
+    LogPosteFileDao logPosteFileDao;
+
+    @Resource
+    UserDao userDao;
 	
     @ModelAttribute("command") 
     public LogSearchCriteria getLogSearchCriteria() {
@@ -43,31 +50,50 @@ public class LogPosteFileController {
     
 	@ModelAttribute("users")
 	public List<String> getUserIds() {
-		List<String> userIds = LogPosteFile.findAllUserIds();
+		List<String> userIds = new java.util.ArrayList<>(userDao.findAllUserIds());
 		userIds.add(0, "");
 		return userIds;
 	}
 	
     @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
-    public String findLogPosteFilesByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String findLogPosteFilesByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
     	if("".equals(searchCriteria.getStatus()) && "".equals(searchCriteria.getUserId())) {
-    		return this.list(page, size, sortFieldName, sortOrder, uiModel);
+    		return this.list(pageable, sortFieldName, sortOrder, uiModel);
     	}
-    	if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("logpostefiles", LogPosteFile.findLogPosteFiles(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).setFirstResult(firstResult).setMaxResults(sizeNo).getResultList());
-            float nrOfPages = (float) LogPosteFile.countFindLogPosteFiles(searchCriteria.getStatus(), searchCriteria.getUserId()) / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-        } else {
-            uiModel.addAttribute("logpostefiles", LogPosteFile.findLogPosteFiles(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder).getResultList());
-        }
-    	
+        int sizeNo = pageable.getPageSize();
+        List<LogPosteFile> all = logPosteFileDao.findLogPosteFiles(searchCriteria.getStatus(), searchCriteria.getUserId(), sortFieldName, sortOrder);
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + sizeNo, all.size());
+        List<LogPosteFile> sub = start <= end ? all.subList(start, end) : new ArrayList<>();
+        uiModel.addAttribute("logpostefiles", new PageImpl<>(sub, pageable, all.size()));
         uiModel.addAttribute("command", searchCriteria);
         uiModel.addAttribute("finderview", true);
-
         addDateTimeFormatPatterns(uiModel);
         return "admin/logpostefiles/list";
     }
     
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String show(@PathVariable Long id, Model uiModel) {
+        addDateTimeFormatPatterns(uiModel);
+        uiModel.addAttribute("logpostefile", logPosteFileDao.findLogPosteFile(id));
+        uiModel.addAttribute("itemId", id);
+        return "admin/logpostefiles/show";
+    }
+
+	@RequestMapping(produces = "text/html")
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+        if (pageable.isPaged()) {
+            Page<LogPosteFile> page = logPosteFileDao.findLogPosteFileEntries(pageable, sortFieldName, sortOrder);
+            uiModel.addAttribute("logpostefiles", page);
+        } else {
+            uiModel.addAttribute("logpostefiles", logPosteFileDao.findAllLogPosteFiles(sortFieldName, sortOrder));
+        }
+        addDateTimeFormatPatterns(uiModel);
+        return "admin/logpostefiles/list";
+    }
+
+	void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("logPosteFile_actiondate_date_format", "dd/MM/yyyy HH:mm");
+    }
 }

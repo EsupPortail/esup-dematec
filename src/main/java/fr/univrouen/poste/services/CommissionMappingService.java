@@ -24,15 +24,15 @@ import fr.univrouen.poste.domain.CommissionEntry;
 @Service
 public class CommissionMappingService {	
 
-    private static final String id_numposte = "Poste";
+    static final String id_numposte = "Poste";
 
-    private static final String id_email = "Email";
+    static final String id_email = "Email";
 
-    private static final String id_nom = "Nom";
+    static final String id_nom = "Nom";
 
-    private static final String id_prenom = "Prénom";
+    static final String id_prenom = "Prénom";
     
-    private static final String id_president= "Président";
+    static final String id_president= "Président";
 
 	public void setAttrFromCell(CommissionEntry commissionEntry, String cellName, String cellValue) {
         if (id_numposte.equals(cellName)) commissionEntry.setNumPoste(cellValue.trim());

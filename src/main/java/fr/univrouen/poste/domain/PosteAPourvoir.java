@@ -16,50 +16,55 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
-@RooJavaBean
-@RooToString(excludeFields = "membres")
-@RooJpaActiveRecord(finders = { "findPosteAPourvoirsByNumEmploi", "findPosteAPourvoirsByDateEndSignupCandidatGreaterThan" })
+import java.util.*;
+
+@Entity
+@Getter
+@Setter
 public class PosteAPourvoir {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    Long id;
+
 	@Column(nullable = false, unique = true)
-	private String numEmploi;
+	String numEmploi;
 
     @Column(length=300)
-    private String profil;
+    String profil;
 
     @Column(length=300)
-    private String localisation;
+    String localisation;
 
     @ManyToMany
-    private Set<User> membres;
+    @JoinTable(
+        name = "posteapourvoir_user",
+        joinColumns = @JoinColumn(name = "posteapourvoir"),
+        inverseJoinColumns = @JoinColumn(name = "membres")
+    )
+    Set<User> membres;
 
     @ManyToMany
-    private Set<User> presidents;
+    @JoinTable(
+        name = "posteapourvoir_user_1",
+        joinColumns = @JoinColumn(name = "posteapourvoir"),
+        inverseJoinColumns = @JoinColumn(name = "presidents")
+    )
+    Set<User> presidents;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "posteapourvoir_postefiles")
     @OrderBy("sendTime DESC")
-    private Set<PosteAPourvoirFile> posteFiles = new HashSet<PosteAPourvoirFile>();
+    Set<PosteAPourvoirFile> posteFiles = new HashSet<PosteAPourvoirFile>();
     
     public List<User> getSortedMembres() {
     	List<User> sortedMembres = new ArrayList<User>(this.membres);
@@ -75,11 +80,11 @@ public class PosteAPourvoir {
     
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private Date dateEndCandidatAuditionnable;
+    Date dateEndCandidatAuditionnable;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private Date dateEndSignupCandidat;
+    Date dateEndSignupCandidat;
     
     public void setNumEmploi(String numEmploi) {
     	if(numEmploi != null) {
@@ -88,30 +93,8 @@ public class PosteAPourvoir {
         this.numEmploi = numEmploi;
     }
 
-    public static List<PosteAPourvoir> findAllPosteAPourvoirs() {
-        return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).getResultList();
+	public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("membres").toString();
     }
 
-    public static List<String> findAllPosteAPourvoirNumEplois() {
-        return entityManager().createQuery("SELECT o.numEmploi FROM PosteAPourvoir o order by o.numEmploi asc", String.class).getResultList();
-    }
-
-    public static List<PosteAPourvoir> findPosteAPourvoirEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM PosteAPourvoir o order by o.numEmploi asc", PosteAPourvoir.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-
-    public static List<PosteAPourvoir> findPosteAPourvoirsByNumEmplois(List<String> numEmplois) {
-        if (numEmplois == null) throw new IllegalArgumentException("The numEmplois argument is required");
-        TypedQuery<PosteAPourvoir> q = entityManager().createQuery("SELECT o FROM PosteAPourvoir o WHERE o.numEmploi IN :numEmplois ORDER BY o.numEmploi asc", PosteAPourvoir.class);
-        q.setParameter("numEmplois", numEmplois);
-        return q.getResultList();
-    }
-
-    public static List<PosteAPourvoir> findPosteAPourvoirsByMembre(User membre) {
-        if (membre == null) throw new IllegalArgumentException("The membre argument is required");
-        TypedQuery<PosteAPourvoir> q = entityManager().createQuery("SELECT o FROM PosteAPourvoir o WHERE :membre MEMBER OF o.membres ORDER BY o.numEmploi asc", PosteAPourvoir.class);
-        q.setParameter("membre", membre);
-        return q.getResultList();
-    }
-    
 }

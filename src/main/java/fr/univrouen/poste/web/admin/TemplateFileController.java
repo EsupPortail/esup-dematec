@@ -1,4 +1,29 @@
 package fr.univrouen.poste.web.admin;
+
+import fr.univrouen.poste.dao.BigFileDao;
+import fr.univrouen.poste.dao.PosteCandidatureTagDao;
+import fr.univrouen.poste.dao.TemplateFileDao;
+import fr.univrouen.poste.domain.TemplateFile;
+import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
+import fr.univrouen.poste.services.TemplateService;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
+
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -6,38 +31,23 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.validation.Valid;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import fr.univrouen.poste.domain.PosteCandidatureTag;
-import fr.univrouen.poste.domain.TemplateFile;
-import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
-import fr.univrouen.poste.services.TemplateService;
-
 @RequestMapping("/admin/templatefiles")
 @Controller
-@RooWebScaffold(path = "admin/templatefiles", formBackingObject = TemplateFile.class)
 public class TemplateFileController {
 
+    final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private final Logger logger = Logger.getLogger(getClass());
+	@Resource
+	TemplateFileDao templateFileDao;
+
+	@Resource
+	PosteCandidatureTagDao posteCandidatureTagDao;
 	
 	@Resource
 	TemplateService templateService;
+
+    @Resource
+    BigFileDao bigFileDao;
 	
 	@ModelAttribute("templateFileTypes")
 	public List<TemplateFileType> getTemplateFileTypeEnum() {
@@ -47,7 +57,7 @@ public class TemplateFileController {
 	@RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
 	public String addFile(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws IOException, SQLException {
 		if (bindingResult.hasErrors()) {
-			logger.warn(bindingResult.getAllErrors());
+			logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/admin/templatefiles";
 		}
 		uiModel.asMap().clear();
@@ -59,15 +69,15 @@ public class TemplateFileController {
 		byte[] bytes = IOUtils.toByteArray(inputStream);
 
 		templateFile.setFilename(filename);
-		templateFile.getBigFile().setBinaryFile(new SerialBlob(bytes)); 
-		templateFile.getBigFile().persist();
+		templateFile.getBigFile().setBinaryFile(new SerialBlob(bytes));
+        bigFileDao.saveBigFile(templateFile.getBigFile());
 
 		// set current date 
 		Calendar cal = Calendar.getInstance();
 		templateFile.setSendTime(cal.getTime());
 
 		// persist
-		templateFile.persist();
+		templateFileDao.saveTemplateFile(templateFile);
 
 		return "redirect:/admin/templatefiles";
 	}
@@ -78,25 +88,65 @@ public class TemplateFileController {
     }
     
     @RequestMapping(produces = "text/html")
-    public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if(sortFieldName == null || sortFieldName.isEmpty()) {
-        	sortFieldName = "id";
-        	sortOrder = "asc";
+            sortFieldName = "id";
+            sortOrder = "asc";
         }
-        if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("templatefiles", TemplateFile.findTemplateFileEntries(firstResult, sizeNo, sortFieldName, sortOrder));
-            float nrOfPages = (float) TemplateFile.countTemplateFiles() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+        if (pageable.isPaged()) {
+            Page<TemplateFile> page = templateFileDao.findTemplateFileEntries(pageable.getPageNumber(), pageable.getPageSize(), sortFieldName, sortOrder);
+            uiModel.addAttribute("templatefiles", page);
         } else {
-            uiModel.addAttribute("templatefiles", TemplateFile.findAllTemplateFiles(sortFieldName, sortOrder));
+            uiModel.addAttribute("templatefiles", templateFileDao.findAllTemplateFiles(sortFieldName, sortOrder));
         }
-        uiModel.addAttribute("allPosteCandidatureTags", PosteCandidatureTag.findAllPosteCandidatureTags());
+        uiModel.addAttribute("allPosteCandidatureTags", posteCandidatureTagDao.findAllPosteCandidatureTags());
         uiModel.addAttribute("galaxieKeys", templateService.getGalaxieKeys());
-        
         addDateTimeFormatPatterns(uiModel);
         return "admin/templatefiles/list";
     }
-}
 
+	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String createdOrUpdate(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, templateFile);
+            return "admin/templatefiles/update";
+        }
+        uiModel.asMap().clear();
+        templateFileDao.saveTemplateFile(templateFile);
+        return "redirect:/admin/templatefiles";
+    }
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new TemplateFile());
+        return "admin/templatefiles/update";
+    }
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, templateFileDao.findTemplateFile(id));
+        return "admin/templatefiles/update";
+    }
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        templateFileDao.deleteTemplateFile(id);
+        uiModel.asMap().clear();
+        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
+        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        return "redirect:/admin/templatefiles";
+    }
+
+	void addDateTimeFormatPatterns(Model uiModel) {
+        uiModel.addAttribute("templateFile_sendtime_date_format", "dd/MM/yyyy HH:mm");
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+        }
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
+    }
+}

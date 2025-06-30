@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/public}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exception</title>
+</head>
+<body>
+<div layout:fragment="body" class="container-fluid">
+  <div>
+    <div class="row-fluid">
+      <h2 th:text="#{error_resourcenotfound_title}"></h2>
+      <p th:text="#{error_resourcenotfound_problemdescription}"></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+

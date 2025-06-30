@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Utilisateurs connectés</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    
+    <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
+      <div class="help-content">
+<p>Utilisateurs connectés.</p>
+      <p th:text="|${#lists.size(sessions)} session(s) active(s)|">0 session(s) active(s)</p>
+      </div>
+    </div>
+    
+    <ul>
+      <li th:each="s : ${sessions}" th:text="${s}">Session</li>
+    </ul>
+    
+  </div>
+</body>
+</html>

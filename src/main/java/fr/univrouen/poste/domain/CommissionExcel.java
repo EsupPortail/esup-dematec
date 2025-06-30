@@ -17,40 +17,51 @@
  */
 package fr.univrouen.poste.domain;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.web.multipart.MultipartFile;
-
-@RooJavaBean
-@RooToString(excludeFields={"bigFile","file","cells"})
-@RooJpaActiveRecord
+@Entity
+@Getter
+@Setter
 public class CommissionExcel {
-	
-    private String filename;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
+
+    String filename;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
-    private BigFile bigFile = new BigFile();
+    @JoinColumn(name = "bigfile")
+    BigFile bigFile = new BigFile();
     
     @Transient
-    private MultipartFile file;
+    MultipartFile file;
     
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern="dd/MM/yyyy HH:mm")
-    private Date creation;
+    Date creation;
     
     @Transient
-    private  List<List<String>> cells;
+     List<List<String>> cells;
+
+
+	public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("bigFile", "file", "cells").toString();
+    }
 
 }

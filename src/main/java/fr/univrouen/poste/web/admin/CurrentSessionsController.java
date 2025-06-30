@@ -17,23 +17,23 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
+
 @RequestMapping("/admin/currentsessions")
 @Controller
 public class CurrentSessionsController {
 
-	@Autowired
-	private SessionRegistry sessionRegistry;
+	@Resource
+	SessionRegistry sessionRegistry;
 	
 	@RequestMapping
 	public String getCurrentSessions(Model uiModel) throws IOException {

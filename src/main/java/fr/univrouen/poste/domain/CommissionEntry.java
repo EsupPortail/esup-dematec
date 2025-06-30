@@ -16,43 +16,50 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-import java.util.List;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString(excludeFields = {"membre","poste"})
-@RooJpaActiveRecord(finders = { "findCommissionEntrysByNumPosteAndEmail", "findCommissionEntrysByMembre", "findCommissionEntrysByMembreIsNull", "findCommissionEntrysByPosteIsNull" })
+@Entity
+@Table(indexes = {
+        @Index(name = "num_postel_index", columnList = "numPoste"),
+        @Index(name = "email_index", columnList = "email")
+})
+@Getter
+@Setter
 public class CommissionEntry {
 
-    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numPoste", "email", "nom", "prenom", "membre", "poste", "numPoste,email");
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
 
     @NotEmpty
-    @Index(name="num_postel_index")
-    private String numPoste;
+    String numPoste;
 
     @NotEmpty
-    @Index(name="email_index")
-    private String email;
+    String email;
 
-    private String nom;
+    String nom;
 
-    private String prenom;
+    String prenom;
     
-    private Boolean president = false;
+    Boolean president = false;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private User membre;
+    User membre;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private PosteAPourvoir poste;
+    PosteAPourvoir poste;
 
     // don't care of upper/lower case for authentication with email ...
     public void setEmail(String email) {
@@ -62,5 +69,11 @@ public class CommissionEntry {
     public Boolean getDeletable() {
         return membre == null && poste == null;
     }
+
+
+	public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("membre", "poste").toString();
+    }
+
 
 }

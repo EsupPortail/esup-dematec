@@ -16,58 +16,70 @@
  * limitations under the License.
  */
 package fr.univrouen.poste.domain;
-import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString(excludeFields = {"candidat","poste","candidature"})
-@RooJpaActiveRecord(finders = { "findGalaxieEntrysByNumEmploiAndNumCandidat", "findGalaxieEntrysByCandidat", "findGalaxieEntrysByCandidatIsNull", "findGalaxieEntrysByPosteIsNull", "findGalaxieEntrysByCandidatureIsNull", "findGalaxieEntrysByCandidature" })
+@Entity
+@Table(indexes = {
+        @Index(name = "num_emploi_index", columnList = "numEmploi"),
+        @Index(name = "num_candidat_index", columnList = "numCandidat")
+})
+@Getter
+@Setter
 public class GalaxieEntry {
 
-    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("numEmploi", "numCandidat", "civilite", "nom", "prenom", "email", "localisation", "profil", "candidat", "poste", "candidature", "numEmploi,numCandidat");
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(
+            name = "my_seq",
+            sequenceName = "hibernate_sequence",
+            allocationSize = 1
+    )
+    Long id;
+
 
     @NotEmpty
-    @Index(name="num_emploi_index")
-    private String numEmploi;
+    String numEmploi;
 
     @NotEmpty
-    @Index(name="num_candidat_index")
-    private String numCandidat;
+    String numCandidat;
 
-    private String civilite = "";
+    String civilite = "";
 
-    private String nom = "";
+    String nom = "";
 
-    private String prenom = "";
+    String prenom = "";
 
-    private String email;
+    String email;
     
     @Column(length=300)
-    private String localisation = "";
+    String localisation = "";
 
     @Column(length=300)
-    private String profil = "";
+    String profil = "";
 
-    private String etatDossier = "";
-
-    @ManyToOne(fetch=FetchType.LAZY)
-    private User candidat;
+    String etatDossier = "";
 
     @ManyToOne(fetch=FetchType.LAZY)
-    private PosteAPourvoir poste;
+    @JoinColumn(name = "candidat")
+    User candidat;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "poste")
+    PosteAPourvoir poste;
 
     @OneToOne(fetch=FetchType.LAZY)
-    private PosteCandidature candidature;
+    @JoinColumn(name = "candidature")
+    PosteCandidature candidature;
+
+	public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("candidat", "poste", "candidature").toString();
+    }
 
     // don't care of upper/lower case for authentication with email ...
     public void setEmail(String email) {
@@ -78,11 +90,5 @@ public class GalaxieEntry {
         return candidat == null && poste == null && candidature == null;
     }
 
-    public static List<GalaxieEntry> findAllGalaxieEntrysWithCandidatNull() {
-        return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.candidat is NULL", GalaxieEntry.class).getResultList();
-    }
 
-    public static List<GalaxieEntry> findAllGalaxieEntrysWithPosteNull() {
-        return entityManager().createQuery("SELECT o FROM GalaxieEntry o WHERE o.poste is NULL", GalaxieEntry.class).getResultList();
-    }
 }

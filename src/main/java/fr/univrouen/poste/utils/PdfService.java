@@ -4,16 +4,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PdfService {
 	
-	private final Logger log = Logger.getLogger(PdfService.class);
+	final Logger log = LoggerFactory.getLogger(PdfService.class);
 	
 	@Resource
 	TxPdfService txPdfService;

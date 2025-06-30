@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Types de fichiers - Création</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Créer Types de fichiers</h2>
+    
+    <form id="fc_fr_univrouen_poste_domain_AppliConfigFileType" th:action="@{/admin/appliconfigfiletype}" th:object="${appliConfigFileType}" method="post">
+
+      
+      <div id="_c_fr_univrouen_poste_domain_AppliConfigFileType_typeTitle_id">
+        <label for="_c_fr_univrouen_poste_domain_AppliConfigFileType_typeTitle_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_typetitle}"></span> :</label>
+        <input type="text" th:field="*{typeTitle}" id="_c_fr_univrouen_poste_domain_AppliConfigFileType_typeTitle_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFileMoSizeMax_id">
+        <label for="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFileMoSizeMax_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturefilemosizemax}"></span> :</label>
+        <input type="text" th:field="*{candidatureFileMoSizeMax}" id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFileMoSizeMax_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureNbFileMax_id">
+        <label for="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureNbFileMax_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturenbfilemax}"></span> :</label>
+        <input type="text" th:field="*{candidatureNbFileMax}" id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureNbFileMax_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp_id">
+        <label for="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturecontenttyperestrictionregexp}"></span> :</label>
+        <input type="text" th:field="*{candidatureContentTypeRestrictionRegexp}" id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureContentTypeRestrictionRegexp_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp_id">
+        <label for="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_candidaturefilenamerestrictionregexp}"></span> :</label>
+        <input type="text" th:field="*{candidatureFilenameRestrictionRegexp}" id="_c_fr_univrouen_poste_domain_AppliConfigFileType_candidatureFilenameRestrictionRegexp_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription_id">
+        <label for="_c_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_typedescription}"></span> :</label>
+        <textarea th:field="*{typeDescription}" id="_c_fr_univrouen_poste_domain_AppliConfigFileType_typeDescription_id" rows="12" cols="120"></textarea>
+        <br/>
+      </div>
+      
+      <div id="_c_fr_univrouen_poste_domain_AppliConfigFileType_listIndex_id">
+        <label for="_c_fr_univrouen_poste_domain_AppliConfigFileType_listIndex_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfigfiletype_listindex}"></span> :</label>
+        <input type="text" th:field="*{listIndex}" id="_c_fr_univrouen_poste_domain_AppliConfigFileType_listIndex_id" class="input-xxlarge"/>
+        <br/>
+      </div>
+      
+      <div class="submit" id="fc_fr_univrouen_poste_domain_AppliConfigFileType_submit">
+        <input id="proceed" type="submit" value="Créer" class="btn btn-success"/>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

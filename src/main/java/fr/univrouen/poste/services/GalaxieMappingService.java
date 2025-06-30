@@ -17,34 +17,45 @@
  */
 package fr.univrouen.poste.services;
 
+import fr.univrouen.poste.dao.GalaxieMappingDao;
+import fr.univrouen.poste.domain.GalaxieEntry;
+import fr.univrouen.poste.domain.GalaxieMapping;
+import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-
-import fr.univrouen.poste.domain.GalaxieEntry;
-import fr.univrouen.poste.domain.GalaxieMapping;
-
 @Service
 public class GalaxieMappingService {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
+
+	@Resource
+	GalaxieMappingDao galaxieMappingDao;
+
+	GalaxieMapping getGalaxieMapping() {
+		return galaxieMappingDao.findAllGalaxieMappings().get(0);
+	}
 
 	public void setAttrFromCell(GalaxieEntry galaxieEntry, String cellName, String cellValue) {
+
+		GalaxieMapping galaxieMapping = getGalaxieMapping();
+
+		String id_numemploi = galaxieMapping.getId_numemploi();
+		String id_numCandidat = galaxieMapping.getId_numCandidat();
+		String id_email = galaxieMapping.getId_email();
 		
-		String id_numemploi = GalaxieMapping.getCache_id_numemploi();
-		String id_numCandidat = GalaxieMapping.getCache_id_numCandidat();
-		String id_email = GalaxieMapping.getCache_id_email();
-		
-		String id_civilite = GalaxieMapping.getCache_id_civilite();
-		String id_nom = GalaxieMapping.getCache_id_nom();
-		String id_prenom = GalaxieMapping.getCache_id_prenom();
-		String id_localisation = GalaxieMapping.getCache_id_localisation();
-		String id_profil = GalaxieMapping.getCache_id_profil();
-		String id_etat_dossier = GalaxieMapping.getCache_id_etat_dossier();
+		String id_civilite = galaxieMapping.getId_civilite();
+		String id_nom = galaxieMapping.getId_nom();
+		String id_prenom = galaxieMapping.getId_prenom();
+		String id_localisation = galaxieMapping.getId_localisation();
+		String id_profil = galaxieMapping.getId_profil();
+		String id_etat_dossier = galaxieMapping.getId_etat_dossier();
 		
 		
         if (id_numemploi.equals(cellName)) galaxieEntry.setNumEmploi(cellValue.trim());
@@ -59,16 +70,18 @@ public class GalaxieMappingService {
 	}
 
 	public void checkCellsHead(Map<String, Long> cellsPosition) {
-		
-		String id_numemploi = GalaxieMapping.getCache_id_numemploi();
-		String id_numCandidat = GalaxieMapping.getCache_id_numCandidat();
-		String id_email = GalaxieMapping.getCache_id_email();
+
+		GalaxieMapping galaxieMapping = getGalaxieMapping();
+
+		String id_numemploi = galaxieMapping.getId_numemploi();
+		String id_numCandidat = galaxieMapping.getId_numCandidat();
+		String id_email = galaxieMapping.getId_email();
 
 		List<String> columnsNotFound = new ArrayList<String>();
 		String[] columnNamesRequired = {id_numemploi, id_numCandidat, id_email};
 		
 		for(String columnName: columnNamesRequired) {
-			if(!cellsPosition.keySet().contains(columnName)) {
+			if(!cellsPosition.containsKey(columnName)) {
 				columnsNotFound.add(columnName);
 			}
 		}

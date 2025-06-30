@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Valeurs tags - Création</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Créer Valeurs tags</h2>
+    
+    <form th:action="@{/admin/candidaturevaluetags}" th:object="${posteCandidatureTagValue}" method="post">
+
+      
+      <div>
+        <label for="value">Valeur</label>
+        <div>
+          <input type="text" th:field="*{value}" id="value"/>
+        </div>
+      </div>
+      
+      <div>
+        <button type="submit" class="btn btn-primary">Créer</button>
+        <a th:href="@{/admin/candidaturevaluetags}" class="btn">Annuler</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

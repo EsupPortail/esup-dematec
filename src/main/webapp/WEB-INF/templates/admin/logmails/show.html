@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Logs emails - Détails</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Détails Logs emails</h2>
+    
+    <dl class="dl-horizontal">
+      <dt>Date</dt>
+      <dd th:text="${log.actionDate}"></dd>
+      <dt>Destinataire</dt>
+      <dd th:text="${log.destinataire}"></dd>
+      <dt>Statut</dt>
+      <dd th:text="${log.status}"></dd>
+    </dl>
+    
+    <hr/>
+    <div>
+      <a th:href="@{/admin/logmails}" class="btn btn-default">Retour</a>
+      <a th:href="@{/admin/logmails/{id}(id=${log.id},form)}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
+    </div>
+  </div>
+</body>
+</html>

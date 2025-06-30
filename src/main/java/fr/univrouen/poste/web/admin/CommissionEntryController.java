@@ -17,58 +17,70 @@
  */
 package fr.univrouen.poste.web.admin;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import fr.univrouen.poste.dao.CommissionEntryDao;
+import fr.univrouen.poste.dao.PosteAPourvoirDao;
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.CommissionEntryService;
 import fr.univrouen.poste.services.LogService;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.WebUtils;
+
+import java.util.*;
 
 @RequestMapping("/admin/commissionentrys")
 @Controller
-@RooWebScaffold(path = "admin/commissionentrys", formBackingObject = CommissionEntry.class)
 public class CommissionEntryController {
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Autowired 
+	@Resource
 	CommissionEntryService commissionEntryService;
 	
-	@Autowired 
-    private LogService logService;
+	@Resource
+    LogService logService;
+
+	@Resource
+	CommissionEntryDao commissionEntryDao;
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
 	
     @RequestMapping(produces = "text/html")
-    public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if(sortFieldName==null)
-        	sortFieldName = "numPoste,email";
-    	if (page != null || size != null) {
-            int sizeNo = size == null ? 10 : size.intValue();
-            final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("commissionentrys", CommissionEntry.findCommissionEntryEntries(firstResult, sizeNo, sortFieldName, sortOrder));
-            float nrOfPages = (float) CommissionEntry.countCommissionEntrys() / sizeNo;
-            uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+            sortFieldName = "numPoste,email";
+        if (pageable.isPaged()) {
+            Page<CommissionEntry> page = commissionEntryDao.findCommissionEntryEntries(pageable, sortFieldName, sortOrder);
+            uiModel.addAttribute("commissionentrys", page);
         } else {
-            uiModel.addAttribute("commissionentrys", CommissionEntry.findAllCommissionEntrys(sortFieldName, sortOrder));
+            uiModel.addAttribute("commissionentrys", commissionEntryDao.findAllCommissionEntrys(sortFieldName, sortOrder));
         }
 
         Map<String, String> unknowMembres = new HashMap<String, String>();
         Map<String, String> unknowPostes = new HashMap<String, String>();
         Map<List<String>, String> unknowCommission = new HashMap<List<String>, String>();
         
-        List<CommissionEntry> commissionEntrysWithMembreNull = CommissionEntry.findCommissionEntrysByMembreIsNull().getResultList();
+        List<CommissionEntry> commissionEntrysWithMembreNull = commissionEntryDao.findCommissionEntrysByMembreIsNull();
         for(CommissionEntry  commissionEntry : commissionEntrysWithMembreNull) {
         	unknowMembres.put(commissionEntry.getEmail(), "dummy");
        		List<String> candidatureKey = new Vector<String>();
@@ -78,7 +90,7 @@ public class CommissionEntryController {
        		unknowCommission.put(candidatureKey, "dummy");
         }
         
-        List<CommissionEntry> commissionEntrysWithPosteNull = CommissionEntry.findCommissionEntrysByPosteIsNull().getResultList();
+        List<CommissionEntry> commissionEntrysWithPosteNull = commissionEntryDao.findCommissionEntrysByPosteIsNull();
         for(CommissionEntry  commissionEntry : commissionEntrysWithPosteNull) {
         	unknowPostes.put(commissionEntry.getNumPoste(), "dummy");
        		List<String> candidatureKey = new Vector<String>();
@@ -99,7 +111,7 @@ public class CommissionEntryController {
     @RequestMapping("/generatecommissions")
     public String generateCommissions() {
  
-    	List<CommissionEntry> commissionEntrys = CommissionEntry.findCommissionEntrysByMembreIsNull().getResultList();
+    	List<CommissionEntry> commissionEntrys = commissionEntryDao.findCommissionEntrysByMembreIsNull();
         for(CommissionEntry  commissionEntry : commissionEntrys) {
         	String commissionEntryStr = commissionEntry.toString();
         	try{
@@ -110,7 +122,7 @@ public class CommissionEntryController {
         	}
         }
         
-    	commissionEntrys = CommissionEntry.findCommissionEntrysByPosteIsNull().getResultList();
+    	commissionEntrys = commissionEntryDao.findCommissionEntrysByPosteIsNull();
         for(CommissionEntry  commissionEntry : commissionEntrys) {     	
         	String commissionEntryStr = commissionEntry.toString();
         	try{
@@ -121,7 +133,7 @@ public class CommissionEntryController {
         	}
         }
         
-    	commissionEntrys = CommissionEntry.findAllCommissionEntrys();
+    	commissionEntrys = commissionEntryDao.findAllCommissionEntrys();
     	Set<User> membres = new HashSet<User>();
         for(CommissionEntry  commissionEntry : commissionEntrys) {  
         	membres.add(commissionEntry.getMembre());
@@ -139,7 +151,72 @@ public class CommissionEntryController {
         }
         
         
-        return "redirect:/admin/logimportcommissions?sortFieldName=actionDate&sortOrder=desc&page=1&size=40";
+        return "redirect:/admin/logimportcommissions";
     }
     
+
+	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String create(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, commissionEntry);
+            return "admin/commissionentrys/create";
+        }
+        uiModel.asMap().clear();
+        commissionEntryDao.saveCommissionEntry(commissionEntry);
+        return "redirect:/admin/commissionentrys/" + encodeUrlPathSegment(commissionEntry.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(params = "form", produces = "text/html")
+    public String createForm(Model uiModel) {
+        populateEditForm(uiModel, new CommissionEntry());
+        return "admin/commissionentrys/create";
+    }
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
+    public String show(@PathVariable Long id, Model uiModel) {
+        uiModel.addAttribute("commissionentry", commissionEntryDao.findCommissionEntry(id));
+        uiModel.addAttribute("itemId", id);
+        return "admin/commissionentrys/show";
+    }
+
+	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
+    public String update(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, commissionEntry);
+            return "admin/commissionentrys/update";
+        }
+        uiModel.asMap().clear();
+        commissionEntryDao.saveCommissionEntry(commissionEntry);
+        return "redirect:/admin/commissionentrys/" + encodeUrlPathSegment(commissionEntry.getId().toString(), httpServletRequest);
+    }
+
+	@RequestMapping(value = "/{id}", params = "form", produces = "text/html")
+    public String updateForm(@PathVariable Long id, Model uiModel) {
+        populateEditForm(uiModel, commissionEntryDao.findCommissionEntry(id));
+        return "admin/commissionentrys/update";
+    }
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        commissionEntryDao.deleteCommissionEntry(id);
+        uiModel.asMap().clear();
+        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
+        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        return "redirect:/admin/commissionentrys";
+    }
+
+	void populateEditForm(Model uiModel, CommissionEntry commissionEntry) {
+        uiModel.addAttribute("commissionEntry", commissionEntry);
+        uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirs());
+        uiModel.addAttribute("users", userDao.findAllUsers());
+    }
+
+	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
+        String enc = httpServletRequest.getCharacterEncoding();
+        if (enc == null) {
+            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+        }
+        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
+        return pathSegment;
+    }
 }

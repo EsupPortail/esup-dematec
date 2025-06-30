@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Entrée commission - Détail</title>
+</head>
+<body>
+  <div layout:fragment="body">
+
+    <dl>
+      <dt>Email</dt>
+      <dd th:text="${commissionentry.email}"></dd>
+
+      <dt>Nom</dt>
+      <dd th:text="${commissionentry.nom}"></dd>
+
+      <dt>Prénom</dt>
+      <dd th:text="${commissionentry.prenom}"></dd>
+
+      <dt>Numéro de poste</dt>
+      <dd th:text="${commissionentry.numPoste}"></dd>
+
+      <dt>Poste</dt>
+      <dd th:text="${commissionentry.poste}"></dd>
+
+      <dt>Membre</dt>
+      <dd th:text="${commissionentry.membre}"></dd>
+
+      <dt>Président</dt>
+      <dd th:text="${commissionentry.president}"></dd>
+    </dl>
+
+    <a th:href="@{/admin/commissionentrys}" class="btn btn-default">Retour à la liste</a>
+    <form th:if="${commissionentry.deletable}"
+       th:action="@{/admin/commissionentrys/{id}(id=${commissionentry.id})}"
+       th:method="delete">
+      <input onclick="return confirm('Êtes-vous sûr de vouloir supprimer celà ?');" value="Supprimer Commission Entry" type="submit" title="Supprimer Commission Entry" class="btn btn-danger" alt="Supprimer Commission Entry">
+    </form>
+  </div>
+</body>
+</html>

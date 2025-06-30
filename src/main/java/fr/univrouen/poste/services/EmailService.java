@@ -19,7 +19,7 @@ package fr.univrouen.poste.services;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,15 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class EmailService implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
+	static final long serialVersionUID = 1L;
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
-    private MailSender mailSender; 
+    MailSender mailSender; 
     
-    private LogService logService;
+    LogService logService;
     
-    private Boolean isEnabled = false;
+    Boolean isEnabled = false;
   
     public void setMailSender(MailSender mailSender) {
     	this.mailSender = mailSender;
@@ -63,10 +63,10 @@ public class EmailService implements Serializable {
 				    mail.setSubject(subject);
 				    mail.setText(mailMessage);
 			        mailSender.send(mail);
-			        logger.debug("Email sent : " + mail.toString());
+			        logger.debug("Email sent : " + mail);
 			        logService.logMail(mailTo, mailMessage, LogService.MAIL_SENT);
 		    	} catch(Exception e) {   		
-			        logger.error("Email failed : " + mail.toString(), e);
+			        logger.error("Email failed : " + mail, e);
 			        logService.logMail(mailTo, mailMessage, LogService.MAIL_FAILED);
 			        return false;
 		    	}

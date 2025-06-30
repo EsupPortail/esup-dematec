@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import fr.univrouen.poste.domain.PosteAPourvoir;
@@ -41,7 +41,7 @@ public class ZipService {
 	
 	static final int BUFFER = 2048; 
 	
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
 
 	public void writeZip(List<PosteCandidature> posteCandidatures, OutputStream destStream) throws IOException, SQLException {

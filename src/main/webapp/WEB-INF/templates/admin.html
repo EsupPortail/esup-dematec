@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin</title>
+</head>
+<body>
+  <div layout:fragment="body">
+      <div class="well">
+        <p>Cette page vous donne quelques statistiques autour des comptes créés, actifs ainsi que des fichiers déposés par les candidats.</p>
+      </div>
+
+    <dl class="dl">
+      <dt>Nombre de postes</dt>
+      <dd th:text="${stat.posteNumber}"></dd>
+
+      <dt>Comptes créés</dt>
+      <dd th:text="${stat.userNumber}"></dd>
+
+      <dt>Comptes activés</dt>
+      <dd th:text="${stat.userActifNumber}"></dd>
+
+      <dt>Admins</dt>
+      <dd th:text="${stat.adminNumber}"></dd>
+
+      <dt>Super Managers</dt>
+      <dd th:text="${stat.supermanagerNumber}"></dd>
+
+      <dt>Managers</dt>
+      <dd th:text="${stat.managerNumber}"></dd>
+
+      <dt>Membres</dt>
+      <dd th:text="${stat.membreNumber}"></dd>
+
+      <dt>Candidats uniques</dt>
+      <dd th:text="${stat.candidatNumber}"></dd>
+
+      <dt>Candidats actifs</dt>
+      <dd th:text="${stat.candidatActifNumber}"></dd>
+
+      <dt>Nombre de candidatures</dt>
+      <dd th:text="${stat.posteCandidatureNumber}"></dd>
+
+      <dt>Nombre de candidatures actives (au moins une modification)</dt>
+      <dd th:text="${stat.posteCandidatureActifNumber}"></dd>
+
+      <dt>Fichiers de candidatures déposés</dt>
+      <dd th:text="${stat.posteCandidatureFileNumber}"></dd>
+
+      <dt>Volume total des fichiers de candidature</dt>
+      <dd th:text="${stat.totalFileSizeFormatted}"></dd>
+
+      <dt>Taille Max Fichier de candidature</dt>
+      <dd th:text="${stat.maxFileSize}"></dd>
+
+      <dt>Nbre total de pages (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
+      <dd><span th:text="${stat.nbPages}"></span> [~<span th:text="${stat.pagesKilo}"></span> kg - ~<span th:text="${stat.nbRames}"></span> rames]</dd>
+
+      <dt>Nbre de pages en moyenne par candidature (fichiers PDF uniquement et pris en compte seulement si le parsing s'est bien déroulé)</dt>
+      <dd>~<span th:text="${stat.moyNbPages}"></span> [~<span th:text="${stat.moyPagesGr}"></span> g]</dd>
+
+      <dt>Rapports de commission déposés</dt>
+      <dd th:text="${stat.memberReviewFileNumber}"></dd>
+
+      <dt>Volume total des rapports de commission</dt>
+      <dd th:text="${stat.totalMemberReviewFileSizeFormatted}"></dd>
+
+      <dt>Fichiers internes des comités de sélection déposés</dt>
+      <dd th:text="${stat.posteAPourvoirFileNumber}"></dd>
+
+      <dt>Volume total des fichiers internes des comités de sélection</dt>
+      <dd th:text="${stat.totalposteAPourvoirFileSizeFormatted}"></dd>
+    </dl>
+  </div>
+</body>
+</html>

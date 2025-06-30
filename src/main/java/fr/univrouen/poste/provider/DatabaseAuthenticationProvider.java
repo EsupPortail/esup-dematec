@@ -20,190 +20,37 @@
  */
 package fr.univrouen.poste.provider;
 
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.services.PasswordService;
-import fr.univrouen.poste.utils.DateClotureChecker;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.authentication.BadCredentialsException;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
-@Service("databaseAuthenticationProvider")
+@Service
 public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Resource
-	private LogService logService;
+	RetrieveUserService retrieveUserService;
 
-	@Resource
-	private PasswordEncoder passwordEncoder;
-
-	@Resource
-	private DatabaseUserDetailsService databaseUserDetailsService;
-	
-	@Resource
-	DateClotureChecker dateClotureChecker;
-
-	@Autowired
-	PasswordService passwordService;
-
-	private List<String> ipsStart4AdminManagerAuthList;
-
-	@Value("${ipsStart4AdminManagerAuth}")
-	public void SetIpsStart4AdminManagerAuth(String ipsStart4AdminManagerAuth) {
-		ipsStart4AdminManagerAuthList = Arrays.asList(ipsStart4AdminManagerAuth.split(" "));
-		logger.warn("Restricted access from this (started) ip for admins, super-managers and managers : " + ipsStart4AdminManagerAuthList);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.security.authentication.dao.
-	 * AbstractUserDetailsAuthenticationProvider
-	 * #additionalAuthenticationChecks(org
-	 * .springframework.security.core.userdetails.UserDetails,
-	 * org.springframework
-	 * .security.authentication.UsernamePasswordAuthenticationToken)
-	 */
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails arg0, UsernamePasswordAuthenticationToken arg1) throws AuthenticationException {
-		return;
-
-	}
+    }
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.security.authentication.dao.
-	 * AbstractUserDetailsAuthenticationProvider#retrieveUser(java.lang.String,
-	 * org
-	 * .springframework.security.authentication.UsernamePasswordAuthenticationToken
-	 * )
+	 * Implements the retrieval of the user details from the database as hack to handle transactional issues with Spring AOP on self-invocation
 	 */
 	@Override
-	@Transactional(noRollbackFor = BadCredentialsException.class)
-	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-
-		UserDetails userDetails = null;
-		
-		logger.debug("Inside retrieveUser");
-
-		WebAuthenticationDetails wad = (WebAuthenticationDetails) authentication.getDetails();
-		String userIPAddress = wad.getRemoteAddress();
-
-		Boolean ipCanBeUsed4AuthAdminManager = this.isIpCanBeUsed4AuthAdminManager(userIPAddress);
-
-		username = username.toLowerCase();
-
-		String password = (String) authentication.getCredentials();
-		if (!StringUtils.hasText(password) || !StringUtils.hasText(username)) {
-			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			throw new BadCredentialsException("Merci de saisir votre email et mot de passe");
-		}
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		Boolean enabled;
-
-		try {
-			TypedQuery<User> query = User.findUsersByEmailAddress(username, null, null);
-
-			User targetUser = (User) query.getSingleResult();		
-			
-			if (targetUser.isLocked()) {
-				throw new BadCredentialsException("Compte vérouillé, merci de retenter d'ici quelques secondes.");
-			}
-
-			// authenticate the person
-			String expectedPassword = targetUser.getPassword();
-			if (!StringUtils.hasText(expectedPassword)) {
-				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-				throw new BadCredentialsException("Aucun mot de passe pour " + username
-				        + " n'est enregistré dans la base, merci d'activer votre compte via le lien d'activation envoyé par email. Contactez un administrateur si problème.");
-			}
-			if (!passwordEncoder.matches(password, expectedPassword)) {
-				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-				if(!expectedPassword.startsWith("$")) {
-					// Hack : En 1.9 les mots de passes sont maintenant chiffrés avec bcrypt et non plus en sha256
-					// -> pour supporter une migration simple, on envoie un lien de changement de mot de passe si le format n'est pas du bcrypt
-					// le password en bcrypt est préfixé par $ - sha256 est en hexa
-					passwordService.sendPasswordActivationKeyMail(targetUser, null);
-					throw new BadCredentialsException("Votre mot de passe doit être mis à jour, un mail de changement de mot de passe vient de vous être envoyé.");
-				}
-				throw new BadCredentialsException("Email utilisateur ou mot de passe invalide.");
-			}
-			
-			// restriction accés réseau
-			if (!ipCanBeUsed4AuthAdminManager && (targetUser.getIsAdmin() || targetUser.getIsSuperManager() || targetUser.getIsManager())) {
-				logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-				logger.warn("User " + username + " tried to access to his admin/manager/supermanager account from this IP " + userIPAddress);
-				throw new BadCredentialsException("Vous ne pouvez pas vous authentifier sur ce compte depuis cet accès réseau. Contactez un administrateur si problème.");
-			}
-
-			// restriction dates accés pour candidats et membres 
-			boolean isCurrentTimeOk4ThisCandidat = dateClotureChecker.isCurrentTimeOk4ThisCandidat(targetUser);
-			boolean isCurrentTimeOk4ThisMembre = dateClotureChecker.isCurrentTimeOk4ThisMembre(targetUser);
-			if((targetUser.getIsCandidat() || targetUser.getIsMembre()) && !isCurrentTimeOk4ThisCandidat && !isCurrentTimeOk4ThisMembre) {
-			    if(targetUser.getIsCandidat() && !isCurrentTimeOk4ThisCandidat) {
-			        logger.warn("User " + username + " tried to access to his candidat account but the dateEndCandidat is < current time");
-			    }    	        
-			    if(targetUser.getIsMembre() && !isCurrentTimeOk4ThisMembre) {
-				logger.warn("User " + username + " tried to access to his membre account but the dateEndMembre is < current time");
-			    }     
-			    logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			    throw new BadCredentialsException("La date de clôture des dépôts est dépassée, vous ne pouvez maintenant plus accéder à l'application.");
-			}
-	        
-	        userDetails = databaseUserDetailsService.loadUserByUser(targetUser);
-
-		} catch (EmptyResultDataAccessException | NoResultException e) {
-			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			throw new BadCredentialsException("Compte utilisateur et/ou mot de passe invalide");
-		} catch (EntityNotFoundException e) {
-			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			throw new BadCredentialsException("Compte utilisateur et/ou mot de passe invalide");
-		} catch (NonUniqueResultException e) {
-			logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-			throw new BadCredentialsException("Utilisateur non unique, contactez l'administrateur.");
-		}
-
-		logService.logActionAuth(LogService.AUTH_SUCCESS, username, userIPAddress);
-
-		return userDetails;
+	protected UserDetails retrieveUser(String username,
+									   UsernamePasswordAuthenticationToken auth)
+			throws AuthenticationException {
+		// Déléguer à la méthode transactionnelle via le proxy
+		return retrieveUserService.retrieveUserTransactional(username, auth);
 	}
 
-	private Boolean isIpCanBeUsed4AuthAdminManager(String userIPAddress) {
-		if (ipsStart4AdminManagerAuthList != null && !ipsStart4AdminManagerAuthList.isEmpty()) {
-			for (String ipStart : ipsStart4AdminManagerAuthList) {
-				if (userIPAddress.startsWith(ipStart)) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			// no restrictions is done
-			return true;
-		}
-	}
 }

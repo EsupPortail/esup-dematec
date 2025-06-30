@@ -1,34 +1,47 @@
 package fr.univrouen.poste.services;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import fr.univrouen.poste.domain.AppliConfig;
+import fr.univrouen.poste.dao.AppliConfigDao;
+import fr.univrouen.poste.dao.CommissionEntryDao;
+import fr.univrouen.poste.dao.PosteAPourvoirDao;
+import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.PosteAPourvoir;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.exceptions.EsupDematEcException;
 import fr.univrouen.poste.web.UserRegistrationForm;
+import jakarta.annotation.Resource;
+import jakarta.persistence.TypedQuery;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class CommissionEntryService {
 
-	@Autowired 
-	private CreateUserService createUserService;
+	@Resource
+	CreateUserService createUserService;
 	
-	@Autowired 
-    private LogService logService;
+	@Resource
+    LogService logService;
 	
-	@Autowired
+	@Resource
 	EmailService emailService;
+
+	@Resource
+	AppliConfigDao appliConfigDao;
+
+	@Resource
+	UserDao userDao;
+
+	@Resource
+	CommissionEntryDao commissionEntryDao;
+
+	@Resource
+	PosteAPourvoirDao posteAPourvoirDao;
 	
 	/**
 	 * 	IMPORTANT : le commissionEntry ayant été récupéré dans un autre contexte transactionnel, on doit faire un merge dessus ici (commissionEntry.merge())
@@ -37,9 +50,8 @@ public class CommissionEntryService {
 	public void generateMembre(CommissionEntry commissionEntry) {
 
 		if(commissionEntry.getMembre()==null) {
-			User membre = null;
-			TypedQuery<User> query = User.findUsersByEmailAddress(commissionEntry.getEmail(), null, null);
-			if(query.getResultList().isEmpty()) {
+			User membre = userDao.findUsersByEmailAddress(commissionEntry.getEmail());
+			if(membre == null) {
 
 				// new User 
 				UserRegistrationForm userRegistration = new UserRegistrationForm();
@@ -57,11 +69,9 @@ public class CommissionEntryService {
 					throw new EsupDematEcException(message);
 				}
 				
-			} else {
-				membre = query.getSingleResult();
 			}
 			commissionEntry.setMembre(membre); 	
-			commissionEntry.merge();
+			commissionEntryDao.saveCommissionEntry(commissionEntry);
 		}
 
 	}
@@ -76,13 +86,13 @@ public class CommissionEntryService {
 		
 		if(commissionEntry.getMembre() != null && commissionEntry.getPoste() == null) {
 			PosteAPourvoir poste = null;
-			TypedQuery<PosteAPourvoir> query =  PosteAPourvoir.findPosteAPourvoirsByNumEmploi(commissionEntry.getNumPoste(), null, null);
+			TypedQuery<PosteAPourvoir> query =  posteAPourvoirDao.findPosteAPourvoirsByNumEmploi(commissionEntry.getNumPoste(), null, null);
 			if(query.getResultList().isEmpty()) {
 				
 				// new Poste
 				poste = new PosteAPourvoir();
 				poste.setNumEmploi(commissionEntry.getNumPoste());
-				poste.persist();
+				posteAPourvoirDao.savePosteAPourvoir(poste);
 				
 				logService.logImportCommission("Poste " + poste.getNumEmploi() + " créé.", LogService.IMPORT_SUCCESS);
 				
@@ -91,7 +101,7 @@ public class CommissionEntryService {
 			}
 			commissionEntry.setPoste(poste);
 			
-			commissionEntry.merge();
+			commissionEntryDao.saveCommissionEntry(commissionEntry);
 		}
 
 	}
@@ -106,7 +116,7 @@ public class CommissionEntryService {
 
 		List<String> postes = new ArrayList<String>();
 		
-		List<CommissionEntry> commissionEntries = CommissionEntry.findCommissionEntrysByMembre(membre).getResultList();
+		List<CommissionEntry> commissionEntries = commissionEntryDao.findCommissionEntrysByMembre(membre);
 		
 		for(CommissionEntry commissionEntry: commissionEntries) {
 			if(commissionEntry.getMembre() != null && commissionEntry.getPoste() != null) {
@@ -135,9 +145,9 @@ public class CommissionEntryService {
 		if(!postes.isEmpty()) {
 			// send email notification    
 		    String mailTo = membre.getEmailAddress();
-		    String mailFrom = AppliConfig.getCacheMailFrom();
-		    String mailSubject = AppliConfig.getCacheMailSubject();	    
-		    String mailMessage = AppliConfig.getCacheTexteMailNewCommissions();
+		    String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
+		    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();	    
+		    String mailMessage = appliConfigDao.getAppliConfig().getTexteMailNewCommissions();
 	
 		    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
 		    

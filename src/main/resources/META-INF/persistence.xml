@@ -18,21 +18,47 @@
     limitations under the License.
 
 -->
-<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-<persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="3.0"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    <persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>fr.univrouen.poste.domain.LogPosteFile</class>
+        <class>fr.univrouen.poste.domain.CommissionEntry</class>
+        <class>fr.univrouen.poste.domain.User</class>
+        <class>fr.univrouen.poste.domain.PosteCandidatureTagValue</class>
+        <class>fr.univrouen.poste.domain.PosteAPourvoirFile</class>
+        <class>fr.univrouen.poste.domain.TemplateFile</class>
+        <class>fr.univrouen.poste.domain.PosteCandidatureFile</class>
+        <class>fr.univrouen.poste.domain.LogImportCommission</class>
+        <class>fr.univrouen.poste.domain.MemberReviewFile</class>
+        <class>fr.univrouen.poste.domain.GalaxieExcel</class>
+        <class>fr.univrouen.poste.domain.PosteCandidature</class>
+        <class>fr.univrouen.poste.domain.PosteCandidatureTag</class>
+        <class>fr.univrouen.poste.domain.GalaxieEntry</class>
+        <class>fr.univrouen.poste.domain.ManagerReview</class>
+        <class>fr.univrouen.poste.domain.LogAuth</class>
+        <class>fr.univrouen.poste.domain.CommissionExcel</class>
+        <class>fr.univrouen.poste.domain.AppliConfig</class>
+        <class>fr.univrouen.poste.domain.GalaxieMapping</class>
+        <class>fr.univrouen.poste.domain.LogMail</class>
+        <class>fr.univrouen.poste.domain.AppliConfigFileType</class>
+        <class>fr.univrouen.poste.domain.PosteAPourvoir</class>
+        <class>fr.univrouen.poste.domain.LogFile</class>
+        <class>fr.univrouen.poste.domain.BigFile</class>
+        <class>fr.univrouen.poste.domain.LogImportGalaxie</class>
+        <class>fr.univrouen.poste.domain.AppliVersion</class>
         <properties>
             <property name="hibernate.dialect" value="fr.univrouen.poste.postgres.PgFullTextDialect"/>
             <!-- value="create" to build a new database on each run; value="update" to modify an existing database; value="create-drop" means the same as "create" but also drops tables when Hibernate closes; value="validate" makes no changes to the database -->
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
-            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.physical_naming_strategy" value="org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy"/>
             <property name="hibernate.connection.charSet" value="UTF-8"/>
             <property name="hibernate.jdbc.use_streams_for_binary" value="true"/>
-            <property name="hibernate.hbm2ddl.import_files_sql_extractor" value="fr.univrouen.poste.postgres.CustomImportSqlCommandExtractor" />
+            <property name="hibernate.hbm2ddl.import_files_sql_extractor" value="fr.univrouen.poste.postgres.CustomImportSqlCommandExtractor"/>
             <property name="hibernate.hbm2ddl.import_files" value="import.sql,import-one-line.sql"/>
-            <!-- Uncomment the following two properties for JBoss only -->
-            <!-- property name="hibernate.validator.apply_to_ddl" value="false" /-->
-            <!-- property name="hibernate.validator.autoregister_listeners" value="false" /-->
         </properties>
     </persistence-unit>
 </persistence>
