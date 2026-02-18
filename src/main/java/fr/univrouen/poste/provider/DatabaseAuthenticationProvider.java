@@ -72,7 +72,7 @@ public class DatabaseAuthenticationProvider extends AbstractUserDetailsAuthentic
 
 	private List<String> ipsStart4AdminManagerAuthList;
 
-	@Value("${ipsStart4AdminManagerAuth}")
+	@Value("${ipsStart4AdminManagerAuth:''}")
 	public void SetIpsStart4AdminManagerAuth(String ipsStart4AdminManagerAuth) {
 		ipsStart4AdminManagerAuthList = Arrays.asList(ipsStart4AdminManagerAuth.split(" "));
 		logger.warn("Restricted access from this (started) ip for admins, super-managers and managers : " + ipsStart4AdminManagerAuthList);
