@@ -27,7 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -60,7 +60,7 @@ public class ChangeDateKoSetupControllerTest extends AbstractControllerTest {
         assertTrue("Il doit y avoir 1 configuration appliconfig", appliconfigs.getContent().size()==1);
 
         AppliConfig config = appliconfigs.getContent().get(0);
-        Date pastDate = new Date(System.currentTimeMillis() - 24 * 3600 * 1000); // -1 jour
+        LocalDateTime pastDate = LocalDateTime.now().minusDays(1); // -1 jour
         config.setDateEndCandidat(pastDate);
         config.setDateEndMembre(pastDate);
         config.setDateEndCandidatActif(pastDate);

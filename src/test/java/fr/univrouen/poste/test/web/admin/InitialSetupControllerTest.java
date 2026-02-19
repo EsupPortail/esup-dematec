@@ -27,7 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -183,7 +183,7 @@ public class InitialSetupControllerTest extends AbstractControllerTest {
         assertTrue("Il doit y avoir 1 configuration appliconfig", appliconfigs.getContent().size()==1);
 
         AppliConfig config = appliconfigs.getContent().get(0);
-        Date futureDate = new Date(System.currentTimeMillis() + 30L * 24 * 3600 * 1000); // +30 jours
+        LocalDateTime futureDate = LocalDateTime.now().plusDays(30); // +30 jours
         config.setDateEndCandidat(futureDate);
         config.setDateEndMembre(futureDate);
         config.setDateEndCandidatActif(futureDate);

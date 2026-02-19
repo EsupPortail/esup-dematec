@@ -50,9 +50,8 @@ import org.springframework.web.util.WebUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RequestMapping("/posteapourvoirs")
@@ -203,11 +202,10 @@ public class PosteAPourvoirController {
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 			response.setContentLength(size.intValue());
 			IOUtils.copy(posteFile.getBigFile().getBinaryFile().getBinaryStream(), response.getOutputStream());
-	
-			Calendar cal = Calendar.getInstance();
-			Date currentTime = cal.getTime();
-	
-			logService.logActionPosteFile(LogService.DOWNLOAD_ACTION, poste, posteFile, request, currentTime);
+
+		LocalDateTime currentTime = LocalDateTime.now();
+
+		logService.logActionPosteFile(LogService.DOWNLOAD_ACTION, poste, posteFile, request, currentTime);
 		} catch(IOException ioe) {
 	        String ip = request.getRemoteAddr();	
 			logger.warn("Download IOException, that can be just because the client [" + ip +
@@ -222,9 +220,8 @@ public class PosteAPourvoirController {
 		PosteAPourvoirFile posteFile = posteAPourvoirFileDao.findPosteAPourvoirFile(idFile);
 		poste.getPosteFiles().remove(posteFile);
 		
-		Calendar cal = Calendar.getInstance();
-		Date currentTime = cal.getTime();
-		
+		LocalDateTime currentTime = LocalDateTime.now();
+
 		logService.logActionPosteFile(LogService.DELETE_ACTION, poste, posteFile, request, currentTime);
 		return "redirect:/posteapourvoirs/" + id.toString();
 	}
@@ -279,11 +276,10 @@ public class PosteAPourvoirController {
 					logger.info("Upload and set file in DB with filesize = " + fileSize);
 					bigFileDao.setBinaryFileStream(newFile.getBigFile(), inputStream, fileSize);
 					bigFileDao.saveBigFile(newFile.getBigFile());
-					
-					Calendar cal = Calendar.getInstance();
-					Date currentTime = cal.getTime();
-					newFile.setSendTime(currentTime);
-					
+
+				LocalDateTime currentTime = LocalDateTime.now();
+				newFile.setSendTime(currentTime);
+
 					User currentUser = getCurrentUser();
 					newFile.setSender(currentUser);
 					
@@ -314,11 +310,10 @@ public class PosteAPourvoirController {
 	public String exportPosteFiles(@PathVariable Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			
-			Calendar cal = Calendar.getInstance();
-			Date currentTime = cal.getTime();
-			SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-			String currentTimeFmt = dateFmt.format(currentTime);
-			
+			LocalDateTime currentTime = LocalDateTime.now();
+			DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+			String currentTimeFmt = currentTime.format(dateFmt);
+
 			PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
 			String fileName = poste.getNumEmploi() + "-poste-" + currentTimeFmt + "." + export;
 			DematFileDummy dematFile = new DematFileDummy(fileName, "-");

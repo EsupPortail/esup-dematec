@@ -34,8 +34,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RequestMapping("/signup")
 @Controller
@@ -98,7 +99,7 @@ public class SignUpController {
     	if(users != null && !users.isEmpty()) {
         	User user = users.get(0);
         	if(user.getPassword() != null) {
-        		user.setActivationDate(new Date());
+        		user.setActivationDate(LocalDateTime.now());
         		user.setEnabled(true);
         		userDao.saveUser(user);
         		return "login";
@@ -124,7 +125,7 @@ public class SignUpController {
         User userEntity = (users != null && !users.isEmpty()) ? users.get(0) : null;
         if(userEntity != null && userRegistration.getPassword().equals(userRegistration.getRepeatPassword()) && !userRegistration.getPassword().isEmpty()){
         	if(userEntity.getPassword() == null) {
-        		userEntity.setActivationDate(new Date());
+        		userEntity.setActivationDate(LocalDateTime.now());
         		userEntity.setEnabled(true);
         		userEntity.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
         		userDao.saveUser(userEntity);
@@ -141,7 +142,7 @@ public class SignUpController {
     public String create(@ModelAttribute("User") @Valid UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
     	AppliConfig config = appliConfigDao.getAppliConfig();
     	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
-    	Date currentTime = new Date();
+    	LocalDateTime currentTime = LocalDateTime.now();
     	if (candidatCanSignup && config != null) {
     		candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
     	}

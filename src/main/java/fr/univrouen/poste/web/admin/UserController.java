@@ -40,7 +40,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @RequestMapping("/admin/users")
 @Controller
@@ -69,13 +70,13 @@ public class UserController {
             if (!savedUser.getPassword().equals(user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
-                	user.setActivationDate(new Date());
+                	user.setActivationDate(LocalDateTime.now());
                 }
             }
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             if(user.getActivationDate() == null) {
-            	user.setActivationDate(new Date());
+            	user.setActivationDate(LocalDateTime.now());
             }
         }
         userDao.saveUser(user);
@@ -94,13 +95,13 @@ public class UserController {
             if (!user.getPassword().equals(savedUser.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
-                	user.setActivationDate(new Date());
+                	user.setActivationDate(LocalDateTime.now());
                 }
             }
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             if(user.getActivationDate() == null) {
-            	user.setActivationDate(new Date());
+            	user.setActivationDate(LocalDateTime.now());
             }
         }
         userDao.saveUser(user);

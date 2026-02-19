@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @RequestMapping("/login")
 @Controller
@@ -49,9 +49,9 @@ public class LoginController {
     	String textePremierePageAnonyme = config != null ? config.getTextePremierePageAnonyme() : "";
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
     	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
-    	Date currentTime = new Date();
+    	LocalDateTime currentTime = LocalDateTime.now();
     	if (candidatCanSignup && config != null) {
-    		candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
+    		candidatCanSignup = currentTime.isBefore(config.getDateEndCandidat());
     	}
     	model.addAttribute("candidatCanSignup", candidatCanSignup);
 

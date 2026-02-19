@@ -27,8 +27,8 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 @Service
 public class PostePermissionEvaluator implements PermissionEvaluator {
@@ -135,14 +135,14 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	        if(isCandidat && pc.getCandidat().equals(user)) {
 	        	
 	        	if(appliConfigService.getCacheCandidatCanSignup()) {
-	        		Date currentTime = new Date();
+	        		LocalDateTime currentTime = LocalDateTime.now();
                     return (!pc.getAuditionnable() && (pc.getPoste().getDateEndSignupCandidat() != null && currentTime.compareTo(pc.getPoste().getDateEndSignupCandidat()) <= 0)) ||
                             (pc.getAuditionnable() && (pc.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) <= 0));
 	        	} else {
 	        	
 		        	if(pc.getCandidat().equals(user)) {
 		        		// restrictions si phase auditionnable
-		        		Date currentTime = new Date();     
+		        		LocalDateTime currentTime = LocalDateTime.now();     
 		    			if(currentTime.compareTo(appliConfigService.getCacheDateEndCandidat()) > 0 &&
 		    				currentTime.compareTo(appliConfigService.getCacheDateEndCandidatActif()) > 0) {
 		    				return pc.getAuditionnable() && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;

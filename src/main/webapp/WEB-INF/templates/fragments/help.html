@@ -3,7 +3,7 @@
 <head></head>
 <body>
   <div th:fragment="accordion(content)">
-    <div th:with="ts=${#dates.format(#dates.createNow(),'yyyyMMddHHmmssSSS')}" 
+    <div th:with="ts=${#temporals.format(#temporals.createNow(),'yyyyMMddHHmmssSSS')}"
          class="accordion help" th:id="'accordion' + ${ts}">
       <div class="accordion-group">
         <div class="accordion-heading">

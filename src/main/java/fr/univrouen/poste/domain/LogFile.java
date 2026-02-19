@@ -24,7 +24,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -36,9 +36,8 @@ public class LogFile {
     @Column(name = "id")
     Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date actionDate;
+    LocalDateTime actionDate;
 
     String userId;
 

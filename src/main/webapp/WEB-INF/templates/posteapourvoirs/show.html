@@ -39,12 +39,12 @@
 
         <div class="field" th:if="${candidatCanSignup and canManage}">
           <label>Date de fin d'inscription candidat :</label>
-          <span th:text="${#dates.format(posteapourvoir.dateEndSignupCandidat, posteAPourvoir_dateendsignupcandidat_date_format)}"></span>
+          <span th:text="${#temporals.format(posteapourvoir.dateEndSignupCandidat, posteAPourvoir_dateendsignupcandidat_date_format)}"></span>
         </div>
 
         <div class="field" th:if="${canManage}">
           <label>Date de fin candidat auditionnable :</label>
-          <span th:text="${#dates.format(posteapourvoir.dateEndCandidatAuditionnable, posteAPourvoir_dateendcandidatauditionnable_date_format)}"></span>
+          <span th:text="${#temporals.format(posteapourvoir.dateEndCandidatAuditionnable, posteAPourvoir_dateendcandidatauditionnable_date_format)}"></span>
         </div>
 
         <div class="field">

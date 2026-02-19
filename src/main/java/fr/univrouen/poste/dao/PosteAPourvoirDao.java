@@ -13,7 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,7 +79,7 @@ public class PosteAPourvoirDao {
         return posteAPourvoirRepository.findAll(pageable);
     }
 
-    public TypedQuery<PosteAPourvoir> findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(Date dateEndSignupCandidat) {
+    public TypedQuery<PosteAPourvoir> findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(LocalDateTime dateEndSignupCandidat) {
         if (dateEndSignupCandidat == null) throw new IllegalArgumentException("The dateEndSignupCandidat argument is required");
         TypedQuery<PosteAPourvoir> q = entityManager.createQuery("SELECT o FROM PosteAPourvoir AS o WHERE o.dateEndSignupCandidat > :dateEndSignupCandidat", PosteAPourvoir.class);
         q.setParameter("dateEndSignupCandidat", dateEndSignupCandidat);

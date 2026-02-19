@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -67,7 +68,7 @@ public class PosteCandidatureDao {
         return posteCandidatureRepository.countFindPosteCandidaturesByTag(tag, tagValue);
     }
 
-    public Page<PosteCandidature> findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(User candidat, Date date, Pageable pageable) {
+    public Page<PosteCandidature> findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(User candidat, LocalDateTime date, Pageable pageable) {
         return posteCandidatureRepository.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(candidat, date, pageable);
     }
 

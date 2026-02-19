@@ -10,8 +10,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @Service
 public class AppliConfigService {
@@ -54,10 +54,8 @@ public class AppliConfigService {
     /**
      * Retourne une date par défaut (+5 ans) si la date est null
      */
-    private Date getDefaultDate() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.YEAR, 5);
-        return c.getTime();
+    private LocalDateTime getDefaultDate() {
+        return LocalDateTime.now().plusYears(5);
     }
 
     public String getCacheTitre() {
@@ -145,17 +143,17 @@ public class AppliConfigService {
         return config != null ? getOrDefault(config.getTexteCandidatAideCandidatureDepot(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
-    public Date getCacheDateEndCandidat() {
+    public LocalDateTime getCacheDateEndCandidat() {
         AppliConfig config = self.getConfig();
         return config != null ? getOrDefault(config.getDateEndCandidat(), getDefaultDate()) : getDefaultDate();
     }
 
-    public Date getCacheDateEndCandidatActif() {
+    public LocalDateTime getCacheDateEndCandidatActif() {
         AppliConfig config = self.getConfig();
         return config != null ? getOrDefault(config.getDateEndCandidatActif(), getDefaultDate()) : getDefaultDate();
     }
 
-    public Date getCacheDateEndMembre() {
+    public LocalDateTime getCacheDateEndMembre() {
         AppliConfig config = self.getConfig();
         return config != null ? getOrDefault(config.getDateEndMembre(), getDefaultDate()) : getDefaultDate();
     }

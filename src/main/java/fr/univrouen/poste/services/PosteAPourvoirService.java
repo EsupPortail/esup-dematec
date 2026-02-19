@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -28,7 +29,7 @@ public class PosteAPourvoirService {
 
 	public List<PosteAPourvoirAvailableBean>  getPosteAPourvoirAvailables(User candidat) {
 		
-		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
+		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(LocalDateTime.now()).getResultList();
 
 		Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(candidat);
 		Set<PosteAPourvoir> postesAlreadyCandidated = new HashSet<PosteAPourvoir>();
@@ -60,20 +61,19 @@ public class PosteAPourvoirService {
 			postesAlreadyCandidated.add(candidature.getPoste());
 		}
 
-		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(new Date()).getResultList();
+		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(LocalDateTime.now()).getResultList();
 		
 		for(Long posteId: posteIds) {
 			PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(posteId);
 			if(!postesAlreadyCandidated.contains(poste) && postesAPourvoir.contains(poste)) {
 				
-				// new Candidature
-				PosteCandidature candidature = new PosteCandidature();
-				candidature.setCandidat(candidat);
-				candidature.setPoste(poste);
+			// new Candidature
+			PosteCandidature candidature = new PosteCandidature();
+			candidature.setCandidat(candidat);
+			candidature.setPoste(poste);
 
-				Calendar cal = Calendar.getInstance();
-				Date currentTime = cal.getTime();
-				candidature.setCreation(currentTime);
+			LocalDateTime currentTime = LocalDateTime.now();
+			candidature.setCreation(currentTime);
 
 				RecevableEnum recevableEnum = appliConfigService.getCacheCandidatureRecevableEnumDefault();
 				candidature.setRecevableEnum(recevableEnum);

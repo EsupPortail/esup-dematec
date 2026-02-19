@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,5 +16,5 @@ public interface PosteAPourvoirRepository extends JpaRepository<PosteAPourvoir, 
     Optional<PosteAPourvoir> findByNumEmploi(String numEmploi);
     List<PosteAPourvoir> findByNumEmploiIn(List<String> numEmplois);
     Page<PosteAPourvoir> findByMembresContains(User membre, Pageable pageable);
-    long countByDateEndSignupCandidatGreaterThan(Date dateEndSignupCandidat);
+    long countByDateEndSignupCandidatGreaterThan(LocalDateTime dateEndSignupCandidat);
 }

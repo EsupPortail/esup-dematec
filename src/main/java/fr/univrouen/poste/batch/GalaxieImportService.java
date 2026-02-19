@@ -23,7 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 @Service
 public class GalaxieImportService {
@@ -59,8 +59,8 @@ public class GalaxieImportService {
 		bigFileDao.saveBigFile(galaxieExcel.getBigFile());
         
         // set current date 
-        Calendar cal = Calendar.getInstance();
-        galaxieExcel.setCreation(cal.getTime());    
+        
+        galaxieExcel.setCreation(LocalDateTime.now());    
         
         // persist
         galaxieExcelDao.saveGalaxieExcel(galaxieExcel);

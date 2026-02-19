@@ -49,7 +49,7 @@
                 <th:block th:text="${membre.emailAddress}"/><th:block th:text="${iter.last ? '' : ', '}"/>
             </th:block>
         </td>
-        <td th:text="${#dates.format(poste.dateEndCandidatAuditionnable, 'dd/MM/yyyy')}"></td>
+        <td th:text="${#temporals.format(poste.dateEndCandidatAuditionnable, 'dd/MM/yyyy')}"></td>
         <td>
             <th:block th:each="president, iter : ${poste.presidents}">
                 <th:block th:text="${president.emailAddress}"/><th:block th:text="${iter.last ? '' : ', '}"/>

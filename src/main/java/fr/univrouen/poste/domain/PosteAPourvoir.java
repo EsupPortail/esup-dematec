@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -78,14 +79,12 @@ public class PosteAPourvoir {
     	return sortedPresidents;
     }
     
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date dateEndCandidatAuditionnable;
+    LocalDateTime dateEndCandidatAuditionnable;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date dateEndSignupCandidat;
-    
+    LocalDateTime dateEndSignupCandidat;
+
     public void setNumEmploi(String numEmploi) {
     	if(numEmploi != null) {
     		numEmploi = numEmploi.trim();

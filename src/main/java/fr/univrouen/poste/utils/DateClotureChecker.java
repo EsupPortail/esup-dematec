@@ -10,7 +10,7 @@ import jakarta.annotation.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Service
 public class DateClotureChecker {
@@ -25,7 +25,7 @@ public class DateClotureChecker {
 	UserDao userDao;
 
 	public boolean isCurrentTimeOk4ThisCandidat(User targetUser) {
-		Date currentTime = new Date();
+		LocalDateTime currentTime = LocalDateTime.now();
 		AppliConfig config = appliConfigDao.getAppliConfig();
 		if(targetUser.getIsCandidat()) {
 			// récupération candidatures candidat : auditionnable ?
@@ -34,18 +34,18 @@ public class DateClotureChecker {
 			for(PosteCandidature candidature: candidatures) {
 				auditionnable = auditionnable || candidature.getAuditionnable();
 			}
-			if(!auditionnable && !userDao.isCandidatActif(targetUser) && config != null && currentTime.compareTo(config.getDateEndCandidat()) > 0 ||
-					!auditionnable && userDao.isCandidatActif(targetUser) && config != null && currentTime.compareTo(config.getDateEndCandidatActif()) > 0) {
-				return false;		        }   
+			if(!auditionnable && !userDao.isCandidatActif(targetUser) && config != null && currentTime.isAfter(config.getDateEndCandidat()) ||
+					!auditionnable && userDao.isCandidatActif(targetUser) && config != null && currentTime.isAfter(config.getDateEndCandidatActif())) {
+				return false;		        }
 			else if(auditionnable) {
-				Date dateEndCandidatAuditionnable = null;
+				LocalDateTime dateEndCandidatAuditionnable = null;
 				for(PosteCandidature candidature: candidatures) {
-					Date datePosteAuditionnable = candidature.getPoste().getDateEndCandidatAuditionnable();
-					if(candidature.getAuditionnable() && (dateEndCandidatAuditionnable == null || datePosteAuditionnable.compareTo(dateEndCandidatAuditionnable) > 0 )) {
+					LocalDateTime datePosteAuditionnable = candidature.getPoste().getDateEndCandidatAuditionnable();
+					if(candidature.getAuditionnable() && (dateEndCandidatAuditionnable == null || datePosteAuditionnable.isAfter(dateEndCandidatAuditionnable) )) {
 						dateEndCandidatAuditionnable = datePosteAuditionnable;
 					}
 				}
-                return dateEndCandidatAuditionnable != null && currentTime.compareTo(dateEndCandidatAuditionnable) <= 0;
+                return dateEndCandidatAuditionnable != null && !currentTime.isAfter(dateEndCandidatAuditionnable);
 			}
 			return true;
 		}
@@ -54,9 +54,9 @@ public class DateClotureChecker {
 	
 	
 	public boolean isCurrentTimeOk4ThisMembre(User targetUser) {
-		Date currentTime = new Date();
+		LocalDateTime currentTime = LocalDateTime.now();
 		AppliConfig config = appliConfigDao.getAppliConfig();
-        return targetUser.getIsMembre() && (config == null || currentTime.compareTo(config.getDateEndMembre()) <= 0);
+        return targetUser.getIsMembre() && (config == null || !currentTime.isAfter(config.getDateEndMembre()));
     }
 
 }

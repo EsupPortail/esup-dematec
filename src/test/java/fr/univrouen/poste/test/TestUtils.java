@@ -13,7 +13,6 @@ import org.springframework.util.MultiValueMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public class TestUtils {
@@ -39,7 +38,6 @@ public class TestUtils {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm"));
 
         // --- MixIn : ajoute @JsonFilter sur la classe sans la toucher ---
         objectMapper.addMixIn(obj.getClass(), ExcludeFilterMixin.class);

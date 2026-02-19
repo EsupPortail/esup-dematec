@@ -49,8 +49,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RequestMapping("/admin/commissionexcels")
 @Controller
@@ -94,8 +95,8 @@ public class CommissionExcelController {
         bigFileDao.saveBigFile(commissionExcel.getBigFile());
 
         // set current date 
-        Calendar cal = Calendar.getInstance();
-        commissionExcel.setCreation(cal.getTime());    
+        
+        commissionExcel.setCreation(LocalDateTime.now());    
         
         // persist
         commissionExcelDao.saveCommissionExcel(commissionExcel);

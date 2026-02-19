@@ -18,8 +18,9 @@ import com.fasterxml.jackson.databind.SequenceWriter;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.time.LocalDateTime;
 
 @Service
 public class ArchiveService {
@@ -38,7 +39,7 @@ public class ArchiveService {
     @Resource
     PosteCandidatureDao posteCandidatureDao;
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
+    private static final DateTimeFormatter SDF = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
 
     @Transactional(readOnly = true)
     public void archive(String destFolder) throws IOException, SQLException {
@@ -147,7 +148,7 @@ public class ArchiveService {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("id", fileName);
                 row.put("filename", f.getFilename());
-                row.put("sendDate", f.getSendTime() != null ? SDF.format(f.getSendTime()) : "");
+                row.put("sendDate", f.getSendTime() != null ? f.getSendTime().format(SDF) : "");
                 row.put("owner", posteCandidatOwnerEmailSafe(f));
                 seqWriter.write(row);
             }
@@ -178,7 +179,7 @@ public class ArchiveService {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("id", fileName);
                 row.put("filename", f.getFilename());
-                row.put("sendDate", f.getSendTime() != null ? SDF.format(f.getSendTime()) : "");
+                row.put("sendDate", f.getSendTime() != null ? f.getSendTime().format(SDF) : "");
                 row.put("owner", memberFileOwnerEmailSafe(f));
                 seqWriter.write(row);
             }
@@ -209,7 +210,7 @@ public class ArchiveService {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("id", fileName);
                 row.put("filename", f.getFilename());
-                row.put("sendDate", f.getSendTime() != null ? SDF.format(f.getSendTime()) : "");
+                row.put("sendDate", f.getSendTime() != null ? f.getSendTime().format(SDF) : "");
                 row.put("owner", posteFileOwnerEmailSafe(f));
                 seqWriter.write(row);
             }
@@ -244,11 +245,11 @@ public class ArchiveService {
 
         String id;
         String filename;
-        Date sendDate;
+        LocalDateTime sendDate;
         String owner;
 
         public ArchiveMetadataFileBean(String id, String filename,
-                                       Date sendDate, String owner) {
+                                       LocalDateTime sendDate, String owner) {
             super();
             this.id = id;
             this.filename = filename;
@@ -264,7 +265,7 @@ public class ArchiveService {
             return filename;
         }
 
-        public Date getSendDate() {
+        public LocalDateTime getSendDate() {
             return sendDate;
         }
 

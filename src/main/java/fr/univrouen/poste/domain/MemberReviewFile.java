@@ -26,7 +26,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.DecimalFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -43,9 +43,8 @@ public class MemberReviewFile implements DematFile {
     @Transient
     MultipartFile file;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern="dd/MM/yyyy HH:mm")
-    Date sendTime;
+    LocalDateTime sendTime;
 
     Long fileSize;
 

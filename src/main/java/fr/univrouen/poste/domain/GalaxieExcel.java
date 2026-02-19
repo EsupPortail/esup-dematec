@@ -25,7 +25,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -52,10 +52,9 @@ public class GalaxieExcel {
     @Transient
     MultipartFile file;
     
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern="dd/MM/yyyy HH:mm")
-    Date creation;
-    
+    LocalDateTime creation;
+
     @Transient
      List<List<String>> cells;
 

@@ -29,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
+import java.time.LocalDateTime;
 
 @Component
 public class ConfigInterceptor implements HandlerInterceptor {
@@ -112,7 +113,7 @@ public class ConfigInterceptor implements HandlerInterceptor {
         modelAndView.addObject("activeMenu", activeMenu);
 
         Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
-        Date currentTime = new Date();
+        LocalDateTime currentTime = LocalDateTime.now();
         if (candidatCanSignup && config != null) {
             candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
         }

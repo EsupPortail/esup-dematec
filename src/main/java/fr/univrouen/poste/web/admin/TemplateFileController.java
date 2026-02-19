@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RequestMapping("/admin/templatefiles")
 @Controller
@@ -71,8 +73,8 @@ public class TemplateFileController {
         bigFileDao.saveBigFile(templateFile.getBigFile());
 
 		// set current date 
-		Calendar cal = Calendar.getInstance();
-		templateFile.setSendTime(cal.getTime());
+		
+		templateFile.setSendTime(LocalDateTime.now());
 
 		// persist
 		templateFileDao.saveTemplateFile(templateFile);

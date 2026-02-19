@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class GalaxieEntryService {
@@ -152,13 +152,12 @@ public class GalaxieEntryService {
 				
 				// new Candidature
 				PosteCandidature candidature = new PosteCandidature();
-				candidature.setCandidat(galaxieEntry.getCandidat());
-				candidature.setPoste(galaxieEntry.getPoste());
-				
-			    Calendar cal = Calendar.getInstance();
-			    Date currentTime = cal.getTime();
-			    candidature.setCreation(currentTime);
-			    
+			candidature.setCandidat(galaxieEntry.getCandidat());
+			candidature.setPoste(galaxieEntry.getPoste());
+
+		    LocalDateTime currentTime = LocalDateTime.now();
+		    candidature.setCreation(currentTime);
+
 			    RecevableEnum recevableEnum = appliConfigService.getCacheCandidatureRecevableEnumDefault();
 			    candidature.setRecevableEnum(recevableEnum);
 

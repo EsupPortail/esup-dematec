@@ -49,8 +49,9 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @RequestMapping("/admin/galaxieexcels")
 @Controller
@@ -88,8 +89,8 @@ public class GalaxieExcelController {
         bigFileDao.saveBigFile( galaxieExcel.getBigFile());
         
         // set current date 
-        Calendar cal = Calendar.getInstance();
-        galaxieExcel.setCreation(cal.getTime());    
+        
+        galaxieExcel.setCreation(LocalDateTime.now());    
         
         // persist
         galaxieExcelDao.saveGalaxieExcel(galaxieExcel);

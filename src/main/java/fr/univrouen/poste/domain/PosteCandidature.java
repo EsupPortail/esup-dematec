@@ -25,6 +25,7 @@ import lombok.Setter;
 import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -46,13 +47,11 @@ public class PosteCandidature {
     Long id;
 
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date creation;
+    LocalDateTime creation;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date modification;
+    LocalDateTime modification;
 
     @NotNull
     @ManyToOne
@@ -164,7 +163,7 @@ public class PosteCandidature {
     	return sortedReporters;
     }
     
-    public void setModification(Date modification) {
+    public void setModification(LocalDateTime modification) {
         if (ReviewStatusTypes.Vue.equals(managerReview.getReviewStatus())) {
             managerReview.setReviewStatus(ReviewStatusTypes.Vue_mais_modifie_depuis);
         } else if (ReviewStatusTypes.Vue_incomplet.equals(managerReview.getReviewStatus())) {

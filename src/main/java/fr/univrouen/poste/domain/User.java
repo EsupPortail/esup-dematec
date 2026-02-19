@@ -27,8 +27,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -64,9 +63,8 @@ public class User {
 
     String password;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
-    Date activationDate;
+    LocalDateTime activationDate;
 
     String activationKey;
 
@@ -129,9 +127,8 @@ public class User {
 	
 	public void reportLoginFailure() {
 		if(!isLocked() && ++loginFailedNb >= MAX_LOGIN_ATTEMPTS_BEFORE_LOCK) {
-	        Calendar cal = Calendar.getInstance();
-	        Date currentTime = cal.getTime();      
-			loginFailedTime = currentTime.getTime();
+	        
+			loginFailedTime = System.currentTimeMillis();
 		}
 	}
 
@@ -141,9 +138,8 @@ public class User {
 	}
 
 	public Boolean isLocked() {
-        Calendar cal = Calendar.getInstance();
-        Date currentTime = cal.getTime();      
-		Long currentTimeMS = currentTime.getTime();
+        
+		Long currentTimeMS = System.currentTimeMillis();
 		if(currentTimeMS < loginFailedTime + MAX_MILISECONDS_LOCK) {
 			loginFailedNb = Long.valueOf(0);
 			return true;

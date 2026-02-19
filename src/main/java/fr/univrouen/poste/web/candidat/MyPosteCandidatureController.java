@@ -53,7 +53,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -148,8 +149,7 @@ public class MyPosteCandidatureController {
 			response.setContentLength(size.intValue());
 			IOUtils.copy(postecandidatureFile.getBigFile().getBinaryFile().getBinaryStream(), response.getOutputStream());
 	
-			Calendar cal = Calendar.getInstance();
-			Date currentTime = cal.getTime();
+			LocalDateTime currentTime = LocalDateTime.now();
 	
 			logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidature, postecandidatureFile, request, currentTime);
 		} catch(IOException ioe) {
@@ -165,11 +165,10 @@ public class MyPosteCandidatureController {
 	public String exportCandidatureFiles(@PathVariable Long id, @RequestParam String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 		try {
 			
-			Calendar cal = Calendar.getInstance();
-			Date currentTime = cal.getTime();
-			SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-			String currentTimeFmt = dateFmt.format(currentTime);
-			
+			LocalDateTime currentTime = LocalDateTime.now();
+			DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+			String currentTimeFmt = currentTime.format(dateFmt);
+
 			PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 			String fileName = postecandidature.getPoste().getNumEmploi() + "-" + postecandidature.getEmail() + "-" + currentTimeFmt + "." + export;
 			DematFileDummy dematFile = new DematFileDummy(fileName, "-");
@@ -216,8 +215,7 @@ public class MyPosteCandidatureController {
 			response.setContentLength(size.intValue());
 			IOUtils.copy(memberReviewFile.getBigFile().getBinaryFile().getBinaryStream(), response.getOutputStream());
 	
-			Calendar cal = Calendar.getInstance();
-			Date currentTime = cal.getTime();
+			LocalDateTime currentTime = LocalDateTime.now();
 			//postecandidature.setModification(currentTime);
 	
 			logService.logActionFile(LogService.DOWNLOAD_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
@@ -261,8 +259,7 @@ public class MyPosteCandidatureController {
 		PosteCandidatureFile postecandidatureFile = posteCandidatureFileDao.findPosteCandidatureFile(idFile);
 		postecandidature.getCandidatureFiles().remove(postecandidatureFile);
 
-		Calendar cal = Calendar.getInstance();
-		Date currentTime = cal.getTime();
+		LocalDateTime currentTime = LocalDateTime.now();
 		postecandidature.setModification(currentTime);
 
 		logService.logActionFile(LogService.DELETE_ACTION, postecandidature, postecandidatureFile, request, currentTime);
@@ -276,8 +273,7 @@ public class MyPosteCandidatureController {
 		MemberReviewFile memberReviewFile = memberReviewFileDao.findMemberReviewFile(idFile);
 		postecandidature.getMemberReviewFiles().remove(memberReviewFile);
 		
-		Calendar cal = Calendar.getInstance();
-		Date currentTime = cal.getTime();
+		LocalDateTime currentTime = LocalDateTime.now();
 		// postecandidature.setModification(currentTime);
 		
 		logService.logActionFile(LogService.DELETE_REVIEW_ACTION, postecandidature, memberReviewFile, request, currentTime);
@@ -351,8 +347,7 @@ public class MyPosteCandidatureController {
 						bigFileDao.setBinaryFileStream(newFile.getBigFile(), inputStream, fileSize);
 						bigFileDao.saveBigFile(newFile.getBigFile());
 				
-						Calendar cal = Calendar.getInstance();
-						Date currentTime = cal.getTime();
+						LocalDateTime currentTime = LocalDateTime.now();
 						newFile.setSendTime(currentTime);
 
 						posteCandidature.getCandidatureFiles().add(newFile);
@@ -426,8 +421,7 @@ public class MyPosteCandidatureController {
 					bigFileDao.setBinaryFileStream(newFile.getBigFile(), inputStream, fileSize);
 					bigFileDao.saveBigFile(newFile.getBigFile());
 			
-					Calendar cal = Calendar.getInstance();
-					Date currentTime = cal.getTime();
+					LocalDateTime currentTime = LocalDateTime.now();
 					newFile.setSendTime(currentTime);
 					
 					User currentUser = getCurrentUser();
@@ -528,12 +522,12 @@ public class MyPosteCandidatureController {
 		if(managerReview == null) {
 			managerReview = new ManagerReview();
 			managerReview.setManager(currentUser);
-			managerReview.setReviewDate(new Date());
+			managerReview.setReviewDate(LocalDateTime.now());
 			postecandidature.setManagerReview(managerReview);
 			managerReviewDao.saveManagerReview(managerReview);
 		} else {	
 			managerReview.setManager(currentUser);
-			managerReview.setReviewDate(new Date());
+			managerReview.setReviewDate(LocalDateTime.now());
 		}
 		if(ReviewStatusTypes.Vue_incomplet.toString().equals(reviewStatus)) {
 			managerReview.setReviewStatus(ReviewStatusTypes.Vue_incomplet);
@@ -701,18 +695,18 @@ public class MyPosteCandidatureController {
 				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(user);
 			
 				// restrictions si phase auditionnable
-		        Date currentTime = new Date();     
-				if(currentTime.compareTo(appliConfigDao.getAppliConfig().getDateEndCandidat()) > 0 && 
-					currentTime.compareTo(appliConfigDao.getAppliConfig().getDateEndCandidatActif()) > 0) { 
+		        LocalDateTime currentTime = LocalDateTime.now();
+				if(currentTime.isAfter(appliConfigDao.getAppliConfig().getDateEndCandidat()) &&
+					currentTime.isAfter(appliConfigDao.getAppliConfig().getDateEndCandidatActif())) {
 					for(PosteCandidature postecandidature: posteCandidatureDao.findPosteCandidaturesByCandidat(user)) {
-						if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(postecandidature.getPoste().getDateEndCandidatAuditionnable()) > 0) {
+						if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.isAfter(postecandidature.getPoste().getDateEndCandidatAuditionnable())) {
 							postecandidatures.getContent().remove(postecandidature);
 						}
 					}
 				}
 			
 			} else {				
-				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, new Date(), pageable);
+				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, LocalDateTime.now(), pageable);
 			}
 			
 		}
@@ -730,11 +724,10 @@ public class MyPosteCandidatureController {
 			}
 			postecandidatures = posteCandidatureDao.findPosteCandidaturesRecevableByPostes(membresPostes, searchCriteria.getAuditionnable(), pageable);
 			if(zip) {
-	    		String contentType = "application/zip";
-	    		Calendar cal = Calendar.getInstance();
-	    		Date currentTime = cal.getTime();
-				SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-				String currentTimeFmt = dateFmt.format(currentTime);
+    		String contentType = "application/zip";
+    		LocalDateTime currentTime = LocalDateTime.now();
+			DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+			String currentTimeFmt = currentTime.format(dateFmt);
 	    		String baseName = "demat-" + currentTimeFmt + ".zip";
 	    		response.setContentType(contentType);
 	    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");

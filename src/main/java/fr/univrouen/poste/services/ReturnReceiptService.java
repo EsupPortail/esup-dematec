@@ -29,14 +29,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Locale;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 @Service
@@ -59,9 +58,9 @@ public class ReturnReceiptService {
 	PosteCandidatureDao posteCandidatureDao;
 	
 
-	DateFormatter dateFormatter = new DateFormatter("dd/MM/yyyy HH:mm");
+	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-	public void logActionFile(String action, PosteCandidature postecandidature, PosteCandidatureFile postecandidatureFile, HttpServletRequest request, Date currentTime) {
+	public void logActionFile(String action, PosteCandidature postecandidature, PosteCandidatureFile postecandidatureFile, HttpServletRequest request, LocalDateTime currentTime) {
 
 		MailReturnReceiptModeTypes mailReturnReceiptMode = appliConfigDao.getAppliConfig().getMailReturnReceiptModeType();
 		
@@ -113,7 +112,7 @@ public class ReturnReceiptService {
 					for(PosteCandidatureFile candidatureFile : candidature.getCandidatureFiles()) {
 						String filename = candidatureFile.getFilename();
 						String fileSize =  candidatureFile.getFileSizeFormatted();
-						String sentDate =  dateFormatter.print(candidatureFile.getSendTime(), Locale.getDefault());
+						String sentDate =  candidatureFile.getSendTime().format(dateFormatter);
 						messageBody = messageBody + "\n - " + filename + " - " + fileSize + " [" + sentDate + "]";
 					}
 				}

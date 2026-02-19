@@ -33,6 +33,7 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserGran
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.time.LocalDateTime;
 
 @Service
 public class LogService {
@@ -87,7 +88,7 @@ public class LogService {
 	@Resource
 	LogImportCommissionDao logImportCommissionDao;
 
-	public void logActionFile(String action, List<PosteCandidature> postecandidatures, HttpServletRequest request, Date currentTime) {
+	public void logActionFile(String action, List<PosteCandidature> postecandidatures, HttpServletRequest request, LocalDateTime currentTime) {
 		
 		LogFile logFile = new LogFile();
 		
@@ -122,7 +123,7 @@ public class LogService {
 	    logFileDao.saveLogFile(logFile);
     }
 	
-	public void logActionFile(String action, PosteCandidature postecandidature, DematFile dematFile, HttpServletRequest request, Date currentTime) {
+	public void logActionFile(String action, PosteCandidature postecandidature, DematFile dematFile, HttpServletRequest request, LocalDateTime currentTime) {
 	    
 
 	    User candidat = postecandidature.getCandidat();
@@ -166,7 +167,7 @@ public class LogService {
 	    logFileDao.saveLogFile(logFile);
     }
 	
-	public void logActionPosteFile(String action, PosteAPourvoir poste, DematFile dematFile, HttpServletRequest request, Date currentTime) {
+	public void logActionPosteFile(String action, PosteAPourvoir poste, DematFile dematFile, HttpServletRequest request, LocalDateTime currentTime) {
 		
 		LogPosteFile logFile = new LogPosteFile();
 		
@@ -202,8 +203,7 @@ public class LogService {
 	
 	public void logActionAuth(String action, String userId, String ip) {
 		
-        Calendar cal = Calendar.getInstance();
-        Date currentTime = cal.getTime();       
+        LocalDateTime currentTime = LocalDateTime.now();
 
 		LogAuth logAuth = new LogAuth();
 		
@@ -219,8 +219,7 @@ public class LogService {
 	
 	public void logMail(String mailTo, String message, String status) {
 		
-        Calendar cal = Calendar.getInstance();
-        Date currentTime = cal.getTime();       
+        LocalDateTime currentTime = LocalDateTime.now();
 
 		LogMail logMail = new LogMail();
 		
@@ -235,8 +234,7 @@ public class LogService {
 	
 	public void logImportGalaxie(String message, String status) {
 		
-        Calendar cal = Calendar.getInstance();
-        Date currentTime = cal.getTime();       
+        LocalDateTime currentTime = LocalDateTime.now();
 
 		LogImportGalaxie logImportGalaxie = new LogImportGalaxie();
 		
@@ -250,8 +248,7 @@ public class LogService {
 	
 	public void logImportCommission(String message, String status) {
 		
-        Calendar cal = Calendar.getInstance();
-        Date currentTime = cal.getTime();       
+        LocalDateTime currentTime = LocalDateTime.now();
 
         LogImportCommission logImportCommission = new LogImportCommission();
 		

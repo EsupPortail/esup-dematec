@@ -29,17 +29,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import org.springframework.web.bind.annotation.RequestMapping;
+import java.time.LocalDateTime;
 import org.springframework.web.multipart.MultipartException;
+import java.time.LocalDateTime;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import java.time.LocalDateTime;
 import org.springframework.web.servlet.ModelAndView;
+import java.time.LocalDateTime;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Date;
 
 
 @Service
@@ -76,7 +82,7 @@ public class ExceptionController implements HandlerExceptionResolver {
 		if(request.getServletPath().matches("/postecandidatures/[0-9]*/addFile")) {
 			String posteCandidatureId = request.getServletPath().replaceAll("/postecandidatures/([0-9]*)/addFile", "$1");
 			PosteCandidature posteCandidature = posteCandidatureDao.findPosteCandidature(Long.valueOf(posteCandidatureId));
-			logService.logActionFile(LogService.UPLOAD_FAILED_ACTION, posteCandidature, null, request, new Date());
+			logService.logActionFile(LogService.UPLOAD_FAILED_ACTION, posteCandidature, null, request, LocalDateTime.now());
 		}
 		
 		

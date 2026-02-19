@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,10 +29,9 @@ public class ManagerReview {
     @JoinColumn(name = "manager")
     User manager;
     
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date reviewDate;
-    
+    LocalDateTime reviewDate;
+
     @Column
     @NotNull
     @Enumerated(EnumType.STRING)

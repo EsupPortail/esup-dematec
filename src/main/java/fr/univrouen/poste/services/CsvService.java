@@ -34,10 +34,10 @@ import com.fasterxml.jackson.databind.SequenceWriter;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class CsvService {
     @Resource
     PosteCandidatureTagDao posteCandidatureTagDao;
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
+    private static final DateTimeFormatter SDF = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
 
     @Transactional(readOnly = true)
     public void csvWrite(Writer writer, List<PosteCandidature> posteCandidatures) throws IOException {
@@ -93,7 +93,7 @@ public class CsvService {
                 row.put("modification", safeDate(() -> p.getModification()));
                 row.put("gestionnaire", safe(() -> p.getManagerReview().getManager().getEmailAddress()));
                 row.put("dateGestion", safeDate(() -> {
-                    Date d = p.getManagerReview().getReviewDate();
+                    LocalDateTime d = p.getManagerReview().getReviewDate();
                     return d;
                 }));
                 row.put("civilite", safe(() -> p.getCandidat() != null ? p.getCandidat().getCivilite() : null));
@@ -129,10 +129,10 @@ public class CsvService {
         }
     }
 
-    private String safeDate(Supplier<Date> supplier) {
+    private String safeDate(Supplier<LocalDateTime> supplier) {
         try {
-            Date d = supplier.get();
-            return d != null ? SDF.format(d) : "";
+            LocalDateTime d = supplier.get();
+            return d != null ? d.format(SDF) : "";
         } catch (Exception e) {
             return "";
         }

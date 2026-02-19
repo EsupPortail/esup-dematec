@@ -23,7 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -41,18 +41,15 @@ public class AppliConfig {
     )
 	Long id;
 
-	@Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date dateEndCandidat;
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    LocalDateTime dateEndCandidat;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date dateEndCandidatActif;
+    LocalDateTime dateEndCandidatActif;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    Date dateEndMembre;
-    
+    LocalDateTime dateEndMembre;
+
     //General
     @Column(columnDefinition="TEXT")
     String titre;

@@ -104,8 +104,8 @@ mvn clean package
 
 ## POSTGRESQL
 
-Cette application a été dévelopée en utilisant Spring ROO et donc ses technologies associées.
-Elle peut théoriquement supporter les différentes bases de données supportées par Spring ROO dans lequel on utilise ici JPA (pour la gestion des blob nous avons également une adhérence avec Hibernate).
+Cette application a été dévelopée en utilisant Spring ses technologies associées.
+Elle peut théoriquement supporter les différentes bases de données supportées par JPA (pour la gestion des blob nous avons également une adhérence avec Hibernate).
 
 Comme annoncé ci-dessus, l'application a cependant été développée et optimisée dans l'optique d'être installée sur un PostgreSQL : lecture/écriture des blobs dans une transaction par streaming si supporté ; cela afin de pouvoir stocker et récupérer des fichiers de taille importante sans saturation de la RAM.
 Nous recommandons donc l'usage de PostgreSQL pour cette application.

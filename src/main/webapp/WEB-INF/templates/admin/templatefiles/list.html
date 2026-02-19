@@ -65,7 +65,7 @@
           </td>
           <td th:text="${template.filename}"></td>
           <td th:text="${template.templateFileType}"></td>
-          <td th:text="${#dates.format(template.sendTime, 'dd/MM/yyyy HH:mm')}"></td>
+          <td th:text="${#temporals.format(template.sendTime, 'dd/MM/yyyy HH:mm')}"></td>
         </tr>
       </tbody>
     </table>
