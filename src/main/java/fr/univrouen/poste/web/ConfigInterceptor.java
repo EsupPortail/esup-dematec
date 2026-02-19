@@ -21,17 +21,17 @@ import fr.univrouen.poste.dao.AppliConfigDao;
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.services.AppliVersionService;
 import jakarta.annotation.Resource;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.servlet.handler.DispatcherServletWebRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
 
-@Service
-public class ConfigInterceptor implements WebRequestInterceptor {
+@Component
+public class ConfigInterceptor implements HandlerInterceptor {
 
     @Resource
     AppliConfigDao appliConfigDao;
@@ -68,34 +68,30 @@ public class ConfigInterceptor implements WebRequestInterceptor {
     }};
 
     @Override
-    public void preHandle(WebRequest request) throws Exception {
-    }
+    public void postHandle(HttpServletRequest request, HttpServletResponse response,
+                           Object handler, ModelAndView modelAndView) {
 
-    @Override
-    public void postHandle(WebRequest request, @Nullable ModelMap model) throws Exception {
 
         // we want to add usual model in modelAndView only when needed, ie with
         // direct html view :
         // not for download response (for example) because we don't need it
         // not for redirect view because we don't need it and we don't want that
         // they appears in the url
-
-        if (model != null) {
-            DispatcherServletWebRequest dswr = (DispatcherServletWebRequest) request;
-            completeModel(dswr.getRequest().getServletPath(), model);
+        if (modelAndView != null && !(modelAndView.getView() instanceof RedirectView) && !modelAndView.getViewName().startsWith("redirect:")) {
+            completeModel(request.getRequestURI(), modelAndView);
         }
     }
 
-    public void completeModel(String path, ModelMap model) {
+    public void completeModel(String path, ModelAndView modelAndView) {
         AppliConfig config = appliConfigDao.getAppliConfig();
         String title = config != null ? config.getTitre() : "";
-        model.addAttribute("title", title);
+        modelAndView.addObject("title", title);
 
         String piedPage = config != null ? config.getPiedPage() : "";
-        model.addAttribute("piedPage", piedPage);
+        modelAndView.addObject("piedPage", piedPage);
 
         String imageUrl = config != null ? config.getImageUrl() : "";
-        model.addAttribute("imageUrl", imageUrl);
+        modelAndView.addObject("imageUrl", imageUrl);
 
         String subTitle = subTitles.get(path);
         String activeMenu = path.replaceAll("/", "");
@@ -112,25 +108,20 @@ public class ConfigInterceptor implements WebRequestInterceptor {
             }
         }
 
-        model.addAttribute("subTitle", subTitle);
-        model.addAttribute("activeMenu", activeMenu);
+        modelAndView.addObject("subTitle", subTitle);
+        modelAndView.addObject("activeMenu", activeMenu);
 
         Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
         Date currentTime = new Date();
         if (candidatCanSignup && config != null) {
             candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
         }
-        model.addAttribute("candidatCanSignup", candidatCanSignup);
+        modelAndView.addObject("candidatCanSignup", candidatCanSignup);
 
         Boolean postesMenu4Members = config != null ? config.getPostesMenu4Members() : false;
-        model.addAttribute("postesMenu4Members", postesMenu4Members);
+        modelAndView.addObject("postesMenu4Members", postesMenu4Members);
 
-        model.addAttribute("versionEsupDematEC", appliVersionService.getCacheVersion());
-    }
-
-    @Override
-    public void afterCompletion(WebRequest request, Exception ex) throws Exception {
-
+        modelAndView.addObject("versionEsupDematEC", appliVersionService.getCacheVersion());
     }
 
 }

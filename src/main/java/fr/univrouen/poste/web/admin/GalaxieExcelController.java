@@ -70,12 +70,11 @@ public class GalaxieExcelController {
     BigFileDao bigFileDao;
 
     @RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
-    public String addFile(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws IOException, SQLException {
+    public String addFile(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult) throws IOException, SQLException {
         if (bindingResult.hasErrors()) {
         	logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
             return "redirect:/admin/galaxieexcels";
         }
-        uiModel.asMap().clear();
         
         // upload file
         MultipartFile file = galaxieExcel.getFile();

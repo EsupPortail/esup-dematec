@@ -89,7 +89,7 @@ public class ExceptionController implements HandlerExceptionResolver {
 	        modelAndview.addObject("exception", ex);
 			modelAndview.addObject("exception_stacktrace", getStackTrace(ex));
 			modelAndview.addObject("exception_message", ex.getMessage());
-			configInterceptor.completeModel(request.getServletPath(), modelAndview.getModelMap());
+			configInterceptor.completeModel(request.getServletPath(), modelAndview);
 	        avoid405Error(request);
 	        return modelAndview;
 		}
@@ -115,7 +115,7 @@ public class ExceptionController implements HandlerExceptionResolver {
 	    modelAndview.addObject("exception", exception);
 		modelAndview.addObject("exception_stacktrace", getStackTrace(exception));
 		modelAndview.addObject("exception_message", exception.getMessage());
-		configInterceptor.completeModel(request.getServletPath(), modelAndview.getModelMap());
+		configInterceptor.completeModel(request.getServletPath(), modelAndview);
 	    avoid405Error(request);
 		return modelAndview;
     }
