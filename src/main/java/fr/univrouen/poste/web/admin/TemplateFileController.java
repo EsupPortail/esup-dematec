@@ -12,14 +12,15 @@ import jakarta.validation.Valid;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -55,12 +56,11 @@ public class TemplateFileController {
 	}
 
 	@RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
-	public String addFile(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws IOException, SQLException {
+	public String addFile(@Valid TemplateFile templateFile, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) throws IOException, SQLException {
 		if (bindingResult.hasErrors()) {
 			logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/admin/templatefiles";
 		}
-		uiModel.asMap().clear();
 
 		// upload file
 		MultipartFile file = templateFile.getFile();
@@ -106,12 +106,11 @@ public class TemplateFileController {
     }
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String createdOrUpdate(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String createdOrUpdate(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, templateFile);
             return "admin/templatefiles/update";
         }
-        uiModel.asMap().clear();
         templateFileDao.saveTemplateFile(templateFile);
         return "redirect:/admin/templatefiles";
     }
@@ -129,11 +128,10 @@ public class TemplateFileController {
     }
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, RedirectAttributes redirectAttributes) {
         templateFileDao.deleteTemplateFile(id);
-        uiModel.asMap().clear();
-        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
-        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
+        redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/admin/templatefiles";
     }
 

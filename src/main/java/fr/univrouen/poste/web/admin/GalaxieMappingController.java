@@ -55,8 +55,7 @@ public class GalaxieMappingController {
         	logger.warn("Errors on testFile method : {}", bindingResult.getAllErrors());
             return "redirect:/admin/galaxieexcels";
         }
-        uiModel.asMap().clear();
-        
+
         // upload file
         MultipartFile file = galaxieExcel.getFile();
         InputStream inputStream = file.getInputStream();
@@ -93,12 +92,11 @@ public class GalaxieMappingController {
     }
 
 	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid GalaxieMapping galaxieMapping, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid GalaxieMapping galaxieMapping, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, galaxieMapping);
             return "admin/galaxiemapping/update";
         }
-        uiModel.asMap().clear();
         galaxieMappingDao.saveGalaxieMapping(galaxieMapping);
         return "redirect:/admin/galaxiemapping";
     }

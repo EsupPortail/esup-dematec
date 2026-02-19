@@ -37,14 +37,13 @@ public class PosteCandidatureTagController {
 
 	@Transactional
     @RequestMapping(value = "/{tagId}", params={"create=value"}, method = RequestMethod.POST, produces = "text/html")
-    public String createValue(@PathVariable Long tagId, @Valid PosteCandidatureTagValue posteCandidatureTagValue, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String createValue(@PathVariable Long tagId, @Valid PosteCandidatureTagValue posteCandidatureTagValue, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
     	PosteCandidatureTag posteCandidatureTag = posteCandidatureTagDao.findPosteCandidatureTag(tagId);
     	if (bindingResult.hasErrors()) {
     		uiModel.addAttribute("posteCandidatureTag", posteCandidatureTag);
             uiModel.addAttribute("posteCandidatureTagValue", posteCandidatureTagValue);
             return "admin/candidaturevaluetags/create";
         }
-        uiModel.asMap().clear();
         posteCandidatureTagValueDao.savePosteCandidatureTagValue(posteCandidatureTagValue);
         posteCandidatureTag.getValues().add(posteCandidatureTagValue);
         return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(tagId.toString(), httpServletRequest);
@@ -64,12 +63,11 @@ public class PosteCandidatureTagController {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteCandidatureTag);
             return "admin/candidaturetags/update";
         }
-        uiModel.asMap().clear();
         PosteCandidatureTag posteCandidatureTagOld = posteCandidatureTagDao.findPosteCandidatureTag(posteCandidatureTag.getId());
         posteCandidatureTag.setValues(posteCandidatureTagOld.getValues());
         posteCandidatureTagDao.savePosteCandidatureTag(posteCandidatureTag);
@@ -78,25 +76,23 @@ public class PosteCandidatureTagController {
     
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable Long id, final RedirectAttributes redirectAttributes, Model uiModel) {
+    public String delete(@PathVariable Long id, final RedirectAttributes redirectAttributes) {
         PosteCandidatureTag posteCandidatureTag = posteCandidatureTagDao.findPosteCandidatureTag(id);
         if(posteCandidatureDao.countFindPosteCandidaturesByTag(posteCandidatureTag, null) == 0) {
         	posteCandidatureTagDao.deletePosteCandidatureTag(posteCandidatureTag);
         } else {
         	redirectAttributes.addFlashAttribute("deleteFailed", "deleteFailed");
         }
-        uiModel.asMap().clear();
         return "redirect:/admin/candidaturetags";
     }
     
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteCandidatureTag);
             return "admin/candidaturetags/create";
         }
-        uiModel.asMap().clear();
         posteCandidatureTagDao.savePosteCandidatureTag(posteCandidatureTag);
         return "redirect:/admin/candidaturetags/" + encodeUrlPathSegment(posteCandidatureTag.getId().toString(), httpServletRequest);
     }

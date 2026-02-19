@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -137,12 +138,11 @@ public class GalaxieExcelController {
 
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid GalaxieExcel galaxieExcel, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, galaxieExcel);
             return "admin/galaxieexcels/create";
         }
-        uiModel.asMap().clear();
         galaxieExcelDao.saveGalaxieExcel(galaxieExcel);
         return "redirect:/admin/galaxieexcels/" + encodeUrlPathSegment(galaxieExcel.getId().toString(), httpServletRequest);
     }

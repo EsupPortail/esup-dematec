@@ -46,6 +46,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -285,12 +286,11 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/addFile", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'manage')")
-	public String addFile(@PathVariable Long id, @Valid PosteCandidatureFile posteCandidatureFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
+	public String addFile(@PathVariable Long id, @Valid PosteCandidatureFile posteCandidatureFile, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) throws IOException {
 		if (bindingResult.hasErrors()) {
 			logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/postecandidatures/" + id.toString();
 		}
-		uiModel.asMap().clear();
 
 		// get PosteCandidature from id
 		PosteCandidature posteCandidature = posteCandidatureDao.findPosteCandidature(id);
@@ -311,7 +311,7 @@ public class MyPosteCandidatureController {
 			}		
 			
 			if(filenameAlreadyUsed) {
-				uiModel.addAttribute("filename_already_used", filename);
+				redirectAttributes.addFlashAttribute("filename_already_used", filename);
 				logger.warn("Upload Restriction sur '" + filename + "' un fichier de même nom existe déjà pour une candidature de " + posteCandidature.getCandidat().getEmailAddress());
 			} else {
 				
@@ -336,7 +336,7 @@ public class MyPosteCandidatureController {
 					if(sizeRestriction || contentTypeRestriction || filenameRestriction) {
 						String restriction = sizeRestriction ? "SizeRestriction" : "";
 						restriction = contentTypeRestriction || filenameRestriction ? restriction + "ContentTypeRestriction" : restriction;
-						uiModel.addAttribute("upload_restricion_size_contentype", restriction);
+						redirectAttributes.addFlashAttribute("upload_restricion_size_contentype", restriction);
 						logger.info("addFile - upload restriction sur " + filename + "' avec taille=" + fileSize + " et contentType=" + contentType + " pour une candidature de " + posteCandidature.getCandidat().getEmailAddress());
 					} else {			
 						InputStream inputStream = file.getInputStream();
@@ -379,12 +379,12 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/addMemberReviewFile", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'review')")
-	public String addMemberReviewFile(@PathVariable Long id, @Valid MemberReviewFile memberReviewFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
+	public String addMemberReviewFile(@PathVariable Long id, @Valid MemberReviewFile memberReviewFile, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) throws IOException {
 		if (bindingResult.hasErrors()) {
 			logger.warn("Errors on addMemberReviewFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/postecandidatures/" + id.toString();
 		}
-		uiModel.asMap().clear();
+		redirectAttributes.asMap().clear();
 
 		// get PosteCandidature from id
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
@@ -405,7 +405,7 @@ public class MyPosteCandidatureController {
 			}		
 			
 			if(filenameAlreadyUsed) {
-				uiModel.addAttribute("filename_already_used", filename);
+				redirectAttributes.addFlashAttribute("filename_already_used", filename);
 				logger.info("addMemberReviewFile - upload restriction sur '" + filename + "' un fichier de même nom existe déjà pour une candidature de " + postecandidature.getCandidat().getEmailAddress());
 			} else {
 			
@@ -452,7 +452,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/modify", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyRecevableCandidature(@PathVariable Long id, @RequestParam(required=true) RecevableEnum recevable) {
+	public String modifyRecevableCandidature(@PathVariable Long id, @RequestParam(required=true) RecevableEnum recevable, RedirectAttributes redirectAttributes) {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		postecandidature.setRecevableEnum(recevable);
@@ -462,7 +462,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/auditionnable", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyAuditionnableCandidatureFile(@PathVariable Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=false) String mailCorps) {
+	public String modifyAuditionnableCandidatureFile(@PathVariable Long id, @RequestParam(required=true) Boolean auditionnable, @RequestParam(required=false) String mailCorps, RedirectAttributes redirectAttributes) {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		mailCorps = mailCorps == null ? "" : mailCorps;
@@ -495,7 +495,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/laureat", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyLaureatCandidatureFile(@PathVariable Long id, @RequestParam(required=true) Boolean laureat, @RequestParam(required=false) String mailCorps) {
+	public String modifyLaureatCandidatureFile(@PathVariable Long id, @RequestParam(required=true) Boolean laureat, @RequestParam(required=false) String mailCorps, RedirectAttributes redirectAttributes) {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		mailCorps = mailCorps == null ? "" : mailCorps;
@@ -519,7 +519,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}/review", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public String modifyReviewCandidature(@PathVariable Long id, @RequestParam(required=true) String reviewStatus) {
+	public String modifyReviewCandidature(@PathVariable Long id, @RequestParam(required=true) String reviewStatus, RedirectAttributes redirectAttributes) {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		
 		User currentUser = getCurrentUser();
@@ -638,12 +638,11 @@ public class MyPosteCandidatureController {
 	
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, RedirectAttributes redirectAttributes) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		posteCandidatureDao.deletePosteCandidature(postecandidature);
-        uiModel.asMap().clear();
-        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
-        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
+        redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/postecandidatures";
     }
 
@@ -915,42 +914,38 @@ public class MyPosteCandidatureController {
 	
     @RequestMapping(value = "/{id}/updateManagerComment", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateManagerComment(@PathVariable Long id, @RequestParam String comment, Model uiModel) {
+    public String updateManagerComment(@PathVariable Long id, @RequestParam String comment, RedirectAttributes redirectAttributes) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	postecandidature.setManagerComment4Members(comment);
 		posteCandidatureDao.savePosteCandidature(postecandidature);
-        uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     
     @RequestMapping(value = "/{id}/addReporter", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasPermission(#id, 'manageReporters')")
-    public String addReporter(@PathVariable Long id, @RequestParam Long userId, Model uiModel) {
+    public String addReporter(@PathVariable Long id, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	User user = userDao.findUser(userId);
     	postecandidature.getReporters().add(user);
 		posteCandidatureDao.savePosteCandidature(postecandidature);
-        uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     
     @RequestMapping(value = "/{id}/delReporter", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasPermission(#id, 'manageReporters')")
-    public String delReporter(@PathVariable Long id, @RequestParam Long userId, Model uiModel) {
+    public String delReporter(@PathVariable Long id, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	User user = userDao.findUser(userId);
     	postecandidature.getReporters().remove(user);
     	posteCandidatureDao.savePosteCandidature(postecandidature);
-        uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     
     @RequestMapping(value = "/{id}/updateTags", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateTags(@PathVariable Long id, @Valid PosteCandidatureTagForm posteCandidatureTagForm, Model uiModel) {
+    public String updateTags(@PathVariable Long id, @Valid PosteCandidatureTagForm posteCandidatureTagForm, RedirectAttributes redirectAttributes) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	postecandidature.setTags(posteCandidatureTagForm.getTags());
-        uiModel.asMap().clear();
         return "redirect:/postecandidatures/" + id;
     }
     

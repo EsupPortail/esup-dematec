@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -83,12 +84,11 @@ public class UserController {
     
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid User user, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid User user, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, user);
             return "admin/users/update";
         }
-        uiModel.asMap().clear();
         if (user.getId() != null) {
             User savedUser = userDao.findUser(user.getId());
             if (!user.getPassword().equals(savedUser.getPassword())) {
@@ -139,12 +139,11 @@ public class UserController {
     }
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+    public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, RedirectAttributes redirectAttributes) {
         User user = userDao.findUser(id);
         userDao.deleteUser(user);
-        uiModel.asMap().clear();
-        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
-        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
+        redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/admin/users";
     }
 

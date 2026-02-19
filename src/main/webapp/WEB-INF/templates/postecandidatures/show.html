@@ -43,10 +43,10 @@
   </th:block>
 
   <!-- Gestion des alertes de restriction -->
-  <script th:if="${param.upload_restricion_size_contentype != null}">
+  <script th:if="${upload_restricion_size_contentype != null}">
     var alertRestriction = /*[[${
-            param.upload_restricion_size_contentype[0] == 'SizeRestriction' ? 'Fichier trop volumineux !' :
-            param.upload_restricion_size_contentype[0] == 'ContentTypeRestriction' ? 'Type de fichier non accepté !' :
+            upload_restricion_size_contentype[0] == 'SizeRestriction' ? 'Fichier trop volumineux !' :
+            upload_restricion_size_contentype[0] == 'ContentTypeRestriction' ? 'Type de fichier non accepté !' :
             'Type de fichier non accepté et trop volumineux !'
         }]]*/ '';
     $(document).ready(function(){
@@ -54,7 +54,7 @@
     });
   </script>
 
-  <script th:if="${param.filename_already_used != null}">
+  <script th:if="${filename_already_used != null}">
     var alertRestriction = 'Un fichier de même nom existe déjà !';
     $(document).ready(function(){
       alert(alertRestriction);
@@ -115,8 +115,8 @@
         <td colspan="5">
           <a class="btn" th:href="@{/postecandidatures/{id}(id=${postecandidature.id}, export='pdf')}">Export pdf</a> |
           <a class="btn" th:href="@{/postecandidatures/{id}(id=${postecandidature.id}, export='zip')}">Export zip</a>
-          <span class="alert alert-error" th:if="${param.exportFailed != null}">
-                            - Export <b th:text="${param.exportFailed[0]}"></b> impossible pour cette candidature.
+          <span class="alert alert-error" th:if="${exportFailed != null}">
+                            - Export <b th:text="${exportFailed[0]}"></b> impossible pour cette candidature.
                         </span>
         </td>
       </tr>

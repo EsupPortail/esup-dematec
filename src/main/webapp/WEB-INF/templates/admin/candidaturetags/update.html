@@ -9,7 +9,7 @@
   <div layout:fragment="body">
     <h2>Modifier Tags candidatures</h2>
 
-    <script type="text/javascript" th:if="${param.deleteFailed}" th:inline="text">
+    <script type="text/javascript" th:if="${deleteFailed}" th:inline="text">
       alert("Suppression impossible, ce tag doit être encore utilisé dans au moins 1 candidature.");
     </script>
     

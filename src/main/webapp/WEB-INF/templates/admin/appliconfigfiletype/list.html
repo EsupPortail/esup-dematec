@@ -22,7 +22,7 @@
       <p>Il est également possible de restreindre le nombre de fichiers acceptés par candidature. <b>-1</b> correspond à ne fixer aucune limite.</p>
       </div>
     
-    <div th:if="${param.deleteErrorCandidaturesExist}" class="alert alert-danger">
+    <div th:if="${deleteErrorCandidaturesExist}" class="alert alert-danger">
       Un ou plusieurs fichiers de candidatures sont liés à ce type de fichier, aussi ce type de fichier ne peut pas être supprimé.
     </div>
     

@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequestMapping("/admin/appliconfigfiletype")
 @Controller
@@ -34,11 +35,10 @@ public class AppliConfigFileTypeController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable Long id, Model uiModel) {
-    	uiModel.asMap().clear();
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
     	AppliConfigFileType appliConfigFileType = appliConfigFileTypeDao.findAppliConfigFileType(id);
         if(posteCandidatureFileDao.countFindPosteCandidatureFilesByFileType(appliConfigFileType)>0) {
-        	uiModel.addAttribute("deleteErrorCandidaturesExist", "true");
+        	redirectAttributes.addFlashAttribute("deleteErrorCandidaturesExist", "true");
         } else {
         	appliConfigFileTypeDao.delete(appliConfigFileType);
         }
@@ -47,12 +47,11 @@ public class AppliConfigFileTypeController {
     
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, appliConfigFileType);
             return "admin/appliconfigfiletype/create";
         }
-        uiModel.asMap().clear();
         appliConfigFileTypeDao.saveAppliConfigFileType(appliConfigFileType);
         return "redirect:/admin/appliconfigfiletype";
     }
@@ -64,12 +63,11 @@ public class AppliConfigFileTypeController {
     }
 
 	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, appliConfigFileType);
             return "admin/appliconfigfiletype/update";
         }
-        uiModel.asMap().clear();
         appliConfigFileTypeDao.saveAppliConfigFileType(appliConfigFileType);
         return "redirect:/admin/appliconfigfiletype";
     }

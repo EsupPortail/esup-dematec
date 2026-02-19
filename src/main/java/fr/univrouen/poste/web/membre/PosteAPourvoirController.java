@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -97,12 +98,11 @@ public class PosteAPourvoirController {
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String create(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteAPourvoir);
             return "posteapourvoirs/create";
         }
-        uiModel.asMap().clear();
         posteAPourvoirDao.savePosteAPourvoir(posteAPourvoir);
         return "redirect:/posteapourvoirs/" + encodeUrlPathSegment(posteAPourvoir.getId().toString(), httpServletRequest);
     }
@@ -149,13 +149,12 @@ public class PosteAPourvoirController {
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String update(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteAPourvoir);
             return "posteapourvoirs/update";
         }
-        uiModel.asMap().clear();
-        
+
         // attention de preserver les fichiers ...
         PosteAPourvoir oldPoste = posteAPourvoirDao.findPosteAPourvoir(posteAPourvoir.getId());
         posteAPourvoir.setPosteFiles(oldPoste.getPosteFiles());
@@ -232,12 +231,11 @@ public class PosteAPourvoirController {
 
 	@RequestMapping(value = "/{id}/addFile", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'manageposte')")
-	public String addFile(@PathVariable Long id, @Valid PosteAPourvoirFile posteFile, BindingResult bindingResult, Model uiModel, HttpServletRequest request) throws IOException {
+	public String addFile(@PathVariable Long id, @Valid PosteAPourvoirFile posteFile, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) throws IOException {
 		if (bindingResult.hasErrors()) {
 			logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
 			return "redirect:/posteapourvoirs/" + id.toString();
 		}
-		uiModel.asMap().clear();
 
 		PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
 
@@ -257,7 +255,7 @@ public class PosteAPourvoirController {
 			}		
 			
 			if(filenameAlreadyUsed) {
-				uiModel.addAttribute("filename_already_used", filename);
+				redirectAttributes.addFlashAttribute("filename_already_used", filename);
 				logger.warn("Upload Restriction sur '" + filename + "' un fichier de même nom existe déjà pour le poste " + poste.getNumEmploi());
 			} else {
 				

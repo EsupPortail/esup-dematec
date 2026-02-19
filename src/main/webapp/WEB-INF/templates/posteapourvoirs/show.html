@@ -108,8 +108,8 @@
             <tr class="footer">
               <td th:colspan="${manageposte ? 5 : 4}">
                 <a class="btn" th:href="@{/posteapourvoirs/{id}(id=${posteapourvoir.id}, export='zip')}">Export zip</a>
-                <span th:if="${param.exportFailed != null}" class="alert alert-error">
-                                        - Export <b th:text="${param.exportFailed[0]}"></b> impossible pour cette candidature.
+                <span th:if="${exportFailed != null}" class="alert alert-error">
+                                        - Export <b th:text="${exportFailed[0]}"></b> impossible pour cette candidature.
                                     </span>
               </td>
             </tr>

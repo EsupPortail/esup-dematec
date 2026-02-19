@@ -99,7 +99,7 @@
                 <td th:text="${user.civilite}"></td>
                 <td th:text="${user.nom}">Nom</td>
                 <td th:text="${user.prenom}">Prénom</td>
-                <td th:text="${#dates.format(user.activationDate, 'dd/MM/yyyy HH:mm')}" th:if="${user.activationDate != null}"></td>
+                <td><span th:text="${#dates.format(user.activationDate, 'dd/MM/yyyy HH:mm')}" th:if="${user.activationDate != null}"/></td>
                 <td class="btn-group">
                     <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-sm btn-info">Voir</a>
                     <a th:href="@{/admin/users/{id}(id=${user.id},form)}" class="btn btn-sm btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>

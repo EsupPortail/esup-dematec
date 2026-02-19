@@ -43,7 +43,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "non_recevable", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesNonRecevables(@RequestParam("candidatureId") List<Long> pcIds, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyRecevableCandidature(id, RecevableEnum.NON_RECEVABLE);
+			myPosteCandidatureController.modifyRecevableCandidature(id, RecevableEnum.NON_RECEVABLE, null);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
@@ -52,7 +52,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "recevable", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesRecevables(@RequestParam("candidatureId") List<Long> pcIds, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyRecevableCandidature(id, RecevableEnum.RECEVABLE);
+			myPosteCandidatureController.modifyRecevableCandidature(id, RecevableEnum.RECEVABLE, null);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
@@ -61,7 +61,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "non_auditionnable", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesNonAuditionnables(@RequestParam("candidatureId") List<Long> pcIds, @RequestParam(required=false) String mailCorps, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyAuditionnableCandidatureFile(id, false, mailCorps);
+			myPosteCandidatureController.modifyAuditionnableCandidatureFile(id, false, mailCorps, null);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
@@ -71,7 +71,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "auditionnable", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesAuditionnables(@RequestParam("candidatureId") List<Long> pcIds, @RequestParam(required=true) String mailCorps, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyAuditionnableCandidatureFile(id, true, mailCorps);
+			myPosteCandidatureController.modifyAuditionnableCandidatureFile(id, true, mailCorps, null);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
@@ -80,7 +80,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "reviewstatus_vue", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesVues(@RequestParam("candidatureId") List<Long> pcIds, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyReviewCandidature(id, "Vue");
+			myPosteCandidatureController.modifyReviewCandidature(id, "Vue", null);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
@@ -89,7 +89,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "reviewstatus_incomplet", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesIncompletes(@RequestParam("candidatureId") List<Long> pcIds, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyReviewCandidature(id, "Vue_incomplet");
+			myPosteCandidatureController.modifyReviewCandidature(id, "Vue_incomplet", null);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
@@ -98,7 +98,7 @@ public class PosteCandidatureMultiManageController {
 	@RequestMapping(value = "/manage", params = "laureat", method = RequestMethod.POST, produces = "text/html")
 	public String candidaturesLaureates(@RequestParam("candidatureId") List<Long> pcIds, @RequestParam(required=true) String mailCorps, HttpServletRequest request) {
 		for(Long id: pcIds) {
-			myPosteCandidatureController.modifyLaureatCandidatureFile(id, true, mailCorps);
+			myPosteCandidatureController.modifyLaureatCandidatureFile(id, true, mailCorps, null);
 		}
 	    String referer = request.getHeader("Referer");
 	    return "redirect:" + referer;
