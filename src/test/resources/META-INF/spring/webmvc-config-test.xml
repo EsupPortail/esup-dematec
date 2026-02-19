@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to ESUP-Portail under one or more contributor license
+    agreements. See the NOTICE file distributed with this work for
+    additional information regarding copyright ownership.
+
+    ESUP-Portail licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in
+    compliance with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!-- Configuration Spring MVC pour les tests -->
+    <!-- Détecte automatiquement les @Controller dans le package fr.univrouen.poste.web -->
+    <context:component-scan base-package="fr.univrouen.poste.web" use-default-filters="false">
+        <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation" />
+    </context:component-scan>
+
+    <!-- Active le support pour les mappages de requêtes vers les méthodes @Controller -->
+    <mvc:annotation-driven conversion-service="applicationConversionService" />
+
+    <!-- Gestion des ressources statiques -->
+    <mvc:resources location="/" mapping="/resources/**" order="1"/>
+
+    <!-- Permet le forwarding des requêtes de ressources statiques -->
+    <mvc:default-servlet-handler />
+
+    <!-- Configuration de la gestion de la locale -->
+    <bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver" id="localeResolver" p:cookieName="locale" />
+
+    <!-- Configuration du thème -->
+    <bean class="org.springframework.ui.context.support.ResourceBundleThemeSource" id="themeSource" />
+    <bean class="org.springframework.web.servlet.theme.CookieThemeResolver" id="themeResolver" p:cookieName="theme" p:defaultThemeName="standard" />
+
+    <!-- Configuration de Tiles pour les vues -->
+    <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" id="tilesViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+    </bean>
+    <bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer" id="tilesConfigurer">
+        <property name="definitions">
+            <list>
+                <value>/WEB-INF/layouts/layouts.xml</value>
+                <value>/WEB-INF/views/**/views.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Service de conversion -->
+    <bean class="fr.univrouen.poste.web.ApplicationConversionServiceFactoryBean" id="applicationConversionService" />
+
+    <!-- Active le support pour les annotations de sécurité basées sur des expressions -->
+    <sec:global-method-security pre-post-annotations="enabled">
+        <sec:expression-handler ref="expressionHandler" />
+    </sec:global-method-security>
+
+    <!-- Intercepteur désactivé pour les tests pour éviter les problèmes avec le cache AppliConfig -->
+    <!--
+    <mvc:interceptors>
+        <bean class="fr.univrouen.poste.utils.ConfigInterceptor" autowire="constructor" />
+    </mvc:interceptors>
+    -->
+
+</beans>
+
