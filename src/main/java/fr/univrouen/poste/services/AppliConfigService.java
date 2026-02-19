@@ -5,6 +5,9 @@ import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.AppliConfig.MailReturnReceiptModeTypes;
 import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -16,586 +19,235 @@ public class AppliConfigService {
     @Autowired
     AppliConfigDao appliConfigDao;
 
-    String cacheTitre;
-    String cacheImageUrl;
-    String cachePiedPage;
-    String cacheMailFrom;
-    String cacheMailSubject;
-    String cacheTexteMailActivation;
-    String cacheTexteMailNewCandidatures;
-    String cacheMailSubjectMembre;
-    String cacheTexteMailActivationMembre;
-    String cacheTexteMailNewCommissions;
-    String cacheTexteMailPasswordOublie;
-    String cacheTextePremierePageAnonyme;
-    String cacheTexteMembreAideCandidatures;
-    String cacheTextePremierePageCandidat;
-    String cacheTextePremierePageMembre;
-    String cacheTexteCandidatAideCandidatures;
-    String cacheTexteCandidatAideCandidatureDepot;
-    String cacheTexteMailCandidatReturnReceipt;
-    String cacheTexteEnteteMailCandidatAuditionnable;
-    String cacheTextePiedpageMailCandidatAuditionnable;
-    Date cacheDateEndCandidat;
-    Date cacheDateEndCandidatActif;
-    Date cacheDateEndMembre;
-    MailReturnReceiptModeTypes cacheMailReturnReceiptModeType;
-    String cacheColorCandidatureNonVue;
-    String cacheColorCandidatureVue;
-    String cacheColorCandidatureVueModifieDepuis;
-    String cacheColorCandidatureVueIncomplet;
-    String cacheColorCandidatureVueIncompletModifieDepuis;
-    Boolean cacheMembreSupprReviewFile;
-    RecevableEnum cacheCandidatureRecevableEnumDefault;
-    Boolean cacheCandidatCanSignup;
-    String cacheColorReporterTag;
-    Boolean cachePostesMenu4Members;
-    Boolean cachePresidentReportersView;
-    String cacheTextePostesMenu4Members;
-    Boolean cacheLaureatEnable;
-    String cacheTexteMailCandidatLaureat;
+    // Auto-injection pour éviter le problème de self-invocation avec @Cacheable
+    @Autowired
+    @Lazy
+    private AppliConfigService self;
 
-    AppliConfig getConfig() {
-        AppliConfig config = appliConfigDao.getAppliConfig();
-        return config;
+    private static final String DEFAULT_STRING = "";
+    private static final String DEFAULT_COLOR = "#FFFFFF";
+    private static final Boolean DEFAULT_BOOLEAN = false;
+
+    /**
+     * Récupère la configuration de l'application (mise en cache)
+     */
+    @Cacheable(value = "appliConfig", unless = "#result == null")
+    public AppliConfig getConfig() {
+        return appliConfigDao.getAppliConfig();
+    }
+
+    /**
+     * Invalide le cache de configuration
+     */
+    @CacheEvict(value = "appliConfig", allEntries = true)
+    public void clearCache() {
+        // Le cache est automatiquement vidé par l'annotation @CacheEvict
+    }
+
+    /**
+     * Retourne une valeur par défaut si la valeur est null
+     */
+    private <T> T getOrDefault(T value, T defaultValue) {
+        return value != null ? value : defaultValue;
+    }
+
+    /**
+     * Retourne une date par défaut (+5 ans) si la date est null
+     */
+    private Date getDefaultDate() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.YEAR, 5);
+        return c.getTime();
     }
 
     public String getCacheTitre() {
-        if (cacheTitre == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTitre = config.getTitre();
-            }
-            if (cacheTitre == null) {
-                cacheTitre = "";
-            }
-        }
-        return cacheTitre;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTitre(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheImageUrl() {
-        if (cacheImageUrl == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheImageUrl = config.getImageUrl();
-            }
-            if (cacheImageUrl == null) {
-                cacheImageUrl = "";
-            }
-        }
-        return cacheImageUrl;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getImageUrl(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCachePiedPage() {
-        if (cachePiedPage == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cachePiedPage = config.getPiedPage();
-            }
-            if (cachePiedPage == null) {
-                cachePiedPage = "";
-            }
-        }
-        return cachePiedPage;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getPiedPage(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheMailFrom() {
-        if (cacheMailFrom == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheMailFrom = config.getMailFrom();
-            }
-            if (cacheMailFrom == null) {
-                cacheMailFrom = "";
-            }
-        }
-        return cacheMailFrom;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getMailFrom(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheMailSubject() {
-        if (cacheMailSubject == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheMailSubject = config.getMailSubject();
-            }
-            if (cacheMailSubject == null) {
-                cacheMailSubject = "";
-            }
-        }
-        return cacheMailSubject;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getMailSubject(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteMailActivation() {
-        if (cacheTexteMailActivation == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMailActivation = config.getTexteMailActivation();
-            }
-            if (cacheTexteMailActivation == null) {
-                cacheTexteMailActivation = "";
-            }
-        }
-        return cacheTexteMailActivation;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMailActivation(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteMailNewCandidatures() {
-        if (cacheTexteMailNewCandidatures == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMailNewCandidatures = config.getTexteMailNewCandidatures();
-            }
-            if (cacheTexteMailNewCandidatures == null) {
-                cacheTexteMailNewCandidatures = "";
-            }
-        }
-        return cacheTexteMailNewCandidatures;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMailNewCandidatures(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheMailSubjectMembre() {
-        if (cacheMailSubjectMembre == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheMailSubjectMembre = config.getMailSubjectMembre();
-            }
-            if (cacheMailSubjectMembre == null) {
-                cacheMailSubjectMembre = "";
-            }
-        }
-        return cacheMailSubjectMembre;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getMailSubjectMembre(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteMailActivationMembre() {
-        if (cacheTexteMailActivationMembre == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMailActivationMembre = config.getTexteMailActivationMembre();
-            }
-            if (cacheTexteMailActivationMembre == null) {
-                cacheTexteMailActivationMembre = "";
-            }
-        }
-        return cacheTexteMailActivationMembre;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMailActivationMembre(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteMailNewCommissions() {
-        if (cacheTexteMailNewCommissions == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMailNewCommissions = config.getTexteMailNewCommissions();
-            }
-            if (cacheTexteMailNewCommissions == null) {
-                cacheTexteMailNewCommissions = "";
-            }
-        }
-        return cacheTexteMailNewCommissions;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMailNewCommissions(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteMailPasswordOublie() {
-        if (cacheTexteMailPasswordOublie == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMailPasswordOublie = config.getTexteMailPasswordOublie();
-            }
-            if (cacheTexteMailPasswordOublie == null) {
-                cacheTexteMailPasswordOublie = "";
-            }
-        }
-        return cacheTexteMailPasswordOublie;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMailPasswordOublie(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTextePremierePageAnonyme() {
-        if (cacheTextePremierePageAnonyme == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTextePremierePageAnonyme = config.getTextePremierePageAnonyme();
-            }
-            if (cacheTextePremierePageAnonyme == null) {
-                cacheTextePremierePageAnonyme = "";
-            }
-        }
-        return cacheTextePremierePageAnonyme;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTextePremierePageAnonyme(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteMembreAideCandidatures() {
-        if (cacheTexteMembreAideCandidatures == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMembreAideCandidatures = config.getTexteMembreAideCandidatures();
-            }
-            if (cacheTexteMembreAideCandidatures == null) {
-                cacheTexteMembreAideCandidatures = "";
-            }
-        }
-        return cacheTexteMembreAideCandidatures;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMembreAideCandidatures(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTextePremierePageCandidat() {
-        if (cacheTextePremierePageCandidat == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTextePremierePageCandidat = config.getTextePremierePageCandidat();
-            }
-            if (cacheTextePremierePageCandidat == null) {
-                cacheTextePremierePageCandidat = "";
-            }
-        }
-        return cacheTextePremierePageCandidat;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTextePremierePageCandidat(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTextePremierePageMembre() {
-        if (cacheTextePremierePageMembre == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTextePremierePageMembre = config.getTextePremierePageMembre();
-            }
-            if (cacheTextePremierePageMembre == null) {
-                cacheTextePremierePageMembre = "";
-            }
-        }
-        return cacheTextePremierePageMembre;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTextePremierePageMembre(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteCandidatAideCandidatures() {
-        if (cacheTexteCandidatAideCandidatures == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteCandidatAideCandidatures = config.getTexteCandidatAideCandidatures();
-            }
-            if (cacheTexteCandidatAideCandidatures == null) {
-                cacheTexteCandidatAideCandidatures = "";
-            }
-        }
-        return cacheTexteCandidatAideCandidatures;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteCandidatAideCandidatures(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteCandidatAideCandidatureDepot() {
-        if (cacheTexteCandidatAideCandidatureDepot == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteCandidatAideCandidatureDepot = config.getTexteCandidatAideCandidatureDepot();
-            }
-            if (cacheTexteCandidatAideCandidatureDepot == null) {
-                cacheTexteCandidatAideCandidatureDepot = "";
-            }
-        }
-        return cacheTexteCandidatAideCandidatureDepot;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteCandidatAideCandidatureDepot(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public Date getCacheDateEndCandidat() {
-        if (cacheDateEndCandidat == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheDateEndCandidat = config.getDateEndCandidat();
-            }
-            if (cacheDateEndCandidat == null) {
-                Calendar c = Calendar.getInstance();
-                c.roll(Calendar.YEAR, 5);
-                cacheDateEndCandidat = c.getTime();
-            }
-        }
-        return cacheDateEndCandidat;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getDateEndCandidat(), getDefaultDate()) : getDefaultDate();
     }
 
     public Date getCacheDateEndCandidatActif() {
-        if (cacheDateEndCandidatActif == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheDateEndCandidatActif = config.getDateEndCandidatActif();
-            }
-            if (cacheDateEndCandidatActif == null) {
-                Calendar c = Calendar.getInstance();
-                c.roll(Calendar.YEAR, 5);
-                cacheDateEndCandidatActif = c.getTime();
-            }
-        }
-        return cacheDateEndCandidatActif;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getDateEndCandidatActif(), getDefaultDate()) : getDefaultDate();
     }
 
     public Date getCacheDateEndMembre() {
-        if (cacheDateEndMembre == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheDateEndMembre = config.getDateEndMembre();
-            }
-            if (cacheDateEndMembre == null) {
-                Calendar c = Calendar.getInstance();
-                c.roll(Calendar.YEAR, 5);
-                cacheDateEndMembre = c.getTime();
-            }
-        }
-        return cacheDateEndMembre;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getDateEndMembre(), getDefaultDate()) : getDefaultDate();
     }
 
     public MailReturnReceiptModeTypes getCacheMailReturnReceiptModeType() {
-        if (cacheMailReturnReceiptModeType == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheMailReturnReceiptModeType = config.getMailReturnReceiptModeType();
-            }
-            if (cacheMailReturnReceiptModeType == null) {
-                cacheMailReturnReceiptModeType = MailReturnReceiptModeTypes.NEVER;
-            }
-        }
-        return cacheMailReturnReceiptModeType;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getMailReturnReceiptModeType(), MailReturnReceiptModeTypes.NEVER) : MailReturnReceiptModeTypes.NEVER;
     }
 
     public String getCacheTexteMailCandidatReturnReceipt() {
-        if (cacheTexteMailCandidatReturnReceipt == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMailCandidatReturnReceipt = config.getTexteMailCandidatReturnReceipt();
-            }
-            if (cacheTexteMailCandidatReturnReceipt == null) {
-                cacheTexteMailCandidatReturnReceipt = "";
-            }
-        }
-        return cacheTexteMailCandidatReturnReceipt;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMailCandidatReturnReceipt(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTexteEnteteMailCandidatAuditionnable() {
-        if (cacheTexteEnteteMailCandidatAuditionnable == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteEnteteMailCandidatAuditionnable = config.getTexteEnteteMailCandidatAuditionnable();
-            }
-            if (cacheTexteEnteteMailCandidatAuditionnable == null) {
-                cacheTexteEnteteMailCandidatAuditionnable = "";
-            }
-        }
-        return cacheTexteEnteteMailCandidatAuditionnable;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteEnteteMailCandidatAuditionnable(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheTextePiedpageMailCandidatAuditionnable() {
-        if (cacheTextePiedpageMailCandidatAuditionnable == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTextePiedpageMailCandidatAuditionnable = config.getTextePiedpageMailCandidatAuditionnable();
-            }
-            if (cacheTextePiedpageMailCandidatAuditionnable == null) {
-                cacheTextePiedpageMailCandidatAuditionnable = "";
-            }
-        }
-        return cacheTextePiedpageMailCandidatAuditionnable;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTextePiedpageMailCandidatAuditionnable(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public String getCacheColorCandidatureNonVue() {
-        if (cacheColorCandidatureNonVue == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheColorCandidatureNonVue = config.getColorCandidatureNonVue();
-            }
-            if (cacheColorCandidatureNonVue == null) {
-                cacheColorCandidatureNonVue = "#FFFFFF";
-            }
-        }
-        return cacheColorCandidatureNonVue;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getColorCandidatureNonVue(), DEFAULT_COLOR) : DEFAULT_COLOR;
     }
 
     public String getCacheColorCandidatureVue() {
-        if (cacheColorCandidatureVue == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheColorCandidatureVue = config.getColorCandidatureVue();
-            }
-            if (cacheColorCandidatureVue == null) {
-                cacheColorCandidatureVue = "#FFFFFF";
-            }
-        }
-        return cacheColorCandidatureVue;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getColorCandidatureVue(), DEFAULT_COLOR) : DEFAULT_COLOR;
     }
 
     public String getCacheColorCandidatureVueIncomplet() {
-        if (cacheColorCandidatureVueIncomplet == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheColorCandidatureVueIncomplet = config.getColorCandidatureVueIncomplet();
-            }
-            if (cacheColorCandidatureVueIncomplet == null) {
-                cacheColorCandidatureVueIncomplet = "#FFFFFF";
-            }
-        }
-        return cacheColorCandidatureVueIncomplet;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getColorCandidatureVueIncomplet(), DEFAULT_COLOR) : DEFAULT_COLOR;
     }
 
     public String getCacheColorCandidatureVueModifieDepuis() {
-        if (cacheColorCandidatureVueModifieDepuis == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheColorCandidatureVueModifieDepuis = config.getColorCandidatureVueModifieDepuis();
-            }
-            if (cacheColorCandidatureVueModifieDepuis == null) {
-                cacheColorCandidatureVueModifieDepuis = "#FFFFFF";
-            }
-        }
-        return cacheColorCandidatureVueModifieDepuis;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getColorCandidatureVueModifieDepuis(), DEFAULT_COLOR) : DEFAULT_COLOR;
     }
 
     public String getCacheColorCandidatureVueIncompletModifieDepuis() {
-        if (cacheColorCandidatureVueIncompletModifieDepuis == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheColorCandidatureVueIncompletModifieDepuis = config.getColorCandidatureVueIncompletModifieDepuis();
-            }
-            if (cacheColorCandidatureVueIncompletModifieDepuis == null) {
-                cacheColorCandidatureVueIncompletModifieDepuis = "#FFFFFF";
-            }
-        }
-        return cacheColorCandidatureVueIncompletModifieDepuis;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getColorCandidatureVueIncompletModifieDepuis(), DEFAULT_COLOR) : DEFAULT_COLOR;
     }
 
     public Boolean getCacheMembreSupprReviewFile() {
-        if (cacheMembreSupprReviewFile == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheMembreSupprReviewFile = config.getMembreSupprReviewFile();
-            }
-            if (cacheMembreSupprReviewFile == null) {
-                cacheMembreSupprReviewFile = false;
-            }
-        }
-        return cacheMembreSupprReviewFile;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getMembreSupprReviewFile(), DEFAULT_BOOLEAN) : DEFAULT_BOOLEAN;
     }
 
     public RecevableEnum getCacheCandidatureRecevableEnumDefault() {
-        if (cacheCandidatureRecevableEnumDefault == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheCandidatureRecevableEnumDefault = config.getCandidatureRecevableEnumDefault();
-            }
-        }
-        return cacheCandidatureRecevableEnumDefault;
+        AppliConfig config = self.getConfig();
+        return config != null ? config.getCandidatureRecevableEnumDefault() : null;
     }
 
     public Boolean getCacheCandidatCanSignup() {
-        if (cacheCandidatCanSignup == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheCandidatCanSignup = config.getCandidatCanSignup();
-            }
-            if (cacheCandidatCanSignup == null) {
-                cacheCandidatCanSignup = false;
-            }
-        }
-        return cacheCandidatCanSignup;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getCandidatCanSignup(), DEFAULT_BOOLEAN) : DEFAULT_BOOLEAN;
     }
 
     public String getCacheColorReporterTag() {
-        if (cacheColorReporterTag == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheColorReporterTag = config.getColorReporterTag();
-            }
-            if (cacheColorReporterTag == null) {
-                cacheColorReporterTag = "#FFFFFF";
-            }
-        }
-        return cacheColorReporterTag;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getColorReporterTag(), DEFAULT_COLOR) : DEFAULT_COLOR;
     }
 
     public Boolean getCachePostesMenu4Members() {
-        if (cachePostesMenu4Members == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cachePostesMenu4Members = config.getPostesMenu4Members();
-            }
-            if (cachePostesMenu4Members == null) {
-                cachePostesMenu4Members = false;
-            }
-        }
-        return cachePostesMenu4Members;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getPostesMenu4Members(), DEFAULT_BOOLEAN) : DEFAULT_BOOLEAN;
     }
 
     public Boolean getCachePresidentReportersView() {
-        if (cachePresidentReportersView == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cachePresidentReportersView = config.getPresidentReportersView();
-            }
-            if (cachePresidentReportersView == null) {
-                cachePresidentReportersView = false;
-            }
-        }
-        return cachePresidentReportersView;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getPresidentReportersView(), DEFAULT_BOOLEAN) : DEFAULT_BOOLEAN;
     }
 
     public String getCacheTextePostesMenu4Members() {
-        if (cacheTextePostesMenu4Members == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTextePostesMenu4Members = config.getTextePostesMenu4Members();
-            }
-            if (cacheTextePostesMenu4Members == null) {
-                cacheTextePostesMenu4Members = "";
-            }
-        }
-        return cacheTextePostesMenu4Members;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTextePostesMenu4Members(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 
     public Boolean getCacheLaureatEnable() {
-        if (cacheLaureatEnable == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheLaureatEnable = config.getLaureatEnable();
-            }
-            if (cacheLaureatEnable == null) {
-                cacheLaureatEnable = false;
-            }
-        }
-        return cacheLaureatEnable;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getLaureatEnable(), DEFAULT_BOOLEAN) : DEFAULT_BOOLEAN;
     }
 
     public String getCacheTexteMailCandidatLaureat() {
-        if (cacheTexteMailCandidatLaureat == null) {
-            AppliConfig config = getConfig();
-            if (config != null) {
-                cacheTexteMailCandidatLaureat = config.getTexteMailCandidatLaureat();
-            }
-            if (cacheTexteMailCandidatLaureat == null) {
-                cacheTexteMailCandidatLaureat = "";
-            }
-        }
-        return cacheTexteMailCandidatLaureat;
-    }
-
-    public void clearCache() {
-        cacheTitre = null;
-        cacheImageUrl = null;
-        cachePiedPage = null;
-        cacheMailFrom = null;
-        cacheMailSubject = null;
-        cacheTexteMailActivation = null;
-        cacheTexteMailNewCandidatures = null;
-        cacheMailSubjectMembre = null;
-        cacheTexteMailActivationMembre = null;
-        cacheTexteMailNewCommissions = null;
-        cacheTexteMailPasswordOublie = null;
-        cacheTextePremierePageAnonyme = null;
-        cacheTexteMembreAideCandidatures = null;
-        cacheTextePremierePageCandidat = null;
-        cacheTextePremierePageMembre = null;
-        cacheTexteCandidatAideCandidatures = null;
-        cacheTexteCandidatAideCandidatureDepot = null;
-        cacheTexteMailCandidatReturnReceipt = null;
-        cacheTexteEnteteMailCandidatAuditionnable = null;
-        cacheTextePiedpageMailCandidatAuditionnable = null;
-        cacheDateEndCandidat = null;
-        cacheDateEndCandidatActif = null;
-        cacheDateEndMembre = null;
-        cacheMailReturnReceiptModeType = null;
-        cacheColorCandidatureNonVue = null;
-        cacheColorCandidatureVue = null;
-        cacheColorCandidatureVueModifieDepuis = null;
-        cacheColorCandidatureVueIncomplet = null;
-        cacheColorCandidatureVueIncompletModifieDepuis = null;
-        cacheMembreSupprReviewFile = null;
-        cacheCandidatureRecevableEnumDefault = null;
-        cacheCandidatCanSignup = null;
-        cacheColorReporterTag = null;
-        cachePostesMenu4Members = null;
-        cachePresidentReportersView = null;
-        cacheTextePostesMenu4Members = null;
-        cacheLaureatEnable = null;
-        cacheTexteMailCandidatLaureat = null;
+        AppliConfig config = self.getConfig();
+        return config != null ? getOrDefault(config.getTexteMailCandidatLaureat(), DEFAULT_STRING) : DEFAULT_STRING;
     }
 }
 
