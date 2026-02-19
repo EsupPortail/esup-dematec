@@ -17,9 +17,10 @@
  */
 package fr.univrouen.poste.test.web.candidat;
 
+import fr.univrouen.poste.domain.AppliConfigFileType;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
-import fr.univrouen.poste.test.AbstractControllerTest;
+import fr.univrouen.poste.test.TestUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -27,15 +28,14 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests d'intégration pour MyPosteCandidatureController - Parcours complet d'un candidat
@@ -53,10 +53,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * ⚠️ Les tests sont ordonnés par nom (NAME_ASCENDING) pour garantir une exécution séquentielle
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MyPosteCandidatureControllerCandidatTest extends AbstractControllerTest {
+public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidatureControllerTestBase {
 
-    // Variable statique pour stocker le numéro de poste trouvé lors du test 02
-    private static String numEmploiPoste = null;
 
     /**
      * Test 01 : Le candidat liste ses candidatures
@@ -65,17 +63,7 @@ public class MyPosteCandidatureControllerCandidatTest extends AbstractController
     @Test
     @WithUserDetails("candidat@example.org")
     public void test01_CandidatListeSesCandidatures() throws Exception {
-        MvcResult result = mockMvc.perform(get("/postecandidatures"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("postecandidatures"))
-                .andReturn();
-
-        @SuppressWarnings("unchecked")
-        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
-                .getModel().get("postecandidatures");
-
-        assertNotNull("La liste des candidatures ne doit pas être null", candidatures);
-        System.out.println("✓ Nombre de candidatures pour " + "candidat@example.org" + " : " + candidatures.size());
+        test_CandidatListeCandidatures();
     }
 
     /**
@@ -140,23 +128,29 @@ public class MyPosteCandidatureControllerCandidatTest extends AbstractController
 
         System.out.println("✓ Candidature trouvée : ID=" + candidature.getId());
 
-        // 2. Charger le fichier PDF test
-        File pdfFile = new File("src/test/resources/doc-dummy.pdf");
-        assertTrue("Le fichier doc-dummy.pdf doit exister", pdfFile.exists());
+        // 1 - bis - charger la vue de la candidature
+        result = mockMvc.perform(get("/postecandidatures/" + candidature.getId()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("postecandidature"))
+                .andExpect(model().attributeExists("fileTypes"))
+                .andReturn();
 
-        FileInputStream fis = new FileInputStream(pdfFile);
-        MockMultipartFile multipartFile = new MockMultipartFile(
-                "file",
-                "doc-dummy.pdf",
-                "application/pdf",
-                fis
-        );
+        List<AppliConfigFileType> fileTypes = (List<AppliConfigFileType>) result.getModelAndView()
+                .getModel().get("fileTypes");
+        assertNotNull("La liste des types de fichiers ne doit pas être null", fileTypes);
+
+        AppliConfigFileType fileType = fileTypes.get(0);
+
+
+        // 2. Charger le fichier PDF test
+        MockMultipartFile multipartFile = TestUtils.getPdfFile();
 
         // 3. Upload le fichier sur la candidature
         mockMvc.perform(multipart("/postecandidatures/" + candidature.getId() + "/addFile")
                 .file(multipartFile)
+                .param("fileType", fileType.getId().toString())
                 .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().is3xxRedirection());
 
         System.out.println("✓ Fichier doc-dummy.pdf uploadé avec succès sur la candidature ID=" + candidature.getId());
     }
@@ -167,7 +161,7 @@ public class MyPosteCandidatureControllerCandidatTest extends AbstractController
      */
     @Test
     @WithUserDetails("candidat@example.org")
-    public void test04_VerificationFichierUploade() throws Exception {
+    public void test04_VerificationFichierUpload() throws Exception {
         assertNotNull("Le numéro de poste doit avoir été déterminé par le test précédent", numEmploiPoste);
 
         // 1. Récupérer la candidature pour le poste
@@ -194,15 +188,20 @@ public class MyPosteCandidatureControllerCandidatTest extends AbstractController
         PosteCandidature candidatureDetail = (PosteCandidature) candidatureDetailResult.getModelAndView()
                 .getModel().get("postecandidature");
 
+        candidatureId = candidature.getId();
+
         assertNotNull("La candidature ne doit pas être null", candidatureDetail);
         assertNotNull("La liste des fichiers ne doit pas être null", candidatureDetail.getCandidatureFiles());
         assertFalse("Au moins un fichier doit être présent", candidatureDetail.getCandidatureFiles().isEmpty());
 
         // 3. Vérifier qu'un fichier avec le bon nom existe
-        boolean fichierTrouve = candidatureDetail.getCandidatureFiles().stream()
-                .anyMatch(f -> "doc-dummy.pdf".equals(f.getFilename()));
-
+        PosteCandidatureFile posteCandidatureFile = candidatureDetail.getCandidatureFiles()
+                .stream().filter(f -> "doc-dummy.pdf".equals(f.getFilename()))
+                .findFirst().get();
+        boolean fichierTrouve = posteCandidatureFile != null;
         assertTrue("Le fichier doc-dummy.pdf doit être présent", fichierTrouve);
+
+        candidatureFileId = posteCandidatureFile.getId();
 
         System.out.println("✓ Nombre de fichiers dans la candidature : " + candidatureDetail.getCandidatureFiles().size());
         candidatureDetail.getCandidatureFiles().forEach(f ->
@@ -216,53 +215,19 @@ public class MyPosteCandidatureControllerCandidatTest extends AbstractController
      */
     @Test
     @WithUserDetails("candidat@example.org")
-    public void test05_VerificationTelechargementFichier() throws Exception {
-        assertNotNull("Le numéro de poste doit avoir été déterminé par le test précédent", numEmploiPoste);
-
-        // 1. Récupérer la candidature pour le poste
-        MvcResult result = mockMvc.perform(get("/postecandidatures"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("postecandidatures"))
-                .andReturn();
-
-        @SuppressWarnings("unchecked")
-        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
-                .getModel().get("postecandidatures");
-
-        PosteCandidature candidature = candidatures.stream()
-                .filter(c -> numEmploiPoste.equals(c.getPoste().getNumEmploi()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Candidature pour le poste " + numEmploiPoste + " introuvable"));
-
-        // 2. Récupérer les détails de la candidature pour obtenir l'ID du fichier
-        MvcResult candidatureDetailResult = mockMvc.perform(get("/postecandidatures/" + candidature.getId()))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("postecandidature"))
-                .andReturn();
-
-        PosteCandidature candidatureDetail = (PosteCandidature) candidatureDetailResult.getModelAndView()
-                .getModel().get("postecandidature");
-
-        // 3. Récupérer le premier fichier
-        PosteCandidatureFile fichier = candidatureDetail.getCandidatureFiles().stream()
-                .filter(f -> "doc-dummy.pdf".equals(f.getFilename()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Fichier doc-dummy.pdf introuvable"));
-
-        System.out.println("✓ Fichier à télécharger : ID=" + fichier.getId() + ", Nom=" + fichier.getFilename());
-
-        // 4. Télécharger le fichier
-        MvcResult downloadResult = mockMvc.perform(get("/postecandidatures/" + candidature.getId() + "/" + fichier.getId()))
-                .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", "application/pdf"))
-                .andExpect(header().string("Content-Disposition", "attachment; filename=\"" + fichier.getFilename() + "\""))
-                .andReturn();
-
-        // 5. Vérifier que le contenu du fichier n'est pas vide
-        byte[] downloadedContent = downloadResult.getResponse().getContentAsByteArray();
-        assertTrue("Le contenu du fichier téléchargé ne doit pas être vide", downloadedContent.length > 0);
-
-        System.out.println("✓ Fichier téléchargé avec succès : " + downloadedContent.length + " octets");
+    public void test05_VerificationTelechargementFichierCandidat() throws Exception {
+        test_VerificationTelechargementFichier();
     }
+
+    /*
+        * Test 06 : Vérifier qu'un autre candidat ne peut pas accéder à la candidature ni au fichier
+        * Vérifie que le candidat "candidat2@example.org" ne peut pas accéder à la candidature ni au fichier de "candidat@example.org"
+     */
+    @Test
+    @WithUserDetails("candidat2@example.org")
+    public void test06_VerificationAccesAutreCandidat() throws Exception {
+        test_VerificationAccesAInterdit();
+    }
+
 }
 

@@ -19,6 +19,7 @@ package fr.univrouen.poste.test.web.admin;
 
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.test.AbstractControllerTest;
+import fr.univrouen.poste.test.TestUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -30,8 +31,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -149,6 +149,59 @@ public class UserControllerTest extends AbstractControllerTest {
         List<User> users = (List<User>) result.getModelAndView().getModel().get("users");
         assertNotNull("La liste des utilisateurs ne doit pas être null", users);
         assertEquals("Un utilisateur doit avoir été créé", 1, users.size());
+    }
+
+    @Test
+    @WithUserDetails("admin")
+    public void test06_ModifyPassword() throws Exception {
+        MvcResult result = mockMvc.perform(get("/admin/users"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("users"))
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<User> users = (List<User>) result.getModelAndView().getModel().get("users");
+        User candidat3 = users.stream()
+                .filter(u -> "candidat3@example.org".equals(u.getEmailAddress()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        mockMvc.perform(put("/admin/users")
+                .with(csrf())
+                .params(TestUtils.getParamsAsStringMap(candidat3, "postes", "password"))
+                .param("password", "Password123"))
+                .andExpect(status().is3xxRedirection());
+
+
+        User membre = users.stream()
+                .filter(u -> "membre@example.org".equals(u.getEmailAddress()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        mockMvc.perform(put("/admin/users")
+                        .with(csrf())
+                        .params(TestUtils.getParamsAsStringMap(membre, "postes", "password"))
+                        .param("password", "Password123"))
+                .andExpect(status().is3xxRedirection());
+
+    }
+
+    @Test
+    public void test07_TestLoginCandidat() throws Exception {
+        mockMvc.perform(post("/login")
+                .param("username", "candidat3@example.org")
+                .param("password", "Password123")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    public void test08_TestLoginMembre() throws Exception {
+        mockMvc.perform(post("/login")
+                        .param("username", "membre@example.org")
+                        .param("password", "Password123")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
     }
 }
 

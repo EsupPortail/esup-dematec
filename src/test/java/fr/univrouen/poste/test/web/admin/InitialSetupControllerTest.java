@@ -17,9 +17,6 @@
  */
 package fr.univrouen.poste.test.web.admin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.test.AbstractControllerTest;
@@ -28,17 +25,14 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -196,13 +190,6 @@ public class InitialSetupControllerTest extends AbstractControllerTest {
         config.setDateEndMembre(futureDate);
         config.setDateEndCandidatActif(futureDate);
         config.setTitre("Test depuis test d'intégration");
-        MultiValueMap<String, String> params = getParamsAsStringMap(config);
-        // put appliConfig entier
-        mockMvc.perform(put("/admin/appliconfig")
-                .with(csrf())
-                .params(params))
-                .andExpect(status().is3xxRedirection());
-
         // vérification
         result = mockMvc.perform(get("/admin/appliconfig/" + config.getId()))
                 .andExpect(status().isOk()).andReturn();
@@ -216,20 +203,7 @@ public class InitialSetupControllerTest extends AbstractControllerTest {
         System.out.println("✓");
     }
 
-    private MultiValueMap<String, String> getParamsAsStringMap(Object obj) {
-        // ObjectMapper pour sérialisation/désérialisation form-urlencoded parameters
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm"));
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        Map<String, Object> fields = objectMapper.convertValue(obj, Map.class);
-        fields.forEach((k, v) -> {
-            if (v != null) map.add(k, v.toString());
-        });
-        return map;
-    }
 
 }
 

@@ -19,12 +19,10 @@ package fr.univrouen.poste.test;
 
 import fr.univrouen.poste.test.security.SecurityAccessTest;
 import fr.univrouen.poste.test.web.LoginControllerTest;
-import fr.univrouen.poste.test.web.admin.AdminControllerTest;
-import fr.univrouen.poste.test.web.admin.CommissionImportControllerTest;
-import fr.univrouen.poste.test.web.admin.GalaxieImportControllerTest;
-import fr.univrouen.poste.test.web.admin.InitialSetupControllerTest;
-import fr.univrouen.poste.test.web.admin.UserControllerTest;
+import fr.univrouen.poste.test.web.admin.*;
+import fr.univrouen.poste.test.web.candidat.MyPosteCandidatureControllerCandidatDateKoTest;
 import fr.univrouen.poste.test.web.candidat.MyPosteCandidatureControllerCandidatTest;
+import fr.univrouen.poste.test.web.candidat.MyPosteCandidatureControllerMembreTest;
 import fr.univrouen.poste.test.web.candidat.MyPosteCandidatureControllerTest;
 import fr.univrouen.poste.test.web.membre.PosteAPourvoirControllerTest;
 import org.junit.runner.RunWith;
@@ -56,7 +54,10 @@ import org.junit.runners.Suite.SuiteClasses;
     PosteAPourvoirControllerTest.class,
     MyPosteCandidatureControllerTest.class,
     MyPosteCandidatureControllerCandidatTest.class,
-    AdminControllerTest.class
+    MyPosteCandidatureControllerMembreTest.class,
+    AdminControllerTest.class,
+    ChangeDateKoSetupControllerTest.class,
+    MyPosteCandidatureControllerCandidatDateKoTest.class,
 })
 public class IntegrationTestSuite {
     // Cette classe reste vide, elle sert uniquement à définir l'ordre d'exécution
