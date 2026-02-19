@@ -17,6 +17,11 @@
  */
 package fr.univrouen.poste.test;
 
+import fr.univrouen.poste.config.AppContextConfig;
+import fr.univrouen.poste.config.AppContextTestConfig;
+import fr.univrouen.poste.config.MethodSecurityConfig;
+import fr.univrouen.poste.config.SecurityConfig;
+import fr.univrouen.poste.config.WebMvcConfig;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +53,12 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        locations = {
-                "classpath*:META-INF/spring/applicationContext.xml",
-                "classpath*:META-INF/spring/applicationContext-security.xml",
-                "classpath*:META-INF/spring/applicationContext-test.xml",
-                "file:src/main/webapp/WEB-INF/spring/webmvc-config.xml"
+        classes = {
+                AppContextConfig.class,
+                AppContextTestConfig.class,
+                SecurityConfig.class,
+                MethodSecurityConfig.class,
+                WebMvcConfig.class
         },
         initializers = TestcontainersInitializer.class
 )
