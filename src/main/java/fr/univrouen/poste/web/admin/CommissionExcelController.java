@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -78,7 +77,7 @@ public class CommissionExcelController {
     }
     
     @RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
-    public String addFile(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) throws IOException, SQLException {
+    public String addFile(@Valid CommissionExcel commissionExcel, BindingResult bindingResult) throws IOException, SQLException {
         if (bindingResult.hasErrors()) {
         	logger.warn("Errors on addFile method : {}", bindingResult.getAllErrors());
             return "redirect:/admin/commissionexcels";
@@ -146,7 +145,7 @@ public class CommissionExcelController {
     
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String create(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, commissionExcel);
             return "admin/commissionexcels/create";
@@ -175,7 +174,7 @@ public class CommissionExcelController {
     }
 
 	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String update(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, commissionExcel);
             return "admin/commissionexcels/update";
@@ -191,7 +190,7 @@ public class CommissionExcelController {
     }
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable Long id, @PageableDefault(size = 10) Pageable pageable, RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable Long id) {
         CommissionExcel commissionExcel = commissionExcelDao.findCommissionExcel(id);
         commissionExcelDao.deleteCommissionExcel(commissionExcel);
         return "redirect:/admin/commissionexcels";

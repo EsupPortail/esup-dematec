@@ -63,7 +63,7 @@ public class PosteCandidatureTagController {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String update(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteCandidatureTag);
             return "admin/candidaturetags/update";
@@ -88,7 +88,7 @@ public class PosteCandidatureTagController {
     
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String create(@Valid PosteCandidatureTag posteCandidatureTag, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteCandidatureTag);
             return "admin/candidaturetags/create";

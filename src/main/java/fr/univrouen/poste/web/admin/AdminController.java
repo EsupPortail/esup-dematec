@@ -22,16 +22,15 @@ import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.services.StatBean;
 import fr.univrouen.poste.services.StatService;
 import fr.univrouen.poste.services.ZipService;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -65,7 +64,7 @@ public class AdminController {
 
 	@RequestMapping("/zip")
 	@Transactional
-	public void getZip(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public void getZip(HttpServletResponse response) throws IOException, SQLException {
 		
 		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures();
 

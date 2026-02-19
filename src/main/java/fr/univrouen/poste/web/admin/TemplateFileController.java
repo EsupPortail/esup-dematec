@@ -21,8 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriUtils;
-import org.springframework.web.util.WebUtils;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
@@ -106,7 +104,7 @@ public class TemplateFileController {
     }
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String createdOrUpdate(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String createdOrUpdate(@Valid TemplateFile templateFile, BindingResult bindingResult, Model uiModel) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, templateFile);
             return "admin/templatefiles/update";
@@ -139,12 +137,4 @@ public class TemplateFileController {
         uiModel.addAttribute("templateFile_sendtime_date_format", "dd/MM/yyyy HH:mm");
     }
 
-	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
-        String enc = httpServletRequest.getCharacterEncoding();
-        if (enc == null) {
-            enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
-        }
-        pathSegment = UriUtils.encodePathSegment(pathSegment, enc);
-        return pathSegment;
-    }
 }

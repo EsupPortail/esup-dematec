@@ -914,7 +914,7 @@ public class MyPosteCandidatureController {
 	
     @RequestMapping(value = "/{id}/updateManagerComment", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateManagerComment(@PathVariable Long id, @RequestParam String comment, RedirectAttributes redirectAttributes) {
+    public String updateManagerComment(@PathVariable Long id, @RequestParam String comment) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	postecandidature.setManagerComment4Members(comment);
 		posteCandidatureDao.savePosteCandidature(postecandidature);
@@ -933,7 +933,7 @@ public class MyPosteCandidatureController {
     
     @RequestMapping(value = "/{id}/delReporter", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasPermission(#id, 'manageReporters')")
-    public String delReporter(@PathVariable Long id, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
+    public String delReporter(@PathVariable Long id, @RequestParam Long userId) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	User user = userDao.findUser(userId);
     	postecandidature.getReporters().remove(user);
@@ -943,7 +943,7 @@ public class MyPosteCandidatureController {
     
     @RequestMapping(value = "/{id}/updateTags", method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String updateTags(@PathVariable Long id, @Valid PosteCandidatureTagForm posteCandidatureTagForm, RedirectAttributes redirectAttributes) {
+    public String updateTags(@PathVariable Long id, @Valid PosteCandidatureTagForm posteCandidatureTagForm) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	postecandidature.setTags(posteCandidatureTagForm.getTags());
         return "redirect:/postecandidatures/" + id;

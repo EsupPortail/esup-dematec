@@ -98,7 +98,7 @@ public class PosteAPourvoirController {
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String create(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String create(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteAPourvoir);
             return "posteapourvoirs/create";
@@ -149,7 +149,7 @@ public class PosteAPourvoirController {
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String update(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String update(@Valid PosteAPourvoir posteAPourvoir, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, posteAPourvoir);
             return "posteapourvoirs/update";
@@ -217,7 +217,7 @@ public class PosteAPourvoirController {
 	
 	@RequestMapping(value = "/{id}/delFile/{idFile}")
 	@PreAuthorize("hasPermission(#id, 'manageposte')")
-	public String deletePosteFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String deletePosteFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request) throws IOException {
 		PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
 		PosteAPourvoirFile posteFile = posteAPourvoirFileDao.findPosteAPourvoirFile(idFile);
 		poste.getPosteFiles().remove(posteFile);

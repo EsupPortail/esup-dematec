@@ -4,7 +4,6 @@ import fr.univrouen.poste.dao.AppliConfigFileTypeDao;
 import fr.univrouen.poste.dao.PosteCandidatureFileDao;
 import fr.univrouen.poste.domain.AppliConfigFileType;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +46,7 @@ public class AppliConfigFileTypeController {
     
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String create(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, appliConfigFileType);
             return "admin/appliconfigfiletype/create";
@@ -63,7 +62,7 @@ public class AppliConfigFileTypeController {
     }
 
 	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String update(@Valid AppliConfigFileType appliConfigFileType, BindingResult bindingResult, Model uiModel) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, appliConfigFileType);
             return "admin/appliconfigfiletype/update";

@@ -58,7 +58,7 @@ public class UserController {
     PasswordEncoder passwordEncoder;
 
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid User user, BindingResult result, Model model, HttpServletRequest request) {
+    public String create(@Valid User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("user", user);
             logger.error("Error when creating an user : " + result.getGlobalError());
@@ -84,7 +84,7 @@ public class UserController {
     
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid User user, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String update(@Valid User user, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, user);
             return "admin/users/update";

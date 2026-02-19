@@ -157,7 +157,7 @@ public class CommissionEntryController {
     
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String create(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, commissionEntry);
             return "admin/commissionentrys/create";
@@ -180,7 +180,7 @@ public class CommissionEntryController {
     }
 
 	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+    public String update(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, commissionEntry);
             return "admin/commissionentrys/update";
