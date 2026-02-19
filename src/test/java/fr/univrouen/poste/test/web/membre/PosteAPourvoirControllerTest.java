@@ -22,11 +22,11 @@ import fr.univrouen.poste.test.AbstractControllerTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -85,12 +85,12 @@ public class PosteAPourvoirControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteAPourvoir> postes = (List<PosteAPourvoir>) result.getModelAndView()
+        Page<PosteAPourvoir> postes = (Page<PosteAPourvoir>) result.getModelAndView()
                 .getModel().get("posteapourvoirs");
 
         // Si des postes existent, tester l'affichage du premier
         if (postes != null && !postes.isEmpty()) {
-            PosteAPourvoir poste = postes.get(0);
+            PosteAPourvoir poste = postes.getContent().get(0);
             mockMvc.perform(get("/posteapourvoirs/" + poste.getId()))
                     .andExpect(status().isOk());
         }
@@ -112,14 +112,14 @@ public class PosteAPourvoirControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteAPourvoir> postes = (List<PosteAPourvoir>) result.getModelAndView()
+        Page<PosteAPourvoir> postes = (Page<PosteAPourvoir>) result.getModelAndView()
                 .getModel().get("posteapourvoirs");
         assertNotNull("La liste des postes ne doit pas être null", postes);
         assertFalse("Des postes doivent avoir été créés par GalaxieImportControllerTest", postes.isEmpty());
 
-        System.out.println("✓ Nombre de postes disponibles : " + postes.size());
+        System.out.println("✓ Nombre de postes disponibles : " + postes.getContent().size());
         if (!postes.isEmpty()) {
-            System.out.println("✓ Exemple de poste : " + postes.get(0).getNumEmploi());
+            System.out.println("✓ Exemple de poste : " + postes.getContent().get(0).getNumEmploi());
         }
     }
 

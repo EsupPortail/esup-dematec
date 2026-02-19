@@ -24,6 +24,7 @@ import fr.univrouen.poste.test.TestUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.data.domain.Page;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
@@ -79,14 +80,14 @@ public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidature
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
+        Page<PosteCandidature> candidatures = (Page<PosteCandidature>) result.getModelAndView()
                 .getModel().get("postecandidatures");
 
         assertNotNull("La liste des candidatures ne doit pas être null", candidatures);
         assertFalse("Le candidat doit avoir au moins une candidature", candidatures.isEmpty());
 
         // Récupérer la première candidature
-        PosteCandidature premiereCandidature = candidatures.get(0);
+        PosteCandidature premiereCandidature = candidatures.getContent().get(0);
         assertNotNull("La candidature ne doit pas être null", premiereCandidature);
         assertNotNull("Le poste de la candidature ne doit pas être null", premiereCandidature.getPoste());
 
@@ -118,10 +119,10 @@ public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidature
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
+        Page<PosteCandidature> candidatures = (Page<PosteCandidature>) result.getModelAndView()
                 .getModel().get("postecandidatures");
 
-        PosteCandidature candidature = candidatures.stream()
+        PosteCandidature candidature = candidatures.getContent().stream()
                 .filter(c -> numEmploiPoste.equals(c.getPoste().getNumEmploi()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Candidature pour le poste " + numEmploiPoste + " introuvable"));
@@ -171,10 +172,10 @@ public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidature
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
+        Page<PosteCandidature> candidatures = (Page<PosteCandidature>) result.getModelAndView()
                 .getModel().get("postecandidatures");
 
-        PosteCandidature candidature = candidatures.stream()
+        PosteCandidature candidature = candidatures.getContent().stream()
                 .filter(c -> numEmploiPoste.equals(c.getPoste().getNumEmploi()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Candidature pour le poste " + numEmploiPoste + " introuvable"));

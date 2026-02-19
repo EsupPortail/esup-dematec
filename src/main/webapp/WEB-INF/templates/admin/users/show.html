@@ -29,7 +29,7 @@
     <div class="row-fluid">
       <div class="span3 well">
         <strong>Date d'activation</strong><br/>
-        <span th:text="${#temporals.format(user.activationDate, 'dd/MM/yyyy HH:mm')}">Date</span>
+        <span th:text="${#dates.format(user.activationDate, 'dd/MM/yyyy HH:mm')}">Date</span>
       </div>
       <div class="span3 well">
         <strong>Clé d'activation</strong><br/>

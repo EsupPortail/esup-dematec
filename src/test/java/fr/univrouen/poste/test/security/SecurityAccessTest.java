@@ -19,7 +19,6 @@ package fr.univrouen.poste.test.security;
 
 import fr.univrouen.poste.test.AbstractControllerTest;
 import org.junit.Test;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -85,7 +84,7 @@ public class SecurityAccessTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "membre@example.org", roles = {"MEMBRE"})
+    @WithUserDetails("membre@example.org")
     public void testMembreZoneAccessibleForMembre() throws Exception {
         mockMvc.perform(get("/posteapourvoirs"))
                 .andExpect(status().isOk());

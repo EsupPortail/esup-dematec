@@ -133,15 +133,13 @@ public class PosteAPourvoirController {
     		String emailAddress = auth.getName();
     		User user = userDao.findUserByEmailAddress(emailAddress);
     		if (user != null) {
-    			List<PosteAPourvoir> posteapourvoirs = posteAPourvoirDao.findPosteAPourvoirsByMembre(user);
+				Page<PosteAPourvoir> posteapourvoirs = posteAPourvoirDao.findPosteAPourvoirsByMembre(pageable, user);
     			uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
     		}
-    	} else if (pageable.isPaged()) {
-            Page<PosteAPourvoir> page = posteAPourvoirDao.findPosteAPourvoirEntries(pageable, sortFieldName, sortOrder);
-            uiModel.addAttribute("posteapourvoirs", page);
-        } else {
-            uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirs(sortFieldName, sortOrder));
-        }
+    	} else {
+			Page<PosteAPourvoir> posteapourvoirs = posteAPourvoirDao.findPosteAPourvoirEntries(pageable, sortFieldName, sortOrder);
+			uiModel.addAttribute("posteapourvoirs", posteapourvoirs);
+		}
     	AppliConfig config = appliConfigDao.getAppliConfig();
     	String textePostesMenu4Members = config != null ? config.getTextePostesMenu4Members() : "";
     	uiModel.addAttribute("textePostesMenu4Members", textePostesMenu4Members);

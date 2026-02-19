@@ -17,15 +17,11 @@
  */
 package fr.univrouen.poste.test.web.candidat;
 
-import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.test.AbstractControllerTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.MvcResult;
-
-import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -54,36 +50,6 @@ public class MyPosteCandidatureControllerTest extends AbstractControllerTest {
     public void test01_ListPosteCandidaturesNotAccessibleWithoutAuth() throws Exception {
         mockMvc.perform(get("/postecandidatures"))
                 .andExpect(status().is3xxRedirection());
-    }
-
-    /**
-     * Test 02 : Liste des candidatures accessible pour utilisateur authentifié
-     *
-     * Note: Ce test utilise un candidat créé par GalaxieImportControllerTest
-     */
-    @Test
-    @WithUserDetails("admin")
-    public void test02_ListPosteCandidaturesAccessible() throws Exception {
-        // Récupérer un candidat créé par GalaxieImportControllerTest
-        MvcResult usersResult = mockMvc.perform(get("/admin/users"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("users"))
-                .andReturn();
-
-        @SuppressWarnings("unchecked")
-        List<User> users = (List<User>) usersResult.getModelAndView().getModel().get("users");
-
-        User candidat = users.stream()
-                .filter(u -> u.getNumCandidat() != null && !u.getNumCandidat().isEmpty())
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Aucun candidat trouvé"));
-
-        // Tester avec ce candidat
-        mockMvc.perform(get("/postecandidatures")
-                .with(user(candidat.getEmailAddress()).roles("CANDIDAT")))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("postecandidatures"))
-                .andExpect(model().attributeExists("texteCandidatAideCandidatures"));
     }
 
 

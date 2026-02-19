@@ -89,6 +89,11 @@ public class RetrieveUserService {
         try {
             User targetUser =  userDao.findUsersByEmailAddress(username);
 
+            if(targetUser == null) {
+                logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
+                throw new BadCredentialsException("Compte utilisateur et/ou mot de passe invalide");
+            }
+
             if (targetUser.isLocked()) {
                 throw new BadCredentialsException("Compte vérouillé, merci de retenter d'ici quelques secondes.");
             }

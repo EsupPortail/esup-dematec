@@ -24,15 +24,17 @@ import fr.univrouen.poste.test.AbstractControllerTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.data.domain.Page;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -101,12 +103,12 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<CommissionExcel> commissionExcels = (List<CommissionExcel>) commissionExcelResult.getModelAndView()
+        Page<CommissionExcel> commissionExcels = (Page<CommissionExcel>) commissionExcelResult.getModelAndView()
                 .getModel().get("commissionexcels");
         assertNotNull("La liste des CommissionExcel ne doit pas être null", commissionExcels);
-        assertTrue("Au moins un CommissionExcel doit être créé", commissionExcels.size() > 0);
+        assertTrue("Au moins un CommissionExcel doit être créé", commissionExcels.getContent().size() > 0);
 
-        CommissionExcel lastCommissionExcel = commissionExcels.get(0);
+        CommissionExcel lastCommissionExcel = commissionExcels.getContent().get(0);
         assertNotNull("Le dernier CommissionExcel doit exister", lastCommissionExcel);
         assertEquals("Le nom du fichier doit correspondre", excelFile.getName(), lastCommissionExcel.getFilename());
 
@@ -120,12 +122,12 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<CommissionEntry> commissionEntries = (List<CommissionEntry>) commissionEntryResult.getModelAndView()
+        Page<CommissionEntry> commissionEntries = (Page<CommissionEntry>) commissionEntryResult.getModelAndView()
                 .getModel().get("commissionentrys");
         assertNotNull("La liste des CommissionEntry ne doit pas être null", commissionEntries);
-        assertTrue("Des CommissionEntry doivent être créées après le parsing", commissionEntries.size() > 0);
+        assertTrue("Des CommissionEntry doivent être créées après le parsing", commissionEntries.getContent().size() > 0);
 
-        System.out.println("✓ Nombre de CommissionEntry créées : " + commissionEntries.size());
+        System.out.println("✓ Nombre de CommissionEntry créées : " + commissionEntries.getContent().size());
 
         // 5. Compter les entités AVANT la génération via MockMvc
         MvcResult usersBeforeResult = mockMvc.perform(get("/admin/users"))
@@ -134,8 +136,8 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> usersBefore = (List<User>) usersBeforeResult.getModelAndView().getModel().get("users");
-        int userCountBefore = usersBefore != null ? usersBefore.size() : 0;
+        Page<User> usersBefore = (Page<User>) usersBeforeResult.getModelAndView().getModel().get("users");
+        int userCountBefore = usersBefore != null ? usersBefore.getContent().size() : 0;
 
         System.out.println("Avant génération : Users=" + userCountBefore);
 
@@ -151,9 +153,9 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> usersAfter = (List<User>) usersAfterResult.getModelAndView().getModel().get("users");
+        Page<User> usersAfter = (Page<User>) usersAfterResult.getModelAndView().getModel().get("users");
         assertNotNull("La liste des utilisateurs après génération ne doit pas être null", usersAfter);
-        int userCountAfter = usersAfter.size();
+        int userCountAfter = usersAfter.getContent().size();
 
         assertTrue("Des utilisateurs doivent être créés", userCountAfter > userCountBefore);
 
@@ -163,36 +165,33 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
         // 9. Vérifier qu'on peut récupérer un utilisateur créé
         if (userCountAfter > userCountBefore) {
             assertFalse("La liste des utilisateurs ne doit pas être vide", usersAfter.isEmpty());
-            User firstUser = usersAfter.get(0);
+            User firstUser = usersAfter.getContent().get(userCountAfter-1);
             assertNotNull("L'utilisateur doit avoir un email", firstUser.getEmailAddress());
             System.out.println("✓ Exemple d'utilisateur créé : " + firstUser.getEmailAddress());
         }
 
         // 11. Vérifier qu'un membre de commission manager@example.org a été créé via MockMvc
-        MvcResult managerResult = mockMvc.perform(get("/admin/users")
-                .param("find", "ByEmailAddress")
-                .param("emailAddress", "manager@example.org"))
+        MvcResult membresResult = mockMvc.perform(get("/admin/users")
+                .param("nomOrPrenomOrEmailAddress", "membre@example.org"))
                 .andExpect(status().isOk())
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> managers = (List<User>) managerResult.getModelAndView().getModel().get("users");
+        Page<User> membres = (Page<User>) membresResult.getModelAndView().getModel().get("users");
+        assertFalse(membres.isEmpty());
 
-        if (managers != null && !managers.isEmpty()) {
-            User manager = managers.get(0);
-            assertNotNull("Le membre de commission manager@example.org doit exister", manager);
-            assertEquals("L'email doit correspondre", "manager@example.org", manager.getEmailAddress());
-            System.out.println("✓ Membre de commission créé : " + manager.getEmailAddress());
+        User membre = membres.getContent().get(0);
+        assertNotNull("Le membre de commission membre@example.org doit exister", membre);
+        assertEquals("L'email doit correspondre", "membre@example.org", membre.getEmailAddress());
+        System.out.println("✓ Membre de commission créé : " + membre.getEmailAddress());
 
-            // Vérifier que le membre a bien le rôle MANAGER
-            if (manager.getIsManager() != null && manager.getIsManager()) {
-                System.out.println("✓ Le membre a le rôle MANAGER");
-            } else {
-                System.out.println("ℹ Le membre n'a pas le rôle MANAGER (peut être membre de commission seulement)");
-            }
-        } else {
-            System.out.println("⚠ Attention : aucun membre manager@example.org n'a été créé (dépend du contenu du fichier COMMISSION.xls)");
-        }
+        // Vérifier que le membre n'est pas manager ni candidat mais manager
+        assertFalse("Le membre ne doit pas être admin", membre.getIsAdmin());
+        assertFalse("Le membre ne doit pas être  doit être manager", membre.getIsManager());
+        assertFalse("Le membre ne doit pas être super manager", membre.getIsSuperManager());
+        // Impossible de récupérer les postes en lazy via MockMvc dont getIsMembre est false ici...
+        // assertTrue(membre.getIsMembre());
+        assertFalse(membre.getIsCandidat());
     }
 
     /**
@@ -267,11 +266,11 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<CommissionEntry> entries = (List<CommissionEntry>) commissionEntryResult.getModelAndView()
+        Page<CommissionEntry> entries = (Page<CommissionEntry>) commissionEntryResult.getModelAndView()
                 .getModel().get("commissionentrys");
 
         if (entries != null && !entries.isEmpty()) {
-            System.out.println("✓ Nombre total de CommissionEntry : " + entries.size());
+            System.out.println("✓ Nombre total de CommissionEntry : " + entries.getContent().size());
 
             // Vérifier via le modèle les listes unknowMembres et unknowPostes
             // qui indiquent les entrées sans membre ou poste
@@ -282,7 +281,7 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
             java.util.Set<String> unknowPostes = (java.util.Set<String>) commissionEntryResult.getModelAndView()
                     .getModel().get("unknowPostes");
 
-            int totalEntries = entries.size();
+            int totalEntries = entries.getContent().size();
             int entriesWithMembreNull = unknowMembres != null ? unknowMembres.size() : 0;
             int entriesWithPosteNull = unknowPostes != null ? unknowPostes.size() : 0;
 

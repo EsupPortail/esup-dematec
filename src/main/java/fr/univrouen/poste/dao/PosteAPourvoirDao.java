@@ -63,11 +63,11 @@ public class PosteAPourvoirDao {
                 .toList();
     }
 
-    public List<PosteAPourvoir> findPosteAPourvoirsByMembre(User membre) {
+    public Page<PosteAPourvoir> findPosteAPourvoirsByMembre(Pageable pageable, User membre) {
         if (membre == null) throw new IllegalArgumentException("The membre argument is required");
-        return posteAPourvoirRepository.findByMembresContains(membre).stream()
-                .sorted((a, b) -> a.getNumEmploi().compareTo(b.getNumEmploi()))
-                .toList();
+        Sort.Direction direction = Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, "numEmploi");
+        return posteAPourvoirRepository.findByMembresContains(membre, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort));
     }
 
     public Page<PosteAPourvoir> findPosteAPourvoirEntries(Pageable pageable, String sortFieldName, String sortOrder) {

@@ -202,7 +202,7 @@
               <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="candidat.numCandidat">N°Galaxie</a></th>
               <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="recevableEnum">Recevable</a></th>
               <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'') or hasRole(''ROLE_MEMBRE'')')}"><a sd:pagination-sort="auditionnable">Auditionnable</a></th>
-              <th th:if="${laureatEnable and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="laureat">Lauréat</a></th>
+              <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')') and laureatEnable}"><a sd:pagination-sort="laureat">Lauréat</a></th>
               <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="managerReview.reviewStatus">Vue</a></th>
               <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="creation">Création</a></th>
               <th th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}"><a sd:pagination-sort="modification">Modification</a></th>
@@ -231,7 +231,7 @@
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.numCandidat}">N°Galaxie</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.recevableEnum}">Recevable</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'') or hasRole(''ROLE_MEMBRE'')')}" th:text="${candidature.auditionnable}">Auditionnable</td>
-              <td th:if="${laureatEnable and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.laureat}">Lauréat</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')') and laureatEnable}" th:text="${candidature.laureat}">Lauréat</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReviewState}">Vue</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${#dates.format(candidature.creation, posteCandidature_creation_date_format)}">Création</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${#dates.format(candidature.modification, posteCandidature_modification_date_format)}">Modification</td>

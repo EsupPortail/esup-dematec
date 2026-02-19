@@ -19,17 +19,20 @@ package fr.univrouen.poste.test.web.admin;
 
 import fr.univrouen.poste.domain.AppliConfig;
 import fr.univrouen.poste.test.AbstractControllerTest;
+import fr.univrouen.poste.test.TestUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -53,16 +56,21 @@ public class ChangeDateKoSetupControllerTest extends AbstractControllerTest {
         MvcResult result = mockMvc.perform(get("/admin/appliconfig"))
                 .andExpect(status().isOk()).andReturn();
 
-        List<AppliConfig> appliconfigs = (List<AppliConfig>) result.getModelAndView().getModel().get("appliconfigs");
-        assertTrue("Il doit y avoir 1 configuration appliconfig", appliconfigs.size()==1);
+        Page<AppliConfig> appliconfigs = (Page<AppliConfig>) result.getModelAndView().getModel().get("appliconfigs");
+        assertTrue("Il doit y avoir 1 configuration appliconfig", appliconfigs.getContent().size()==1);
 
-        AppliConfig config = appliconfigs.get(0);
+        AppliConfig config = appliconfigs.getContent().get(0);
         Date pastDate = new Date(System.currentTimeMillis() - 24 * 3600 * 1000); // -1 jour
         config.setDateEndCandidat(pastDate);
         config.setDateEndMembre(pastDate);
         config.setDateEndCandidatActif(pastDate);
 
-        System.out.println("✓");
+        // on put aussi la config modifiée car sinon elle reste en cache dans appliConfigService
+        mockMvc.perform(put("/admin/appliconfig")
+                        .with(csrf())
+                        .params(TestUtils.getParamsAsStringMap(config))
+                )
+                .andExpect(status().is3xxRedirection());
     }
 
 

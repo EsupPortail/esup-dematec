@@ -61,7 +61,7 @@ public class AppliConfigController {
 	}
 
 
-	@RequestMapping(produces = "text/html")
+	@RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
         if (pageable.isPaged()) {
             Page<AppliConfig> page = appliConfigDao.findAppliConfigEntries(pageable, sortFieldName, sortOrder);

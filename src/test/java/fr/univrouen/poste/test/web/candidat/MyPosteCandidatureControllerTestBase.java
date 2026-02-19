@@ -3,9 +3,9 @@ package fr.univrouen.poste.test.web.candidat;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.test.AbstractControllerTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,11 +26,11 @@ public abstract class MyPosteCandidatureControllerTestBase extends AbstractContr
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
+        Page<PosteCandidature> candidatures = (Page<PosteCandidature>) result.getModelAndView()
                 .getModel().get("postecandidatures");
 
         assertNotNull("La liste des candidatures ne doit pas être null", candidatures);
-        System.out.println("✓ Nombre de candidatures pour " + "candidat@example.org" + " : " + candidatures.size());
+        System.out.println("✓ Nombre de candidatures pour " + "candidat@example.org" + " : " + candidatures.getContent().size());
     }
 
     void test_VerificationTelechargementFichier() throws Exception {

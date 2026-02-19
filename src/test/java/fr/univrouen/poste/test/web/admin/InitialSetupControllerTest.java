@@ -23,11 +23,11 @@ import fr.univrouen.poste.test.AbstractControllerTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -64,7 +64,7 @@ public class InitialSetupControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> users = (List<User>) result.getModelAndView().getModel().get("users");
+        Page<User> users = (Page<User>) result.getModelAndView().getModel().get("users");
         assertNotNull("La liste des utilisateurs ne doit pas être null", users);
 
         // Chercher l'utilisateur admin
@@ -74,7 +74,7 @@ public class InitialSetupControllerTest extends AbstractControllerTest {
         assertTrue("L'utilisateur admin doit exister", adminFound);
 
         System.out.println("✓ Utilisateur admin vérifié");
-        System.out.println("✓ Nombre d'utilisateurs au démarrage : " + users.size());
+        System.out.println("✓ Nombre d'utilisateurs au démarrage : " + users.getContent().size());
     }
 
     /**
@@ -102,19 +102,17 @@ public class InitialSetupControllerTest extends AbstractControllerTest {
         System.out.println("✓ Création de super-manager@example.org effectuée");
 
         // Vérifier que l'utilisateur a bien été créé
-        MvcResult result = mockMvc.perform(get("/admin/users")
-                .param("find", "ByEmailAddress")
-                .param("emailAddress", "super-manager@example.org"))
+        MvcResult result = mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("users"))
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> users = (List<User>) result.getModelAndView().getModel().get("users");
+        Page<User> users = (Page<User>) result.getModelAndView().getModel().get("users");
         assertNotNull("La liste des utilisateurs ne doit pas être null", users);
-        assertEquals("Un utilisateur super-manager@example.org doit avoir été créé", 1, users.size());
+        assertEquals("Un utilisateur super-manager@example.org doit avoir été créé", 2, users.getContent().size());
 
-        User superManager = users.get(0);
+        User superManager = users.getContent().get(1);
         assertEquals("L'email doit correspondre", "super-manager@example.org", superManager.getEmailAddress());
         assertEquals("Le nom doit correspondre", "SuperManager", superManager.getNom());
         assertEquals("Le prénom doit correspondre", "Test", superManager.getPrenom());
@@ -181,19 +179,20 @@ public class InitialSetupControllerTest extends AbstractControllerTest {
         MvcResult result = mockMvc.perform(get("/admin/appliconfig"))
                 .andExpect(status().isOk()).andReturn();
 
-        List<AppliConfig> appliconfigs = (List<AppliConfig>) result.getModelAndView().getModel().get("appliconfigs");
-        assertTrue("Il doit y avoir 1 configuration appliconfig", appliconfigs.size()==1);
+        Page<AppliConfig> appliconfigs = (Page<AppliConfig>) result.getModelAndView().getModel().get("appliconfigs");
+        assertTrue("Il doit y avoir 1 configuration appliconfig", appliconfigs.getContent().size()==1);
 
-        AppliConfig config = appliconfigs.get(0);
+        AppliConfig config = appliconfigs.getContent().get(0);
         Date futureDate = new Date(System.currentTimeMillis() + 30L * 24 * 3600 * 1000); // +30 jours
         config.setDateEndCandidat(futureDate);
         config.setDateEndMembre(futureDate);
         config.setDateEndCandidatActif(futureDate);
         config.setTitre("Test depuis test d'intégration");
+
         // vérification
         result = mockMvc.perform(get("/admin/appliconfig/" + config.getId()))
                 .andExpect(status().isOk()).andReturn();
-        AppliConfig updatedConfig = (AppliConfig) result.getModelAndView().getModel().get("appliconfig");
+        AppliConfig updatedConfig = (AppliConfig) result.getModelAndView().getModel().get("appliConfig");
         assertNotNull("La configuration doit être récupérée", updatedConfig);
         assertEquals("Le titre doit être mis à jour", "Test depuis test d'intégration", updatedConfig.getTitre());
         assertNotNull("La date de fin candidat doit être mise à jour", updatedConfig.getDateEndCandidat());

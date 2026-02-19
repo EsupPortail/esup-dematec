@@ -283,26 +283,26 @@
 
         <i th:if="${postecandidature.managerReviewState == 'Vue'}">
           Vue par <span th:text="${postecandidature.managerReview.manager.emailAddress}"></span> le
-          <span th:text="${#temporals.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span>
+          <span th:text="${#dates.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span>
         </i>
 
         <i th:if="${postecandidature.managerReviewState == 'Vue_incomplet'}">
           Vue par <span th:text="${postecandidature.managerReview.manager.emailAddress}"></span> le
-          <span th:text="${#temporals.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span>
+          <span th:text="${#dates.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span>
           mais notée comme <b>incomplet</b>
         </i>
 
         <i th:if="${postecandidature.managerReviewState == 'Vue_mais_modifie_depuis'}">
           Vue par <span th:text="${postecandidature.managerReview.manager.emailAddress}"></span> le
-          <span th:text="${#temporals.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span> ...
-          <b> mais modifiée depuis (<span th:text="${#temporals.format(postecandidature.modification, 'dd/MM/yyyy HH:mm')}"></span>)</b>
+          <span th:text="${#dates.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span> ...
+          <b> mais modifiée depuis (<span th:text="${#dates.format(postecandidature.modification, 'dd/MM/yyyy HH:mm')}"></span>)</b>
         </i>
 
         <i th:if="${postecandidature.managerReviewState == 'Vue_incomplet_mais_modifie_depuis'}">
           Vue par <span th:text="${postecandidature.managerReview.manager.emailAddress}"></span> le
-          <span th:text="${#temporals.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span>
+          <span th:text="${#dates.format(postecandidature.managerReview.reviewDate, 'dd/MM/yyyy HH:mm')}"></span>
           et notée comme <b>incomplet</b> ...
-          <b> mais modifiée depuis (<span th:text="${#temporals.format(postecandidature.modification, 'dd/MM/yyyy HH:mm')}"></span>)</b>
+          <b> mais modifiée depuis (<span th:text="${#dates.format(postecandidature.modification, 'dd/MM/yyyy HH:mm')}"></span>)</b>
         </i>
       </div>
     </div>

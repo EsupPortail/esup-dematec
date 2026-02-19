@@ -23,10 +23,10 @@ import fr.univrouen.poste.test.TestUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -103,16 +103,15 @@ public class UserControllerTest extends AbstractControllerTest {
 
         // Vérifier que l'utilisateur a été créé via MockMvc
         MvcResult result = mockMvc.perform(get("/admin/users")
-                .param("find", "ByEmailAddress")
-                .param("emailAddress", "newadmin@example.org"))
+                .param("nomOrPrenomOrEmailAddress", "newadmin@example.org"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("users"))
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> users = (List<User>) result.getModelAndView().getModel().get("users");
+        Page<User> users = (Page<User>) result.getModelAndView().getModel().get("users");
         assertNotNull("La liste des utilisateurs ne doit pas être null", users);
-        assertEquals("Un utilisateur doit avoir été créé", 1, users.size());
+        assertEquals("Un utilisateur doit avoir été créé", 1, users.getContent().size());
     }
 
     /**
@@ -139,16 +138,15 @@ public class UserControllerTest extends AbstractControllerTest {
 
         // Vérifier que l'utilisateur a été créé via MockMvc
         MvcResult result = mockMvc.perform(get("/admin/users")
-                .param("find", "ByEmailAddress")
-                .param("emailAddress", uniqueEmail))
+                .param("nomOrPrenomOrEmailAddress", uniqueEmail))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("users"))
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> users = (List<User>) result.getModelAndView().getModel().get("users");
+        Page<User> users = (Page<User>) result.getModelAndView().getModel().get("users");
         assertNotNull("La liste des utilisateurs ne doit pas être null", users);
-        assertEquals("Un utilisateur doit avoir été créé", 1, users.size());
+        assertEquals("Un utilisateur doit avoir été créé", 1, users.getContent().size());
     }
 
     @Test
@@ -160,8 +158,8 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> users = (List<User>) result.getModelAndView().getModel().get("users");
-        User candidat3 = users.stream()
+        Page<User> users = (Page<User>) result.getModelAndView().getModel().get("users");
+        User candidat3 = users.getContent().stream()
                 .filter(u -> "candidat3@example.org".equals(u.getEmailAddress()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
@@ -172,7 +170,7 @@ public class UserControllerTest extends AbstractControllerTest {
                 .andExpect(status().is3xxRedirection());
 
 
-        User membre = users.stream()
+        User membre = users.getContent().stream()
                 .filter(u -> "membre@example.org".equals(u.getEmailAddress()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));

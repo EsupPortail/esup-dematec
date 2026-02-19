@@ -25,13 +25,13 @@ import fr.univrouen.poste.test.AbstractControllerTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.data.domain.Page;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -100,12 +100,12 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<GalaxieExcel> galaxieExcels = (List<GalaxieExcel>) galaxieExcelResult.getModelAndView()
+        Page<GalaxieExcel> galaxieExcels = (Page<GalaxieExcel>) galaxieExcelResult.getModelAndView()
                 .getModel().get("galaxieexcels");
         assertNotNull("La liste des GalaxieExcel ne doit pas être null", galaxieExcels);
         assertTrue("Au moins un GalaxieExcel doit être créé", !galaxieExcels.isEmpty());
 
-        GalaxieExcel lastGalaxieExcel = galaxieExcels.get(0);
+        GalaxieExcel lastGalaxieExcel = galaxieExcels.getContent().get(0);
         assertNotNull("Le dernier GalaxieExcel doit exister", lastGalaxieExcel);
         assertEquals("Le nom du fichier doit correspondre", excelFile.getName(), lastGalaxieExcel.getFilename());
 
@@ -119,12 +119,12 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<GalaxieEntry> galaxieEntries = (List<GalaxieEntry>) galaxieEntryResult.getModelAndView()
+        Page<GalaxieEntry> galaxieEntries = (Page<GalaxieEntry>) galaxieEntryResult.getModelAndView()
                 .getModel().get("galaxieentrys");
         assertNotNull("La liste des GalaxieEntry ne doit pas être null", galaxieEntries);
         assertTrue("Des GalaxieEntry doivent être créées après le parsing", !galaxieEntries.isEmpty());
 
-        System.out.println("✓ Nombre de GalaxieEntry créées : " + galaxieEntries.size());
+        System.out.println("✓ Nombre de GalaxieEntry créées : " + galaxieEntries.getContent().size());
 
         // 5. Compter les entités AVANT la génération via MockMvc
         MvcResult usersBeforeResult = mockMvc.perform(get("/admin/users"))
@@ -133,8 +133,8 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> usersBefore = (List<User>) usersBeforeResult.getModelAndView().getModel().get("users");
-        int userCountBefore = usersBefore != null ? usersBefore.size() : 0;
+        Page<User> usersBefore = (Page<User>) usersBeforeResult.getModelAndView().getModel().get("users");
+        int userCountBefore = usersBefore != null ? usersBefore.getContent().size() : 0;
 
         MvcResult postesBeforeResult = mockMvc.perform(get("/posteapourvoirs"))
                 .andExpect(status().isOk())
@@ -142,9 +142,9 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteAPourvoir> postesBefore = (List<PosteAPourvoir>) postesBeforeResult.getModelAndView()
+        Page<PosteAPourvoir> postesBefore = (Page<PosteAPourvoir>) postesBeforeResult.getModelAndView()
                 .getModel().get("posteapourvoirs");
-        int posteCountBefore = postesBefore != null ? postesBefore.size() : 0;
+        int posteCountBefore = postesBefore != null ? postesBefore.getContent().size() : 0;
 
         System.out.println("Avant génération : Users=" + userCountBefore +
                            ", Postes=" + posteCountBefore);
@@ -161,9 +161,9 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<User> usersAfter = (List<User>) usersAfterResult.getModelAndView().getModel().get("users");
+        Page<User> usersAfter = (Page<User>) usersAfterResult.getModelAndView().getModel().get("users");
         assertNotNull("La liste des utilisateurs après génération ne doit pas être null", usersAfter);
-        int userCountAfter = usersAfter.size();
+        int userCountAfter = usersAfter.getContent().size();
 
         assertTrue("Des utilisateurs doivent être créés", userCountAfter > userCountBefore);
 
@@ -174,10 +174,10 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteAPourvoir> postesAfter = (List<PosteAPourvoir>) postesAfterResult.getModelAndView()
+        Page<PosteAPourvoir> postesAfter = (Page<PosteAPourvoir>) postesAfterResult.getModelAndView()
                 .getModel().get("posteapourvoirs");
         assertNotNull("La liste des postes après génération ne doit pas être null", postesAfter);
-        int posteCountAfter = postesAfter.size();
+        int posteCountAfter = postesAfter.getContent().size();
 
         assertTrue("Des postes doivent être créés", posteCountAfter > posteCountBefore);
 
@@ -190,7 +190,7 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
         // 10. Vérifier qu'on peut récupérer un utilisateur créé
         if (userCountAfter > userCountBefore) {
             assertFalse("La liste des utilisateurs ne doit pas être vide", usersAfter.isEmpty());
-            User firstUser = usersAfter.get(0);
+            User firstUser = usersAfter.getContent().get(0);
             assertNotNull("L'utilisateur doit avoir un email", firstUser.getEmailAddress());
             System.out.println("✓ Exemple d'utilisateur créé : " + firstUser.getEmailAddress());
         }
@@ -198,7 +198,7 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
         // 11. Vérifier qu'on peut récupérer un poste créé
         if (posteCountAfter > posteCountBefore) {
             assertFalse("La liste des postes ne doit pas être vide", postesAfter.isEmpty());
-            PosteAPourvoir firstPoste = postesAfter.get(0);
+            PosteAPourvoir firstPoste = postesAfter.getContent().get(0);
             assertNotNull("Le poste doit avoir un numéro d'emploi", firstPoste.getNumEmploi());
             System.out.println("✓ Exemple de poste créé : " + firstPoste.getNumEmploi());
         }
