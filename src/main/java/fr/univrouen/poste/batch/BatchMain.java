@@ -1,23 +1,17 @@
 package fr.univrouen.poste.batch;
 
+import fr.univrouen.poste.config.AppContextConfig;
+import fr.univrouen.poste.services.ArchiveService;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import java.io.IOException;
 import java.sql.SQLException;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import fr.univrouen.poste.services.ArchiveService;
-import fr.univrouen.poste.services.GalaxieEntriesService;
 
 public class BatchMain {
 
 	public static void main(String[] args) throws IOException, SQLException  {
-		ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext("classpath*:META-INF/spring/applicationContext*.xml");
+		AnnotationConfigApplicationContext springContext =
+				new AnnotationConfigApplicationContext(AppContextConfig.class);
 		
 		if(args.length < 1 || !"archive".equals(args[0]) && !"dbupgrade".equals(args[0]) && !"deletedata".equals(args[0]) && !"importgalaxie".equals(args[0])) {
 			System.err.println("#####\n" +

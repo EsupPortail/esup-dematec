@@ -27,8 +27,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.*;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-// Note: EnableSpringConfigured est fourni par spring-aspects (contexte AspectJ LTW/CTW)
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -51,14 +49,15 @@ import java.util.List;
 @EnableCaching
 @EnableAsync
 @EnableAspectJAutoProxy
-@EnableSpringConfigured
 @ComponentScan(
         basePackages = "fr.univrouen.poste",
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ANNOTATION,
                         classes = org.springframework.stereotype.Controller.class),
                 @ComponentScan.Filter(type = FilterType.ANNOTATION,
-                        classes = org.springframework.web.bind.annotation.ControllerAdvice.class)
+                        classes = org.springframework.web.bind.annotation.ControllerAdvice.class),
+                @ComponentScan.Filter(type = FilterType.REGEX,
+                        pattern = "fr\\.univrouen\\.poste\\.config\\.(WebMvcConfig|SecurityConfig|MethodSecurityConfig)")
         }
 )
 @EnableJpaRepositories(basePackages = "fr.univrouen.poste.repository")
@@ -120,6 +119,8 @@ public class AppContextConfig {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setPersistenceUnitName("persistenceUnit");
         emf.setDataSource(dataSource);
+        // Important: charge le persistence.xml situé dans META-INF
+        emf.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
         return emf;
     }
 
