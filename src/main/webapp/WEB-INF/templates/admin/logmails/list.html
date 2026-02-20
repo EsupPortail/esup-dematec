@@ -19,13 +19,6 @@
     
     <h2>Logs emails</h2>
     
-    <a th:href="@{/admin/logmails(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
-    <br/><br/>
-    
-    <div th:if="${logmails == null or #lists.isEmpty(logmails)}">
-      <p>Aucun élément trouvé.</p>
-    </div>
-    
     <table th:if="${logmails != null and !#lists.isEmpty(logmails)}" class="table table-striped table-bordered">
       <thead>
         <tr>
@@ -40,7 +33,6 @@
         <tr th:each="log : ${logmails}">
           <td class="btn-group">
             <a th:href="@{/admin/logmails/{id}(id=${log.id})}" class="btn btn-sm btn-info">Voir</a>
-            <a th:href="@{/admin/logmails/{id}(id=${log.id},form)}" class="btn btn-sm btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
           </td>
           <td th:text="${log.actionDate}"></td>
           <td th:text="${log.mailTo}"></td>

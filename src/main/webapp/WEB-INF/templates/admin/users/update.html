@@ -10,7 +10,7 @@
     
     <h2>Modifier l'utilisateur</h2>
     
-    <form th:action="@{/admin/users/{id}(id=${user.id})}" th:object="${user}" method="post">
+    <form th:action="@{/admin/users}" th:object="${user}" method="post">
       <input type="hidden" name="_method" value="put"/>
 
       <input type="hidden" th:field="*{id}"/>

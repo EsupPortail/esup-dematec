@@ -23,14 +23,13 @@ import fr.univrouen.poste.domain.LogFile;
 import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 import jakarta.annotation.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/admin/logfiles")
@@ -63,48 +62,13 @@ public class LogFileController {
 		}
 		return userNoms;
 	}
-	
-    @RequestMapping(params = "find=ByActionEquals", method = RequestMethod.GET)
-    public String findLogFilesByActionEquals(@ModelAttribute("command") LogSearchCriteria searchCriteria, @PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-    	if (pageable.isPaged()) {
-            List<LogFile> results = logFileDao.findLogFiles(searchCriteria, sortFieldName, sortOrder);
-            int start = (int) pageable.getOffset();
-            int end = Math.min(start + pageable.getPageSize(), results.size());
-            List<LogFile> sub = start <= end ? results.subList(start, end) : new ArrayList<>();
-            uiModel.addAttribute("logfiles", new PageImpl<>(sub, pageable, results.size()));
-        } else {
-            uiModel.addAttribute("logfiles", logFileDao.findLogFiles(searchCriteria, sortFieldName, sortOrder));
-        }
-    	
-        uiModel.addAttribute("command", searchCriteria);
-        uiModel.addAttribute("finderview", true);
 
-        addDateTimeFormatPatterns(uiModel);
-        return "admin/logfiles/list";
-    }
-    
-
-	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
-    public String show(@PathVariable Long id, Model uiModel) {
-        addDateTimeFormatPatterns(uiModel);
-        uiModel.addAttribute("logfile", logFileDao.findLogFile(id));
-        uiModel.addAttribute("itemId", id);
-        return "admin/logfiles/show";
-    }
 
 	@RequestMapping(produces = "text/html")
-    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
-        if (pageable.isPaged()) {
-            Page<LogFile> result = logFileDao.findLogFileEntries(pageable, sortFieldName, sortOrder);
-            uiModel.addAttribute("logfiles", result);
-        } else {
-            uiModel.addAttribute("logfiles", logFileDao.findAllLogFiles(sortFieldName, sortOrder));
-        }
-        addDateTimeFormatPatterns(uiModel);
+    public String list(@PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable, Model uiModel) {
+        Page<LogFile> result = logFileDao.findLogFileEntries(pageable);
+        uiModel.addAttribute("logfiles", result);
         return "admin/logfiles/list";
     }
 
-	void addDateTimeFormatPatterns(Model uiModel) {
-        uiModel.addAttribute("logFile_actiondate_date_format", "dd/MM/yyyy HH:mm");
-    }
 }
