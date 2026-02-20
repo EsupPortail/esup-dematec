@@ -57,7 +57,7 @@
         </td>
         <td>
           <a th:href="@{/posteapourvoirs/{id}(id=${poste.id})}" class="btn btn-small btn-info">Voir</a>
-          <a th:href="@{/posteapourvoirs/{id}/edit(id=${poste.id})}" class="btn btn-small btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
+          <a th:href="@{/posteapourvoirs/{id}(id=${poste.id},form)}" class="btn btn-small btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
         </td>
       </tr>
     </tbody>
