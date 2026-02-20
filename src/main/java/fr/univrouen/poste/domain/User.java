@@ -127,18 +127,15 @@ public class User {
 	
 	public void reportLoginFailure() {
 		if(!isLocked() && ++loginFailedNb >= MAX_LOGIN_ATTEMPTS_BEFORE_LOCK) {
-	        
 			loginFailedTime = System.currentTimeMillis();
 		}
 	}
 
 	public void reportLoginOK() {
 		loginFailedNb = Long.valueOf(0);
-		loginFailedTime = Long.valueOf(0);
 	}
 
 	public Boolean isLocked() {
-        
 		Long currentTimeMS = System.currentTimeMillis();
 		if(currentTimeMS < loginFailedTime + MAX_MILISECONDS_LOCK) {
 			loginFailedNb = Long.valueOf(0);
@@ -146,6 +143,10 @@ public class User {
 		}
 		return false;
 	}
+
+    public LocalDateTime loginFailedTimeAsDate() {
+        	return LocalDateTime.ofEpochSecond(loginFailedTime/1000, 0, java.time.ZoneOffset.UTC);
+    }
 
 	public String toString() {
         return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("postes").toString();
