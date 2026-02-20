@@ -95,7 +95,7 @@ public class RetrieveUserService {
             }
 
             if (targetUser.isLocked()) {
-                throw new BadCredentialsException("Compte vérouillé, merci de retenter d'ici quelques secondes.");
+                throw new BadCredentialsException("Compte verrouillé, merci de retenter d'ici quelques secondes.");
             }
 
             // authenticate the person

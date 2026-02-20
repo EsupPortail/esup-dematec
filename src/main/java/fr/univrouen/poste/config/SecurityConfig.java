@@ -95,7 +95,11 @@ public class SecurityConfig {
                     .permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form.loginPage("/login").permitAll())
+            .formLogin(form -> form
+                .loginPage("/login")
+                .failureUrl("/login?error")
+                .permitAll()
+            )
             .logout(Customizer.withDefaults())
             .sessionManagement(session -> session
                 .maximumSessions(5)
@@ -154,6 +158,7 @@ public class SecurityConfig {
     /* ------------------------------------------------------------------ */
     /* Expression handler et listener d'événements                        */
     /* ------------------------------------------------------------------ */
+
 
     @Bean
     public DefaultWebSecurityExpressionHandler webSecurityExpressionHandler() {

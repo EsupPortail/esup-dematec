@@ -20,13 +20,18 @@ package fr.univrouen.poste.web;
 import fr.univrouen.poste.dao.AppliConfigDao;
 import fr.univrouen.poste.domain.AppliConfig;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 
@@ -44,7 +49,10 @@ public class LoginController {
 
     @RequestMapping
 	@Transactional
-    public String login(Model model) {
+    public String login(
+    		@RequestParam(value = "error", required = false) String error,
+    		HttpServletRequest request,
+    		Model model) {
     	AppliConfig config = appliConfigDao.getAppliConfig();
     	String textePremierePageAnonyme = config != null ? config.getTextePremierePageAnonyme() : "";
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
@@ -54,6 +62,20 @@ public class LoginController {
     		candidatCanSignup = currentTime.isBefore(config.getDateEndCandidat());
     	}
     	model.addAttribute("candidatCanSignup", candidatCanSignup);
+
+    	// Récupération de l'exception d'authentification si présente
+    	if (error != null) {
+    		HttpSession session = request.getSession(false);
+    		if (session != null) {
+    			AuthenticationException authException =
+    				(AuthenticationException) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+    			if (authException != null) {
+    				model.addAttribute("error", error);
+    				model.addAttribute("errorMessage", authException.getMessage());
+    				logger.debug("Échec d'authentification: {}", authException.getMessage());
+    			}
+    		}
+    	}
 
         return "login";
     }
