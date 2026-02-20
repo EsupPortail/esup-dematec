@@ -34,7 +34,7 @@
           <td class="btn-group">
             <a th:href="@{/admin/logmails/{id}(id=${log.id})}" class="btn btn-sm btn-info">Voir</a>
           </td>
-          <td th:text="${log.actionDate}"></td>
+          <td th:text="${#temporals.format(log.actionDate, 'dd/MM/yyyy HH:mm')}"></td>
           <td th:text="${log.mailTo}"></td>
           <td th:text="${log.message}"></td>
           <td th:text="${log.status}"></td>

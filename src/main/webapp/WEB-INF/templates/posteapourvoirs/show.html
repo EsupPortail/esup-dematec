@@ -93,7 +93,7 @@
                 </h4>
               </td>
               <td th:text="${posteFile.fileSizeFormatted}"></td>
-              <td th:text="${posteFile.sendTime}"></td>
+              <td th:text="${#temporals.format(posteFile.sendTime, 'dd/MM/yyyy HH:mm')}"></td>
               <td th:text="${posteFile.sender.emailAddress}"></td>
               <td th:if="${manageposte}">
                 <a class="btn btn-danger"

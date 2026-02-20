@@ -28,7 +28,7 @@
       </thead>
       <tbody>
         <tr th:each="log : ${logpostefiles}">
-          <td th:text="${log.actionDate}"></td>
+          <td th:text="${#temporals.format(log.actionDate, 'dd/MM/yyyy HH:mm')}"></td>
           <td th:text="${log.email}"></td>
           <td th:text="${log.ip}"></td>
           <td th:text="${log.userAgent}"></td>

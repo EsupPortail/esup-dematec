@@ -83,7 +83,7 @@
         </h4>
       </td>
       <td th:text="${candidatureFile.fileSizeFormatted}"></td>
-      <td th:text="${candidatureFile.sendTime}"></td>
+      <td th:text="${#temporals.format(candidatureFile.sendTime, 'dd/MM/yyyy HH:mm')}"></td>
       <td th:text="${candidatureFile.fileType.typeTitle}"></td>
 
       <th:block sec:authorize="hasRole('ROLE_ADMIN')">
@@ -400,7 +400,7 @@
             </h4>
           </td>
           <td th:text="${memberReviewFile.fileSizeFormatted}"></td>
-          <td th:text="${memberReviewFile.sendTime}"></td>
+          <td th:text="${#temporals.format(memberReviewFile.sendTime, 'dd/MM/yyyy HH:mm')}"></td>
           <td th:text="${memberReviewFile.member.emailAddress}"></td>
 
           <th:block sec:authorize="hasRole('ROLE_ADMIN')">

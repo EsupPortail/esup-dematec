@@ -72,7 +72,7 @@
         </thead>
         <tbody>
         <tr th:each="log : ${logimportcommissions}">
-            <td th:text="${log.actionDate}"></td>
+            <td th:text="${#temporals.format(log.actionDate, 'dd/MM/yyyy HH:mm')}"></td>
             <td th:text="${log.message}"></td>
             <td th:text="${log.status}"></td>
         </tr>
