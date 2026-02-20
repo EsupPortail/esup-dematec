@@ -56,18 +56,35 @@ public class LogFileController {
 	
 	@ModelAttribute("userNoms")
 	public List<String> getUserNoms() {
-		List<String> userNoms = new java.util.ArrayList<>(userDao.findAllUserNoms());
+		List<String> userNoms = new java.util.ArrayList<>(logFileDao.findAllDistinctNoms());
 		if(!userNoms.contains("")) {
 			userNoms.add(0, "");
 		}
 		return userNoms;
 	}
 
+	@ModelAttribute("actions")
+	public List<String> getActions() {
+		List<String> actions = new java.util.ArrayList<>(logFileDao.findAllDistinctActions());
+		actions.add(0, "");
+		return actions;
+	}
+
+	@ModelAttribute("emails")
+	public List<String> getEmails() {
+		List<String> emails = new java.util.ArrayList<>(logFileDao.findAllDistinctEmails());
+		emails.add(0, "");
+		return emails;
+	}
+
 
 	@RequestMapping(produces = "text/html")
-    public String list(@PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable, Model uiModel) {
-        Page<LogFile> result = logFileDao.findLogFileEntries(pageable);
+    public String list(@ModelAttribute("command") LogSearchCriteria searchCriteria,
+                       @PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable,
+                       Model uiModel) {
+        Page<LogFile> result = logFileDao.findLogFileEntries(searchCriteria, pageable);
         uiModel.addAttribute("logfiles", result);
+        uiModel.addAttribute("command", searchCriteria);
         return "admin/logfiles/list";
     }
 

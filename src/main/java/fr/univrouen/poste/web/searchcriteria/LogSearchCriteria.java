@@ -9,6 +9,10 @@ public class LogSearchCriteria {
 	
 	String nom = "";
 	
+	String action = "";
+
+	String email = "";
+
 
 	public String getStatus() {
         return this.status;
@@ -32,5 +36,21 @@ public class LogSearchCriteria {
 
 	public void setNom(String nom) {
         this.nom = nom;
+    }
+
+	public String getAction() {
+        return this.action;
+    }
+
+	public void setAction(String action) {
+        this.action = action;
+    }
+
+	public String getEmail() {
+        return this.email;
+    }
+
+	public void setEmail(String email) {
+        this.email = email;
     }
 }
