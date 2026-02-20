@@ -768,18 +768,16 @@ public class MyPosteCandidatureController {
 			List<String> numPostes = searchCriteria.getNumEmploiPostes();
 			if(numPostes != null && !numPostes.isEmpty()) {
 				membresPostes = membresPostes.stream().filter(p->numPostes.contains(p.getNumEmploi())).collect(Collectors.toSet());
-	    		uiModel.addAttribute("finderview", true);
-	    		uiModel.addAttribute("command", searchCriteria);
 			} 
 			if(membresPostes.isEmpty()) {
 				membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			}
 			postecandidatures = posteCandidatureDao.findPosteCandidaturesRecevableByPostes(membresPostes, searchCriteria.getAuditionnable(), pageable);
 			if(zip) {
-    		String contentType = "application/zip";
-    		LocalDateTime currentTime = LocalDateTime.now();
-			DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
-			String currentTimeFmt = currentTime.format(dateFmt);
+				String contentType = "application/zip";
+				LocalDateTime currentTime = LocalDateTime.now();
+				DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+				String currentTimeFmt = currentTime.format(dateFmt);
 	    		String baseName = "demat-" + currentTimeFmt + ".zip";
 	    		response.setContentType(contentType);
 	    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
@@ -803,6 +801,7 @@ public class MyPosteCandidatureController {
 				}} );
 			
 			uiModel.addAttribute("membresPostes", membresPostes2Display);
+			uiModel.addAttribute("filter", searchCriteria);
 		}
 		
 		uiModel.addAttribute("postecandidatures", postecandidatures);

@@ -129,14 +129,14 @@
           <div class="accordion-heading">
             <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilterMembre"> Filtrer </a>
           </div>
-          <div th:classappend="${finderview} ? 'in' : ''" class="accordion-body collapse" id="collapseFilterMembre">
+          <div th:classappend="${filter.isEmpty()} ? '' : 'in'" class="accordion-body collapse" id="collapseFilterMembre">
             <div class="accordion-inner">
               <div class="row-fluid">
                 <div class="span4">
-                  <form th:action="@{/postecandidatures}" method="get">
+                  <form th:action="@{/postecandidatures}" method="get" th:object="${filter}">
                     <label for="membresPostesSelect">Postes</label>
                     <select multiple="multiple" th:field="*{numEmploiPostes}" id="membresPostesSelect">
-                      <option th:each="p : ${membresPostes}" th:value="${p.numEmploi}" th:text="${p}"></option>
+                      <option th:each="p : ${membresPostes}" th:value="${p.numEmploi}" th:text="${p.numEmploi}"></option>
                     </select>
                     <div>
                       <label for="auditionnable_membre">Auditionnable</label>
@@ -147,7 +147,7 @@
                       </select>
                     </div>
                     <div>
-                      <label><input type="checkbox" th:field="*{zip}"/> Zip</label>
+                      <label><input type="checkbox" name="zip"/> Zip</label>
                     </div>
                     <div style="margin-top:10px;">
                       <button class="btn btn-success" type="submit">Trouver</button>
