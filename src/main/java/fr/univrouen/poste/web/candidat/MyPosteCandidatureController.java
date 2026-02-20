@@ -644,31 +644,86 @@ public class MyPosteCandidatureController {
 	public String list(@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria,
 			@PageableDefault(size = 10) Pageable pageable,
 			@RequestParam(value = "zip", required = false, defaultValue = "off") Boolean zip,
+			@RequestParam(value = "mails", required = false, defaultValue = "off") Boolean mails,
+			@RequestParam(value = "csv", required = false, defaultValue = "off") Boolean csv,
+			@RequestParam(value = "find", required = false) String find,
 			HttpServletResponse response, HttpServletRequest request,
 			Model uiModel) throws IOException, SQLException {
 		
-		Page<PosteCandidature> postecandidatures = null;
-
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		
 		String emailAddress = auth.getName();
 		User user = userDao.findUserByEmailAddress(emailAddress);
 		
 		boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
 		boolean isManager = request.isUserInRole("ROLE_MANAGER");
-		boolean isSuperManager = isManager || request.isUserInRole("ROLE_SUPER_MANAGER");
 		boolean isMembre = request.isUserInRole("ROLE_MEMBRE");
 		boolean isCandidat = request.isUserInRole("ROLE_CANDIDAT");
-    		
+
+		// Handle exports for admin/manager in finder mode - these need all results without pagination
+		if (isAdmin || isManager) {
+			if(zip) {
+				List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
+				String contentType = "application/zip";
+				String baseName = "demat.zip";
+				response.setContentType(contentType);
+				response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+				zipService.writeZip(postecandidatures, response.getOutputStream());
+				return null;
+			} else if(searchCriteria.getTemplateFile() != null) {
+				List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
+				String filename = searchCriteria.getTemplateFile().getFilename();
+				response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+				templateService.generateTemplateFile(searchCriteria.getTemplateFile(), postecandidatures, response.getOutputStream());
+				return null;
+			} else if(mails) {
+				List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
+				Set<String> mailAdresses = new HashSet<String>();
+				for(PosteCandidature pc: postecandidatures) {
+					mailAdresses.add(pc.getEmail());
+				}
+
+				List<String> mailAdressesSorted = new ArrayList<String>(mailAdresses);
+				Collections.sort(mailAdressesSorted);
+				StringBuffer mailAdressesString = new StringBuffer();
+				for(String email: mailAdressesSorted) {
+					mailAdressesString.append(email).append("\r\n");
+				}
+
+				String contentType = "text/plain";
+				String baseName = "emails.txt";
+				InputStream inputStream = new ByteArrayInputStream(mailAdressesString.toString().getBytes(StandardCharsets.UTF_8));
+
+				response.setContentType(contentType);
+				response.setCharacterEncoding("utf-8");
+				response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+				FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+				return null;
+			} else if(csv) {
+				List<PosteCandidature> posteCandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
+
+				String contentType = "text/csv";
+				String baseName = "candidatures.csv";
+
+				response.setContentType(contentType);
+				response.setCharacterEncoding("utf-8");
+				response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+				csvService.csvWrite(response.getWriter(), posteCandidatures);
+
+				return null;
+			}
+		}
+
+		Page<PosteCandidature> postecandidatures = null;
     	// pagination only for admin / manager users ...
     	if (isAdmin || isManager) {
+			postecandidatures = posteCandidatureDao.findPosteCandidatures(searchCriteria, pageable);
 
-			Page<PosteCandidature> result = posteCandidatureDao.findPosteCandidatureEntries(pageable);
-			long nbResultsTotal = result.getTotalElements();
+			long nbResultsTotal = postecandidatures.getTotalElements();
 			uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
-			uiModel.addAttribute("maxPages", result.getTotalPages());
-			postecandidatures = result;
-			
+			uiModel.addAttribute("maxPages", postecandidatures.getTotalPages());
+
 			uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirNumEplois());
 			uiModel.addAttribute("candidats", userDao.findAllCandidatsIds());
 			uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
@@ -685,10 +740,9 @@ public class MyPosteCandidatureController {
 			uiModel.addAttribute("templateFiles", templateFiles);
 			
 			uiModel.addAttribute("allPosteCandidatureTag", posteCandidatureTagDao.findAllPosteCandidatureTags());
-			
-		}
 
-		else if (isCandidat) {
+			uiModel.addAttribute("filter", searchCriteria);
+		} else if (isCandidat) {
 			
 			if(!appliConfigDao.getAppliConfig().getCandidatCanSignup()) {
 				
@@ -709,9 +763,7 @@ public class MyPosteCandidatureController {
 				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, LocalDateTime.now(), pageable);
 			}
 			
-		}
-
-		else if (isMembre) {
+		} else if (isMembre) {
 			Set<PosteAPourvoir> membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			List<String> numPostes = searchCriteria.getNumEmploiPostes();
 			if(numPostes != null && !numPostes.isEmpty()) {
@@ -767,106 +819,7 @@ public class MyPosteCandidatureController {
 		addDateTimeFormatPatterns(uiModel);
 		return "postecandidatures/list";
 	}
-	
-    @RequestMapping(params = "find=ByMultiParams", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-    public String findPosteCandidatures(HttpServletRequest request, 
-    		HttpServletResponse response, 
-    		@ModelAttribute("command") PosteCandidatureSearchCriteria searchCriteria, BindingResult bindResult,
-    		@RequestParam(defaultValue="off", required=false) Boolean zip,
-    		@RequestParam(defaultValue="off", required=false) Boolean mails,
-    		@RequestParam(defaultValue="off", required=false) Boolean csv,
-    		@PageableDefault(size = 10) Pageable pageable,
-    		Model uiModel) throws IOException, SQLException {
 
-    	// Handle exports (zip, template, mails, csv) - these need all results without pagination
-    	if(zip) {
-    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
-    		String contentType = "application/zip";
-    		String baseName = "demat.zip";
-    		response.setContentType(contentType);
-    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-    		zipService.writeZip(postecandidatures, response.getOutputStream());
-    		return null; 
-    	} else if(searchCriteria.getTemplateFile() != null) {
-    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
-			String filename = searchCriteria.getTemplateFile().getFilename();
-			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-    		templateService.generateTemplateFile(searchCriteria.getTemplateFile(), postecandidatures, response.getOutputStream());
-    		return null; 
-    	} else if(mails) {
-    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
-    		Set<String> mailAdresses = new HashSet<String>();
-    		for(PosteCandidature pc: postecandidatures) {
-    			mailAdresses.add(pc.getEmail());
-    		}
-
-    		List<String> mailAdressesSorted = new ArrayList<String>(mailAdresses);
-    		Collections.sort(mailAdressesSorted);
-    		StringBuffer mailAdressesString = new StringBuffer();
-    		for(String email: mailAdressesSorted) {
-    			mailAdressesString.append(email).append("\r\n");
-    		}
-
-    		String contentType = "text/plain";
-    		String baseName = "emails.txt";
-    		InputStream inputStream = new ByteArrayInputStream(mailAdressesString.toString().getBytes(StandardCharsets.UTF_8));
-
-    		response.setContentType(contentType);
-    		response.setCharacterEncoding("utf-8");
-    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-    		FileCopyUtils.copy(inputStream, response.getOutputStream());
-
-    		return null;
-    	} else if(csv) {
-    		List<PosteCandidature> posteCandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
-
-    		String contentType = "text/csv";
-    		String baseName = "candidatures.csv";
-
-    		response.setContentType(contentType);
-    		response.setCharacterEncoding("utf-8");
-    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-    		csvService.csvWrite(response.getWriter(), posteCandidatures);
-
-    		return null;
-    	} else {
-    		// Normal page view with pagination
-    		Page<PosteCandidature> postecandidaturesPage = posteCandidatureDao.findPosteCandidatures(searchCriteria, pageable);
-    		uiModel.addAttribute("postecandidatures", postecandidaturesPage);
-    		uiModel.addAttribute("nbResultsTotal", postecandidaturesPage.getTotalElements());
-
-    		uiModel.addAttribute("texteMembreAideCandidatures", appliConfigDao.getAppliConfig().getTexteMembreAideCandidatures());
-    		uiModel.addAttribute("texteCandidatAideCandidatures", appliConfigDao.getAppliConfig().getTexteCandidatAideCandidatures());
-
-    		uiModel.addAttribute("legendColors", managerReviewLegendColorService.getLegendColors());
-			uiModel.addAttribute("legendColorMap", managerReviewLegendColorService.getLegendColorsMap());
-
-			uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirNumEplois());
-			uiModel.addAttribute("candidats", userDao.findAllCandidatsIds());
-			uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
-
-    		uiModel.addAttribute("command", searchCriteria);
-    		uiModel.addAttribute("finderview", true);
-
-		    String mailAuditionnableEntete = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable();
-		    String mailAuditionnablePiedPage = appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable();
-		    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
-		    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
-
-			uiModel.addAttribute("laureatEnable", appliConfigDao.getAppliConfig().getLaureatEnable());
-			uiModel.addAttribute("texteMailCandidatLaureat", appliConfigDao.getAppliConfig().getTexteMailCandidatLaureat());
-
-			List<TemplateFile> templateFiles = templateFileDao.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES);
-			uiModel.addAttribute("templateFiles", templateFiles);
-
-			uiModel.addAttribute("allPosteCandidatureTag", posteCandidatureTagDao.findAllPosteCandidatureTags());
-
-            addDateTimeFormatPatterns(uiModel);
-            return "postecandidatures/list";
-    	}
-    }    
 	
     @RequestMapping(value = "/{id}/updateManagerComment", method = RequestMethod.POST, produces = "text/html")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")

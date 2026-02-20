@@ -39,4 +39,18 @@ public class PosteCandidatureSearchCriteria {
 	
     Map<PosteCandidatureTag, PosteCandidatureTagValue> tags;
 
+	public boolean isEmpty() {
+		return recevable == null
+				&& auditionnable == null
+				&& modification == null
+				&& (numEmploiPostes == null || numEmploiPostes.isEmpty())
+				&& (emailCandidats == null || emailCandidats.isEmpty())
+				&& (postes == null || postes.isEmpty())
+				&& (candidats == null || candidats.isEmpty())
+				&& (reviewStatus == null || reviewStatus.isEmpty())
+				&& (searchText == null || searchText.isBlank())
+				&& templateFile == null
+				&& (tags == null || tags.isEmpty());
+	}
+
 }

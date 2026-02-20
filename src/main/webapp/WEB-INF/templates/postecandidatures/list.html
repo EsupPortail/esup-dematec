@@ -29,21 +29,21 @@
             <div class="accordion-heading">
               <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
             </div>
-            <div th:classappend="${finderview} ? 'in' : ''" class="accordion-body collapse" id="collapseFilter">
+            <div th:classappend="${filter.isEmpty()} ? '' : 'in'" class="accordion-body collapse" id="collapseFilter">
               <div class="accordion-inner">
                 <div class="row-fluid">
-                  <form th:action="@{/postecandidatures}" method="get" id="filterForm">
+                  <form th:action="@{/postecandidatures}" method="get" id="filterForm" th:object="${filter}">
                     <div class="span4 demat-filter">
-                      <input class="input-large" type="text" th:name="searchText" th:id="f_searchText" th:value="${searchText}" placeholder="Recherche libre sur le nom, prénom, email, n°galaxie"/>
+                      <input class="input-large" type="text" th:field="*{searchText}" th:id="f_searchText"  placeholder="Recherche libre sur le nom, prénom, email, n°galaxie"/>
                       <label for="posteSelect">Postes</label>
-                      <select multiple="multiple" size="15" th:name="numEmploiPostes" id="posteSelect" class="input-block-level">
+                      <select multiple="multiple" size="15" th:field="*{numEmploiPostes}" id="posteSelect" class="input-block-level">
                         <option th:each="p : ${posteapourvoirs}" th:value="${p}" th:text="${p}">Poste</option>
                       </select>
                     </div>
 
                     <div class="span5 demat-filter">
                       <label for="candidatSelect">Candidats</label>
-                      <select multiple="multiple" size="15" id="candidatSelect" th:name="emailCandidats" class="input-block-level">
+                      <select multiple="multiple" size="15" id="candidatSelect" th:field="*{emailCandidats}" class="input-block-level">
                         <option th:each="u : ${candidats}" th:value="${u}" th:text="${u}">Candidat</option>
                       </select>
                       <input id="textbox" type="text" placeholder="Filtrer candidats"/>
@@ -51,35 +51,35 @@
 
                     <div class="span3 demat-filter">
                       <label for="reviewStatusSelect">Vue</label>
-                      <select multiple="multiple" size="5" id="reviewStatusSelect" th:name="reviewStatus" class="input-block-level">
+                      <select multiple="multiple" size="5" id="reviewStatusSelect" th:field="*{reviewStatus}" class="input-block-level">
                         <option th:each="s : ${reviewStatusList}" th:value="${s}" th:text="${s}">Vue</option>
                       </select>
 
                       <div>
                         <label for="recevable">Recevable</label>
-                        <select id="recevable" name="recevable">
+                        <select id="recevable" th:field="*{recevable}">
                           <option value="">--</option>
-                          <option value="RECEVABLE" th:selected="${recevable == 'RECEVABLE'}">Recevable</option>
-                          <option value="NON_RECEVABLE" th:selected="${recevable == 'NON_RECEVABLE'}">Non recevable</option>
-                          <option value="NON_DEFINI" th:selected="${recevable == 'NON_DEFINI'}">Non défini</option>
+                          <option value="RECEVABLE">Recevable</option>
+                          <option value="NON_RECEVABLE">Non recevable</option>
+                          <option value="NON_DEFINI">Non défini</option>
                         </select>
                       </div>
 
                       <div>
                         <label for="auditionnable">Auditionnable</label>
-                        <select id="auditionnable" name="auditionnable">
+                        <select id="auditionnable" th:field="*{auditionnable}">
                           <option value="">--</option>
-                          <option value="true" th:selected="${auditionnable == 'true'}">Auditionnable</option>
-                          <option value="false" th:selected="${auditionnable == 'false'}">Non Auditionnable</option>
+                          <option value="true">Auditionnable</option>
+                          <option value="false">Non Auditionnable</option>
                         </select>
                       </div>
 
                       <div>
                         <label for="modification">Activité</label>
-                        <select id="modification" name="modification">
+                        <select id="modification" th:field="*{modification}">
                           <option value="">--</option>
-                          <option value="true" th:selected="${modification == 'true'}">Au moins 1 modification</option>
-                          <option value="false" th:selected="${modification == 'false'}">Aucune modification</option>
+                          <option value="true">Au moins 1 modification</option>
+                          <option value="false">Aucune modification</option>
                         </select>
                       </div>
 
@@ -135,19 +135,19 @@
                 <div class="span4">
                   <form th:action="@{/postecandidatures}" method="get">
                     <label for="membresPostesSelect">Postes</label>
-                    <select multiple="multiple" th:name="numEmploiPostes" id="membresPostesSelect">
+                    <select multiple="multiple" th:field="*{numEmploiPostes}" id="membresPostesSelect">
                       <option th:each="p : ${membresPostes}" th:value="${p.numEmploi}" th:text="${p}"></option>
                     </select>
                     <div>
                       <label for="auditionnable_membre">Auditionnable</label>
-                      <select id="auditionnable_membre" name="auditionnable">
+                      <select id="auditionnable_membre" th:field="*{auditionnable}">
                         <option value="">--</option>
                         <option value="true">Auditionnable</option>
                         <option value="false">Non Auditionnable</option>
                       </select>
                     </div>
                     <div>
-                      <label><input type="checkbox" name="zip"/> Zip</label>
+                      <label><input type="checkbox" th:field="*{zip}"/> Zip</label>
                     </div>
                     <div style="margin-top:10px;">
                       <button class="btn btn-success" type="submit">Trouver</button>
@@ -233,7 +233,7 @@
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReviewState}">Vue</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${#temporals.format(candidature.creation, posteCandidature_creation_date_format)}">Création</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${#temporals.format(candidature.modification, posteCandidature_modification_date_format)}">Modification</td>
-              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReview != null ? candidature.managerReview.manager : ''}">Gestionnaire</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReview?.manager?.emailAddress}">Gestionnaire</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReview != null ? #temporals.format(candidature.managerReview.reviewDate, posteCandidature_modification_date_format) : ''}">Date gestion</td>
               <td th:if="${not candidatCanSignup and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.galaxieEntryEtatDossier}">Etat Dossier Galaxie</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerComment4Members}" class="demat-popover" th:attrappend="title=${candidature.managerComment4Members}">Com.</td>
