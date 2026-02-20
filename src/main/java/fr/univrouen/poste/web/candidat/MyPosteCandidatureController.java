@@ -776,30 +776,12 @@ public class MyPosteCandidatureController {
     		@RequestParam(defaultValue="off", required=false) Boolean zip,
     		@RequestParam(defaultValue="off", required=false) Boolean mails,
     		@RequestParam(defaultValue="off", required=false) Boolean csv,
-    		@RequestParam(required = false) Integer page, 
-    		@RequestParam(required = false) Integer size, 
-    		@RequestParam(required = false) String sortFieldName, 
-    		@RequestParam(required = false) String sortOrder,
+    		@PageableDefault(size = 10) Pageable pageable,
     		Model uiModel) throws IOException, SQLException {
 
-    	uiModel.addAttribute("sortFieldName", sortFieldName);
-		uiModel.addAttribute("sortOrder", sortOrder);
-
-		if("poste".equals(sortFieldName))
-    		sortFieldName = "poste.numEmploi";
-    	if("nom".equals(sortFieldName))
-    		sortFieldName = "candidat.nom";
-    	if("email".equals(sortFieldName))
-    		sortFieldName = "candidat.emailAddress";
-		if("numCandidat".equals(sortFieldName))
-			sortFieldName = "candidat.numCandidat";
-    	if("managerReviewState".equals(sortFieldName))
-    		sortFieldName = "managerReview.reviewStatus";
-    	if("galaxieEntryEtatDossier".equals(sortFieldName))
-    		sortFieldName = "galaxieEntry.etatDossier";
-    	
+    	// Handle exports (zip, template, mails, csv) - these need all results without pagination
     	if(zip) {
-    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
+    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
     		String contentType = "application/zip";
     		String baseName = "demat.zip";
     		response.setContentType(contentType);
@@ -807,101 +789,82 @@ public class MyPosteCandidatureController {
     		zipService.writeZip(postecandidatures, response.getOutputStream());
     		return null; 
     	} else if(searchCriteria.getTemplateFile() != null) {
-    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
+    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
 			String filename = searchCriteria.getTemplateFile().getFilename();
 			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
     		templateService.generateTemplateFile(searchCriteria.getTemplateFile(), postecandidatures, response.getOutputStream());
     		return null; 
-    	} else {
-    		
-    		if(mails) {
-    			
-    			List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, null, null).getResultList();
-    			Set<String> mailAdresses = new HashSet<String>();
-    			for(PosteCandidature pc: postecandidatures) {
-    				mailAdresses.add(pc.getEmail());
-    			}
-    			
-    			List<String> mailAdressesSorted = new ArrayList<String>(mailAdresses);
-    			Collections.sort(mailAdressesSorted);
-    			StringBuffer mailAdressesString = new StringBuffer();
-    			for(String email: mailAdressesSorted) {
-    				mailAdressesString.append(email).append("\r\n");
-    			}
-
-        		String contentType = "text/plain";
-        		String baseName = "emails.txt";
-        		InputStream inputStream = new ByteArrayInputStream(mailAdressesString.toString().getBytes(StandardCharsets.UTF_8));
-
-        		response.setContentType(contentType);
-        		response.setCharacterEncoding("utf-8");
-        		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-        		FileCopyUtils.copy(inputStream, response.getOutputStream());
-        		
-        		return null; 
-    			
-    		} else if(csv) {
-    			
-    			List<PosteCandidature> posteCandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, null, null).getResultList();
-    			
-        		String contentType = "text/csv";
-        		String baseName = "candidatures.csv";
-
-        		response.setContentType(contentType);
-        		response.setCharacterEncoding("utf-8");
-        		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
-        		csvService.csvWrite(response.getWriter(), posteCandidatures);
-
-        		return null; 
-    			
-    		} else {
-    	    	
-	    		if (page != null || size != null) {
-	                int sizeNo = size == null ? 10 : size.intValue();
-	                final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-	                List<PosteCandidature> allPosteCandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
-	                long nbResultsTotal = posteCandidatureDao.countFindPosteCandidatures(searchCriteria);
-	                int endResult = Math.min(firstResult + sizeNo, allPosteCandidatures.size());
-	                uiModel.addAttribute("postecandidatures", allPosteCandidatures.subList(firstResult, endResult));
-	                uiModel.addAttribute("nbResultsTotal", nbResultsTotal);
-	                float nrOfPages = (float) nbResultsTotal / sizeNo;
-	                uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-	            } else {
-	            	List<PosteCandidature> postecandidatures = posteCandidatureDao.findPostesCandidatures(searchCriteria, sortFieldName, sortOrder).getResultList();
-	                uiModel.addAttribute("postecandidatures", postecandidatures);
-	                uiModel.addAttribute("nbResultsTotal", postecandidatures.size());
-	            }
-	    		
-	    		uiModel.addAttribute("texteMembreAideCandidatures", appliConfigDao.getAppliConfig().getTexteMembreAideCandidatures());
-	    		uiModel.addAttribute("texteCandidatAideCandidatures", appliConfigDao.getAppliConfig().getTexteCandidatAideCandidatures());
-	    		
-	    		uiModel.addAttribute("legendColors", managerReviewLegendColorService.getLegendColors());
-				uiModel.addAttribute("legendColorMap", managerReviewLegendColorService.getLegendColorsMap());
-
-				uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirNumEplois());
-				uiModel.addAttribute("candidats", userDao.findAllCandidatsIds());
-				uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
-				
-	    		uiModel.addAttribute("command", searchCriteria);
-	    		uiModel.addAttribute("finderview", true);
-	    		
-			    String mailAuditionnableEntete = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable();
-			    String mailAuditionnablePiedPage = appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable();	    
-			    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
-			    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
-			    
-				uiModel.addAttribute("laureatEnable", appliConfigDao.getAppliConfig().getLaureatEnable());
-				uiModel.addAttribute("texteMailCandidatLaureat", appliConfigDao.getAppliConfig().getTexteMailCandidatLaureat());
-	    		
-				List<TemplateFile> templateFiles = templateFileDao.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES);
-				uiModel.addAttribute("templateFiles", templateFiles);
-				
-				uiModel.addAttribute("allPosteCandidatureTag", posteCandidatureTagDao.findAllPosteCandidatureTags());
-				
-	            addDateTimeFormatPatterns(uiModel);       
-	            return "postecandidatures/list";           
+    	} else if(mails) {
+    		List<PosteCandidature> postecandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
+    		Set<String> mailAdresses = new HashSet<String>();
+    		for(PosteCandidature pc: postecandidatures) {
+    			mailAdresses.add(pc.getEmail());
     		}
+
+    		List<String> mailAdressesSorted = new ArrayList<String>(mailAdresses);
+    		Collections.sort(mailAdressesSorted);
+    		StringBuffer mailAdressesString = new StringBuffer();
+    		for(String email: mailAdressesSorted) {
+    			mailAdressesString.append(email).append("\r\n");
+    		}
+
+    		String contentType = "text/plain";
+    		String baseName = "emails.txt";
+    		InputStream inputStream = new ByteArrayInputStream(mailAdressesString.toString().getBytes(StandardCharsets.UTF_8));
+
+    		response.setContentType(contentType);
+    		response.setCharacterEncoding("utf-8");
+    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+    		FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+    		return null;
+    	} else if(csv) {
+    		List<PosteCandidature> posteCandidatures = posteCandidatureDao.findAllPosteCandidatures(searchCriteria);
+
+    		String contentType = "text/csv";
+    		String baseName = "candidatures.csv";
+
+    		response.setContentType(contentType);
+    		response.setCharacterEncoding("utf-8");
+    		response.setHeader("Content-Disposition","attachment; filename=\"" + baseName +"\"");
+    		csvService.csvWrite(response.getWriter(), posteCandidatures);
+
+    		return null;
+    	} else {
+    		// Normal page view with pagination
+    		Page<PosteCandidature> postecandidaturesPage = posteCandidatureDao.findPosteCandidatures(searchCriteria, pageable);
+    		uiModel.addAttribute("postecandidatures", postecandidaturesPage);
+    		uiModel.addAttribute("nbResultsTotal", postecandidaturesPage.getTotalElements());
+
+    		uiModel.addAttribute("texteMembreAideCandidatures", appliConfigDao.getAppliConfig().getTexteMembreAideCandidatures());
+    		uiModel.addAttribute("texteCandidatAideCandidatures", appliConfigDao.getAppliConfig().getTexteCandidatAideCandidatures());
+
+    		uiModel.addAttribute("legendColors", managerReviewLegendColorService.getLegendColors());
+			uiModel.addAttribute("legendColorMap", managerReviewLegendColorService.getLegendColorsMap());
+
+			uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirNumEplois());
+			uiModel.addAttribute("candidats", userDao.findAllCandidatsIds());
+			uiModel.addAttribute("reviewStatusList", Arrays.asList(ReviewStatusTypes.values()));
+
+    		uiModel.addAttribute("command", searchCriteria);
+    		uiModel.addAttribute("finderview", true);
+
+		    String mailAuditionnableEntete = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable();
+		    String mailAuditionnablePiedPage = appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable();
+		    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
+		    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
+
+			uiModel.addAttribute("laureatEnable", appliConfigDao.getAppliConfig().getLaureatEnable());
+			uiModel.addAttribute("texteMailCandidatLaureat", appliConfigDao.getAppliConfig().getTexteMailCandidatLaureat());
+
+			List<TemplateFile> templateFiles = templateFileDao.findTemplateFilesByTemplateFileType(TemplateFileType.MULTI_CANDIDATURES);
+			uiModel.addAttribute("templateFiles", templateFiles);
+
+			uiModel.addAttribute("allPosteCandidatureTag", posteCandidatureTagDao.findAllPosteCandidatureTags());
+
+            addDateTimeFormatPatterns(uiModel);
+            return "postecandidatures/list";
     	}
     }    
 	
