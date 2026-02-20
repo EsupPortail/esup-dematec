@@ -56,7 +56,7 @@ public class LoginController {
     	AppliConfig config = appliConfigDao.getAppliConfig();
     	String textePremierePageAnonyme = config != null ? config.getTextePremierePageAnonyme() : "";
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
-    	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
+    	Boolean candidatCanSignup = config != null && config.getDateEndCandidat() != null ? config.getCandidatCanSignup() : false;
     	LocalDateTime currentTime = LocalDateTime.now();
     	if (candidatCanSignup && config != null) {
     		candidatCanSignup = currentTime.isBefore(config.getDateEndCandidat());

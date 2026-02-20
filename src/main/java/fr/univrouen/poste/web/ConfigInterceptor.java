@@ -112,7 +112,7 @@ public class ConfigInterceptor implements HandlerInterceptor {
         modelAndView.addObject("subTitle", subTitle);
         modelAndView.addObject("activeMenu", activeMenu);
 
-        Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
+        Boolean candidatCanSignup = config != null && config.getDateEndCandidat() != null ? config.getCandidatCanSignup() : false;
         LocalDateTime currentTime = LocalDateTime.now();
         if (candidatCanSignup && config != null) {
             candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
