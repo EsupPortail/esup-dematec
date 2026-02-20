@@ -85,6 +85,7 @@ public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidature
 
         assertNotNull("La liste des candidatures ne doit pas être null", candidatures);
         assertFalse("Le candidat doit avoir au moins une candidature", candidatures.isEmpty());
+        assertTrue("Le candidat doit avoir une seule candidature", candidatures.getTotalElements() == 1);
 
         // Récupérer la première candidature
         PosteCandidature premiereCandidature = candidatures.getContent().get(0);
