@@ -8,6 +8,15 @@
 		</encoder>
 	</appender>
 
+	<property name="LOG_FILE" value="${LOG_FILE:-${sys:java.io.tmpdir}/esup-dematec.log}" />
+
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_FILE}</file>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
 	<!-- Appender mail optionnel : renseignez vos paramètres SMTP puis ajoutez
 	     la référence `MAIL_ERRORS` dans le root logger ou dans un logger ciblé. -->
 	<appender name="MAIL_ERRORS" class="ch.qos.logback.classic.net.SMTPAppender">
@@ -26,6 +35,7 @@
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />
+		<!-- <appender-ref ref="FILE" /> -->
 		<!-- <appender-ref ref="MAIL_ERRORS" /> -->
 	</root>
 
