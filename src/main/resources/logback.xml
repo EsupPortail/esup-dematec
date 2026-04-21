@@ -1,63 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+	<property name="LOG_PATTERN" value="[%-5level] %date{dd/MM/yyyy HH:mm:ss} [%thread] %logger{36} - %msg%n" />
+
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-            <pattern>[%-5level] %date{dd/MM/yyyy HH:mm:ss} %logger{36} (%file:%line\) - %msg%n</pattern>
-        </encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
 	</appender>
-	
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-       <file>/opt/tomcat-esup-sgc/logs/esup-poste.log</file>
-        <encoder>
-            <pattern>[%-5level] %date{dd/MM/yyyy HH:mm:ss} %logger{36} (%file:%line\)  - %msg%n</pattern>
-        </encoder>
-    </appender>
-    
-    <appender name="FILE-SYNC" class="ch.qos.logback.core.FileAppender">
-       <file>/opt/tomcat-esup-sgc/logs/esup-sgc-sync.log</file>
-        <encoder>
-            <pattern>[%-5level] %date{dd/MM/yyyy HH:mm:ss} %logger{36} (%file:%line\)  - %msg%n</pattern>
-        </encoder>
-    </appender>
-    
-    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
-        <smtpHost>smtp.univ-rouen.fr</smtpHost>
-        <smtpPort>25</smtpPort>
-        <to>esup-sgc-logs@univ-rouen.fr</to>
-        <from>esup-sgc-logs@univ-rouen.fr</from>
-        <subject>%-5level - esup-sgc %date{dd/MM/yyyy HH:mm:ss}</subject>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>[%-5level] %date{dd/MM/yyyy HH:mm:ss} [%-20thread] %logger{36} - %msg%n</pattern>
-        </layout>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+
+	<!-- Appender mail optionnel : renseignez vos paramètres SMTP puis ajoutez
+	     la référence `MAIL_ERRORS` dans le root logger ou dans un logger ciblé. -->
+	<appender name="MAIL_ERRORS" class="ch.qos.logback.classic.net.SMTPAppender">
+		<smtpHost>${LOG_EMAIL_SMTP_HOST:-localhost}</smtpHost>
+		<smtpPort>${LOG_EMAIL_SMTP_PORT:-25}</smtpPort>
+		<to>${LOG_EMAIL_TO:-errors@localhost}</to>
+		<from>${LOG_EMAIL_FROM:-noreply@localhost}</from>
+		<subject>[${LOG_EMAIL_SUBJECT_PREFIX:-Application}] %level - %date{dd/MM/yyyy HH:mm:ss}</subject>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>${LOG_PATTERN}</pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>ERROR</level>
 		</filter>
-    </appender>
+	</appender>
 
-	<root level="WARN" >
+	<root level="WARN">
 		<appender-ref ref="STDOUT" />
+		<!-- <appender-ref ref="MAIL_ERRORS" /> -->
 	</root>
 
-	<logger name="fr.univrouen.poste.security" additivity="false" level="INFO">
-		<appender-ref ref="STDOUT" />
-		<!-- <appender-ref ref="EMAIL" /> -->
-	</logger>
+	<logger name="fr.univrouen" level="INFO" />
 
-	<logger name="fr.univrouen" additivity="false" level="DEBUG">
-		<appender-ref ref="STDOUT" />
-		<!-- <appender-ref ref="EMAIL" /> -->
-	</logger>
-	
-	
-	<logger name="org.springframework.aop.interceptor" additivity="false" level="TRACE">
-		<appender-ref ref="STDOUT" />
-		<!-- <appender-ref ref="EMAIL" /> -->
-	</logger>
-	
-	
-	<logger name="fr.univrouen.poste.services.sync" additivity="false" level="DEBUG">
-		<appender-ref ref="STDOUT" />
-		<!-- <appender-ref ref="EMAIL" /> -->
-	</logger>
-	
 </configuration>
