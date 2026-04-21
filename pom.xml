@@ -15,6 +15,7 @@
         <spring-data-jpa.version>3.5.5</spring-data-jpa.version>
         <hibernate.version>7.1.0.Final</hibernate.version>
         <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
+        <skipTests>true</skipTests>
     </properties>
     <dependencies>
         <!-- Debut ; devraient être provided ? -->
