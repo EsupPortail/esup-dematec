@@ -19,6 +19,8 @@ public abstract class MyPosteCandidatureControllerTestBase extends AbstractContr
 
     static Long candidatureFileId = null;
 
+    static Long candidature2Id = null;
+
     protected void test_CandidatListeCandidatures() throws Exception {
         MvcResult result = mockMvc.perform(get("/postecandidatures"))
                 .andExpect(status().isOk())
