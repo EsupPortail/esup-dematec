@@ -62,7 +62,7 @@ public class PasswordService {
 
 	public String generateActivationKey() {
 		String activationKey = generateSecureToken();
-		while(userDao.countFindUsersByActivationKey(activationKey) > 0) {
+		while(User.countFindUsersByActivationKey(activationKey) > 0) {
 			activationKey = generateSecureToken();
 		}
 		return activationKey;

@@ -17,19 +17,9 @@
  */
 package fr.univrouen.poste.web.membre;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.domain.*;
+import fr.univrouen.poste.services.LogService;
+import fr.univrouen.poste.services.ZipService;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +37,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.CommissionEntry;
-import fr.univrouen.poste.domain.DematFileDummy;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteAPourvoirFile;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.services.ZipService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @RequestMapping("/posteapourvoirs")
 @Controller
@@ -185,7 +178,7 @@ public class PosteAPourvoirController {
 			PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
 			PosteAPourvoirFile posteFile = PosteAPourvoirFile.findPosteAPourvoirFile(idFile);
 			if (posteFile == null || !poste.getPosteFiles().contains(posteFile)) {
-				logger.warn("Access denied: user {} attempted to access file {} not belonging to poste {}", request.getRemoteUser(), idFile, id);
+				logger.warn("Access denied: user " + request.getRemoteUser() + " attempted to download file " + idFile + " not belonging to poste " + id);
 				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à ce poste");
 				return;
 			}
@@ -214,7 +207,7 @@ public class PosteAPourvoirController {
 		PosteAPourvoir poste = PosteAPourvoir.findPosteAPourvoir(id);
 		PosteAPourvoirFile posteFile = PosteAPourvoirFile.findPosteAPourvoirFile(idFile);
 		if (posteFile == null || !poste.getPosteFiles().contains(posteFile)) {
-			logger.warn("Access denied: user {} attempted to delete file {} not belonging to poste {}", request.getRemoteUser(), idFile, id);
+			logger.warn("Access denied: user " + request.getRemoteUser() + " attempted to delete file " + idFile + " not belonging to poste " + id);
 			return "redirect:/posteapourvoirs/" + id.toString();
 		}
 		poste.getPosteFiles().remove(posteFile);

@@ -17,29 +17,14 @@
  */
 package fr.univrouen.poste.web.candidat;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import fr.univrouen.poste.domain.*;
+import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
+import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
+import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
+import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
+import fr.univrouen.poste.services.*;
+import fr.univrouen.poste.utils.PdfService;
+import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,39 +37,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.univrouen.poste.domain.AppliConfig;
-import fr.univrouen.poste.domain.AppliConfigFileType;
-import fr.univrouen.poste.domain.DematFileDummy;
-import fr.univrouen.poste.domain.ManagerReview;
-import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
-import fr.univrouen.poste.domain.ManagerReviewLegendColor;
-import fr.univrouen.poste.domain.MemberReviewFile;
-import fr.univrouen.poste.domain.PosteAPourvoir;
-import fr.univrouen.poste.domain.PosteCandidature;
-import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
-import fr.univrouen.poste.domain.PosteCandidatureFile;
-import fr.univrouen.poste.domain.PosteCandidatureTag;
-import fr.univrouen.poste.domain.PosteCandidatureTagValue;
-import fr.univrouen.poste.domain.TemplateFile;
-import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
-import fr.univrouen.poste.domain.User;
-import fr.univrouen.poste.provider.DatabaseAuthenticationProvider;
-import fr.univrouen.poste.services.CsvService;
-import fr.univrouen.poste.services.EmailService;
-import fr.univrouen.poste.services.LogService;
-import fr.univrouen.poste.services.ReturnReceiptService;
-import fr.univrouen.poste.services.TemplateService;
-import fr.univrouen.poste.services.ZipService;
-import fr.univrouen.poste.utils.PdfService;
-import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RequestMapping("postecandidatures")
 @Controller
@@ -138,7 +104,7 @@ public class MyPosteCandidatureController {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 			PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
 			if (postecandidatureFile == null || !postecandidature.getCandidatureFiles().contains(postecandidatureFile)) {
-				logger.warn("Access denied: user {} attempted to access file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+				logger.warn("Access denied: user " + request.getRemoteUser() + " attempted to access file " + idFile + " not belonging to candidature " + id);
 				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à cette candidature");
 				return;
 			}
@@ -210,7 +176,7 @@ public class MyPosteCandidatureController {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 			MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
 			if (memberReviewFile == null || !postecandidature.getMemberReviewFiles().contains(memberReviewFile)) {
-				logger.warn("Access denied: user {} attempted to access review file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+				logger.warn("Access denied: user " + request.getRemoteUser() + " attempted to access review file " + idFile + " not belonging to candidature " + id);
 				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à cette candidature");
 				return;
 			}
@@ -267,7 +233,7 @@ public class MyPosteCandidatureController {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
 		if (postecandidatureFile == null || !postecandidature.getCandidatureFiles().contains(postecandidatureFile)) {
-			logger.warn("Access denied: user {} attempted to delete file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+			logger.warn("Access denied: user " + request.getRemoteUser() +  " attempted to delete candidature " + id);
 			return "redirect:/postecandidatures/" + id.toString();
 		}
 		postecandidature.getCandidatureFiles().remove(postecandidatureFile);
@@ -286,7 +252,7 @@ public class MyPosteCandidatureController {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
 		if (memberReviewFile == null || !postecandidature.getMemberReviewFiles().contains(memberReviewFile)) {
-			logger.warn("Access denied: user {} attempted to delete review file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+			logger.warn("Access denied: user " + request.getRemoteUser() +   " attempted to delete memberReviewFile " + id);
 			return "redirect:/postecandidatures/" + id.toString();
 		}
 		postecandidature.getMemberReviewFiles().remove(memberReviewFile);
@@ -970,7 +936,7 @@ public class MyPosteCandidatureController {
     	User user = User.findUser(userId);
     	if (user == null || postecandidature.getPoste().getMembres() == null
     			|| !postecandidature.getPoste().getMembres().contains(user)) {
-    		logger.warn("Access denied: user {} attempted to add user {} as reporter on candidature {} but that user is not a member of the poste", SecurityContextHolder.getContext().getAuthentication().getName(), userId, id);
+    		logger.warn("Access denied: user " + SecurityContextHolder.getContext().getAuthentication().getName() + " attempted to add user " + userId + " as reporter on candidature " + id + " but that user is not a member of the poste");
     		return "redirect:/postecandidatures/" + id;
     	}
     	postecandidature.getReporters().add(user);
@@ -986,7 +952,7 @@ public class MyPosteCandidatureController {
     	User user = User.findUser(userId);
     	if (user == null || postecandidature.getPoste().getMembres() == null
     			|| !postecandidature.getPoste().getMembres().contains(user)) {
-    		logger.warn("Access denied: user {} attempted to remove user {} as reporter on candidature {} but that user is not a member of the poste", SecurityContextHolder.getContext().getAuthentication().getName(), userId, id);
+    		logger.warn("Access denied: user " + SecurityContextHolder.getContext().getAuthentication().getName() + " attempted to remove user " + userId + " as reporter on candidature " + id + " but that user is not a member of the poste");
     		return "redirect:/postecandidatures/" + id;
     	}
     	postecandidature.getReporters().remove(user);

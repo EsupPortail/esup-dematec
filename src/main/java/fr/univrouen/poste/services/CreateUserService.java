@@ -37,7 +37,7 @@ public class CreateUserService {
 	@Autowired
 	EmailService emailService;
 
-	@Resource
+	@Autowired
 	PasswordService passwordService;
 
 	public User createCandidatUser(UserRegistrationForm userRegistration) {
