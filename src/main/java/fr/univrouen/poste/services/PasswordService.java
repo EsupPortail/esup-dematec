@@ -24,7 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 @Service
 public class PasswordService {
@@ -40,7 +41,7 @@ public class PasswordService {
 	@Autowired
 	private LogService logService;
 
-	private Random random = new Random(System.currentTimeMillis());
+	private final SecureRandom secureRandom = new SecureRandom();
 
 	public void sendPasswordActivationKeyMail(User user, String remoteAdress) {
 		String activationKey = generateActivationKey();
@@ -59,12 +60,18 @@ public class PasswordService {
 		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 	}
 
-	String generateActivationKey() {
-		String activationKey = "activationKey" + Math.abs(this.random.nextInt());
-		while(User.countFindUsersByActivationKey(activationKey) > 0) {
-			activationKey = "activationKey" + Math.abs(this.random.nextInt());
+	public String generateActivationKey() {
+		String activationKey = generateSecureToken();
+		while(userDao.countFindUsersByActivationKey(activationKey) > 0) {
+			activationKey = generateSecureToken();
 		}
 		return activationKey;
+	}
+
+	private String generateSecureToken() {
+		byte[] bytes = new byte[32];
+		secureRandom.nextBytes(bytes);
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
 	}
 
 }

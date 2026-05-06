@@ -26,8 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
-
 @Service
 public class CreateUserService {
 	
@@ -38,6 +36,9 @@ public class CreateUserService {
 	
 	@Autowired
 	EmailService emailService;
+
+	@Resource
+	PasswordService passwordService;
 
 	public User createCandidatUser(UserRegistrationForm userRegistration) {
 	    String mailSubject = AppliConfig.getCacheMailSubject();
@@ -56,8 +57,7 @@ public class CreateUserService {
     }
 
 	private User createUser(UserRegistrationForm userRegistration, String mailSubject, String mailMessage) {
-	    Random random = new Random(System.currentTimeMillis());
-	    String activationKey = "activationKey" + Math.abs(random.nextInt());
+	    String activationKey = passwordService.generateActivationKey();
 
 	    User user = new User();
 	    user.setActivationDate(null);
