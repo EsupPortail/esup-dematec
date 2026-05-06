@@ -217,11 +217,14 @@ public class PosteCandidatureDao {
                 String[] propertyParts = property.split("\\.");
 
                 if (propertyParts.length == 1) {
-                    if (order.isAscending()) {
-                        orders.add(criteriaBuilder.asc(c.get(property)));
+                    Expression<?> expr;
+                    if ("modification".equals(property)) {
+                        // Les candidatures sans date de modification sont traitées comme très anciennes
+                        expr = criteriaBuilder.coalesce(c.<LocalDateTime>get("modification"), LocalDateTime.of(1970, 1, 1, 0, 0));
                     } else {
-                        orders.add(criteriaBuilder.desc(c.get(property)));
+                        expr = c.get(property);
                     }
+                    orders.add(order.isAscending() ? criteriaBuilder.asc(expr) : criteriaBuilder.desc(expr));
                 } else if (propertyParts.length == 2) {
                     // Get or create join
                     Join<PosteCandidature, ?> join = joins.get(propertyParts[0]);
@@ -229,11 +232,14 @@ public class PosteCandidatureDao {
                         join = c.join(propertyParts[0], JoinType.LEFT);
                         joins.put(propertyParts[0], join);
                     }
-                    if (order.isAscending()) {
-                        orders.add(criteriaBuilder.asc(join.get(propertyParts[1])));
+                    Expression<?> expr2;
+                    if ("managerReview".equals(propertyParts[0]) && "reviewDate".equals(propertyParts[1])) {
+                        // Les candidatures sans date de review sont traitées comme très anciennes
+                        expr2 = criteriaBuilder.coalesce(join.<LocalDateTime>get("reviewDate"), LocalDateTime.of(1970, 1, 1, 0, 0));
                     } else {
-                        orders.add(criteriaBuilder.desc(join.get(propertyParts[1])));
+                        expr2 = join.get(propertyParts[1]);
                     }
+                    orders.add(order.isAscending() ? criteriaBuilder.asc(expr2) : criteriaBuilder.desc(expr2));
                 }
             }
         }
