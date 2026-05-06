@@ -246,7 +246,7 @@ public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidature
                 .andReturn();
 
         @SuppressWarnings("unchecked")
-        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
+        Page<PosteCandidature> candidatures = (Page<PosteCandidature>) result.getModelAndView()
                 .getModel().get("postecandidatures");
 
         assertNotNull("La liste des candidatures ne doit pas être null", candidatures);
