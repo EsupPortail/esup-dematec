@@ -34,10 +34,10 @@ public class DateClotureChecker {
 			for(PosteCandidature candidature: candidatures) {
 				auditionnable = auditionnable || candidature.getAuditionnable();
 			}
-			if(!auditionnable && !userDao.isCandidatActif(targetUser) && config != null && currentTime.isAfter(config.getDateEndCandidat()) ||
-					!auditionnable && userDao.isCandidatActif(targetUser) && config != null && currentTime.isAfter(config.getDateEndCandidatActif())) {
-				return false;		        }
-			else if(auditionnable) {
+			if(!auditionnable && !userDao.isCandidatActif(targetUser) && config != null && config.getDateEndCandidat() != null && currentTime.isAfter(config.getDateEndCandidat()) ||
+					!auditionnable && userDao.isCandidatActif(targetUser) && config != null && config.getDateEndCandidatActif() != null && currentTime.isAfter(config.getDateEndCandidatActif())) {
+				return false;
+			} else if(auditionnable) {
 				LocalDateTime dateEndCandidatAuditionnable = null;
 				for(PosteCandidature candidature: candidatures) {
 					LocalDateTime datePosteAuditionnable = candidature.getPoste().getDateEndCandidatAuditionnable();
