@@ -137,6 +137,11 @@ public class MyPosteCandidatureController {
 		try {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 			PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
+			if (postecandidatureFile == null || !postecandidature.getCandidatureFiles().contains(postecandidatureFile)) {
+				logger.warn("Access denied: user {} attempted to access file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à cette candidature");
+				return;
+			}
 			String filename = postecandidatureFile.getFilename();
 			Long size = postecandidatureFile.getFileSize();
 			String contentType = postecandidatureFile.getContentType();
@@ -204,6 +209,11 @@ public class MyPosteCandidatureController {
 		try {
 			PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 			MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
+			if (memberReviewFile == null || !postecandidature.getMemberReviewFiles().contains(memberReviewFile)) {
+				logger.warn("Access denied: user {} attempted to access review file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à cette candidature");
+				return;
+			}
 			// byte[] file = postecandidatureFile.getBigFile().getBinaryFile();
 			String filename = memberReviewFile.getFilename();
 			Long size = memberReviewFile.getFileSize();
@@ -256,6 +266,10 @@ public class MyPosteCandidatureController {
 	public String deleteCandidatureFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		PosteCandidatureFile postecandidatureFile = PosteCandidatureFile.findPosteCandidatureFile(idFile);
+		if (postecandidatureFile == null || !postecandidature.getCandidatureFiles().contains(postecandidatureFile)) {
+			logger.warn("Access denied: user {} attempted to delete file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+			return "redirect:/postecandidatures/" + id.toString();
+		}
 		postecandidature.getCandidatureFiles().remove(postecandidatureFile);
 
 		Calendar cal = Calendar.getInstance();
@@ -271,6 +285,10 @@ public class MyPosteCandidatureController {
 	public String delMemberReviewFile(@PathVariable("id") Long id, @PathVariable("idFile") Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
 		MemberReviewFile memberReviewFile = MemberReviewFile.findMemberReviewFile(idFile);
+		if (memberReviewFile == null || !postecandidature.getMemberReviewFiles().contains(memberReviewFile)) {
+			logger.warn("Access denied: user {} attempted to delete review file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+			return "redirect:/postecandidatures/" + id.toString();
+		}
 		postecandidature.getMemberReviewFiles().remove(memberReviewFile);
 		
 		Calendar cal = Calendar.getInstance();
@@ -950,6 +968,11 @@ public class MyPosteCandidatureController {
     public String addReporter(@PathVariable("id") Long id, @RequestParam Long userId, Model uiModel) {
     	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
     	User user = User.findUser(userId);
+    	if (user == null || postecandidature.getPoste().getMembres() == null
+    			|| !postecandidature.getPoste().getMembres().contains(user)) {
+    		logger.warn("Access denied: user {} attempted to add user {} as reporter on candidature {} but that user is not a member of the poste", SecurityContextHolder.getContext().getAuthentication().getName(), userId, id);
+    		return "redirect:/postecandidatures/" + id;
+    	}
     	postecandidature.getReporters().add(user);
     	postecandidature.merge();
         uiModel.asMap().clear();
@@ -961,6 +984,11 @@ public class MyPosteCandidatureController {
     public String delReporter(@PathVariable("id") Long id, @RequestParam Long userId, Model uiModel) {
     	PosteCandidature postecandidature = PosteCandidature.findPosteCandidature(id);
     	User user = User.findUser(userId);
+    	if (user == null || postecandidature.getPoste().getMembres() == null
+    			|| !postecandidature.getPoste().getMembres().contains(user)) {
+    		logger.warn("Access denied: user {} attempted to remove user {} as reporter on candidature {} but that user is not a member of the poste", SecurityContextHolder.getContext().getAuthentication().getName(), userId, id);
+    		return "redirect:/postecandidatures/" + id;
+    	}
     	postecandidature.getReporters().remove(user);
     	postecandidature.merge();
         uiModel.asMap().clear();
