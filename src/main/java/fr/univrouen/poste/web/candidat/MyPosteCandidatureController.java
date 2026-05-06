@@ -566,7 +566,7 @@ public class MyPosteCandidatureController {
 	@Transactional
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
 	@PreAuthorize("hasPermission(#id, 'view')")
-	public String show(@PathVariable Long id, Model uiModel) {
+	public String show(@PathVariable Long id, Model uiModel, HttpServletRequest request) {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		uiModel.addAttribute("postecandidature", postecandidature);
 		PosteCandidatureFile posteCandidatureFile = new PosteCandidatureFile();
@@ -619,6 +619,10 @@ public class MyPosteCandidatureController {
 		
 		Boolean isPresident = postecandidature.getPoste().getPresidents() != null && postecandidature.getPoste().getPresidents().contains(getCurrentUser());
 		uiModel.addAttribute("isPresident", isPresident);
+
+		boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
+		boolean isManager = request.isUserInRole("ROLE_MANAGER");
+		uiModel.addAttribute("isAdminOrManager", isAdmin ||  isManager);
 		
 		uiModel.addAttribute("presidentReportersView", appliConfigDao.getAppliConfig().getPresidentReportersView());
 		
