@@ -17,6 +17,7 @@
  */
 package fr.univrouen.poste.domain;
 
+import fr.univrouen.poste.dao.PosteCandidatureFileDao;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,8 +43,9 @@ public class GalaxieExcel {
     )
     Long id;
 
-
     String filename;
+
+    Long fileSize;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name = "bigfile")
@@ -56,7 +58,13 @@ public class GalaxieExcel {
     LocalDateTime creation;
 
     @Transient
-     List<List<String>> cells;
+    List<List<String>> cells;
+
+    @Transient
+    public String getFileSizeFormatted() {
+        if(fileSize == null || fileSize <= 0) return "-";
+        return PosteCandidatureFileDao.readableFileSize(fileSize.longValue());
+    }
 
 	public String toString() {
         return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).setExcludeFieldNames("bigFile", "file", "cells").toString();

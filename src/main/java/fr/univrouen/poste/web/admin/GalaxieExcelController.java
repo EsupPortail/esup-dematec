@@ -51,7 +51,6 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.time.LocalDateTime;
 
 @RequestMapping("/admin/galaxieexcels")
 @Controller
@@ -88,9 +87,10 @@ public class GalaxieExcelController {
         galaxieExcel.getBigFile().setBinaryFile(new SerialBlob(bytes));
         bigFileDao.saveBigFile( galaxieExcel.getBigFile());
         
-        // set current date 
-        
-        galaxieExcel.setCreation(LocalDateTime.now());    
+        // set current date
+        galaxieExcel.setCreation(LocalDateTime.now());
+
+        galaxieExcel.setFileSize(Long.valueOf(bytes.length));
         
         // persist
         galaxieExcelDao.saveGalaxieExcel(galaxieExcel);

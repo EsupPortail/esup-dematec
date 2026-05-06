@@ -32,6 +32,11 @@
                 Céation
               </a>
           </th>
+            <th>
+                <a sd:pagination-sort="fileSize">
+                    Taille
+                </a>
+            </th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -39,6 +44,7 @@
         <tr th:each="excel : ${galaxieexcels}">
           <td th:text="${excel.filename}"></td>
           <td th:text="${excel.creation}"></td>
+          <td th:text="${excel.fileSizeFormatted}"></td>
           <td class="btn-group">
              <a th:href="@{/admin/galaxieexcels/{id}(id=${excel.id})}" class="btn btn-sm btn-info">Voir</a>
           </td>
