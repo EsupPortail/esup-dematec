@@ -25,11 +25,8 @@ import jakarta.annotation.Resource;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Random;
 
 @Service
 public class CreateUserService {
@@ -48,6 +45,9 @@ public class CreateUserService {
 	@Resource
 	UserDao userDao;
 
+	@Resource
+	PasswordService passwordService;
+
 	public User createCandidatUser(UserRegistrationForm userRegistration) {
 	    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
 	    String mailMessage = appliConfigDao.getAppliConfig().getTexteMailActivation();
@@ -65,8 +65,7 @@ public class CreateUserService {
     }
 
 	User createUser(UserRegistrationForm userRegistration, String mailSubject, String mailMessage) {
-	    Random random = new Random(System.currentTimeMillis());
-	    String activationKey = "activationKey" + Math.abs(random.nextInt());
+	    String activationKey = passwordService.generateActivationKey();
 
 	    User user = new User();
 	    user.setActivationDate(null);
