@@ -195,6 +195,11 @@ public class PosteAPourvoirController {
 		try {
 			PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
 			PosteAPourvoirFile posteFile = posteAPourvoirFileDao.findPosteAPourvoirFile(idFile);
+			if (posteFile == null || !poste.getPosteFiles().contains(posteFile)) {
+				logger.warn("Access denied: user {} attempted to access file {} not belonging to poste {}", request.getRemoteUser(), idFile, id);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à ce poste");
+				return;
+			}
 			String filename = posteFile.getFilename();
 			Long size = posteFile.getFileSize();
 			String contentType = posteFile.getContentType();
@@ -218,6 +223,10 @@ public class PosteAPourvoirController {
 	public String deletePosteFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request) throws IOException {
 		PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);
 		PosteAPourvoirFile posteFile = posteAPourvoirFileDao.findPosteAPourvoirFile(idFile);
+		if (posteFile == null || !poste.getPosteFiles().contains(posteFile)) {
+			logger.warn("Access denied: user {} attempted to delete file {} not belonging to poste {}", request.getRemoteUser(), idFile, id);
+			return "redirect:/posteapourvoirs/" + id.toString();
+		}
 		poste.getPosteFiles().remove(posteFile);
 		
 		LocalDateTime currentTime = LocalDateTime.now();

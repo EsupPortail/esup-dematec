@@ -141,6 +141,11 @@ public class MyPosteCandidatureController {
 		try {
 			PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 			PosteCandidatureFile postecandidatureFile = posteCandidatureFileDao.findPosteCandidatureFile(idFile);
+			if (postecandidatureFile == null || !postecandidature.getCandidatureFiles().contains(postecandidatureFile)) {
+				logger.warn("Access denied: user {} attempted to access file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à cette candidature");
+				return;
+			}
 			String filename = postecandidatureFile.getFilename();
 			Long size = postecandidatureFile.getFileSize();
 			String contentType = postecandidatureFile.getContentType();
@@ -206,6 +211,11 @@ public class MyPosteCandidatureController {
 		try {
 			PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 			MemberReviewFile memberReviewFile = memberReviewFileDao.findMemberReviewFile(idFile);
+			if (memberReviewFile == null || !postecandidature.getMemberReviewFiles().contains(memberReviewFile)) {
+				logger.warn("Access denied: user {} attempted to access review file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ce fichier n'appartient pas à cette candidature");
+				return;
+			}
 			// byte[] file = postecandidatureFile.getBigFile().getBinaryFile();
 			String filename = memberReviewFile.getFilename();
 			Long size = memberReviewFile.getFileSize();
@@ -257,6 +267,10 @@ public class MyPosteCandidatureController {
 	public String deleteCandidatureFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		PosteCandidatureFile postecandidatureFile = posteCandidatureFileDao.findPosteCandidatureFile(idFile);
+		if (postecandidatureFile == null || !postecandidature.getCandidatureFiles().contains(postecandidatureFile)) {
+			logger.warn("Access denied: user {} attempted to delete file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+			return "redirect:/postecandidatures/" + id.toString();
+		}
 		postecandidature.getCandidatureFiles().remove(postecandidatureFile);
 
 		LocalDateTime currentTime = LocalDateTime.now();
@@ -271,6 +285,10 @@ public class MyPosteCandidatureController {
 	public String delMemberReviewFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
 		MemberReviewFile memberReviewFile = memberReviewFileDao.findMemberReviewFile(idFile);
+		if (memberReviewFile == null || !postecandidature.getMemberReviewFiles().contains(memberReviewFile)) {
+			logger.warn("Access denied: user {} attempted to delete review file {} not belonging to candidature {}", request.getRemoteUser(), idFile, id);
+			return "redirect:/postecandidatures/" + id.toString();
+		}
 		postecandidature.getMemberReviewFiles().remove(memberReviewFile);
 		
 		LocalDateTime currentTime = LocalDateTime.now();
@@ -838,6 +856,11 @@ public class MyPosteCandidatureController {
     public String addReporter(@PathVariable Long id, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	User user = userDao.findUser(userId);
+    	if (user == null || postecandidature.getPoste().getMembres() == null
+    			|| !postecandidature.getPoste().getMembres().contains(user)) {
+    		logger.warn("Access denied: user {} attempted to add user {} as reporter on candidature {} but that user is not a member of the poste", SecurityContextHolder.getContext().getAuthentication().getName(), userId, id);
+    		return "redirect:/postecandidatures/" + id;
+    	}
     	postecandidature.getReporters().add(user);
 		posteCandidatureDao.savePosteCandidature(postecandidature);
         return "redirect:/postecandidatures/" + id;
@@ -848,6 +871,11 @@ public class MyPosteCandidatureController {
     public String delReporter(@PathVariable Long id, @RequestParam Long userId) {
     	PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
     	User user = userDao.findUser(userId);
+    	if (user == null || postecandidature.getPoste().getMembres() == null
+    			|| !postecandidature.getPoste().getMembres().contains(user)) {
+    		logger.warn("Access denied: user {} attempted to remove user {} as reporter on candidature {} but that user is not a member of the poste", SecurityContextHolder.getContext().getAuthentication().getName(), userId, id);
+    		return "redirect:/postecandidatures/" + id;
+    	}
     	postecandidature.getReporters().remove(user);
     	posteCandidatureDao.savePosteCandidature(postecandidature);
         return "redirect:/postecandidatures/" + id;
