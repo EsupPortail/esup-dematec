@@ -229,5 +229,64 @@ public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidature
         test_VerificationAccesAInterdit();
     }
 
+    /**
+     * Test 07 : L'esup-manager récupère l'ID de la candidature de candidat2@example.org
+     * Vérifie que le super-manager peut lister toutes les candidatures et filtrer par candidat
+     */
+    @Test
+    @WithUserDetails("super-manager@example.org")
+    public void test07_EsupManagerRecupereCandidature2Id() throws Exception {
+        MvcResult result = mockMvc.perform(get("/postecandidatures")
+                .param("find", "ByMultiParams")
+                .param("emailCandidats", "candidat2@example.org"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("postecandidatures"))
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<PosteCandidature> candidatures = (List<PosteCandidature>) result.getModelAndView()
+                .getModel().get("postecandidatures");
+
+        assertNotNull("La liste des candidatures ne doit pas être null", candidatures);
+        assertFalse("candidat2@example.org doit avoir au moins une candidature", candidatures.isEmpty());
+
+        PosteCandidature candidature2 = candidatures.stream()
+                .filter(c -> "candidat2@example.org".equals(c.getCandidat().getEmailAddress()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Aucune candidature trouvée pour candidat2@example.org"));
+
+        candidature2Id = candidature2.getId();
+        assertNotNull("L'ID de la candidature de candidat2@example.org ne doit pas être null", candidature2Id);
+
+        System.out.println("✓ ID de la candidature de candidat2@example.org récupéré : " + candidature2Id);
+        System.out.println("  - Poste : " + candidature2.getPoste().getNumEmploi());
+    }
+
+    /**
+     * Test 08 : candidat2@example.org tente de télécharger le fichier de candidat@example.org
+     * en utilisant son propre ID de candidature (candidature2Id) et l'ID du fichier de candidat@example.org (candidatureFileId).
+     *
+     * Scénario de sécurité : la permission 'view' sur la candidature (candidature2Id) appartient à candidat2,
+     * mais le fichier demandé (candidatureFileId) appartient à candidat@example.org.
+     * L'accès doit être refusé (403 Forbidden).
+     */
+    @Test
+    @WithUserDetails("candidat2@example.org")
+    public void test08_Candidat2TenteTelechargerFichierCandidat() throws Exception {
+        assertNotNull("L'ID de la candidature de candidat2 doit avoir été récupéré par le test précédent", candidature2Id);
+        assertNotNull("L'ID du fichier de candidat@example.org doit avoir été déterminé par les tests précédents", candidatureFileId);
+
+        System.out.println("Tentative de téléchargement frauduleux : candidature2Id=" + candidature2Id
+                + ", candidatureFileId (de candidat@example.org)=" + candidatureFileId);
+
+        // candidat2 utilise son propre ID de candidature mais l'ID de fichier de candidat@example.org
+        mockMvc.perform(get("/postecandidatures/" + candidature2Id + "/" + candidatureFileId))
+                .andExpect(status().isForbidden());
+
+        System.out.println("✓ Accès refusé : candidat2@example.org ne peut pas télécharger le fichier de candidat@example.org"
+                + " même en utilisant son propre ID de candidature");
+    }
+
+
 }
 
