@@ -9,20 +9,34 @@
 <body>
   <div layout:fragment="body">
     <h2>Détails Logs emails</h2>
-    
-    <dl class="dl-horizontal">
+
+    <div class="alert alert-danger" th:if="${param.emailSent}">
+      Mail renvoyé.
+    </div>
+
+    <dl>
       <dt>Date</dt>
-      <dd th:text="${#temporals.format(log.actionDate, 'dd/MM/yyyy HH:mm')}"></dd>
+      <dd th:text="${#temporals.format(logmail.actionDate, 'dd/MM/yyyy HH:mm')}"></dd>
       <dt>Destinataire</dt>
-      <dd th:text="${log.destinataire}"></dd>
+      <dd th:text="${logmail.mailTo}"></dd>
+      <dt>Message</dt>
+      <dd><pre th:text="${logmail.message}"></pre></dd>
       <dt>Statut</dt>
-      <dd th:text="${log.status}"></dd>
+      <dd th:text="${logmail.status}"></dd>
     </dl>
-    
+
+    <br/>
+
+    <div sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">
+      <form th:action="@{/admin/logmails/{id}/resend(id=${logmail.id})}" method="post"
+            onsubmit="return confirm('Renvoyer le mail ?');">
+        <input type="submit" value="Renvoyer" class="btn btn-warning"/>
+      </form>
+    </div>
+
     <hr/>
     <div>
       <a th:href="@{/admin/logmails}" class="btn btn-default">Retour</a>
-      <a th:href="@{/admin/logmails/{id}(id=${log.id},form)}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
     </div>
   </div>
 </body>
