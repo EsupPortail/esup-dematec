@@ -13,18 +13,18 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmailAddress(String emailAddress);
+    Optional<User> findByEmailAddressIgnoreCase(String emailAddress);
     List<User> findByActivationKey(String activationKey);
-    List<User> findByActivationKeyAndEmailAddress(String activationKey, String emailAddress);
-    List<User> findByEmailAddressAndActivationDateIsNotNull(String emailAddress);
+    List<User> findByActivationKeyIgnoreCaseAndEmailAddressIgnoreCase(String activationKey, String emailAddress);
+    List<User> findByEmailAddressIgnoreCaseAndActivationDateIsNotNull(String emailAddress);
     List<User> findByIsAdmin(Boolean isAdmin);
     List<User> findByIsManager(Boolean isManager);
     List<User> findByIsSuperManager(Boolean isSuperManager);
     Optional<User> findByNumCandidat(String numCandidat);
     long countByActivationKey(String activationKey);
-    long countByActivationKeyAndEmailAddress(String activationKey, String emailAddress);
-    long countByEmailAddress(String emailAddress);
-    long countByEmailAddressAndActivationDateIsNotNull(String emailAddress);
+    long countByActivationKeyIgnoreCaseAndEmailAddressIgnoreCase(String activationKey, String emailAddress);
+    long countByEmailAddressIgnoreCase(String emailAddress);
+    long countByEmailAddressIgnoreCaseAndActivationDateIsNotNull(String emailAddress);
     long countByIsAdmin(Boolean isAdmin);
     long countByIsManager(Boolean isManager);
     long countByIsSuperManager(Boolean isSuperManager);

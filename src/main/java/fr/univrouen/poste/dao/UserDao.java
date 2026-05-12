@@ -136,7 +136,7 @@ public class UserDao {
 
     public User findUserByEmailAddress(String emailAddress) {
         if (emailAddress == null || emailAddress.isEmpty()) throw new IllegalArgumentException("The emailAddress argument is required");
-        return userRepository.findByEmailAddress(emailAddress).orElse(null);
+        return userRepository.findByEmailAddressIgnoreCase(emailAddress).orElse(null);
     }
 
     public List<User> findUsersByActivationKey(String activationKey) {
@@ -147,12 +147,12 @@ public class UserDao {
     public List<User> findUsersByActivationKeyAndEmailAddress(String activationKey, String emailAddress) {
         if (activationKey == null || activationKey.isEmpty()) throw new IllegalArgumentException("The activationKey argument is required");
         if (emailAddress == null || emailAddress.isEmpty()) throw new IllegalArgumentException("The emailAddress argument is required");
-        return userRepository.findByActivationKeyAndEmailAddress(activationKey, emailAddress);
+        return userRepository.findByActivationKeyIgnoreCaseAndEmailAddressIgnoreCase(activationKey, emailAddress);
     }
 
     public List<User> findUsersByEmailAddressAndActivationDateIsNotNull(String emailAddress) {
         if (emailAddress == null || emailAddress.isEmpty()) throw new IllegalArgumentException("The emailAddress argument is required");
-        return userRepository.findByEmailAddressAndActivationDateIsNotNull(emailAddress);
+        return userRepository.findByEmailAddressIgnoreCaseAndActivationDateIsNotNull(emailAddress);
     }
 
     public List<User> findUsersByIsAdmin(Boolean isAdmin) {
@@ -182,7 +182,7 @@ public class UserDao {
 
     public long countFindUsersByEmailAddress(String emailAddress) {
         if (emailAddress == null || emailAddress.isEmpty()) throw new IllegalArgumentException("The emailAddress argument is required");
-        return userRepository.countByEmailAddress(emailAddress);
+        return userRepository.countByEmailAddressIgnoreCase(emailAddress);
     }
 
     public Page<User> findUserEntries(String status, String nomOrPrenomOrEmailAddress, Pageable pageable) {
@@ -228,7 +228,7 @@ public class UserDao {
     }
 
     public User findUsersByEmailAddress(String email) {
-        return userRepository.findByEmailAddress(email).orElse(null);
+        return userRepository.findByEmailAddressIgnoreCase(email).orElse(null);
     }
 
 
