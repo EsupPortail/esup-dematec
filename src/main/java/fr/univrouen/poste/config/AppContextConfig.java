@@ -40,6 +40,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * JavaConfig principal remplaçant applicationContext.xml.
@@ -154,12 +155,32 @@ public class AppContextConfig {
     @Value("${email.isEnabled}")
     private boolean emailEnabled;
 
+    @Value("${email.username:}")
+    private String mailUsername;
+
+    @Value("${email.password:}")
+    private String mailPassword;
+
+    @Value("${email.starttls:false}")
+    private boolean mailStartTls;
+
+    @Value("${email.ssl:false}")
+    private boolean mailSsl;
+
     @Bean
     public JavaMailSenderImpl mailSender() {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(mailHost);
         sender.setProtocol(mailProtocol);
         sender.setPort(mailPort);
+        if (!mailUsername.isEmpty()) {
+            sender.setUsername(mailUsername);
+            sender.setPassword(mailPassword);
+        }
+        Properties props = sender.getJavaMailProperties();
+        props.put("mail.smtp.auth", !mailUsername.isEmpty());
+        props.put("mail.smtp.starttls.enable", mailStartTls);
+        props.put("mail.smtp.ssl.enable", mailSsl);
         return sender;
     }
 
