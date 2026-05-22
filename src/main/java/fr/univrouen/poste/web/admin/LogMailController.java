@@ -61,6 +61,13 @@ public class LogMailController {
 		return userIds;
 	}
 
+	@ModelAttribute("statuses")
+	public List<String> getStatuses() {
+		List<String> statuses = logMailDao.getAllDistinctStatuses();
+		statuses.add(0, "");
+		return statuses;
+	}
+
 	@RequestMapping(value = "/{id}/resend", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')")
 	public String resendEmail(@PathVariable Long id, RedirectAttributes ra) {
@@ -89,9 +96,12 @@ public class LogMailController {
     }
 
 	@RequestMapping(produces = "text/html")
-    public String list(@PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable, Model uiModel) {
-       Page<LogMail> result = logMailDao.findLogMailEntries(pageable);
+    public String list(@ModelAttribute("command") LogSearchCriteria searchCriteria,
+                       @PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable,
+                       Model uiModel) {
+        Page<LogMail> result = logMailDao.findLogMailsByCriteria(searchCriteria, pageable);
         uiModel.addAttribute("logmails", result);
+        uiModel.addAttribute("command", searchCriteria);
         return "admin/logmails/list";
     }
 

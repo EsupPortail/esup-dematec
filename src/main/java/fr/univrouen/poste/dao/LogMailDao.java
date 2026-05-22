@@ -2,6 +2,7 @@ package fr.univrouen.poste.dao;
 
 import fr.univrouen.poste.domain.LogMail;
 import fr.univrouen.poste.repository.LogMailRepository;
+import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 import jakarta.annotation.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,16 @@ public class LogMailDao {
         return log_mailRepository.findAll(pageable);
     }
 
+    public Page<LogMail> findLogMailsByCriteria(LogSearchCriteria criteria, Pageable pageable) {
+        boolean hasNoCriteria = (criteria.getUserId() == null || criteria.getUserId().isEmpty()) &&
+                                (criteria.getStatus() == null || criteria.getStatus().isEmpty()) &&
+                                (criteria.getMessage() == null || criteria.getMessage().isEmpty());
+        if (hasNoCriteria) {
+            return log_mailRepository.findAll(pageable);
+        }
+        return log_mailRepository.findLogMailsByCriteria(criteria, pageable);
+    }
+
     public LogMail saveLogMail(LogMail log_mail) {
         return log_mailRepository.save(log_mail);
     }
@@ -40,4 +51,10 @@ public class LogMailDao {
         return log_mailRepository.getAllMailTo();
     }
 
+    public List<String> getAllDistinctStatuses() {
+        return log_mailRepository.getAllDistinctStatuses();
+    }
+
 }
+
+

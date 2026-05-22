@@ -9,11 +9,49 @@
 <body>
   <div layout:fragment="body">
     <h2>Logs authentification</h2>
-    
+
+    <!-- Bloc filtre repliable -->
+    <div class="accordion help" id="accordionfilter">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter">
+            Filtrer
+          </a>
+        </div>
+        <div class="accordion-body collapse"
+             th:classappend="${(command.userId != null and command.userId != '') or (command.action != null and command.action != '')} ? 'in' : ''"
+             id="collapseFilter">
+          <div class="accordion-inner">
+            <form th:action="@{/admin/logauths}" method="get" th:object="${command}">
+              <div class="row-fluid">
+                <div class="span6">
+                  <label for="userId">Utilisateur</label>
+                  <select id="userId" th:field="*{userId}" class="form-control">
+                    <option th:each="user : ${users}" th:value="${user}" th:text="${user}"></option>
+                  </select>
+                </div>
+                <div class="span6">
+                  <label for="action">Action</label>
+                  <select id="action" th:field="*{action}" class="form-control">
+                    <option th:each="act : ${actions}" th:value="${act}" th:text="${act}"></option>
+                  </select>
+                </div>
+              </div>
+              <input name="sort" type="hidden" value="actionDate,desc"/>
+              <div class="submit">
+                <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
+                <input class="btn reset" value="Effacer" type="reset" id="reset">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div th:if="${logauths == null or #lists.isEmpty(logauths)}">
       <p>Aucun élément trouvé.</p>
     </div>
-    
+
     <table th:if="${logauths != null and !#lists.isEmpty(logauths)}" class="table table-striped table-bordered">
       <thead>
         <tr>
@@ -33,10 +71,12 @@
       </tbody>
     </table>
 
-        <div class="pagination-container">
-            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
-            <div class="pagination pagination-centered" sd:pagination="full"></div>
-        </div>
+    <div class="pagination-container">
+      <div class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+      <div class="pagination pagination-centered" sd:pagination="full"></div>
+    </div>
   </div>
 </body>
 </html>
+
+

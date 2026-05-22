@@ -41,28 +41,39 @@ public class LogAuthController {
 
     @Resource
     UserDao userDao;
-	
-    @ModelAttribute("command") 
+
+    @ModelAttribute("command")
     public LogSearchCriteria getLogSearchCriteria() {
-    	return new LogSearchCriteria();
+        return new LogSearchCriteria();
     }
 
-	@ModelAttribute("users")
-	public List<String> getUserIds() {
-		List<String> userIds = new java.util.ArrayList<>(userDao.findAllUserIds());
-		userIds.add(0, "");
-		return userIds;
-	}
+    @ModelAttribute("users")
+    public List<String> getUserIds() {
+        List<String> userIds = new java.util.ArrayList<>(logAuthDao.findAllDistinctUserIds());
+        userIds.add(0, "");
+        return userIds;
+    }
 
-	@RequestMapping(produces = "text/html")
-    public String list(@PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable, Model uiModel) {
-        Page<LogAuth> result = logAuthDao.findLogAuthEntries(pageable);
+    @ModelAttribute("actions")
+    public List<String> getActions() {
+        List<String> actions = new java.util.ArrayList<>(logAuthDao.findAllDistinctActions());
+        actions.add(0, "");
+        return actions;
+    }
+
+    @RequestMapping(produces = "text/html")
+    public String list(@ModelAttribute("command") LogSearchCriteria searchCriteria,
+                       @PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable,
+                       Model uiModel) {
+        Page<LogAuth> result = logAuthDao.findLogAuthsByCriteria(searchCriteria, pageable);
         uiModel.addAttribute("logauths", result);
+        uiModel.addAttribute("command", searchCriteria);
         addDateTimeFormatPatterns(uiModel);
         return "admin/logauths/list";
     }
 
-	void addDateTimeFormatPatterns(Model uiModel) {
+    void addDateTimeFormatPatterns(Model uiModel) {
         uiModel.addAttribute("logAuth_actiondate_date_format", "dd/MM/yyyy HH:mm");
     }
 }
+

@@ -13,6 +13,9 @@ public class LogSearchCriteria {
 
 	String email = "";
 
+	String message = "";
+
+	String numEmploi = "";
 
 	public String getStatus() {
         return this.status;
@@ -52,5 +55,21 @@ public class LogSearchCriteria {
 
 	public void setEmail(String email) {
         this.email = email;
+    }
+
+	public String getMessage() {
+        return this.message;
+    }
+
+	public void setMessage(String message) {
+        this.message = message;
+    }
+
+	public String getNumEmploi() {
+        return this.numEmploi;
+    }
+
+	public void setNumEmploi(String numEmploi) {
+        this.numEmploi = numEmploi;
     }
 }

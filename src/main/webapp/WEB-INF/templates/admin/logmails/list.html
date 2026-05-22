@@ -11,22 +11,68 @@
   <div layout:fragment="body">
     <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
       <div class="help-content">
-<p>Pour chaque mail envoyé, une ligne de log est ajoutée.</p>
-      <p>Si l'envoi du mail a échoué (dès l'envoi), une ligne de log est également ajoutée mais avec un status particulier (MAIL FAILED).</p>
-      <p>Cela peut arriver lorsque le mail de l'utilisateur est mal formé par exemple.</p>
+        <p>Pour chaque mail envoyé, une ligne de log est ajoutée.</p>
+        <p>Si l'envoi du mail a échoué (dès l'envoi), une ligne de log est également ajoutée mais avec un status particulier (MAIL FAILED).</p>
+        <p>Cela peut arriver lorsque le mail de l'utilisateur est mal formé par exemple.</p>
       </div>
     </div>
-    
+
     <h2>Logs emails</h2>
-    
+
+    <!-- Bloc filtre repliable -->
+    <div class="accordion help" id="accordionfilter">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter">
+            Filtrer
+          </a>
+        </div>
+        <div class="accordion-body collapse"
+             th:classappend="${(command.userId != null and command.userId != '') or (command.status != null and command.status != '') or (command.message != null and command.message != '')} ? 'in' : ''"
+             id="collapseFilter">
+          <div class="accordion-inner">
+            <form th:action="@{/admin/logmails}" method="get" th:object="${command}">
+              <div class="row-fluid">
+                <div class="span4">
+                  <label for="userId">Destinataire (mailTo)</label>
+                  <select id="userId" th:field="*{userId}" class="form-control">
+                    <option th:each="user : ${users}" th:value="${user}" th:text="${user}"></option>
+                  </select>
+                </div>
+                <div class="span4">
+                  <label for="status">Statut</label>
+                  <select id="status" th:field="*{status}" class="form-control">
+                    <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"></option>
+                  </select>
+                </div>
+                <div class="span4">
+                  <label for="message">Contenu du message (recherche libre)</label>
+                  <input type="text" id="message" th:field="*{message}" class="form-control" placeholder="Texte recherché dans le message..."/>
+                </div>
+              </div>
+              <input name="sort" type="hidden" value="actionDate,desc"/>
+              <div class="submit">
+                <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
+                <input class="btn reset" value="Effacer" type="reset" id="reset">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${logmails == null or #lists.isEmpty(logmails)}">
+      <p>Aucun élément trouvé.</p>
+    </div>
+
     <table th:if="${logmails != null and !#lists.isEmpty(logmails)}" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Actions</th>
-          <th>Date</th>
-          <th>Destinataire</th>
+          <th><a sd:pagination-sort="actionDate">Date</a></th>
+          <th><a sd:pagination-sort="mailTo">Destinataire</a></th>
           <th>Message</th>
-          <th>Statut</th>
+          <th><a sd:pagination-sort="status">Statut</a></th>
         </tr>
       </thead>
       <tbody>
@@ -36,15 +82,17 @@
           </td>
           <td th:text="${#temporals.format(log.actionDate, 'dd/MM/yyyy HH:mm')}"></td>
           <td th:text="${log.mailTo}"></td>
-          <td th:text="${log.message}"></td>
+          <td th:text="${#strings.abbreviate(log.message, 100)}"></td>
           <td th:text="${log.status}"></td>
         </tr>
       </tbody>
     </table>
-        <div class="pagination-container">
-            <div  class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
-            <div class="pagination pagination-centered" sd:pagination="full"></div>
-        </div>
+    <div class="pagination-container">
+      <div class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+      <div class="pagination pagination-centered" sd:pagination="full"></div>
+    </div>
   </div>
 </body>
 </html>
+
+

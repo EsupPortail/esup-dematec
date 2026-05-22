@@ -18,7 +18,6 @@
 package fr.univrouen.poste.web.admin;
 
 import fr.univrouen.poste.dao.LogPosteFileDao;
-import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.LogPosteFile;
 import fr.univrouen.poste.web.searchcriteria.LogSearchCriteria;
 import jakarta.annotation.Resource;
@@ -28,8 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,26 +38,41 @@ public class LogPosteFileController {
     @Resource
     LogPosteFileDao logPosteFileDao;
 
-    @Resource
-    UserDao userDao;
-	
-    @ModelAttribute("command") 
+    @ModelAttribute("command")
     public LogSearchCriteria getLogSearchCriteria() {
-    	return new LogSearchCriteria();
+        return new LogSearchCriteria();
     }
-    
-	@ModelAttribute("users")
-	public List<String> getUserIds() {
-		List<String> userIds = new java.util.ArrayList<>(userDao.findAllUserIds());
-		userIds.add(0, "");
-		return userIds;
-	}
 
-	@RequestMapping(produces = "text/html")
-    public String list(@PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable, Model uiModel) {
-        Page<LogPosteFile> page = logPosteFileDao.findLogPosteFileEntries(pageable);
+    @ModelAttribute("emails")
+    public List<String> getEmails() {
+        List<String> emails = new java.util.ArrayList<>(logPosteFileDao.findAllDistinctEmails());
+        emails.add(0, "");
+        return emails;
+    }
+
+    @ModelAttribute("actions")
+    public List<String> getActions() {
+        List<String> actions = new java.util.ArrayList<>(logPosteFileDao.findAllDistinctActions());
+        actions.add(0, "");
+        return actions;
+    }
+
+    @ModelAttribute("numEmplois")
+    public List<String> getNumEmplois() {
+        List<String> numEmplois = new java.util.ArrayList<>(logPosteFileDao.findAllDistinctNumEmplois());
+        numEmplois.add(0, "");
+        return numEmplois;
+    }
+
+    @RequestMapping(produces = "text/html")
+    public String list(@ModelAttribute("command") LogSearchCriteria searchCriteria,
+                       @PageableDefault(size = 10, sort="actionDate", direction = Sort.Direction.DESC) Pageable pageable,
+                       Model uiModel) {
+        Page<LogPosteFile> page = logPosteFileDao.findLogPosteFilesByCriteria(searchCriteria, pageable);
         uiModel.addAttribute("logpostefiles", page);
+        uiModel.addAttribute("command", searchCriteria);
         return "admin/logpostefiles/list";
     }
 
 }
+

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sd="http://www.thymeleaf.org/spring-data"
       layout:decorate="~{layouts/default}">
 <head>
   <title>Logs fichiers postes - Liste</title>
@@ -8,20 +9,64 @@
 <body>
   <div layout:fragment="body">
     <h2>Logs fichiers postes</h2>
-    
+
+    <!-- Bloc filtre repliable -->
+    <div class="accordion help" id="accordionfilter">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter">
+            Filtrer
+          </a>
+        </div>
+        <div class="accordion-body collapse"
+             th:classappend="${(command.email != null and command.email != '') or (command.action != null and command.action != '') or (command.numEmploi != null and command.numEmploi != '')} ? 'in' : ''"
+             id="collapseFilter">
+          <div class="accordion-inner">
+            <form th:action="@{/admin/logpostefiles}" method="get" th:object="${command}">
+              <div class="row-fluid">
+                <div class="span4">
+                  <label for="email">Email</label>
+                  <select id="email" th:field="*{email}" class="form-control">
+                    <option th:each="mail : ${emails}" th:value="${mail}" th:text="${mail}"></option>
+                  </select>
+                </div>
+                <div class="span4">
+                  <label for="action">Action</label>
+                  <select id="action" th:field="*{action}" class="form-control">
+                    <option th:each="act : ${actions}" th:value="${act}" th:text="${act}"></option>
+                  </select>
+                </div>
+                <div class="span4">
+                  <label for="numEmploi">Numéro d'emploi</label>
+                  <select id="numEmploi" th:field="*{numEmploi}" class="form-control">
+                    <option th:each="num : ${numEmplois}" th:value="${num}" th:text="${num}"></option>
+                  </select>
+                </div>
+              </div>
+              <input name="sort" type="hidden" value="actionDate,desc"/>
+              <div class="submit">
+                <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
+                <input class="btn reset" value="Effacer" type="reset" id="reset">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div th:if="${logpostefiles == null or #lists.isEmpty(logpostefiles)}">
       <p>Aucun élément trouvé.</p>
     </div>
-    
+
     <table th:if="${logpostefiles != null and !#lists.isEmpty(logpostefiles)}" class="table table-striped table-bordered">
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Email</th>
+          <th><a sd:pagination-sort="actionDate">Date</a></th>
+          <th><a sd:pagination-sort="email">Email</a></th>
           <th>IP</th>
           <th>User Agent</th>
-          <th>Emploi</th>
-          <th>Action</th>
+          <th><a sd:pagination-sort="numEmploi">Emploi</a></th>
+          <th><a sd:pagination-sort="action">Action</a></th>
           <th>Fichier</th>
           <th>Taille</th>
         </tr>
@@ -39,6 +84,13 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="pagination-container">
+      <div class="pagination-selector btn-group" sd:page-size-selector="dropdown"></div>
+      <div class="pagination pagination-centered" sd:pagination="full"></div>
+    </div>
   </div>
 </body>
 </html>
+
+
