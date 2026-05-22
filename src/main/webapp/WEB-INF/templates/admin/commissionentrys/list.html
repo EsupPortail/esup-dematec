@@ -36,8 +36,7 @@
                </a>
            </div>
       </div>
-    
-    <a th:href="@{/admin/commissionentrys(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+      
     <br/><br/>
     
     <div th:if="${commissionentrys == null or #lists.isEmpty(commissionentrys)}">
