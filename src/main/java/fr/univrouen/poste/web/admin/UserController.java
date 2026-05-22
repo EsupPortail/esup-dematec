@@ -32,6 +32,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,12 +95,19 @@ public class UserController {
         }
         if (user.getId() != null) {
             User savedUser = userDao.findUser(user.getId());
-            if (!user.getPassword().equals(savedUser.getPassword())) {
+            if(StringUtils.hasLength(user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
                 	user.setActivationDate(LocalDateTime.now());
                 }
+                user.setActivationKey(null);
+            } else {
+                user.setPassword(savedUser.getPassword());
+                user.setActivationDate(savedUser.getActivationDate());
+                user.setActivationKey(savedUser.getActivationKey());
             }
+            user.setLoginFailedTime(savedUser.getLoginFailedTime());
+            user.setPostes(savedUser.getPostes());
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             if(user.getActivationDate() == null) {
