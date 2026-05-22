@@ -1,13 +1,13 @@
 package fr.univrouen.poste.web;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.lang.Nullable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
@@ -32,19 +32,21 @@ public class PrefAwarePageableResolver extends PageableHandlerMethodArgumentReso
     @Override
     public Pageable resolveArgument(MethodParameter methodParameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) {
         Pageable pageable = super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String prefPagesize = String.valueOf(pageSize);
-        String requestPagesize = webRequest.getParameter("size");
-        if(StringUtils.isBlank(requestPagesize)) {
-            if (!StringUtils.isBlank(prefPagesize)) {
-                int size = Integer.parseInt(prefPagesize);
-                pageable = PageRequest.of(pageable.getPageNumber(), size, pageable.getSort());
-            } else {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageSize, pageable.getSort());
-            }
-        } else if(!requestPagesize.equals(prefPagesize)) {
-            pageSize =  Integer.parseInt(requestPagesize);
+
+        HttpServletRequest httpRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        if (httpRequest == null) {
+            return pageable;
         }
-        return pageable;
+        HttpSession session = httpRequest.getSession();
+
+        String requestPagesize = webRequest.getParameter("size");
+        if (StringUtils.isNotBlank(requestPagesize)) {
+            session.setAttribute(SIZE_IN_SESSION, requestPagesize);
+        }
+
+        String sessionPagesize = (String) session.getAttribute(SIZE_IN_SESSION);
+        int size = (sessionPagesize != null) ? Integer.parseInt(sessionPagesize) : pageSize;
+
+        return PageRequest.of(pageable.getPageNumber(), size, pageable.getSort());
     }
 }
