@@ -13,7 +13,7 @@ public class BatchMain {
 		AnnotationConfigApplicationContext springContext =
 				new AnnotationConfigApplicationContext(AppContextConfig.class);
 		
-		if(args.length < 1 || !"archive".equals(args[0]) && !"dbupgrade".equals(args[0]) && !"deletedata".equals(args[0]) && !"importgalaxie".equals(args[0])) {
+		if(args.length < 1 || !"archive".equals(args[0]) && !"dbupgrade".equals(args[0]) && !"deletedata".equals(args[0]) && !"importgalaxie".equals(args[0]) && !"resendactivation".equals(args[0])) {
 			System.err.println("#####\n" +
 					"Merci de préciser les arguments.\n" +
 					"Voici les possibilités : \n" +
@@ -23,6 +23,8 @@ public class BatchMain {
 					"\t* mvn exec:java -Dexec.args=\"deletedata\"\n" +
 					"-- Attention, cette dernière commande efface les données de candidature de la base !! " +
 					"A utiliser pour nettoyer une base pour l'utiliser sur une nouvelle campagne --\n" +
+					"\t* mvn exec:java -Dexec.args=\"resendactivation\"\n" +
+					"-- Renvoie un mail d'activation à tous les candidats n'ayant pas encore activé leur compte --\n" +
 					"#####");
 			return;
 		}
@@ -42,7 +44,10 @@ public class BatchMain {
 			dbToolService.upgrade();		
 		} else if("deletedata".equals(args[0])) {
 			DbToolService dbToolService = springContext.getBean("dbToolService", DbToolService.class);
-			dbToolService.deleteData();					
+			dbToolService.deleteData();
+		} else if("resendactivation".equals(args[0])) {
+			ResendActivationMailService resendActivationMailService = springContext.getBean("resendActivationMailService", ResendActivationMailService.class);
+			resendActivationMailService.resendActivationMails();
 		} else {
 			System.err.println("Commande non trouvée.");
 		}
