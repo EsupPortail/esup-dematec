@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -45,7 +44,6 @@ public class GalaxieImportService {
 	@Resource
 	BigFileDao bigFileDao;
 
-	@Transactional
 	public void importGalaxie(String galaxieFilePath) throws IOException, SQLException {
 		
 		File file = new File(galaxieFilePath);
@@ -56,7 +54,6 @@ public class GalaxieImportService {
         GalaxieExcel galaxieExcel = new GalaxieExcel();
         galaxieExcel.setFilename(filename);
         galaxieExcel.getBigFile().setBinaryFile(new SerialBlob(bytes));
-		bigFileDao.saveBigFile(galaxieExcel.getBigFile());
         
         // set current date
         galaxieExcel.setCreation(LocalDateTime.now());
