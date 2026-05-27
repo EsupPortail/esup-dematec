@@ -67,15 +67,18 @@ public class CommissionEntryController {
 	PosteAPourvoirDao posteAPourvoirDao;
 	
     @RequestMapping(produces = "text/html")
-    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, @RequestParam(value = "search", required = false) String search, Model uiModel) {
         if(sortFieldName==null)
             sortFieldName = "numPoste,email";
-        if (pageable.isPaged()) {
+        if (search != null && !search.trim().isEmpty()) {
+            uiModel.addAttribute("commissionentrys", commissionEntryDao.findCommissionEntryEntriesBySearch(search.trim(), pageable));
+        } else if (pageable.isPaged()) {
             Page<CommissionEntry> page = commissionEntryDao.findCommissionEntryEntries(pageable, sortFieldName, sortOrder);
             uiModel.addAttribute("commissionentrys", page);
         } else {
             uiModel.addAttribute("commissionentrys", commissionEntryDao.findAllCommissionEntrys(sortFieldName, sortOrder));
         }
+        uiModel.addAttribute("search", search);
 
         Map<String, String> unknowMembres = new HashMap<String, String>();
         Map<String, String> unknowPostes = new HashMap<String, String>();

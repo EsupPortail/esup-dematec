@@ -9,6 +9,8 @@
 </head>
 <body>
   <div layout:fragment="body">
+    <div class="demat-fluid">
+    <div class="demat6">
     <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
       <div class="help-content">
 <p>L'ensemble des données importées depuis l'ensemble des fichiers commission déposés dans l'application est listé ici.</p>
@@ -21,6 +23,29 @@
       </ul>
       </p>
       </div>
+    </div>
+    </div>
+    <div class="demat6">
+      <div id="accordionfilter" class="accordion help">
+        <div class="accordion-group"><div class="accordion-heading">
+          <a href="#collapseFilter" data-toggle="collapse" data-parent="#accordionfilter" class="accordion-toggle">Filtrer</a></div>
+          <div id="collapseFilter" class="accordion-body" th:classappend="${(search != null and search != '')} ? ' in' : ' collapse'">
+            <div class="accordion-inner">
+              <form th:action="@{/admin/commissionentrys}" method="GET">
+                <div>
+                  <label for="_search_commission_id">Numéro de poste, email, nom ou prénom :</label>
+                  <input th:value="${search}" id="_search_commission_id" name="search" type="text" placeholder="Recherche libre...">
+                </div>
+                <div class="submit">
+                  <input class="btn btn-success" value="Trouver" type="submit">
+                  <a th:href="@{/admin/commissionentrys}" class="btn">Effacer</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
 
       <div class="well" th:unless="${#lists.isEmpty(unknowMembres) and  #lists.isEmpty(unknowPostes) and  #lists.isEmpty(unknowCommission)}">

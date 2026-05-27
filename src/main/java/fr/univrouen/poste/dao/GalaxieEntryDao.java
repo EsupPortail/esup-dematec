@@ -59,6 +59,10 @@ public class GalaxieEntryDao {
         return galaxieEntryRepository.findAll(pageable);
     }
 
+    public Page<GalaxieEntry> findGalaxieEntryEntriesBySearch(String search, Pageable pageable) {
+        return galaxieEntryRepository.findBySearch(search, pageable);
+    }
+
     public GalaxieEntry saveGalaxieEntry(GalaxieEntry galaxie_entry) {
         return galaxieEntryRepository.save(galaxie_entry);
     }

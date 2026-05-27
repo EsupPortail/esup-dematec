@@ -9,6 +9,8 @@
 </head>
 <body>
   <div layout:fragment="body">
+    <div class="demat-fluid">
+    <div class="demat6">
     <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
       <div class="help-content">
 <p>L'ensemble des données importées depuis l'ensemble des fichiers galaxie déposés dans l'application est listé ici.</p>
@@ -22,7 +24,30 @@
       </p>
       </div>
     </div>
-    
+    </div>
+    <div class="demat6">
+      <div id="accordionfilter" class="accordion help">
+        <div class="accordion-group"><div class="accordion-heading">
+          <a href="#collapseFilter" data-toggle="collapse" data-parent="#accordionfilter" class="accordion-toggle">Filtrer</a></div>
+          <div id="collapseFilter" class="accordion-body" th:classappend="${(search != null and search != '')} ? ' in' : ' collapse'">
+            <div class="accordion-inner">
+              <form th:action="@{/admin/galaxieentrys}" method="GET">
+                <div>
+                  <label for="_search_galaxie_id">Numéro de candidat, numéro d'emploi, nom, prénom ou email :</label>
+                  <input th:value="${search}" id="_search_galaxie_id" name="search" type="text" placeholder="Recherche libre...">
+                </div>
+                <div class="submit">
+                  <input class="btn btn-success" value="Trouver" type="submit">
+                  <a th:href="@{/admin/galaxieentrys}" class="btn">Effacer</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
     <div class="well" th:unless="${#lists.isEmpty(unknowCandidatures) and  #lists.isEmpty(unknowPostes) and  #lists.isEmpty(unknowCandidats)}">
       <div th:unless="${#lists.isEmpty(unknowCandidatures)}">
         <strong>Les éléments correspondants à ces candidatures sont manquants : </strong>

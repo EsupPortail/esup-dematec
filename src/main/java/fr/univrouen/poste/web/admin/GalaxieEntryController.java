@@ -66,15 +66,18 @@ public class GalaxieEntryController {
 	UserDao userDao;
 
     @RequestMapping(produces = "text/html")
-    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, Model uiModel) {
+    public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, @RequestParam(value = "search", required = false) String search, Model uiModel) {
     	if(sortFieldName==null)
         	sortFieldName = "numEmploi,numCandidat";
-        if (pageable.isPaged()) {
+        if (search != null && !search.trim().isEmpty()) {
+            uiModel.addAttribute("galaxieentrys", galaxieEntryDao.findGalaxieEntryEntriesBySearch(search.trim(), pageable));
+        } else if (pageable.isPaged()) {
             Page<GalaxieEntry> page = galaxieEntryDao.findGalaxieEntryEntries(pageable, sortFieldName, sortOrder);
             uiModel.addAttribute("galaxieentrys", page);
         } else {
             uiModel.addAttribute("galaxieentrys", galaxieEntryDao.findAllGalaxieEntrys(sortFieldName, sortOrder));
         }
+        uiModel.addAttribute("search", search);
         
         Map<String, String> unknowCandidats = new HashMap<String, String>();
         Map<String, String> unknowPostes = new HashMap<String, String>();

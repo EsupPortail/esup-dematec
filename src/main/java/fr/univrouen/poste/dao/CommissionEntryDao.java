@@ -68,6 +68,10 @@ public class CommissionEntryDao {
         return commission_entryRepository.findAll(pageable);
     }
 
+    public Page<CommissionEntry> findCommissionEntryEntriesBySearch(String search, Pageable pageable) {
+        return commission_entryRepository.findBySearch(search, pageable);
+    }
+
     public CommissionEntry saveCommissionEntry(CommissionEntry commission_entry) {
         return commission_entryRepository.save(commission_entry);
     }
