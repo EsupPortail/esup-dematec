@@ -43,7 +43,7 @@
 
                     <div class="span5 demat-filter">
                       <label for="candidatSelect">Candidats</label>
-                      <select multiple="multiple" size="15" id="candidatSelect" th:field="*{emailCandidats}" class="input-block-level">
+                      <select multiple="multiple" size="15" id="candidatSelect" th:field="*{emailCandidats}" class="input-block-level js-candidat-select">
                         <option th:each="u : ${candidats}" th:value="${u}" th:text="${u}">Candidat</option>
                       </select>
                       <input id="textbox" type="text" placeholder="Filtrer candidats"/>
@@ -265,7 +265,7 @@
               // Convertir colonnes texte en icônes simple (ex : true/false)
               $("td").filter(function(){ return $(this).text().trim() === "false"; }).text("");
               $(".demat-popover").filter(function(){ return !$(this).text().trim(); }).removeClass();
-              $('#_emailCandidats_id').filterByText($('#textbox'), true);
+              $('.js-candidat-select').filterByText($('#textbox'), true);
             });
           </script>
 
@@ -384,7 +384,7 @@
                 return !$(this).text().trim();
               }).removeClass();
 
-              $('#_emailCandidats_id').filterByText($('#textbox'), true);
+              $('.js-candidat-select').filterByText($('#textbox'), true);
             });
           </script>
 
