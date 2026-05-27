@@ -36,7 +36,7 @@
       <tbody>
         <tr th:each="excel : ${commissionexcels}">
           <td th:text="${excel.filename}"></td>
-          <td th:text="${excel.creation}"></td>
+          <td th:text="${#temporals.format(excel.creation, 'dd/MM/yyyy HH:mm:ss')}"></td>
             <td class="btn-group">
                 <a th:href="@{/admin/commissionexcels/{id}(id=${excel.id})}" class="btn btn-sm btn-info">Voir</a>
             </td>
