@@ -26,22 +26,28 @@
               <div class="row-fluid">
                 <div class="span6">
                   <label for="userId">Utilisateur</label>
-                  <select id="userId" th:field="*{userId}" class="form-control">
+                  <select size="15" id="userId" th:field="*{userId}" class="input-block-level form-control js-candidat-select">
                     <option th:each="user : ${users}" th:value="${user}" th:text="${user}"></option>
                   </select>
+                  <input id="textbox" type="text" placeholder="Filtrer"/>
                 </div>
                 <div class="span6">
                   <label for="action">Action</label>
                   <select id="action" th:field="*{action}" class="form-control">
                     <option th:each="act : ${actions}" th:value="${act}" th:text="${act}"></option>
                   </select>
+                  <input name="sort" type="hidden" value="actionDate,desc"/>
+                  <div class="submit">
+                    <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
+                    <input class="btn reset" value="Effacer" type="reset" id="reset">
+                  </div>
                 </div>
               </div>
-              <input name="sort" type="hidden" value="actionDate,desc"/>
-              <div class="submit">
-                <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
-                <input class="btn reset" value="Effacer" type="reset" id="reset">
-              </div>
+              <script>
+                $(document).ready(function() {
+                  $('.js-candidat-select').filterByText($('#textbox'), true);
+                });
+              </script>
             </form>
           </div>
         </div>

@@ -32,28 +32,38 @@
                 </div>
                 <div class="span3">
                   <label for="email">Email</label>
-                  <select id="email" th:field="*{email}" class="form-control">
+                  <select size="15" id="email" th:field="*{email}" class="input-block-level form-control js-mail-select">
                     <option th:each="mail : ${emails}" th:value="${mail}" th:text="${mail}"></option>
                   </select>
+                  <input id="textboxMail" type="text" placeholder="Filtrer"/>
                 </div>
                 <div class="span3">
                   <label for="nom">Nom</label>
-                  <select id="nom" th:field="*{nom}" class="form-control">
+                  <select size="15" id="nom" th:field="*{nom}" class="input-block-level form-control js-nom-select">
                     <option th:each="n : ${userNoms}" th:value="${n}" th:text="${n}"></option>
                   </select>
+                  <input id="textboxNom" type="text" placeholder="Filtrer"/>
                 </div>
                 <div class="span3">
                   <label for="userId">Utilisateur</label>
-                  <select id="userId" th:field="*{userId}" class="form-control">
+                  <select size="15" id="userId" th:field="*{userId}" class="input-block-level form-control js-user-select">
                     <option th:each="user : ${users}" th:value="${user}" th:text="${user}"></option>
                   </select>
+                  <input id="textbox" type="text" placeholder="Filtrer"/>
+                  <input name="sort" type="hidden" value="actionDate,desc"/>
+                  <div class="submit">
+                    <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
+                    <input class="btn reset" value="Effacer" type="reset" id="reset">
+                  </div>
                 </div>
               </div>
-              <input name="sort" type="hidden" value="actionDate,desc"/>
-              <div class="submit">
-                <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
-                <input class="btn reset" value="Effacer" type="reset" id="reset">
-              </div>
+              <script>
+                $(document).ready(function() {
+                  $('.js-user-select').filterByText($('#textbox'), true);
+                  $('.js-nom-select').filterByText($('#textboxNom'), true);
+                  $('.js-mail-select').filterByText($('#textboxMail'), true);
+                });
+              </script>
             </form>
           </div>
         </div>
