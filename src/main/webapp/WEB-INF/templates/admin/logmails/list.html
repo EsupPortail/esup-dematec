@@ -33,28 +33,32 @@
           <div class="accordion-inner">
             <form th:action="@{/admin/logmails}" method="get" th:object="${command}">
               <div class="row-fluid">
-                <div class="span4">
+                <div class="span6">
                   <label for="userId">Destinataire (mailTo)</label>
-                  <select id="userId" th:field="*{userId}" class="form-control">
+                  <select size="15" id="userId" th:field="*{userId}" class="input-block-level form-control js-candidat-select">
                     <option th:each="user : ${users}" th:value="${user}" th:text="${user}"></option>
                   </select>
+                  <input id="textbox" type="text" placeholder="Filtrer"/>
                 </div>
-                <div class="span4">
+                <div class="span6">
                   <label for="status">Statut</label>
                   <select id="status" th:field="*{status}" class="form-control">
                     <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"></option>
                   </select>
-                </div>
-                <div class="span4">
                   <label for="message">Contenu du message (recherche libre)</label>
                   <input type="text" id="message" th:field="*{message}" class="form-control" placeholder="Texte recherché dans le message..."/>
-                </div>
+                  <input name="sort" type="hidden" value="actionDate,desc"/>
+                  <div class="submit">
+                    <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
+                    <input class="btn reset" value="Effacer" type="reset" id="reset">
+                  </div>
               </div>
-              <input name="sort" type="hidden" value="actionDate,desc"/>
-              <div class="submit">
-                <input class="btn btn-success" value="Trouver" type="submit" id="proceed">
-                <input class="btn reset" value="Effacer" type="reset" id="reset">
-              </div>
+
+              <script>
+                $(document).ready(function() {
+                  $('.js-candidat-select').filterByText($('#textbox'), true);
+                });
+              </script>
             </form>
           </div>
         </div>
