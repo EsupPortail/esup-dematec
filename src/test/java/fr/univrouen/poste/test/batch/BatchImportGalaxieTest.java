@@ -79,7 +79,7 @@ public class BatchImportGalaxieTest extends AbstractBatchTest {
     @Test
     public void test01_ImportGalaxieBatch() throws Exception {
         // Localiser le fichier Galaxie d'exemple fourni avec l'application
-        File galaxieFile = new File("src/main/webapp/doc/EXTETBF.xls");
+        File galaxieFile = new File("src/main/webapp/doc/EXTETBF-2.xls");
         assertTrue("Le fichier Galaxie d'exemple doit exister pour exécuter le batch",
                 galaxieFile.exists());
 

@@ -18,13 +18,16 @@
 package fr.univrouen.poste.services;
 
 import fr.univrouen.poste.dao.GalaxieEntryDao;
+import fr.univrouen.poste.dao.PosteCandidatureDao;
 import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.GalaxieEntry;
 import fr.univrouen.poste.domain.GalaxieExcel;
+import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -48,6 +51,8 @@ public class GalaxieExcelParser {
 
 	@Resource
 	GalaxieEntryDao galaxieEntryDao;
+    @Autowired
+    private PosteCandidatureDao posteCandidatureDao;
 
 	public void process(GalaxieExcel galaxieExcel) throws SQLException {
 		
@@ -112,23 +117,27 @@ public class GalaxieExcelParser {
 					else if(!dbGalaxyEntrie.getEmail().equals(galaxieEntry.getEmail())) {
 						try {
 							User user = userDao.findUsersByEmailAddress(dbGalaxyEntrie.getEmail());
-							if(user.getActivationDate() == null && !userDao.isCandidatActif(user)) {
+							if(user!=null && user.getActivationDate() == null && !userDao.isCandidatActif(user)) {
 								logger.info("Le candidat " + dbGalaxyEntrie.getNumCandidat() + " a changé d'email alors qu'il n'avait pas encore activé son compte - on relance la procédure de création de son compte/candidature.");
 								
 								// cas où le candidat postule à plusieurs postes pris en compte ainsi
 								List<GalaxieEntry> userGalaxieEntries = galaxieEntryDao.findGalaxieEntrysByCandidat(user);
 								for(GalaxieEntry userGalaxieEntry: userGalaxieEntries) {
 									dbGalaxyEntries.remove(getList4Id(userGalaxieEntry));
+									userGalaxieEntry.setCandidat(null);
+									userGalaxieEntry.setCandidature(null);
+									galaxieEntryDao.saveGalaxieEntry(userGalaxieEntry);
 								}
-								
+								for(PosteCandidature posteCandidature : posteCandidatureDao.findPosteCandidaturesByCandidat(user).getContent()) {
+									if(posteCandidature.getModification()==null) {
+										posteCandidatureDao.deletePosteCandidature(posteCandidature);
+									}
+								}
 								userDao.deleteUser(user);
-								galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
-								dbGalaxyEntries.put(getList4Id(galaxieEntry), galaxieEntry);
-								continue;
 							}
 							dbGalaxyEntrie.setEmail(galaxieEntry.getEmail());
 						} catch(Exception e) {
-							logger.warn("Pb avec le candidat " + dbGalaxyEntrie.getNumCandidat() + " qui a changé d'email ...", e);
+							logger.error("Pb avec le candidat " + dbGalaxyEntrie.getNumCandidat() + " qui a changé d'email ...", e);
 						}
 					}
 					dbGalaxyEntrie.setLocalisation(galaxieEntry.getLocalisation());
