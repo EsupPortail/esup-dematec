@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @EnableTransactionManagement
+@Import(MethodSecurityConfig.class)
 @ComponentScan(
         basePackages = "fr.univrouen.poste",
         useDefaultFilters = false,
