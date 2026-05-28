@@ -77,7 +77,7 @@ public class TestcontainersInitializer implements ApplicationContextInitializer<
             // Hook pour arrêter le conteneur à la fin des tests, sauf si keepAlive est true
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 // TODO : ajouter uen configuration pour choisir de garder le conteneur actif après les tests (keepAlive=true) ou de l'arrêter
-                if(true) {
+                if(false) {
                     System.out.println("🛑 Arrêt du conteneur PostgreSQL...");
                     postgresContainer.stop();
                 } else {

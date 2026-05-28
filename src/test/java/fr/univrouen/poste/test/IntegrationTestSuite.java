@@ -17,6 +17,10 @@
  */
 package fr.univrouen.poste.test;
 
+import fr.univrouen.poste.test.batch.BatchArchiveTest;
+import fr.univrouen.poste.test.batch.BatchDbUpgradeTest;
+import fr.univrouen.poste.test.batch.BatchImportGalaxieTest;
+import fr.univrouen.poste.test.batch.BatchResendActivationTest;
 import fr.univrouen.poste.test.security.SecurityAccessTest;
 import fr.univrouen.poste.test.web.LoginControllerTest;
 import fr.univrouen.poste.test.web.admin.*;
@@ -57,7 +61,12 @@ import org.junit.runners.Suite.SuiteClasses;
     ChangeDateKoSetupControllerTest.class,
     MyPosteCandidatureControllerCandidatDateKoTest.class,
     PosteAPourvoirControllerDatePosteAuditionnableTest.class,
-    MyPosteCandidatureControllerCandidatAuditionnableTest.class
+    MyPosteCandidatureControllerCandidatAuditionnableTest.class,
+    BatchResendActivationTest.class,
+    BatchDbUpgradeTest.class,
+    BatchArchiveTest.class,
+    // BatchDeleteDataTest.class,
+    BatchImportGalaxieTest.class
 })
 public class IntegrationTestSuite {
     // Cette classe reste vide, elle sert uniquement à définir l'ordre d'exécution

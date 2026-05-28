@@ -20,7 +20,7 @@ La base de données est configurée en mode `create-drop` et est recréée à ch
 
 ```bash
 # Exécuter les tests (Testcontainers démarre automatiquement PostgreSQL)
-mvn clean compile test -Dtest=IntegrationTestSuite
+mvn clean compile test -DskipTests=false -Dtest=IntegrationTestSuite
 ```
 
 ### Structure des tests

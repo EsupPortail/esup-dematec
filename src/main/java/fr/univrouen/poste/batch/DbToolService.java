@@ -280,22 +280,18 @@ public class DbToolService {
 				"delete from log_import_galaxie;" +
 				"delete from log_mail;" +
 				"delete from log_poste_file;" +
-				"delete from poste_candidature_reporters;" +
-				"delete from poste_candidature_member_review_files;" +
 				"delete from member_review_file;" +
-				"delete from poste_candidature_candidature_files;" +
 				"delete from poste_candidature_file;" +
-				"delete from poste_candidature_tags;" +
+				"delete from poste_candidature_tag;" +
 				"delete from poste_candidature;" +
 				"delete from manager_review;" +
-				"delete from posteapourvoir_membres;" +
-				"delete from posteapourvoir_presidents;" +		
-				"delete from posteapourvoir_poste_files;" +
+				"delete from posteapourvoir_user;" +
+				"delete from posteapourvoir_user_1;" +
 				"delete from posteapourvoir_file;" +
 				"delete from posteapourvoir;" +
 				"delete from c_user where is_admin=false and is_manager=false and is_super_manager=false;" +
 				"-- ne pas faire de truncate sur big_file pour appel du trigger et suppression effective du blob\n" +
-				"delete from big_file where id not in (select big_file from template_file);" +
+				"delete from big_file where id not in (select bigfile from template_file);" +
 				"COMMIT;" +
 				"VACUUM FULL;";
 		logger.warn("La commande SQL suivante va être exécutée : \n" + sqlUpdate);
