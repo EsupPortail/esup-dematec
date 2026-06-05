@@ -2,6 +2,7 @@ package fr.univrouen.poste.dao;
 
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.User;
+import fr.univrouen.poste.exceptions.EsupDematEcException;
 import fr.univrouen.poste.repository.UserRepository;
 import jakarta.annotation.Resource;
 import org.springframework.data.domain.Page;
@@ -220,6 +221,13 @@ public class UserDao {
     }
 
     public void deleteUser(User user) {
+        Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(user);
+        if(candidatures.getContent().size() > 0) {
+            throw new EsupDematEcException("Impossible de supprimer l'utilisateur " + user.getEmailAddress() + " car il est candidat sur des postes.");
+        }
+        if(user.getPostes() != null && user.getPostes().size() > 0) {
+            throw new EsupDematEcException("Impossible de supprimer l'utilisateur " + user.getEmailAddress() + " car il est membre sur des postes.");
+        }
         userRepository.delete(user);
     }
 
