@@ -44,11 +44,11 @@
 
   <!-- Gestion des alertes de restriction -->
   <script th:if="${upload_restricion_size_contentype != null}">
-    var alertRestriction = /*[[${
-            upload_restricion_size_contentype[0] == 'SizeRestriction' ? 'Fichier trop volumineux !' :
-            upload_restricion_size_contentype[0] == 'ContentTypeRestriction' ? 'Type de fichier non accepté !' :
+    var alertRestriction ="[[${
+            upload_restricion_size_contentype == 'SizeRestriction' ? 'Fichier trop volumineux !' :
+            upload_restricion_size_contentype == 'ContentTypeRestriction' ? 'Type de fichier non accepté !' :
             'Type de fichier non accepté et trop volumineux !'
-        }]]*/ '';
+        }]]";
     $(document).ready(function(){
       alert(alertRestriction);
     });
