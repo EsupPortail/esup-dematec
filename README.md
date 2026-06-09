@@ -54,10 +54,10 @@ Les admin et super-manager peuvent configurer certains éléments de l'applicati
 ## Installation 
 
 ### Pré-requis
-* Java Open JDK 8 ou 11 : https://openjdk.java.net/install : le mieux est de l'installer via le système de paquets de votre linux.
-* Maven (dernière version 3.0.x) : http://maven.apache.org/download.cgi : le mieux est de l'installer via le système de paquets de votre linux.
+* Java Open JDK 17 : le mieux est de l'installer via le système de paquets de votre linux.
+* Maven (dernière version 3.9.x) : le mieux est de l'installer via le système de paquets de votre linux.
 * Postgresql : le mieux est de l'installer via le système de paquets de votre linux.
-* Tomcat 8 ou 9 (suivant votre version du JDK)
+* Tomcat 10
 
 ### PostgreSQL
 * pg_hba.conf : ajout de 
@@ -76,18 +76,6 @@ grant ALL ON DATABASE esupdematec to esupdematec;
 ALTER DATABASE esupdematec OWNER TO esupdematec;
 ```
 
-### Paramétrage mémoire JVM :
-
-Pensez à paramétrer les espaces mémoire JVM : 
-```
-export JAVA_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=256m"
-```
-
-Pour maven :
-```
-export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:MaxPermSize=256m"
-```
-
 ### Lancement simple avec jetty :
 ```
 mvn jetty:run
@@ -100,15 +88,12 @@ Puis firefox http://localhost:8080/EsupDematEC (compte admin/admin)
 mvn clean package
 ```
 
-
-
 ## POSTGRESQL
 
 Cette application a été dévelopée en utilisant Spring ses technologies associées.
-Elle peut théoriquement supporter les différentes bases de données supportées par JPA (pour la gestion des blob nous avons également une adhérence avec Hibernate).
+Elle a été développée et optimisée dans l'optique d'être installée sur un PostgreSQL : lecture/écriture des blobs dans une transaction par streaming si supporté ; cela afin de pouvoir stocker et récupérer des fichiers de taille importante sans saturation de la RAM.
 
-Comme annoncé ci-dessus, l'application a cependant été développée et optimisée dans l'optique d'être installée sur un PostgreSQL : lecture/écriture des blobs dans une transaction par streaming si supporté ; cela afin de pouvoir stocker et récupérer des fichiers de taille importante sans saturation de la RAM.
-Nous recommandons donc l'usage de PostgreSQL pour cette application.
+PostgreSQL est requis pour cette application.
 
 Pour une bonne gestion des blob de cette application, il faut ajouter dans PostgreSQL un trigger sur la base de données sur la table big_file.
 La fonction lo_manage est nécessaire ici.
@@ -120,7 +105,6 @@ apt-get install postgresql-contrib
 
 Puis la création de l'extension lo se fait via un super-user:
 
-* avec postgresql 9 ou supérieur :
 ```
 psql
 \c esupdematec
@@ -133,7 +117,7 @@ Et enfin ajout du trigger* :
 CREATE TRIGGER t_big_file BEFORE UPDATE OR DELETE ON big_file  FOR EACH ROW EXECUTE PROCEDURE lo_manage(binary_file);
 ```
 
-CF https://www.postgresql.org/docs/9.4/static/lo.html
+CF https://www.postgresql.org/docs/17/lo.html
 
 \* afin que les tables soient préalablement créées, notamment la table big_file sur lequel on souhaite mettre le trigger lo_manage, vous devez démarrer l'application une fois ; en n'oubliant pas ensuite, pour ne pas écraser la base au redémarrage, de __modifier src/main/resources/META-INF/persistence.xml : create-> update__ - cf ci-dessous.
 
