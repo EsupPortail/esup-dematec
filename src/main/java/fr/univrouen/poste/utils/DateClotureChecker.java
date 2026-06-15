@@ -56,7 +56,7 @@ public class DateClotureChecker {
 	public boolean isCurrentTimeOk4ThisMembre(User targetUser) {
 		LocalDateTime currentTime = LocalDateTime.now();
 		AppliConfig config = appliConfigDao.getAppliConfig();
-        return targetUser.getIsMembre() && (config == null || !currentTime.isAfter(config.getDateEndMembre()));
+        return targetUser.getIsMembre() && (config == null || config.getDateEndMembre() == null || !currentTime.isAfter(config.getDateEndMembre()));
     }
 
 }
