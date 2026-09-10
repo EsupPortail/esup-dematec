@@ -36,7 +36,7 @@
 insert into c_user (id, activation_date, activation_key, email_address, enabled, is_admin, is_manager, is_super_manager, password, login_failed_nb, login_failed_time)
 values (nextval('hibernate_sequence'), NULL, NULL, 'admin', TRUE, TRUE, FALSE, FALSE, '$2a$10$KFQrNLgtWFfrTcBzz2YzxuIjHArXj2Og5asxJhTZVz5oqVW4RLNdS', 0, 0);
 
-insert into appli_version(id, esup_demat_ec_version) values (nextval('hibernate_sequence'), '1.9.x');
+insert into appli_version(id, esup_demat_ec_version) values (nextval('hibernate_sequence'), '2.0.x');
 
 --  appli_config
 INSERT INTO appli_config (

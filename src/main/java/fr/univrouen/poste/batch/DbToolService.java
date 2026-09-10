@@ -254,11 +254,14 @@ public class DbToolService {
 			if("1.8.x".equals(esupDematEcVersion)) {
 				// ... pas de màj de BD ici
 				esupDematEcVersion = "1.9.x";
-			} else {
-				logger.warn("\n\n#####\n\t" +
+			}
+			if("1.9.x".equals(esupDematEcVersion)) {
+				// ... pas de màj de BD ici
+				esupDematEcVersion = "2.0.x";
+			}
+			logger.warn("\n\n#####\n\t" +
 	    				"Base de données à jour !" +
 	    				"\n#####\n");
-			}
 			
 			appliVersion.setEsupDematEcVersion(currentEsupDematEcVersion);
 			appliVersionDao.saveAppliVersion(appliVersion);
