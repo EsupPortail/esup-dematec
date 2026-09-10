@@ -62,9 +62,6 @@
       </div>
     </div>
     
-    <a th:href="@{/admin/galaxieentrys(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
-    <br/><br/>
-    
     <div th:if="${galaxieentrys == null or #lists.isEmpty(galaxieentrys)}">
       <p>Aucun élément trouvé.</p>
     </div>
