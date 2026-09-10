@@ -136,7 +136,17 @@ public class PosteCandidature {
     public String getManagerReviewState() {
         return managerReview.getReviewStatus().toString();
     }
-    
+
+    public String getTagsAsHtmlString() {
+        String tagsAsString = "";
+        for(PosteCandidatureTag tag : tags.keySet()) {
+            if(tags.get(tag) != null) {
+                tagsAsString += String.format("<span class=\"important\">%s : </span> %s<br/>", tag.getName(), tags.get(tag).getValue());
+            }
+        }
+        return tagsAsString;
+    }
+
     public Map<String, String> getMapFields() {
     	Map<String, String> mapStrings = new HashMap<String, String>();
     	mapStrings.put("candidature_candidat_nom", this.getCandidat().getNom());

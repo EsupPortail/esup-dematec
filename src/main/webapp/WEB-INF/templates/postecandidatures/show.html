@@ -466,7 +466,7 @@
                 <option th:each="tagValue : ${posteCandidatureTag.values}"
                         th:value="${tagValue.id}"
                         th:text="${tagValue.value}"
-                        th:selected="${postecandidature.tags[posteCandidatureTag] == tagValue}"></option>
+                        th:selected="${postecandidature.tags.get(posteCandidatureTag) == tagValue}"></option>
               </select>
             </div>
             <br/>
