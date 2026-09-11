@@ -316,7 +316,7 @@ public class PosteAPourvoirController {
 	
 	@RequestMapping(value = "/{id}", params = {"export"})
 	@PreAuthorize("hasPermission(#id, 'viewposte')")
-	public String exportPosteFiles(@PathVariable Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public String exportPosteFiles(@PathVariable Long id, @RequestParam(required=true) String export, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			
 			LocalDateTime currentTime = LocalDateTime.now();
@@ -338,7 +338,8 @@ public class PosteAPourvoirController {
 			logService.logActionPosteFile(LogService.DOWNLOAD_ACTION, poste, dematFile, request, currentTime);
 		} catch(Exception e) {
 			logger.info("PostCandidature " + id + " can't be exported as " + export, e);
-			return "redirect:/postecandidatures/" + id.toString() + "?exportFailed=" + export;
+			redirectAttributes.addFlashAttribute("exportFailed", export);
+			return "redirect:/postecandidatures/" + id.toString();
 		}
 		return null;
 	}

@@ -116,7 +116,7 @@
           <a class="btn" th:href="@{/postecandidatures/{id}(id=${postecandidature.id}, export='pdf')}">Export pdf</a> |
           <a class="btn" th:href="@{/postecandidatures/{id}(id=${postecandidature.id}, export='zip')}">Export zip</a>
           <span class="alert alert-error" th:if="${exportFailed != null}">
-                            - Export <b th:text="${exportFailed[0]}"></b> impossible pour cette candidature.
+                            - Export <b th:text="${exportFailed}"></b> impossible pour cette candidature.
                         </span>
         </td>
       </tr>

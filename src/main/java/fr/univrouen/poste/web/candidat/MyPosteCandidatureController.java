@@ -167,7 +167,7 @@ public class MyPosteCandidatureController {
 	
 	@RequestMapping(value = "/{id}", params = {"export"})
 	@PreAuthorize("hasPermission(#id, 'review')")
-	public String exportCandidatureFiles(@PathVariable Long id, @RequestParam String export, HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
+	public String exportCandidatureFiles(@PathVariable Long id, @RequestParam String export, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			
 			LocalDateTime currentTime = LocalDateTime.now();
@@ -200,7 +200,8 @@ public class MyPosteCandidatureController {
 			logService.logActionFile(LogService.DOWNLOAD_ACTION, postecandidature, dematFile, request, currentTime);
 		} catch(Exception e) {
 			logger.info("PostCandidature " + id + " can't be exported as " + export, e);
-			return "redirect:/postecandidatures/" + id.toString() + "?exportFailed=" + export;
+			redirectAttributes.addFlashAttribute("exportFailed", export);
+			return "redirect:/postecandidatures/" + id.toString();
 		}
 		return null;
 	}
