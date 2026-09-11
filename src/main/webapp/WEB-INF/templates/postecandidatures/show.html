@@ -34,7 +34,7 @@
           <dl>
             <th:block th:each="posteCandidatureTag : ${allPosteCandidatureTag}">
               <dt th:text="${posteCandidatureTag.name}"></dt>
-              <dd th:text="${postecandidature.tags[posteCandidatureTag]?.value}"></dd>
+              <dd th:text="${postecandidature.tags.get(posteCandidatureTag)?.value}"></dd>
             </th:block>
           </dl>
         </fieldset>
