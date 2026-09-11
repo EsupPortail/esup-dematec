@@ -236,8 +236,44 @@
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReview?.manager?.emailAddress}">Gestionnaire</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerReview != null ? #temporals.format(candidature.managerReview.reviewDate, posteCandidature_modification_date_format) : ''}">Date gestion</td>
               <td th:if="${not candidatCanSignup and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.galaxieEntryEtatDossier}">Etat Dossier Galaxie</td>
-              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.managerComment4Members}" class="demat-popover" th:attrappend="title=${candidature.managerComment4Members}">Com.</td>
-              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')') and not #lists.isEmpty(allPosteCandidatureTag)}" th:utext="${candidature.tagsAsHtmlString}" class="demat-popover demat-star">Tags</td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" class="demat-icon-cell">
+                <th:block th:if="${candidature.managerComment4Members != null and not #strings.isEmpty(candidature.managerComment4Members)}">
+                  <a href="#" data-toggle="modal" th:href="${'#comment-modal-' + candidature.id}" class="demat-popover-trigger" title="Voir le commentaire">
+                    <img th:src="@{/css/images/dialog-information.png}" alt="Commentaire" class="demat-popover-icon"/>
+                  </a>
+                  <div class="modal hide fade" th:id="${'comment-modal-' + candidature.id}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-header">
+                      <button class="close" data-dismiss="modal" type="button">×</button>
+                      <h3>Commentaire</h3>
+                    </div>
+                    <div class="modal-body">
+                      <p th:text="${candidature.managerComment4Members}">Commentaire</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button class="btn" data-dismiss="modal" type="button">Fermer</button>
+                    </div>
+                  </div>
+                </th:block>
+              </td>
+              <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')') and not #lists.isEmpty(allPosteCandidatureTag)}" class="demat-icon-cell">
+                <th:block th:if="${candidature.tagsAsHtmlString != null and not #strings.isEmpty(candidature.tagsAsHtmlString)}">
+                  <a href="#" data-toggle="modal" th:href="${'#tags-modal-' + candidature.id}" class="demat-star-trigger" title="Voir les tags">
+                    <img th:src="@{/css/images/star.png}" alt="Tags" class="demat-star-icon"/>
+                  </a>
+                  <div class="modal hide fade" th:id="${'tags-modal-' + candidature.id}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-header">
+                      <button class="close" data-dismiss="modal" type="button">×</button>
+                      <h3>Tags</h3>
+                    </div>
+                    <div class="modal-body">
+                      <div th:utext="${candidature.tagsAsHtmlString}"></div>
+                    </div>
+                    <div class="modal-footer">
+                      <button class="btn" data-dismiss="modal" type="button">Fermer</button>
+                    </div>
+                  </div>
+                </th:block>
+              </td>
               <td>
                 <a th:href="@{/postecandidatures/{id}(id=${candidature.id})}" class="btn btn-small btn-info">Voir</a>
               </td>
@@ -264,7 +300,6 @@
 
               // Convertir colonnes texte en icônes simple (ex : true/false)
               $("td").filter(function(){ return $(this).text().trim() === "false"; }).text("");
-              $(".demat-popover").filter(function(){ return !$(this).text().trim(); }).removeClass();
               $('.js-candidat-select').filterByText($('#textbox'), true);
             });
           </script>
@@ -380,9 +415,6 @@
                 return $(this).text() === "false";
               }).text("");
 
-              $(".demat-popover").filter(function() {
-                return !$(this).text().trim();
-              }).removeClass();
 
               $('.js-candidat-select').filterByText($('#textbox'), true);
             });

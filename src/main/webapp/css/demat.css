@@ -222,22 +222,36 @@ float: left;
 width: 100%;
 }
 
-.demat-popover {
-background-image: url("images/dialog-information.png");
-background-repeat: no-repeat;
-background-position: center;
-font-size: 0;
-width: auto;
+.demat-icon-cell {
+text-align: center;
+vertical-align: middle;
 }
-.demat-popover:hover {
-display: block;
-font-size: 100%;
-background: #fefefe !important;
-position: absolute; 
-right: 30px;
+
+.demat-popover-trigger,
+.demat-star-trigger {
+display: inline-block;
+padding: 2px;
+border-radius: 4px;
+transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out;
 }
-.demat-star {
-background-image: url("images/star.png");
+
+.demat-popover-trigger:hover,
+.demat-star-trigger:hover {
+background-color: #eef6ff;
+transform: scale(1.15);
+}
+
+.demat-popover-icon,
+.demat-star-icon {
+width: 18px;
+height: 18px;
+cursor: pointer;
+vertical-align: middle;
+}
+
+.modal-body .important {
+font-weight: bold;
+color: #333;
 }
 
 .navbar-inverse form {
