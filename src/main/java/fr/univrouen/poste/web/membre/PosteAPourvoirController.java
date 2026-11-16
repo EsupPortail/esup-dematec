@@ -218,7 +218,7 @@ public class PosteAPourvoirController {
 		}
 	}
 	
-	@RequestMapping(value = "/{id}/delFile/{idFile}")
+	@RequestMapping(value = "/{id}/delFile/{idFile}", method = RequestMethod.POST)
 	@PreAuthorize("hasPermission(#id, 'manageposte')")
 	public String deletePosteFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request) throws IOException {
 		PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(id);

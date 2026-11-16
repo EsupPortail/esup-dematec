@@ -263,7 +263,7 @@ public class MyPosteCandidatureController {
 		}
 	}
 	
-	@RequestMapping(value = "/{id}/delFile/{idFile}")
+	@RequestMapping(value = "/{id}/delFile/{idFile}", method = RequestMethod.POST)
 	@PreAuthorize("hasPermission(#id, 'manage') and hasPermission(#idFile, 'delFile')")
 	public String deleteCandidatureFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);
@@ -281,7 +281,7 @@ public class MyPosteCandidatureController {
 		return "redirect:/postecandidatures/" + id.toString();
 	}
 
-	@RequestMapping(value = "/{id}/delMemberReviewFile/{idFile}")
+	@RequestMapping(value = "/{id}/delMemberReviewFile/{idFile}", method = RequestMethod.POST)
 	@PreAuthorize("hasPermission(#id, 'review') and hasPermission(#idFile, 'delMemberReviewFile')")
 	public String delMemberReviewFile(@PathVariable Long id, @PathVariable Long idFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PosteCandidature postecandidature = posteCandidatureDao.findPosteCandidature(id);

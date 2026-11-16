@@ -88,21 +88,25 @@
 
       <th:block sec:authorize="hasRole('ROLE_ADMIN')">
         <td>
-          <a class="btn btn-danger"
-             th:href="@{/postecandidatures/{id}/delFile/{fileId}(id=${postecandidature.id}, fileId=${candidatureFile.id})}"
-             th:onclick="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
-            <i class="icon-trash"><!--  --></i>Supprimer
-          </a>
+          <form method="post" th:action="@{/postecandidatures/{id}/delFile/{fileId}(id=${postecandidature.id}, fileId=${candidatureFile.id})}"
+                th:onsubmit="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-danger">
+              <i class="icon-trash"><!--  --></i>Supprimer
+            </button>
+          </form>
         </td>
       </th:block>
 
       <th:block sec:authorize="hasRole('ROLE_CANDIDAT')">
         <td th:if="${candidatureFile.writeable}">
-          <a class="btn btn-danger"
-             th:href="@{/postecandidatures/{id}/delFile/{fileId}(id=${postecandidature.id}, fileId=${candidatureFile.id})}"
-             th:onclick="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
-            <i class="icon-trash"><!--  --></i>Supprimer
-          </a>
+          <form method="post" th:action="@{/postecandidatures/{id}/delFile/{fileId}(id=${postecandidature.id}, fileId=${candidatureFile.id})}"
+                th:onsubmit="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-danger">
+              <i class="icon-trash"><!--  --></i>Supprimer
+            </button>
+          </form>
         </td>
         <td th:unless="${candidatureFile.writeable}"><!--  --></td>
       </th:block>
@@ -405,21 +409,25 @@
 
           <th:block sec:authorize="hasRole('ROLE_ADMIN')">
             <td>
-              <a class="btn btn-danger"
-                 th:href="@{/postecandidatures/{id}/delMemberReviewFile/{fileId}(id=${postecandidature.id}, fileId=${memberReviewFile.id})}"
-                 th:onclick="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
-                <i class="icon-trash"><!--  --></i>Supprimer
-              </a>
+              <form method="post" th:action="@{/postecandidatures/{id}/delMemberReviewFile/{fileId}(id=${postecandidature.id}, fileId=${memberReviewFile.id})}"
+                    th:onsubmit="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-danger">
+                  <i class="icon-trash"><!--  --></i>Supprimer
+                </button>
+              </form>
             </td>
           </th:block>
 
           <th:block sec:authorize="hasRole('ROLE_MEMBRE')">
             <td th:if="${supprReview and memberReviewFile.member == currentUser}">
-              <a class="btn btn-danger"
-                 th:href="@{/postecandidatures/{id}/delMemberReviewFile/{fileId}(id=${postecandidature.id}, fileId=${memberReviewFile.id})}"
-                 th:onclick="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
-                <i class="icon-trash"><!--  --></i>Supprimer
-              </a>
+              <form method="post" th:action="@{/postecandidatures/{id}/delMemberReviewFile/{fileId}(id=${postecandidature.id}, fileId=${memberReviewFile.id})}"
+                    th:onsubmit="'return confirm(\'' + #{entity_delete_confirm} + '\');'">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-danger">
+                  <i class="icon-trash"><!--  --></i>Supprimer
+                </button>
+              </form>
             </td>
             <td th:unless="${supprReview and memberReviewFile.member == currentUser}"><!--  --></td>
           </th:block>
