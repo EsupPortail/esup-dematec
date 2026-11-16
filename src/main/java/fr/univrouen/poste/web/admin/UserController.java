@@ -29,12 +29,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +67,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid User user, BindingResult result, Model model) {
+        requireUserManagementPermission();
         if (result.hasErrors()) {
             model.addAttribute("user", user);
             logger.error("Error when creating an user : " + result.getGlobalError());
@@ -89,6 +94,7 @@ public class UserController {
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String update(@Valid User user, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        requireUserManagementPermission();
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, user);
             return "admin/users/update";
@@ -120,6 +126,7 @@ public class UserController {
 
 	@RequestMapping(params = "form", produces = "text/html")
     public String createForm(Model uiModel) {
+        requireUserManagementPermission();
         populateEditForm(uiModel, new User());
         return "admin/users/create";
     }
@@ -145,17 +152,36 @@ public class UserController {
 
 	@RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String updateForm(@PathVariable Long id, Model uiModel) {
-        populateEditForm(uiModel, userDao.findUser(id));
+        User user = userDao.findUser(id);
+        requireUserManagementPermission();
+        populateEditForm(uiModel, user);
         return "admin/users/update";
     }
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
     public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, RedirectAttributes redirectAttributes) {
         User user = userDao.findUser(id);
+        requireUserManagementPermission();
         userDao.deleteUser(user);
         redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
         redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/admin/users";
+    }
+
+    @ModelAttribute("canManagePrivileges")
+    public boolean canManagePrivileges() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated()
+                && authentication.getAuthorities().stream().anyMatch(authority ->
+                    "ROLE_ADMIN".equals(authority.getAuthority())
+                    || "ROLE_SUPER_MANAGER".equals(authority.getAuthority()));
+    }
+
+    /** The web interface reserves all user mutations for ADMIN and SUPER_MANAGER. */
+    private void requireUserManagementPermission() {
+        if (!canManagePrivileges()) {
+            throw new AccessDeniedException("Seuls les administrateurs et super-gestionnaires peuvent modifier les comptes utilisateurs.");
+        }
     }
 
 	void populateEditForm(Model uiModel, User user) {

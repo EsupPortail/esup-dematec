@@ -82,6 +82,8 @@ public class SecurityConfig {
                     .hasRole("PREVIOUS_ADMINISTRATOR")
                 .requestMatchers("/")
                     .authenticated()
+                .requestMatchers("/admin/appliconfig", "/admin/appliconfig/**")
+                    .hasAnyRole("ADMIN", "SUPER_MANAGER")
                 .requestMatchers("/admin/**")
                     .hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/membre/**")
