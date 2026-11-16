@@ -14,7 +14,7 @@
         <spring-security.version>6.5.11</spring-security.version>
         <spring-data-jpa.version>3.5.5</spring-data-jpa.version>
         <hibernate.version>7.1.25.Final</hibernate.version>
-        <thymeleaf.version>3.1.4.RELEASE</thymeleaf.version>
+        <thymeleaf.version>3.1.7.RELEASE</thymeleaf.version>
         <skipTests>true</skipTests>
     </properties>
     <dependencies>
