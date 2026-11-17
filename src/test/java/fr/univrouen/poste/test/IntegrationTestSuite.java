@@ -52,6 +52,7 @@ import org.junit.runners.Suite.SuiteClasses;
     CommissionImportControllerTest.class,
     fr.univrouen.poste.test.security.CredentialRegressionTest.class,
     fr.univrouen.poste.test.security.ExportAndImportSecurityTest.class,
+    fr.univrouen.poste.test.security.UploadSecurityTest.class,
     SecurityAccessTest.class,
     LoginControllerTest.class,
     UserControllerTest.class,

@@ -124,6 +124,16 @@ public class MyPosteCandidatureController {
     @Autowired
     private AppliConfigService appliConfigService;
 
+    @InitBinder("posteCandidatureFile")
+    public void bindCandidatureUpload(org.springframework.web.bind.WebDataBinder binder) {
+        binder.setAllowedFields("file", "fileType");
+    }
+
+    @InitBinder("memberReviewFile")
+    public void bindReviewUpload(org.springframework.web.bind.WebDataBinder binder) {
+        binder.setAllowedFields("file");
+    }
+
 	@ModelAttribute("currentUser")
 	public User getCurrentUser() {
 		String emailAddress = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -308,13 +318,28 @@ public class MyPosteCandidatureController {
 		}
 
 		// get PosteCandidature from id
-		PosteCandidature posteCandidature = posteCandidatureDao.findPosteCandidature(id);
+		PosteCandidature posteCandidature = posteCandidatureDao.findPosteCandidatureForUpdate(id);
+        AppliConfigFileType requestedType = posteCandidatureFile.getFileType();
+        AppliConfigFileType fileType = requestedType == null ? null
+                : appliConfigFileTypeDao.findAppliConfigFileType(requestedType.getId());
+        if (posteCandidature == null || fileType == null) {
+            redirectAttributes.addFlashAttribute("upload_restricion_size_contentype", "InvalidFileType");
+            return "redirect:/postecandidatures/" + id;
+        }
+        long count = posteCandidature.getCandidatureFiles().stream()
+                .filter(existing -> existing.getFileType() != null
+                        && fileType.getId().equals(existing.getFileType().getId())).count();
+        if (fileType.getCandidatureNbFileMax() >= 0 && count >= fileType.getCandidatureNbFileMax()) {
+            redirectAttributes.addFlashAttribute("upload_restricion_size_contentype", "FileCountRestriction");
+            return "redirect:/postecandidatures/" + id;
+        }
+        posteCandidatureFile.setFileType(fileType);
 
 		// upload file
 		MultipartFile file = posteCandidatureFile.getFile();
 		
 		// sometimes file is null here, but I don't know how to reproduce this issue ... maybe that can occur only with some specifics browsers ?
-		if(file != null) {
+		if(file != null && file.getOriginalFilename() != null && !file.getOriginalFilename().isBlank()) {
 			String filename = file.getOriginalFilename();
 			
 			boolean filenameAlreadyUsed = false;
@@ -333,7 +358,7 @@ public class MyPosteCandidatureController {
 				Long fileSize = file.getSize();
 				
 				if(fileSize != 0) {
-					String contentType = file.getContentType();
+					String contentType = file.getContentType() != null ? file.getContentType() : "application/octet-stream";
 					// cf https://github.com/EsupPortail/esup-dematec/issues/8 - workaround pour éviter mimetype erroné comme application/text-plain:formatted
 					contentType = contentType.replaceAll(":.*", "");
 					
@@ -406,7 +431,7 @@ public class MyPosteCandidatureController {
 		// upload file
 		MultipartFile file = memberReviewFile.getFile();
 		// sometimes file is null here, but I don't know how to reproduce this issue ... maybe that can occur only with some specifics browsers ?
-		if(file != null) {
+		if(file != null && file.getOriginalFilename() != null && !file.getOriginalFilename().isBlank()) {
 			String filename = file.getOriginalFilename();
 			Long fileSize = file.getSize();
 			
@@ -424,7 +449,7 @@ public class MyPosteCandidatureController {
 			} else {
 			
 				if(fileSize != 0) {
-					String contentType = file.getContentType();
+					String contentType = file.getContentType() != null ? file.getContentType() : "application/octet-stream";
 					// cf https://github.com/EsupPortail/esup-dematec/issues/8 - workaround pour éviter mimetype erroné comme application/text-plain:formatted
 					contentType = contentType.replaceAll(":.*", "");
 					

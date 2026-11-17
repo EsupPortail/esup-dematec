@@ -40,6 +40,11 @@ public class PosteCandidatureDao {
         return posteCandidatureRepository.findAll();
     }
 
+    /** Serialize uploads so concurrent requests cannot exceed a file-type quota. */
+    public PosteCandidature findPosteCandidatureForUpdate(Long id) {
+        return entityManager.find(PosteCandidature.class, id, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+    }
+
     public PosteCandidature findPosteCandidature(Long id) {
         if (id == null) return null;
         Optional<PosteCandidature> result = posteCandidatureRepository.findById(id);
