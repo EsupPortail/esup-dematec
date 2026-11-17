@@ -42,11 +42,14 @@ public class CommissionExcel {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     String filename;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name = "bigfile")
+    @JoinColumn(name = "big_file")
     BigFile bigFile = new BigFile();
     
     @Transient

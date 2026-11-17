@@ -40,6 +40,9 @@ public class BigFile {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
 	//@Lob
 	//@Type(type="org.hibernate.type.PrimitiveByteArrayBlobType")

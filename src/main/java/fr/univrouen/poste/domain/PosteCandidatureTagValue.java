@@ -29,9 +29,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class PosteCandidatureTagValue {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name = "my_seq", sequenceName = "hibernate_sequence", allocationSize = 1)
     @Column(name = "id")
     Long id;
+
+    @Version
+    Integer version;
 
 
     String value;

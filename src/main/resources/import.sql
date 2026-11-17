@@ -33,14 +33,14 @@
 
 
 -- ADMIN USER
-insert into c_user (id, activation_date, activation_key, email_address, enabled, is_admin, is_manager, is_super_manager, password, login_failed_nb, login_failed_time)
-values (nextval('hibernate_sequence'), NULL, NULL, 'admin', TRUE, TRUE, FALSE, FALSE, '$2a$10$KFQrNLgtWFfrTcBzz2YzxuIjHArXj2Og5asxJhTZVz5oqVW4RLNdS', 0, 0);
+insert into c_user (id, activation_date, activation_key, email_address, enabled, is_admin, is_manager, is_super_manager, password, login_failed_nb, login_failed_time, version)
+values (nextval('hibernate_sequence'), NULL, NULL, 'admin', TRUE, TRUE, FALSE, FALSE, '$2a$10$KFQrNLgtWFfrTcBzz2YzxuIjHArXj2Og5asxJhTZVz5oqVW4RLNdS', 0, 0, 0);
 
-insert into appli_version(id, esup_demat_ec_version) values (nextval('hibernate_sequence'), '2.0.x');
+insert into appli_version(id, esup_demat_ec_version, version) values (nextval('hibernate_sequence'), '2.0.x', 0);
 
 --  appli_config
 INSERT INTO appli_config (
-id, 
+version, id,
 texte_candidat_aide_candidature_depot, 
 texte_candidat_aide_candidatures, 
 mail_from, 
@@ -78,7 +78,7 @@ laureat_enable,
 texte_mail_candidat_laureat
 )
 VALUES (
-nextval('hibernate_sequence'),
+0, nextval('hibernate_sequence'),
 '',
 '<div class="well help">  <p>Voici ci-dessous la liste de vos différentes candidatures.</p>  
 <p>Merci de cliquer sur les boutons "voir" des différentes candidatures afin de les compléter (dépôt de fichiers).</p></div>',
@@ -147,10 +147,10 @@ Le comité de sélection a décidé de retenir votre candidature au poste @@numE
 Cordialement.\n--\nUniversité ESUP - Direction des Ressources Humaines'
 );
 
-insert into appli_config_file_type (id, type_title, type_description, candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, list_index)
-values (nextval('hibernate_sequence'), 'Fichier de candidature', 'Merci de sélectionner un fichier puis de valider votre sélection pour l''envoi effectif.', -1, -1, '.*', '.*', 0);
+insert into appli_config_file_type (id, type_title, type_description, candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, list_index, version)
+values (nextval('hibernate_sequence'), 'Fichier de candidature', 'Merci de sélectionner un fichier puis de valider votre sélection pour l''envoi effectif.', -1, -1, '.*', '.*', 0, 0);
 
 
-insert into galaxie_mapping(id, id_email, id_num_candidat, id_numemploi, id_civilite, id_localisation, id_nom, id_prenom, id_profil, id_etat_dossier)
-values (nextval('hibernate_sequence'), 'Email', 'N° candidat', 'N° emploi', 'Civilité', 'Localisation', 'Nom', 'Prénom', 'Profil', 'Etat dossier');
+insert into galaxie_mapping(id, id_email, id_num_candidat, id_numemploi, id_civilite, id_localisation, id_nom, id_prenom, id_profil, id_etat_dossier, version)
+values (nextval('hibernate_sequence'), 'Email', 'N° candidat', 'N° emploi', 'Civilité', 'Localisation', 'Nom', 'Prénom', 'Profil', 'Etat dossier', 0);
 

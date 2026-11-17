@@ -40,6 +40,9 @@ public class LogMail {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     LocalDateTime actionDate;

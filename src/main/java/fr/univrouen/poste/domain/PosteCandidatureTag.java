@@ -41,12 +41,17 @@ public class PosteCandidatureTag {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
 	@Column(unique=true)
     String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "postcandidaturetag_values")
+    @JoinTable(name = "poste_candidature_tag_values",
+        joinColumns = @JoinColumn(name = "poste_candidature_tag"),
+        inverseJoinColumns = @JoinColumn(name = "values", unique = true))
     @OrderBy("value ASC")
     Set<PosteCandidatureTagValue> values = new HashSet<PosteCandidatureTagValue>();
 

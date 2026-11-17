@@ -49,6 +49,9 @@ public class User {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 	
     String civilite = "";
 

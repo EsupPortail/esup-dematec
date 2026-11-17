@@ -46,6 +46,9 @@ public class TemplateFile {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     String filename;
 
@@ -56,7 +59,7 @@ public class TemplateFile {
     LocalDateTime sendTime;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "bigfile")
+    @JoinColumn(name = "big_file")
     BigFile bigFile = new BigFile();
 
     @Column

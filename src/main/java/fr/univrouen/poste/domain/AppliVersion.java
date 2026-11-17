@@ -20,6 +20,9 @@ public class AppliVersion {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 	
 	String esupDematEcVersion;
 

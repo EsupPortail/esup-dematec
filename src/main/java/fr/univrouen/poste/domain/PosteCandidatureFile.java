@@ -42,9 +42,8 @@ public class PosteCandidatureFile implements DematFile {
     )
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "posteCandidature")
-    PosteCandidature posteCandidature;
+    @Version
+    Integer version;
 
     String filename;
 
@@ -64,11 +63,11 @@ public class PosteCandidatureFile implements DematFile {
     String contentType;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "bigfile")
+    @JoinColumn(name = "big_file")
     BigFile bigFile = new BigFile();
 
     @ManyToOne
-    @JoinColumn(name = "filetype")
+    @JoinColumn(name = "file_type")
     AppliConfigFileType fileType;
 
     @Transient

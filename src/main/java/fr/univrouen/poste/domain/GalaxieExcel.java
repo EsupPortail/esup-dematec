@@ -43,12 +43,15 @@ public class GalaxieExcel {
     )
     Long id;
 
+    @Version
+    Integer version;
+
     String filename;
 
     Long fileSize;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name = "bigfile")
+    @JoinColumn(name = "big_file")
     BigFile bigFile = new BigFile();
     
     @Transient

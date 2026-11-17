@@ -34,9 +34,13 @@ import java.time.LocalDateTime;
 public class MemberReviewFile implements DematFile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name = "my_seq", sequenceName = "hibernate_sequence", allocationSize = 1)
     @Column(name = "id")
     Long id;
+
+    @Version
+    Integer version;
 
     String filename;
 
@@ -55,7 +59,7 @@ public class MemberReviewFile implements DematFile {
     User member;
     
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name = "bigfile")
+    @JoinColumn(name = "big_file")
     BigFile bigFile = new BigFile();
     
     @Transient

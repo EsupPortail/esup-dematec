@@ -24,6 +24,9 @@ public class ManagerReview {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     @ManyToOne
     @JoinColumn(name = "manager")

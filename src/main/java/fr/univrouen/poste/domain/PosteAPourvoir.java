@@ -33,9 +33,13 @@ import java.util.*;
 public class PosteAPourvoir {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name = "my_seq", sequenceName = "hibernate_sequence", allocationSize = 1)
     @Column(name = "id")
     Long id;
+
+    @Version
+    Integer version;
 
 	@Column(nullable = false, unique = true)
 	String numEmploi;
@@ -48,22 +52,24 @@ public class PosteAPourvoir {
 
     @ManyToMany
     @JoinTable(
-        name = "posteapourvoir_user",
-        joinColumns = @JoinColumn(name = "posteapourvoir"),
+        name = "posteapourvoir_membres",
+        joinColumns = @JoinColumn(name = "postes"),
         inverseJoinColumns = @JoinColumn(name = "membres")
     )
     Set<User> membres;
 
     @ManyToMany
     @JoinTable(
-        name = "posteapourvoir_user_1",
+        name = "posteapourvoir_presidents",
         joinColumns = @JoinColumn(name = "posteapourvoir"),
         inverseJoinColumns = @JoinColumn(name = "presidents")
     )
     Set<User> presidents;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "posteapourvoir_postefiles")
+    @JoinTable(name = "posteapourvoir_poste_files",
+        joinColumns = @JoinColumn(name = "posteapourvoir"),
+        inverseJoinColumns = @JoinColumn(name = "poste_files", unique = true))
     @OrderBy("sendTime DESC")
     Set<PosteAPourvoirFile> posteFiles = new HashSet<PosteAPourvoirFile>();
     

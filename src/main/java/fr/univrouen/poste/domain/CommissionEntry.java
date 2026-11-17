@@ -42,6 +42,9 @@ public class CommissionEntry {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     @NotEmpty
     String numPoste;
@@ -56,9 +59,11 @@ public class CommissionEntry {
     Boolean president = false;
 
     @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "membre")
     User membre;
 
     @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "poste")
     PosteAPourvoir poste;
 
     // don't care of upper/lower case for authentication with email ...

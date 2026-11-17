@@ -42,6 +42,9 @@ public class GalaxieEntry {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     @NotEmpty
     String numEmploi;

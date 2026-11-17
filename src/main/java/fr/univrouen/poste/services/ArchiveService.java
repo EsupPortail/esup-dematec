@@ -90,7 +90,8 @@ public class ArchiveService {
                 folder.mkdir();
 
                 // écrire metadata.csv pour les candidatures
-                writeMetadataCsvForFiles(posteCandidature.getCandidatureFiles(), folderName, header);
+                writeMetadataCsvForFiles(posteCandidature.getCandidatureFiles(), folderName, header,
+                        posteCandidature.getCandidat().getEmailAddress());
 
                 if (!posteCandidature.getMemberReviewFiles().isEmpty()) {
                     folderName = folderName.concat("Rapports_commission").concat("/");
@@ -124,7 +125,7 @@ public class ArchiveService {
         }
     }
 
-    private void writeMetadataCsvForFiles(Set<PosteCandidatureFile> files, String folderName, String[] header) throws IOException, SQLException {
+    private void writeMetadataCsvForFiles(Set<PosteCandidatureFile> files, String folderName, String[] header, String ownerEmail) throws IOException, SQLException {
         CsvMapper mapper = new CsvMapper();
         CsvSchema.Builder schemaBuilder = CsvSchema.builder();
         for (String col : header) schemaBuilder.addColumn(col);
@@ -149,7 +150,7 @@ public class ArchiveService {
                 row.put("id", fileName);
                 row.put("filename", f.getFilename());
                 row.put("sendDate", f.getSendTime() != null ? f.getSendTime().format(SDF) : "");
-                row.put("owner", posteCandidatOwnerEmailSafe(f));
+                row.put("owner", ownerEmail);
                 seqWriter.write(row);
             }
         }
@@ -214,14 +215,6 @@ public class ArchiveService {
                 row.put("owner", posteFileOwnerEmailSafe(f));
                 seqWriter.write(row);
             }
-        }
-    }
-
-    private String posteCandidatOwnerEmailSafe(PosteCandidatureFile f) {
-        try {
-            return f.getPosteCandidature().getCandidat().getEmailAddress();
-        } catch (Exception e) {
-            return "";
         }
     }
 

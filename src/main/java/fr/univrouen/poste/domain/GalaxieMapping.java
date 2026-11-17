@@ -18,6 +18,9 @@ public class GalaxieMapping {
     )
 	Long id;
 
+    @Version
+    Integer version;
+
 
     String id_numemploi;
     

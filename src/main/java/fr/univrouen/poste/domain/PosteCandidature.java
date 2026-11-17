@@ -46,6 +46,9 @@ public class PosteCandidature {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     LocalDateTime creation;
@@ -59,12 +62,16 @@ public class PosteCandidature {
     PosteAPourvoir poste;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "postecandidature_candidaturefiles")
+    @JoinTable(name = "poste_candidature_candidature_files",
+        joinColumns = @JoinColumn(name = "poste_candidature"),
+        inverseJoinColumns = @JoinColumn(name = "candidature_files", unique = true))
     @OrderBy("sendTime DESC")
     Set<PosteCandidatureFile> candidatureFiles = new HashSet<PosteCandidatureFile>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "postecandidature_memberreviewfiles")
+    @JoinTable(name = "poste_candidature_member_review_files",
+        joinColumns = @JoinColumn(name = "poste_candidature"),
+        inverseJoinColumns = @JoinColumn(name = "member_review_files", unique = true))
     @OrderBy("sendTime DESC")
     Set<MemberReviewFile> memberReviewFiles = new HashSet<MemberReviewFile>();
 
@@ -97,8 +104,8 @@ public class PosteCandidature {
     
     @ManyToMany
     @JoinTable(
-        name = "postecandidature_user",
-        joinColumns = @JoinColumn(name = "postecandidature"),
+        name = "poste_candidature_reporters",
+        joinColumns = @JoinColumn(name = "poste_candidature"),
         inverseJoinColumns = @JoinColumn(name = "reporters")
     )
     Set<User> reporters;
@@ -106,11 +113,11 @@ public class PosteCandidature {
     @Transient
     Boolean reporterTag = false;
     
-    @ElementCollection
-    @CollectionTable(name = "postecandidature_postcandidaturetagvalue",
-        joinColumns = @JoinColumn(name = "postecandidature"))
+    @ManyToMany
+    @JoinTable(name = "poste_candidature_tags",
+        joinColumns = @JoinColumn(name = "poste_candidature"),
+        inverseJoinColumns = @JoinColumn(name = "tags"))
     @MapKeyJoinColumn(name = "tags_key")
-    @Column(name = "tags")
     Map<PosteCandidatureTag, PosteCandidatureTagValue> tags = new HashedMap<PosteCandidatureTag, PosteCandidatureTagValue>();
 
 	public boolean isRecevable() {

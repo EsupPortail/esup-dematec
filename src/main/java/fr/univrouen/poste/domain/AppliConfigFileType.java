@@ -26,6 +26,9 @@ public class AppliConfigFileType {
     )
     Long id;
 
+    @Version
+    Integer version;
+
 
     @Column(columnDefinition="TEXT")
 	String typeTitle;
