@@ -45,25 +45,29 @@ public class ForgotChangePasswordValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		ForgotChangePasswordForm form = (ForgotChangePasswordForm) target;
 
+        if (!fr.univrouen.poste.utils.CredentialValidation.validToken(form.getActivationKey())) {
+            errors.rejectValue("activationKey", "changepassword.invalidemailaddress");
+            return;
+        }
 		try {
 			List<User> users = userDao.findUsersByActivationKey(form.getActivationKey());
-			if (users != null && !users.isEmpty()) {
+			if (users != null && !users.isEmpty() && users.get(0).getActivationDate() != null) {
 				if (users.size() > 1) {
-					errors.rejectValue("emailAddress",
+					errors.rejectValue("activationKey",
 							"changepassword.duplicateemailaddress");
 				} else {
 					String newPassword = form.getNewPassword();
 					String newPasswordAgain = form.getNewPasswordAgain();
-					if (!newPassword.equals(newPasswordAgain)) {
+					if (!fr.univrouen.poste.utils.CredentialValidation.validPassword(newPassword) || !newPassword.equals(newPasswordAgain)) {
 						errors.reject("changepassword.passwordsnomatch");
 					}
 				}
 			} else {
-				errors.rejectValue("emailAddress",
+				errors.rejectValue("activationKey",
 						"changepassword.invalidemailaddress");
 			}
 		} catch (Exception e) {
-			errors.rejectValue("emailAddress",
+			errors.rejectValue("activationKey",
 					"changepassword.invalidemailaddress");
 		}
 	}

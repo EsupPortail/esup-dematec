@@ -13,6 +13,7 @@
       <h4>Modification du password</h4>
     <form method="POST" th:action="@{/forgotpassword/change}" th:object="${changePasswordForm}">
       <div class="password-container">
+        <div th:if="${#fields.hasAnyErrors()}" class="errors" th:errors="*{all}"></div>
         <input type="hidden" id="_changepassword_activationKey" maxlength="30" th:field="*{activationKey}" />
         <div id="changepassword_newpassword">
           <label for="_changepassword_newpassword">Nouveau Password:</label>

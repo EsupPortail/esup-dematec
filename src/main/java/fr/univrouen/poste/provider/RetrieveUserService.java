@@ -79,7 +79,7 @@ public class RetrieveUserService {
         username = username.toLowerCase();
 
         String password = (String) authentication.getCredentials();
-        if (!StringUtils.hasText(password) || !StringUtils.hasText(username)) {
+        if (!fr.univrouen.poste.utils.CredentialValidation.validPassword(password) || !StringUtils.hasText(username)) {
             logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
             throw new BadCredentialsException("Merci de saisir votre email et mot de passe");
         }

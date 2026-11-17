@@ -148,7 +148,7 @@ public class UserDao {
     public List<User> findUsersByActivationKeyAndEmailAddress(String activationKey, String emailAddress) {
         if (activationKey == null || activationKey.isEmpty()) throw new IllegalArgumentException("The activationKey argument is required");
         if (emailAddress == null || emailAddress.isEmpty()) throw new IllegalArgumentException("The emailAddress argument is required");
-        return userRepository.findByActivationKeyIgnoreCaseAndEmailAddressIgnoreCase(activationKey, emailAddress);
+        return userRepository.findByActivationKeyAndEmailAddressIgnoreCase(activationKey, emailAddress);
     }
 
     public List<User> findUsersByEmailAddressAndActivationDateIsNotNull(String emailAddress) {

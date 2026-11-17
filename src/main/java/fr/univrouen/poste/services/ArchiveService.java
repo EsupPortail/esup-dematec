@@ -63,7 +63,7 @@ public class ArchiveService {
             for (PosteCandidature posteCandidature : posteCandidatures) {
                 String folderName = destFolder.concat("/");
                 String numEmploi = posteCandidature.getPoste().getNumEmploi();
-                numEmploi = numEmploi.replaceAll("[^a-zA-Z0-9.-]", "_");
+                numEmploi = safeComponent(numEmploi);
                 folderName = folderName.concat(numEmploi).concat("/");
 
                 File folder = new File(folderName);
@@ -79,9 +79,9 @@ public class ArchiveService {
                     folder.mkdir();
                 }
 
-                String nom = posteCandidature.getCandidat().getNom().replaceAll("[^a-zA-Z0-9.-]", "_");
-                String prenom = posteCandidature.getCandidat().getPrenom().replaceAll("[^a-zA-Z0-9.-]", "_");
-                String numCandidat = posteCandidature.getCandidat().getNumCandidat().replaceAll("[^a-zA-Z0-9.-]", "_");
+                String nom = safeComponent(posteCandidature.getCandidat().getNom());
+                String prenom = safeComponent(posteCandidature.getCandidat().getPrenom());
+                String numCandidat = safeComponent(posteCandidature.getCandidat().getNumCandidat());
                 folderName = folderName.concat(nom).concat("-");
                 folderName = folderName.concat(prenom).concat("-");
                 folderName = folderName.concat(numCandidat).concat("/");
@@ -106,7 +106,7 @@ public class ArchiveService {
 
                 String folderName = destFolder.concat("/");
                 String numEmploi = poste.getNumEmploi();
-                numEmploi = numEmploi.replaceAll("[^a-zA-Z0-9.-]", "_");
+                numEmploi = safeComponent(numEmploi);
                 folderName = folderName.concat(numEmploi).concat("/");
 
                 File folder = new File(folderName);
@@ -136,9 +136,13 @@ public class ArchiveService {
              SequenceWriter seqWriter = objWriter.writeValues(metadataWriter)) {
 
             for (PosteCandidatureFile f : files) {
-                String fileName = f.getId().toString().concat("-").concat(f.getFilename());
+                String fileName = f.getId().toString().concat("-").concat(safeComponent(f.getFilename()));
                 String folderFileName = folderName.concat(fileName);
                 File file = new File(folderFileName);
+                if (!file.toPath().toAbsolutePath().normalize().startsWith(
+                        new File(folderName).toPath().toAbsolutePath().normalize())) {
+                    throw new IOException("Archive path outside destination");
+                }
                 file.createNewFile();
 
                 try (OutputStream outputStream = new FileOutputStream(file);
@@ -167,9 +171,13 @@ public class ArchiveService {
              SequenceWriter seqWriter = objWriter.writeValues(metadataWriter)) {
 
             for (MemberReviewFile f : files) {
-                String fileName = f.getId().toString().concat("-").concat(f.getFilename());
+                String fileName = f.getId().toString().concat("-").concat(safeComponent(f.getFilename()));
                 String folderFileName = folderName.concat(fileName);
                 File file = new File(folderFileName);
+                if (!file.toPath().toAbsolutePath().normalize().startsWith(
+                        new File(folderName).toPath().toAbsolutePath().normalize())) {
+                    throw new IOException("Archive path outside destination");
+                }
                 file.createNewFile();
 
                 try (OutputStream outputStream = new FileOutputStream(file);
@@ -198,9 +206,13 @@ public class ArchiveService {
              SequenceWriter seqWriter = objWriter.writeValues(metadataWriter)) {
 
             for (PosteAPourvoirFile f : files) {
-                String fileName = f.getId().toString().concat("-").concat(f.getFilename());
+                String fileName = f.getId().toString().concat("-").concat(safeComponent(f.getFilename()));
                 String folderFileName = folderName.concat(fileName);
                 File file = new File(folderFileName);
+                if (!file.toPath().toAbsolutePath().normalize().startsWith(
+                        new File(folderName).toPath().toAbsolutePath().normalize())) {
+                    throw new IOException("Archive path outside destination");
+                }
                 file.createNewFile();
 
                 try (OutputStream outputStream = new FileOutputStream(file);
@@ -216,6 +228,12 @@ public class ArchiveService {
                 seqWriter.write(row);
             }
         }
+    }
+
+    private static String safeComponent(String value) {
+        if (value == null || value.isBlank()) return "_";
+        String safe = value.replaceAll("[^a-zA-Z0-9.-]", "_");
+        return safe.equals(".") || safe.equals("..") ? "_" : safe;
     }
 
     private String memberFileOwnerEmailSafe(MemberReviewFile f) {

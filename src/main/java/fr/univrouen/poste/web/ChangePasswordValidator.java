@@ -23,8 +23,6 @@ package fr.univrouen.poste.web;
 import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.User;
 import jakarta.annotation.Resource;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.NonUniqueResultException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,33 +59,19 @@ public class ChangePasswordValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		ChangePasswordForm form = (ChangePasswordForm) target;
 
-		try {
-			if (SecurityContextHolder.getContext().getAuthentication()
-					.isAuthenticated()) {
-				UserDetails userDetails = (UserDetails) SecurityContextHolder
-						.getContext().getAuthentication().getPrincipal();
-				User person = userDao.findUsersByEmailAddress(userDetails.getUsername());
-				if(person!=null){
-					String storedPassword = person.getPassword();
-					String currentPassword = form.getOldPassword();
-					if (!passwordEncoder.matches(currentPassword, storedPassword)) {
-						errors.rejectValue("oldPassword",
-								"changepassword.invalidpassword");
-					}
-					String newPassword = form.getNewPassword();
-					String newPasswordAgain = form.getNewPasswordAgain();
-					if (!newPassword.equals(newPasswordAgain)) {
-						errors.reject("changepassword.passwordsnomatch");
-					}
-				}
-			}
-		} catch (EntityNotFoundException e) {
-			errors.rejectValue("emailAddress",
-					"changepassword.invalidemailaddress");
-		} catch (NonUniqueResultException e) {
-			errors.rejectValue("emailAddress",
-					"changepassword.duplicateemailaddress");
-		}
-	}
-
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails userDetails)) {
+            errors.reject("changepassword.invalidpassword");
+            return;
+        }
+        User person = userDao.findUsersByEmailAddress(userDetails.getUsername());
+        if (person == null || !fr.univrouen.poste.utils.CredentialValidation.validPassword(form.getOldPassword())
+                || !passwordEncoder.matches(form.getOldPassword(), person.getPassword())) {
+            errors.rejectValue("oldPassword", "changepassword.invalidpassword");
+        }
+        if (!fr.univrouen.poste.utils.CredentialValidation.validPassword(form.getNewPassword())
+                || !form.getNewPassword().equals(form.getNewPasswordAgain())) {
+            errors.rejectValue("newPassword", "changepassword.passwordsnomatch");
+        }
+    }
 }

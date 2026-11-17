@@ -77,7 +77,7 @@ public class ForgotPasswordController {
         	return "forgotpassword/index";
         } else {
         	List<User> users = userDao.findUsersByEmailAddressAndActivationDateIsNotNull(form.getEmailAddress().trim());
-        	if(users != null && !users.isEmpty()){
+            if(users != null && users.size() == 1 && users.get(0).getActivationDate() != null){
         		User user = users.get(0);
 				passwordService.sendPasswordActivationKeyMail(user, request.getRemoteAddr());
 			} else {
@@ -90,8 +90,11 @@ public class ForgotPasswordController {
 
     @RequestMapping(value = "/forgotpassword/formChange", method = RequestMethod.GET)
     public String modifyPasswordFormWithActivationKey(@RequestParam String activationKey, Model model) {
+        if (!fr.univrouen.poste.utils.CredentialValidation.validToken(activationKey)) {
+            return "redirect:/";
+        }
         List<User> users = userDao.findUsersByActivationKey(activationKey);
-        if(users != null && !users.isEmpty()){
+        if(users != null && users.size() == 1 && users.get(0).getActivationDate() != null){
         	ForgotChangePasswordForm changePasswordForm = new ForgotChangePasswordForm();
         	changePasswordForm.setActivationKey(activationKey);
         	model.addAttribute("changePasswordForm", changePasswordForm);
@@ -105,10 +108,10 @@ public class ForgotPasswordController {
 			BindingResult result, HttpServletRequest request) {
 		validator.validate(form, result);
 		if (result.hasErrors()) {
-			return "changepassword/index";
+            return "forgotpassword/formChange";
 		}
         List<User> users = userDao.findUsersByActivationKey(form.getActivationKey());
-        if(users != null && !users.isEmpty()){
+        if(users != null && users.size() == 1 && users.get(0).getActivationDate() != null){
         	User user = users.get(0);
         	user.setPassword(passwordEncoder.encode(form.getNewPassword()));
         	user.setActivationKey(null);

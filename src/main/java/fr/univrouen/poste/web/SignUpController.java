@@ -25,6 +25,7 @@ import fr.univrouen.poste.services.CreateUserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,13 +34,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import fr.univrouen.poste.utils.CredentialValidation;
 import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.time.LocalDateTime;
 
 @RequestMapping("/signup")
 @Controller
+@org.springframework.transaction.annotation.Transactional
 public class SignUpController {
 
 	final Logger log = LoggerFactory.getLogger(getClass());
@@ -95,12 +97,16 @@ public class SignUpController {
 	    AppliConfig config = appliConfigDao.getAppliConfig();
 	    String textePremierePageAnonyme = config != null ? config.getTextePremierePageAnonyme() : "";
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
+        if (!CredentialValidation.validToken(activationKey) || emailAddress == null || emailAddress.isBlank()) {
+            return "signup/errorlink";
+        }
     	List<User> users = userDao.findUsersByActivationKeyAndEmailAddress(activationKey, emailAddress);
-    	if(users != null && !users.isEmpty()) {
+        if(users != null && users.size() == 1 && users.get(0).getActivationDate() == null && Boolean.TRUE.equals(users.get(0).getEnabled())) {
         	User user = users.get(0);
         	if(user.getPassword() != null) {
         		user.setActivationDate(LocalDateTime.now());
         		user.setEnabled(true);
+                user.setActivationKey(null);
         		userDao.saveUser(user);
         		return "login";
         	} else {
@@ -117,19 +123,23 @@ public class SignUpController {
     }
     
     @RequestMapping(value="/initpassword", method = RequestMethod.POST)  
-    public String initPassword(@Valid UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
+    public String initPassword(@Validated(PasswordInitialization.class) UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
     	AppliConfig config = appliConfigDao.getAppliConfig();
     	String textePremierePageAnonyme = config != null ? config.getTextePremierePageAnonyme() : "";
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
+        if (result.hasErrors() || !CredentialValidation.validToken(userRegistration.getActivationKey())
+                || !CredentialValidation.validPassword(userRegistration.getPassword())
+                || !userRegistration.getPassword().equals(userRegistration.getRepeatPassword())) {
+            return "signup/error";
+        }
     	List<User> users = userDao.findUsersByActivationKeyAndEmailAddress(userRegistration.getActivationKey(), userRegistration.getEmailAddress());
-        User userEntity = (users != null && !users.isEmpty()) ? users.get(0) : null;
-        if(userEntity != null && userRegistration.getPassword().equals(userRegistration.getRepeatPassword()) && !userRegistration.getPassword().isEmpty()){
-        	if(userEntity.getPassword() == null) {
+        User userEntity = (users != null && users.size() == 1) ? users.get(0) : null;
+        if(userEntity != null && userEntity.getActivationDate() == null && userEntity.getPassword() == null && Boolean.TRUE.equals(userEntity.getEnabled())){
         		userEntity.setActivationDate(LocalDateTime.now());
         		userEntity.setEnabled(true);
+                userEntity.setActivationKey(null);
         		userEntity.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
         		userDao.saveUser(userEntity);
-        	} 
     		return "login";
         }
         else{

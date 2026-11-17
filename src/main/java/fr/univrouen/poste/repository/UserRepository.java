@@ -14,8 +14,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailAddressIgnoreCase(String emailAddress);
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
     List<User> findByActivationKey(String activationKey);
-    List<User> findByActivationKeyIgnoreCaseAndEmailAddressIgnoreCase(String activationKey, String emailAddress);
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    List<User> findByActivationKeyAndEmailAddressIgnoreCase(String activationKey, String emailAddress);
     List<User> findByEmailAddressIgnoreCaseAndActivationDateIsNotNull(String emailAddress);
     List<User> findByIsAdmin(Boolean isAdmin);
     List<User> findByIsManager(Boolean isManager);

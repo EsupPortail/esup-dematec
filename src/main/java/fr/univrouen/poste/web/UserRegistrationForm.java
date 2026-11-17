@@ -37,7 +37,9 @@ public class UserRegistrationForm {
 	@Size(min = 1, message="Merci de saisir votre nom de famille")
 	String lastName;
 	
-	@NotNull
+	@NotNull(groups = {jakarta.validation.groups.Default.class, PasswordInitialization.class})
+    @jakarta.validation.constraints.NotBlank(groups = PasswordInitialization.class)
+    @jakarta.validation.constraints.Email(groups = PasswordInitialization.class)
 	@Size(min = 1, message="Merci de saisir votre adresse email")
 	String emailAddress;
 	

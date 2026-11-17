@@ -80,5 +80,29 @@ public class LoginControllerTest extends AbstractControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
     }
+    @Test
+    public void test04_ResetPasswordRejectsInvalidToken() throws Exception {
+        mockMvc.perform(post("/forgotpassword/change").with(csrf())
+                        .param("activationKey", "unknown-token")
+                        .param("newPassword", "ExamplePassword123!")
+                        .param("newPasswordAgain", "ExamplePassword123!"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("forgotpassword/formChange"))
+                .andExpect(model().attributeHasFieldErrors("changePasswordForm", "activationKey"));
+    }
+
+    @Test
+    public void test05_ResetPasswordRejectsMissingToken() throws Exception {
+        mockMvc.perform(post("/forgotpassword/change").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("forgotpassword/formChange"))
+                .andExpect(model().attributeHasFieldErrors("changePasswordForm", "activationKey"));
+    }
+
+    @Test
+    public void test06_ResetPasswordRequiresCsrf() throws Exception {
+        mockMvc.perform(post("/forgotpassword/change"))
+                .andExpect(status().isForbidden());
+    }
 }
 
