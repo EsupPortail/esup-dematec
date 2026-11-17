@@ -79,6 +79,7 @@ public class PosteAPourvoirService {
 				candidature.setRecevableEnum(recevableEnum);
 
 				posteCandidatureDao.savePosteCandidature(candidature);
+				postesAlreadyCandidated.add(poste);
 			}
 		} 
 

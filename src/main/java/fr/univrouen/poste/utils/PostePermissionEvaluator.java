@@ -54,6 +54,10 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
 		
+		if (auth == null || !auth.isAuthenticated() || auth.getName() == null || auth.getName().isEmpty()) {
+			return false;
+		}
+
 		Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
 		
 		if(roles.contains("ROLE_ADMIN") || 
@@ -65,8 +69,6 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 		
 		String permissionKey = (String) permission;
 
-		if(auth == null || auth.getName() == null || "".equals(auth.getName()))
-			return false;
 		
         if(!(targetDomainObject instanceof PosteCandidature || targetDomainObject instanceof Long))
         	return false;
@@ -76,7 +78,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 		if("delFile".equals(permissionKey)) {
         	Long id = (Long) targetDomainObject;
         	PosteCandidatureFile pcFile = posteCandidatureFileDao.findPosteCandidatureFile(id);
-			return pcFile.getWriteable();
+			return pcFile != null && Boolean.TRUE.equals(pcFile.getWriteable());
 		}
 		
 		if("delMemberReviewFile".equals(permissionKey)) {
@@ -87,14 +89,14 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         	Long id = (Long) targetDomainObject;
         	MemberReviewFile reviewFile = memberReviewFileDao.findMemberReviewFile(id);
         	User user = userDao.findUsersByEmailAddress(email);
-			return reviewFile.getMember().equals(user);
+			return reviewFile != null && user != null && user.equals(reviewFile.getMember());
 		}
 		
 		if("manageReporters".equals(permissionKey)) {
 			Long id = (Long) targetDomainObject;
         	PosteCandidature pc = posteCandidatureDao.findPosteCandidature(id);
         	User user = userDao.findUsersByEmailAddress(email);
-			return pc.getPoste().getPresidents()!=null && pc.getPoste().getPresidents().contains(user);
+			return pc != null && pc.getPoste().getPresidents()!=null && pc.getPoste().getPresidents().contains(user);
 		}
 		
 		if("viewposte".equals(permissionKey)) {
@@ -126,6 +128,7 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         
         if(pc != null) {
 	        User user = userDao.findUsersByEmailAddress(email);
+	        if (user == null) return false;
 	        
 	        if("review".equals(permissionKey)) {
         		PosteAPourvoir poste = pc.getPoste();
@@ -145,7 +148,8 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
 		        		LocalDateTime currentTime = LocalDateTime.now();     
 		    			if(currentTime.compareTo(appliConfigService.getCacheDateEndCandidat()) > 0 &&
 		    				currentTime.compareTo(appliConfigService.getCacheDateEndCandidatActif()) > 0) {
-		    				return pc.getAuditionnable() && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;
+					return pc.getAuditionnable() && pc.getPoste().getDateEndCandidatAuditionnable() != null
+							&& currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;
 		    			} else {
 		    				return true;
 		    			}

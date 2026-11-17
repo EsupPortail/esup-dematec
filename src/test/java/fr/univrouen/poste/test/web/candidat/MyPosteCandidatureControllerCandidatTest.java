@@ -18,6 +18,11 @@
 package fr.univrouen.poste.test.web.candidat;
 
 import fr.univrouen.poste.domain.AppliConfigFileType;
+import fr.univrouen.poste.domain.AppliConfig;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import org.springframework.util.MultiValueMap;
+import org.springframework.test.annotation.Rollback;
 import fr.univrouen.poste.domain.PosteCandidature;
 import fr.univrouen.poste.domain.PosteCandidatureFile;
 import fr.univrouen.poste.test.TestUtils;
@@ -34,6 +39,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -290,5 +298,67 @@ public class MyPosteCandidatureControllerCandidatTest extends MyPosteCandidature
     }
 
 
+
+    @Test
+    @WithUserDetails("candidat@example.org")
+    public void test09_SuppressionFichierInexistantRefusee() throws Exception {
+        mockMvc.perform(post("/postecandidatures/" + candidatureId + "/delFile/" + Long.MAX_VALUE)
+                .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Rollback
+    @WithUserDetails("super-manager@example.org")
+    public void test10_InscriptionPosteRepeteSansDoublon() throws Exception {
+        MvcResult result = mockMvc.perform(get("/admin/appliconfig"))
+                .andExpect(status().isOk()).andReturn();
+        Page<AppliConfig> configs =
+                (Page<AppliConfig>) result.getModelAndView()
+                        .getModel().get("appliconfigs");
+        AppliConfig config = configs.getContent().get(0);
+        MultiValueMap<String, String> original = TestUtils.getParamsAsStringMap(config);
+        MultiValueMap<String, String> enabled = TestUtils.getParamsAsStringMap(config);
+        enabled.set("candidatCanSignup", "true");
+        try {
+            mockMvc.perform(put("/admin/appliconfig").with(csrf()).params(enabled))
+                    .andExpect(status().is3xxRedirection());
+            String posteUrl = mockMvc.perform(post("/posteapourvoirs").with(csrf())
+                    .param("numEmploi", "REGRESSION-DOUBLON")
+                    .param("localisation", "Test").param("profil", "Test")
+                    .param("dateEndSignupCandidat", LocalDateTime.now().plusDays(1)
+                            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))))
+                    .andExpect(status().is3xxRedirection()).andReturn().getResponse().getRedirectedUrl();
+            String posteId = posteUrl.substring(posteUrl.lastIndexOf('/') + 1);
+            mockMvc.perform(post("/addpostecandidatures").with(csrf())
+                    .with(user("candidat@example.org").roles("CANDIDAT"))
+                    .param("posteIds", posteId, posteId))
+                    .andExpect(status().is3xxRedirection());
+            MvcResult list = mockMvc.perform(get("/postecandidatures")
+                    .with(user("candidat@example.org").roles("CANDIDAT")))
+                    .andExpect(status().isOk()).andReturn();
+            Page<PosteCandidature> candidatures = (Page<PosteCandidature>) list.getModelAndView()
+                    .getModel().get("postecandidatures");
+            assertEquals(1L, candidatures.stream()
+                    .filter(pc -> pc.getPoste().getId().toString().equals(posteId)).count());
+        } finally {
+            MvcResult current = mockMvc.perform(get("/admin/appliconfig/" + config.getId())
+                    .with(user("super-manager@example.org").roles("MANAGER", "SUPER_MANAGER")))
+                    .andExpect(status().isOk()).andReturn();
+            AppliConfig currentConfig = (AppliConfig) current.getModelAndView().getModel().get("appliConfig");
+            original.set("version", currentConfig.getVersion().toString());
+            mockMvc.perform(put("/admin/appliconfig").with(csrf())
+                    .with(user("super-manager@example.org").roles("MANAGER", "SUPER_MANAGER")).params(original))
+                    .andExpect(status().is3xxRedirection());
+        }
+    }
+
+    @Test
+    @WithUserDetails("candidat@example.org")
+    public void test11_RapporteurCandidatureInexistanteRefuse() throws Exception {
+        mockMvc.perform(post("/postecandidatures/" + Long.MAX_VALUE + "/addReporter")
+                .with(csrf()).param("userId", "1"))
+                .andExpect(status().isForbidden());
+    }
 }
 
