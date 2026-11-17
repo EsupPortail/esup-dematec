@@ -53,6 +53,7 @@ import org.junit.runners.Suite.SuiteClasses;
     fr.univrouen.poste.test.security.CredentialRegressionTest.class,
     fr.univrouen.poste.test.security.ExportAndImportSecurityTest.class,
     fr.univrouen.poste.test.security.UploadSecurityTest.class,
+    fr.univrouen.poste.test.security.CandidatureSignupFlowTest.class,
     SecurityAccessTest.class,
     LoginControllerTest.class,
     fr.univrouen.poste.test.security.SessionRevocationTest.class,

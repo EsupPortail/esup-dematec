@@ -271,4 +271,28 @@ public class CredentialRegressionTest extends AbstractControllerTest {
         mockMvc.perform(get("/uncaughtException"))
                 .andExpect(status().isInternalServerError());
     }
+    @Test
+    public void administrativePasswordsUseTheSameValidation() throws Exception {
+        String email = "admin-password-validation@example.org";
+        for (String invalid : new String[]{null, "", " ", "\u0000", "a".repeat(73), "é".repeat(37)}) {
+            var request = post("/admin/users").with(csrf()).param("emailAddress", email);
+            if (invalid != null) request.param("password", invalid);
+            mockMvc.perform(request).andExpect(view().name("admin/users/create"))
+                    .andExpect(model().attributeHasFieldErrors("user", "password"));
+        }
+        mockMvc.perform(post("/admin/users").with(csrf()).param("emailAddress", email)
+                .param("password", PASSWORD)).andExpect(status().is3xxRedirection());
+        Page<User> users = (Page<User>) mockMvc.perform(get("/admin/users")
+                .param("nomOrPrenomOrEmailAddress", email)).andReturn().getModelAndView().getModel().get("users");
+        assertEquals(1, users.getTotalElements());
+        User target = users.getContent().get(0);
+        for (String invalid : new String[]{" ", "\u0000", "a".repeat(73), "é".repeat(37)}) {
+            mockMvc.perform(put("/admin/users").with(csrf()).param("id", target.getId().toString())
+                    .param("emailAddress", email).param("password", invalid))
+                    .andExpect(view().name("admin/users/update"))
+                    .andExpect(model().attributeHasFieldErrors("user", "password"));
+        }
+        mockMvc.perform(post("/login").with(anonymous()).with(csrf()).param("username", email)
+                .param("password", PASSWORD)).andExpect(redirectedUrl("/"));
+    }
 }

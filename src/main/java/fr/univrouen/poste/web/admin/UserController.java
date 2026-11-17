@@ -71,6 +71,9 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid User user, BindingResult result, Model model) {
         requireUserManagementPermission();
+        if (!fr.univrouen.poste.utils.CredentialValidation.validPassword(user.getPassword())) {
+            result.rejectValue("password", "changepassword.invalidpassword");
+        }
         if (result.hasErrors()) {
             model.addAttribute("user", user);
             logger.error("Error when creating an user : " + result.getGlobalError());
@@ -90,6 +93,10 @@ public class UserController {
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String update(@Valid User user, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         requireUserManagementPermission();
+        if ((user.getId() == null || org.springframework.util.StringUtils.hasLength(user.getPassword()))
+                && !fr.univrouen.poste.utils.CredentialValidation.validPassword(user.getPassword())) {
+            bindingResult.rejectValue("password", "changepassword.invalidpassword");
+        }
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, user);
             return "admin/users/update";

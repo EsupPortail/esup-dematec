@@ -18,9 +18,18 @@
 
   <div th:if="${not #lists.isEmpty(posteapourvoirs)}">
     <ul>
-      <li th:each="poste : ${posteapourvoirs}">
-        <a th:href="@{/postecandidatures/new(posteId=${poste.id})}" 
-           th:text="${poste.numEmploi + ' - ' + poste.profil}"></a>
+      <li th:each="available : ${posteapourvoirs}">
+        <span th:text="${available.poste.numEmploi + ' - ' + available.poste.profil}"></span>
+        <form th:unless="${available.candidat}" method="post" th:action="@{/addpostecandidatures}">
+          <input type="hidden" name="posteIds" th:value="${available.poste.id}" />
+          <button type="submit" class="btn btn-primary">Candidater</button>
+        </form>
+        <span th:if="${available.candidat}">Candidature enregistrée</span>
+        <form th:if="${available.candidat and available.canBeUnsubscribed}" method="post" th:action="@{/addpostecandidatures}">
+          <input type="hidden" name="_method" value="DELETE" />
+          <input type="hidden" name="posteIds" th:value="${available.poste.id}" />
+          <button type="submit" class="btn btn-warning">Annuler la candidature</button>
+        </form>
       </li>
     </ul>
   </div>
@@ -29,7 +38,7 @@
     <p>Aucun poste disponible pour candidature.</p>
   </div>
 
-    <a href="/" class="btn btn-info">Retour</a>
+    <a th:href="@{/}" class="btn btn-info">Retour</a>
   </div>
 </body>
 </html>

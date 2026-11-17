@@ -130,9 +130,14 @@ public class CandidatAddPosteCandidatureController {
 			if(candidat != null) {
 				for(Long posteId : posteIds) {   			
 					PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(posteId);
+                    if (poste == null || poste.getDateEndSignupCandidat() == null
+                            || !poste.getDateEndSignupCandidat().isAfter(java.time.LocalDateTime.now())) {
+                        continue;
+                    }
 					Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndPoste(candidat, poste);
 					if(!candidatures.isEmpty()) {
-						PosteCandidature candidature = candidatures.getContent().get(0);
+						PosteCandidature candidature = posteCandidatureDao.findPosteCandidatureForUpdate(
+                                candidatures.getContent().get(0).getId());
 						if(candidature.getModification() == null) {
 							posteCandidatureDao.deletePosteCandidature(candidature);
 							log.info("Candidatures annulées sur les postes : " + posteIds + " pour le candidat " + candidat);

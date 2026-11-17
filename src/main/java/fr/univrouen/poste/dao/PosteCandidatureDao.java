@@ -42,7 +42,14 @@ public class PosteCandidatureDao {
 
     /** Serialize uploads so concurrent requests cannot exceed a file-type quota. */
     public PosteCandidature findPosteCandidatureForUpdate(Long id) {
-        return entityManager.find(PosteCandidature.class, id, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+        PosteCandidature candidature = entityManager.find(PosteCandidature.class, id,
+                jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+        if (candidature != null) {
+            entityManager.flush();
+            // Permission checks may already have loaded it before another upload committed.
+            entityManager.refresh(candidature, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+        }
+        return candidature;
     }
 
     public PosteCandidature findPosteCandidature(Long id) {
