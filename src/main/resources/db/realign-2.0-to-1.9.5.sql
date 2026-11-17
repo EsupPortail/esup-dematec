@@ -4,6 +4,7 @@
 -- base complète, Large Objects compris, et valider sur une restauration de recette.
 -- Simulation par défaut : psql -X -d BASE -f realign-2.0-to-1.9.5.sql
 -- Application explicite : psql -X -v apply=true -d BASE -f realign-2.0-to-1.9.5.sql
+-- Tables de liaison obsolètes supprimées après contrôle de reprise des liens.
 -- Aucun document supprimé. Toute divergence entre deux représentations provoque
 -- une erreur et l'annulation de la transaction : ne pas contourner ce contrôle.
 -- Ne pas redémarrer l'ancien WAR sur la base convertie.
@@ -46,6 +47,8 @@ $$;
 
 -- Renomme si la cible manque ; si les deux existent, la cible doit être
 -- entièrement vide ou strictement identique à la source (NULL compris).
+-- Exception ciblée : les imports Galaxie historiques et récents peuvent avoir
+-- des liens complémentaires. Conserve les anciens et complète les seuls NULL.
 CREATE OR REPLACE FUNCTION pg_temp.realign_column(t text, src text, dst text) RETURNS void
 LANGUAGE plpgsql AS $$
 DECLARE populated boolean; different boolean; n bigint;
@@ -59,6 +62,18 @@ BEGIN
   IF NOT pg_temp.has_column(t,dst) THEN
     EXECUTE format('ALTER TABLE public.%I RENAME COLUMN %I TO %I',t,src,dst);
     RAISE NOTICE 'Renommage %.% -> %',t,src,dst;
+    RETURN;
+  END IF;
+  IF t='galaxie_excel' AND src='bigfile' AND dst='big_file' THEN
+    IF EXISTS(SELECT 1 FROM public.galaxie_excel
+              WHERE big_file IS NOT NULL AND bigfile IS NOT NULL
+                AND big_file<>bigfile) THEN
+      RAISE EXCEPTION 'Conflit galaxie_excel : deux références non NULL différentes. Audit manuel requis.';
+    END IF;
+    UPDATE public.galaxie_excel SET big_file=bigfile
+      WHERE big_file IS NULL AND bigfile IS NOT NULL;
+    GET DIAGNOSTICS n=ROW_COUNT;
+    RAISE NOTICE 'galaxie_excel.big_file : % liens récents repris ; liens historiques conservés',n;
     RETURN;
   END IF;
   EXECUTE format('SELECT EXISTS(SELECT 1 FROM public.%I WHERE %I IS NOT NULL)',t,dst) INTO populated;
@@ -195,27 +210,44 @@ SELECT pg_temp.realign_links('poste_candidature_tags',
   'SELECT postecandidature,tags_id,tags_key FROM public.postecandidature_postcandidaturetagvalue',
   to_regclass('public.postecandidature_postcandidaturetagvalue') IS NOT NULL);
 
--- Archive les anciennes tables sans références contraignantes vers les données
--- actives. Ces instantanés ne suivent plus les écritures de la campagne.
-CREATE SCHEMA IF NOT EXISTS dematec_before_realign;
+-- Supprime uniquement les quatre tables de liaison remplacées, après contrôle
+-- que chaque association source existe dans la table historique cible.
+-- Couvre aussi les archives créées par une précédente exécution du script.
+-- Aucun CASCADE : une dépendance inattendue provoque le rollback complet.
 DO $$
-DECLARE t text; c record; obsolete record;
+DECLARE relation record; source_schema text; c record; obsolete record; missing boolean;
 BEGIN
-  FOREACH t IN ARRAY ARRAY['posteapourvoir_user','posteapourvoir_user_1',
-                           'postecandidature_user','postecandidature_postcandidaturetagvalue']
+  FOR relation IN SELECT * FROM (VALUES
+    ('posteapourvoir_user','posteapourvoir_membres','posteapourvoir,membres','postes,membres'),
+    ('posteapourvoir_user_1','posteapourvoir_presidents','posteapourvoir,presidents','posteapourvoir,presidents'),
+    ('postecandidature_user','poste_candidature_reporters','postecandidature,reporters','poste_candidature,reporters'),
+    ('postecandidature_postcandidaturetagvalue','poste_candidature_tags','postecandidature,tags_id,tags_key','poste_candidature,tags,tags_key')
+  ) AS r(source_table,target_table,source_columns,target_columns)
   LOOP
-    IF to_regclass(format('public.%I',t)) IS NOT NULL THEN
-      IF to_regclass(format('dematec_before_realign.%I',t)) IS NOT NULL THEN
-        RAISE EXCEPTION 'Archive déjà présente pour % : audit manuel requis',t;
+    FOREACH source_schema IN ARRAY ARRAY['public','dematec_before_realign']
+    LOOP
+      IF to_regclass(format('%I.%I',source_schema,relation.source_table)) IS NOT NULL THEN
+        EXECUTE format('LOCK TABLE %I.%I IN ACCESS EXCLUSIVE MODE',source_schema,relation.source_table);
+        EXECUTE format('SELECT EXISTS(SELECT %s FROM %I.%I EXCEPT SELECT %s FROM public.%I)',
+                       relation.source_columns,source_schema,relation.source_table,
+                       relation.target_columns,relation.target_table) INTO missing;
+        IF missing THEN
+          RAISE EXCEPTION 'Nettoyage refusé : %.% contient des associations absentes de %. Audit manuel requis.',
+                          source_schema,relation.source_table,relation.target_table;
+        END IF;
+        EXECUTE format('DROP TABLE %I.%I RESTRICT',source_schema,relation.source_table);
+        RAISE NOTICE 'Table obsolète %.% supprimée (associations vérifiées)',source_schema,relation.source_table;
       END IF;
-      FOR c IN SELECT conname FROM pg_constraint
-               WHERE conrelid=to_regclass(format('public.%I',t)) AND contype='f'
-      LOOP
-        EXECUTE format('ALTER TABLE public.%I DROP CONSTRAINT %I',t,c.conname);
-      END LOOP;
-      EXECUTE format('ALTER TABLE public.%I SET SCHEMA dematec_before_realign',t);
-    END IF;
+    END LOOP;
   END LOOP;
+  IF EXISTS(SELECT 1 FROM pg_namespace WHERE nspname='dematec_before_realign') THEN
+    BEGIN
+      EXECUTE 'DROP SCHEMA dematec_before_realign RESTRICT';
+      RAISE NOTICE 'Schéma d''archive vide dematec_before_realign supprimé';
+    EXCEPTION WHEN dependent_objects_still_exist THEN
+      RAISE NOTICE 'Schéma dematec_before_realign conservé : autres objets présents';
+    END;
+  END IF;
   -- Les colonnes inutilisées sont conservées, sans FK qui bloquerait les
   -- modifications/suppressions réalisées par les nouveaux mappings.
   FOR obsolete IN SELECT * FROM (VALUES
@@ -304,7 +336,7 @@ UNION ALL SELECT 'valeurs de tags',count(*) FROM public.poste_candidature_tag_va
 UNION ALL SELECT 'tags candidature',count(*) FROM public.poste_candidature_tags;
 
 -- Réexécution possible avant reprise des écritures uniquement. Après la reprise,
--- les colonnes/instantanés obsolètes ne sont plus une source de conversion fiable.
+-- les colonnes obsolètes ne sont plus une source de conversion fiable.
 -- Pour revenir en arrière, restaurer la sauvegarde avec son WAR/configuration.
 \if :apply
 COMMIT;
