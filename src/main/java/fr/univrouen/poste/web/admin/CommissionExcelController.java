@@ -86,6 +86,10 @@ public class CommissionExcelController {
 
         // upload file
         MultipartFile file = commissionExcel.getFile();
+        if (file == null || file.isEmpty() || file.getOriginalFilename() == null
+                || file.getOriginalFilename().isBlank()) {
+            return "redirect:/admin/commissionexcels";
+        }
         String filename = file.getOriginalFilename();
         InputStream inputStream = file.getInputStream();
         byte[] bytes = IOUtils.toByteArray(inputStream);

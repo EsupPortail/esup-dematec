@@ -64,6 +64,10 @@ public class TemplateFileController {
 
 		// upload file
 		MultipartFile file = templateFile.getFile();
+        if (file == null || file.isEmpty() || file.getOriginalFilename() == null
+                || file.getOriginalFilename().isBlank()) {
+            return "redirect:/admin/templatefiles";
+        }
 		String filename = file.getOriginalFilename();
 		InputStream inputStream = file.getInputStream();
 		byte[] bytes = IOUtils.toByteArray(inputStream);

@@ -148,7 +148,8 @@ public class PosteCandidature {
         String tagsAsString = "";
         for(PosteCandidatureTag tag : tags.keySet()) {
             if(tags.get(tag) != null) {
-                tagsAsString += String.format("<span class=\"important\">%s : </span> %s<br/>", tag.getName(), tags.get(tag).getValue());
+                tagsAsString += String.format("<span class=\"important\">%s : </span> %s<br/>", org.springframework.web.util.HtmlUtils.htmlEscape(java.util.Objects.toString(tag.getName(), "")),
+                        org.springframework.web.util.HtmlUtils.htmlEscape(java.util.Objects.toString(tags.get(tag).getValue(), "")));
             }
         }
         return tagsAsString;

@@ -79,6 +79,10 @@ public class GalaxieExcelController {
         
         // upload file
         MultipartFile file = galaxieExcel.getFile();
+        if (file == null || file.isEmpty() || file.getOriginalFilename() == null
+                || file.getOriginalFilename().isBlank()) {
+            return "redirect:/admin/galaxieexcels";
+        }
         String filename = file.getOriginalFilename();
         InputStream inputStream = file.getInputStream();
         byte[] bytes = IOUtils.toByteArray(inputStream);

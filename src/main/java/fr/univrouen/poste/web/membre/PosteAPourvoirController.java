@@ -249,7 +249,7 @@ public class PosteAPourvoirController {
 		MultipartFile file = posteFile.getFile();
 		
 		// sometimes file is null here, but I don't know how to reproduce this issue ... maybe that can occur only with some specifics browsers ?
-		if(file != null) {
+		if(file != null && file.getOriginalFilename() != null && !file.getOriginalFilename().isBlank()) {
 			String filename = file.getOriginalFilename();
 			
 			boolean filenameAlreadyUsed = false;
@@ -268,7 +268,7 @@ public class PosteAPourvoirController {
 				Long fileSize = file.getSize();
 				
 				if(fileSize != 0) {
-					String contentType = file.getContentType();
+					String contentType = file.getContentType() != null ? file.getContentType() : "application/octet-stream";
 					// cf https://github.com/EsupPortail/esup-dematec/issues/8 - workaround pour éviter mimetype erroné comme application/text-plain:formatted
 					contentType = contentType.replaceAll(":.*", "");
 					
