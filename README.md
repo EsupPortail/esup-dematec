@@ -204,3 +204,8 @@ Les mots de passe actuels utilisent BCrypt. Pour les comptes provenant d'ancienn
 ## Captures d'écran
 
 [Captures d'écran historiques sur le wiki ESUP-Portail](https://www.esup-portail.org/pages/viewpage.action?pageId=282099720#ESUP-DématérialisationEnseignantsChercheurs(etATER)-Screenshots).
+
+
+## IA
+
+Depuis la version 2.0.0, esup-dematec est développé avec l'assistance d'agents IA.
