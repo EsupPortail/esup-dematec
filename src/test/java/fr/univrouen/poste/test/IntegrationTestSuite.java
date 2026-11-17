@@ -55,6 +55,7 @@ import org.junit.runners.Suite.SuiteClasses;
     fr.univrouen.poste.test.security.UploadSecurityTest.class,
     fr.univrouen.poste.test.security.CandidatureSignupFlowTest.class,
     fr.univrouen.poste.test.security.TagsAndMalformedUploadsTest.class,
+    fr.univrouen.poste.test.security.CsvSecurityTest.class,
     SecurityAccessTest.class,
     LoginControllerTest.class,
     fr.univrouen.poste.test.security.SessionRevocationTest.class,

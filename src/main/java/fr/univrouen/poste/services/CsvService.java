@@ -32,6 +32,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
 
+import static fr.univrouen.poste.utils.SpreadsheetCsv.cell;
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDateTime;
@@ -63,8 +64,12 @@ public class CsvService {
                 "vue", "creation", "modification", "gestionnaire", "dateGestion", "civilite"));
 
         List<PosteCandidatureTag> allTags = posteCandidatureTagDao.findAllPosteCandidatureTags();
+        Map<Long, String> tagColumns = new LinkedHashMap<>();
         for (PosteCandidatureTag tag : allTags) {
-            header.add(tag.getName());
+            String column = tag.getName() == null ? "" : tag.getName();
+            while (header.contains(column)) column = "tag:" + column;
+            tagColumns.put(tag.getId(), column);
+            header.add(column);
         }
 
         // construire le schema CSV avec header (ordonné)
@@ -73,12 +78,15 @@ public class CsvService {
         for (String col : header) {
             schemaBuilder.addColumn(col);
         }
-        CsvSchema schema = schemaBuilder.build().withHeader();
+        CsvSchema schema = schemaBuilder.build().withoutHeader();
 
         ObjectWriter objWriter = mapper.writer(schema);
         SequenceWriter seqWriter = objWriter.writeValues(writer);
 
         try {
+            Map<String, String> headerRow = new LinkedHashMap<>();
+            for (String column : header) headerRow.put(column, cell(column));
+            seqWriter.write(headerRow);
             for (PosteCandidature p : posteCandidatures) {
                 Map<String, String> row = new LinkedHashMap<>();
                 row.put("poste", safe(() -> p.getPoste() != null ? p.getPoste().getNumEmploi() : null));
@@ -108,9 +116,10 @@ public class CsvService {
                     } catch (Exception e) {
                         value = "";
                     }
-                    row.put(tag.getName(), value);
+                    row.put(tagColumns.get(tag.getId()), value);
                 }
 
+                row.replaceAll((column, value) -> cell(value));
                 seqWriter.write(row);
             }
         } finally {

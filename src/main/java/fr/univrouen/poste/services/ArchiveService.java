@@ -153,9 +153,9 @@ public class ArchiveService {
 
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("id", fileName);
-                row.put("filename", f.getFilename());
+                row.put("filename", fr.univrouen.poste.utils.SpreadsheetCsv.cell(f.getFilename()));
                 row.put("sendDate", f.getSendTime() != null ? f.getSendTime().format(SDF) : "");
-                row.put("owner", ownerEmail);
+                row.put("owner", fr.univrouen.poste.utils.SpreadsheetCsv.cell(ownerEmail));
                 seqWriter.write(row);
             }
         }
@@ -188,9 +188,9 @@ public class ArchiveService {
 
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("id", fileName);
-                row.put("filename", f.getFilename());
+                row.put("filename", fr.univrouen.poste.utils.SpreadsheetCsv.cell(f.getFilename()));
                 row.put("sendDate", f.getSendTime() != null ? f.getSendTime().format(SDF) : "");
-                row.put("owner", memberFileOwnerEmailSafe(f));
+                row.put("owner", fr.univrouen.poste.utils.SpreadsheetCsv.cell(memberFileOwnerEmailSafe(f)));
                 seqWriter.write(row);
             }
         }
@@ -223,9 +223,9 @@ public class ArchiveService {
 
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("id", fileName);
-                row.put("filename", f.getFilename());
+                row.put("filename", fr.univrouen.poste.utils.SpreadsheetCsv.cell(f.getFilename()));
                 row.put("sendDate", f.getSendTime() != null ? f.getSendTime().format(SDF) : "");
-                row.put("owner", posteFileOwnerEmailSafe(f));
+                row.put("owner", fr.univrouen.poste.utils.SpreadsheetCsv.cell(posteFileOwnerEmailSafe(f)));
                 seqWriter.write(row);
             }
         }
