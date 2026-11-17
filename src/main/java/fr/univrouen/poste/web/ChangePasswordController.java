@@ -35,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class ChangePasswordController {
 
+    @Resource
+    fr.univrouen.poste.services.SessionRevocationService sessionRevocationService;
+
 	@Resource
 	LogService logService;
 	
@@ -77,6 +80,7 @@ public class ChangePasswordController {
 				User person =  userDao.findUsersByEmailAddress(userDetails.getUsername());
 				person.setPassword(passwordEncoder.encode(newPassword));
 				userDao.saveUser(person);
+                sessionRevocationService.revoke(person.getEmailAddress());
 				logService.logActionAuth(LogService.AUTH_PASSWORD_CHANGED, userDetails.getUsername(), request.getRemoteAddr());
 				return "changepassword/thanks";
 			} else {

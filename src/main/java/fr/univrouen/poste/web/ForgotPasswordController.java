@@ -43,6 +43,9 @@ import java.util.List;
 @Transactional
 public class ForgotPasswordController {
 
+    @Resource
+    fr.univrouen.poste.services.SessionRevocationService sessionRevocationService;
+
 	@Resource
 	LogService logService;
 	
@@ -115,6 +118,7 @@ public class ForgotPasswordController {
         	User user = users.get(0);
         	user.setPassword(passwordEncoder.encode(form.getNewPassword()));
         	user.setActivationKey(null);
+            sessionRevocationService.revoke(user.getEmailAddress());
         	userDao.saveUser(user);
         }
         return "redirect:/";

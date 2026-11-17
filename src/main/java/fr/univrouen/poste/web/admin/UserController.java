@@ -54,6 +54,9 @@ import java.time.LocalDateTime;
 @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
 public class UserController {
 
+    @Resource
+    fr.univrouen.poste.services.SessionRevocationService sessionRevocationService;
+
 	final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Resource
@@ -74,19 +77,11 @@ public class UserController {
             return "admin/users/create";
         }
         if (user.getId() != null) {
-            User savedUser = userDao.findUser(user.getId());
-            if (!savedUser.getPassword().equals(user.getPassword())) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                if(user.getActivationDate() == null) {
-                	user.setActivationDate(LocalDateTime.now());
-                }
-            }
-        } else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            if(user.getActivationDate() == null) {
-            	user.setActivationDate(LocalDateTime.now());
-            }
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Use PUT to update an existing user");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getActivationDate() == null) user.setActivationDate(LocalDateTime.now());
         userDao.saveUser(user);
         return "redirect:/admin/users/" + user.getId().toString();
     }
@@ -99,8 +94,13 @@ public class UserController {
             populateEditForm(uiModel, user);
             return "admin/users/update";
         }
+        String previousEmail = null;
         if (user.getId() != null) {
             User savedUser = userDao.findUser(user.getId());
+            if (savedUser == null) {
+                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND);
+            }
+            previousEmail = savedUser.getEmailAddress();
             if(StringUtils.hasLength(user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 if(user.getActivationDate() == null) {
@@ -121,6 +121,7 @@ public class UserController {
             }
         }
         userDao.saveUser(user);
+        sessionRevocationService.revoke(previousEmail);
         return "redirect:/admin/users/" + encodeUrlPathSegment(user.getId().toString(), httpServletRequest);
     }
 
@@ -163,6 +164,7 @@ public class UserController {
         User user = userDao.findUser(id);
         requireUserManagementPermission();
         userDao.deleteUser(user);
+        sessionRevocationService.revoke(user.getEmailAddress());
         redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
         redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/admin/users";
