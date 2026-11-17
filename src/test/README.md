@@ -23,6 +23,18 @@ La base de données est configurée en mode `create-drop` et est recréée à ch
 mvn clean compile test -DskipTests=false -Dtest=IntegrationTestSuite
 ```
 
+### Intégration continue
+
+Le workflow `.github/workflows/integration-tests.yml` lance `IntegrationTestSuite`
+sur toutes les pull requests et les push vers `master`. Il peut aussi être lancé
+manuellement depuis l'onglet Actions de GitHub.
+
+Il utilise Java 17 sur Ubuntu avec un cache Maven. Testcontainers démarre PostgreSQL
+automatiquement ; aucun service de base de données externe ni secret n'est nécessaire.
+La suite s'exécute dans un seul job pour préserver l'ordre des tests et leurs données
+partagées. Les rapports `target/surefire-reports/` sont conservés pendant 14 jours
+dans l'artefact `integration-test-reports`, y compris en cas d'échec des tests.
+
 ### Structure des tests
 
 ```

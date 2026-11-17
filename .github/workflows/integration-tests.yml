@@ -1,0 +1,48 @@
+name: Tests d'intégration
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integration-tests:
+    name: IntegrationTestSuite (Java 17)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Installer Java 17 et activer le cache Maven
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Vérifier l'accès à Docker
+        run: docker info
+
+      - name: Exécuter la suite d'intégration
+        run: mvn -B -ntp clean test -DskipTests=false -Dtest=IntegrationTestSuite
+
+      - name: Conserver les rapports de tests
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-test-reports
+          path: target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 14
