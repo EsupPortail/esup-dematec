@@ -149,7 +149,7 @@ public class CommissionEntryService {
 		    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();	    
 		    String mailMessage = appliConfigDao.getAppliConfig().getTexteMailNewCommissions();
 	
-		    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
+        mailMessage = mailMessage.replace("@@postes@@", StringUtils.join(postes, ","));
 		    
 		    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 		}

@@ -182,10 +182,10 @@ public class GalaxieEntryService {
 	    String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();	    
 	    String mailMessage = appliConfigDao.getAppliConfig().getTexteMailNewCandidatures();
 	    
-	    mailMessage = mailMessage.replaceAll("@@postes@@", StringUtils.join(postes, ","));
-	    mailMessage = mailMessage.replaceAll("@@nom@@",  WordUtils.capitalizeFully(nom));
-	    mailMessage = mailMessage.replaceAll("@@prenom@@", WordUtils.capitalizeFully(prenom));
-	    mailMessage = mailMessage.replaceAll("@@civilite@@", civilite);
+        mailMessage = mailMessage.replace("@@postes@@", StringUtils.join(postes, ","));
+        mailMessage = mailMessage.replace("@@nom@@",  WordUtils.capitalizeFully(nom));
+        mailMessage = mailMessage.replace("@@prenom@@", WordUtils.capitalizeFully(prenom));
+        mailMessage = mailMessage.replace("@@civilite@@", civilite);
 	    
 	    emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 		

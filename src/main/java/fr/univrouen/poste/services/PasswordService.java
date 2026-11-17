@@ -61,7 +61,7 @@ public class PasswordService {
 		String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
 
 		String mailMessage = appliConfigDao.getAppliConfig().getTexteMailPasswordOublie();
-		mailMessage = mailMessage.replaceAll("@@activationKey@@", activationKey);
+        mailMessage = mailMessage.replace("@@activationKey@@", activationKey);
 
 		logService.logActionAuth(LogService.AUTH_PASSWORD_FORGOT_SENT, user.getEmailAddress(), remoteAdress);
 

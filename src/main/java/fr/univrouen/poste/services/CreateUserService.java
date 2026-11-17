@@ -89,10 +89,10 @@ public class CreateUserService {
 	    String mailTo = user.getEmailAddress();
 	    String mailFrom = appliConfigDao.getAppliConfig().getMailFrom();
 
-	    mailMessage = mailMessage.replaceAll("@@mailAddress@@", mailTo);
-	    mailMessage = mailMessage.replaceAll("@@activationKey@@", activationKey);
-	    mailMessage = mailMessage.replaceAll("@@nom@@", WordUtils.capitalizeFully(user.getNom()));
-	    mailMessage = mailMessage.replaceAll("@@prenom@@", WordUtils.capitalizeFully(user.getPrenom()));
+        mailMessage = mailMessage.replace("@@mailAddress@@", mailTo);
+        mailMessage = mailMessage.replace("@@activationKey@@", activationKey);
+        mailMessage = mailMessage.replace("@@nom@@", WordUtils.capitalizeFully(user.getNom()));
+        mailMessage = mailMessage.replace("@@prenom@@", WordUtils.capitalizeFully(user.getPrenom()));
 	    
 	    if(emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage)) {
 	    	logger.warn("User with email " + user.getEmailAddress() + " is created and we sent him an email");

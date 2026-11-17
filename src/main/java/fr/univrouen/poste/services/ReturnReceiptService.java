@@ -88,8 +88,8 @@ public class ReturnReceiptService {
 		String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
 
 		String mailMessage = appliConfigDao.getAppliConfig().getTexteMailCandidatReturnReceipt();
-		mailMessage = mailMessage.replaceAll("@@fileName@@", fileName);       
-		mailMessage = mailMessage.replaceAll("@@numEmploi@@", numEmploi);      
+        mailMessage = mailMessage.replace("@@fileName@@", fileName);
+        mailMessage = mailMessage.replace("@@numEmploi@@", numEmploi);
 		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 	}
 
@@ -120,7 +120,7 @@ public class ReturnReceiptService {
 				String mailSubject = appliConfigDao.getAppliConfig().getMailSubject();
 
 				String mailMessage = appliConfigDao.getAppliConfig().getTexteMailCandidatReturnReceipt();
-				mailMessage = mailMessage.replaceAll("@@messageBody@@", messageBody);           
+        mailMessage = mailMessage.replace("@@messageBody@@", messageBody);
 				emailService.sendMessage(mailFrom, emailAddress, mailSubject, mailMessage);
 			}
 		}

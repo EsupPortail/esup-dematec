@@ -31,21 +31,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Controller;
-import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import org.springframework.web.bind.annotation.RequestMapping;
-import java.time.LocalDateTime;
 import org.springframework.web.multipart.MultipartException;
-import java.time.LocalDateTime;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import java.time.LocalDateTime;
 import org.springframework.web.servlet.ModelAndView;
-import java.time.LocalDateTime;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 
 @Service
@@ -90,11 +82,8 @@ public class ExceptionController implements HandlerExceptionResolver {
 			// Client can't get exception page here. 
 			return null;
 		} else {
-	    	//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	        ModelAndView modelAndview = new ModelAndView("uncaughtException");
-	        modelAndview.addObject("exception", ex);
-			modelAndview.addObject("exception_stacktrace", getStackTrace(ex));
-			modelAndview.addObject("exception_message", ex.getMessage());
 			configInterceptor.completeModel(request.getServletPath(), modelAndview);
 	        avoid405Error(request);
 	        return modelAndview;
@@ -114,16 +103,16 @@ public class ExceptionController implements HandlerExceptionResolver {
 
 
 	@RequestMapping("/uncaughtException")
-    public ModelAndView uncaughtExceptionView(HttpServletRequest request) {
-	    Throwable exception = (Throwable) request.getAttribute("jakarta.servlet.error.exception");
-	    ModelAndView modelAndview = new ModelAndView("uncaughtException");
-	    modelAndview.addObject("uncaughtException", true);
-	    modelAndview.addObject("exception", exception);
-		modelAndview.addObject("exception_stacktrace", getStackTrace(exception));
-		modelAndview.addObject("exception_message", exception.getMessage());
-		configInterceptor.completeModel(request.getServletPath(), modelAndview);
-	    avoid405Error(request);
-		return modelAndview;
+    public ModelAndView uncaughtExceptionView(HttpServletRequest request, HttpServletResponse response) {
+        Object exception = request.getAttribute("jakarta.servlet.error.exception");
+        if (exception instanceof Throwable failure) {
+            log.error("Unhandled servlet exception", failure);
+        }
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        ModelAndView view = new ModelAndView("uncaughtException");
+        configInterceptor.completeModel(request.getServletPath(), view);
+        avoid405Error(request);
+        return view;
     }
    
 	/**
@@ -142,11 +131,6 @@ public class ExceptionController implements HandlerExceptionResolver {
 	}
 
 
-	private String getStackTrace(Throwable t) {
-		StringWriter sw = new StringWriter();
-		t.printStackTrace(new PrintWriter(sw));
-		return sw.toString();
-	}
 
 }
 

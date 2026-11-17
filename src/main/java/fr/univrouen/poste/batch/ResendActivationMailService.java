@@ -82,10 +82,10 @@ public class ResendActivationMailService {
 
             String mailTo = user.getEmailAddress();
             String mailMessage = mailTemplate
-                    .replaceAll("@@mailAddress@@", mailTo)
-                    .replaceAll("@@activationKey@@", activationKey)
-                    .replaceAll("@@nom@@",    WordUtils.capitalizeFully(user.getNom()))
-                    .replaceAll("@@prenom@@", WordUtils.capitalizeFully(user.getPrenom()));
+                    .replace("@@mailAddress@@", mailTo)
+                    .replace("@@activationKey@@", activationKey)
+                    .replace("@@nom@@",    WordUtils.capitalizeFully(user.getNom()))
+                    .replace("@@prenom@@", WordUtils.capitalizeFully(user.getPrenom()));
 
             boolean success = emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
             if (success) {

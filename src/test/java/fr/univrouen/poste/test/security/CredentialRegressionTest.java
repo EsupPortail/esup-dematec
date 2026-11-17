@@ -50,6 +50,10 @@ public class CredentialRegressionTest extends AbstractControllerTest {
     }
 
     private String signup() throws Exception {
+        return signup("Test", "Credentials");
+    }
+
+    private String signup(String firstName, String lastName) throws Exception {
         Page<AppliConfig> configs = (Page<AppliConfig>) mockMvc.perform(get("/admin/appliconfig"))
                 .andReturn().getModelAndView().getModel().get("appliconfigs");
         AppliConfig original = configs.getContent().get(0);
@@ -60,7 +64,7 @@ public class CredentialRegressionTest extends AbstractControllerTest {
                 .andExpect(status().is3xxRedirection());
         try {
             mockMvc.perform(post("/signup").with(anonymous()).with(csrf())
-                    .param("civilite", "M.").param("firstName", "Test").param("lastName", "Credentials")
+                    .param("civilite", "M.").param("firstName", firstName).param("lastName", lastName)
                     .param("emailAddress", EMAIL)).andExpect(view().name("signup/thanks"));
         } finally {
             mockMvc.perform(put("/admin/appliconfig").with(csrf()).flashAttr("appliConfig", original))
@@ -243,5 +247,28 @@ public class CredentialRegressionTest extends AbstractControllerTest {
                 .param("password", boundary + "suffix")).andExpect(redirectedUrl("/login?error"));
         mockMvc.perform(post("/login").with(anonymous()).with(csrf()).param("username", EMAIL)
                 .param("password", boundary)).andExpect(redirectedUrl("/"));
+    }
+    @Test
+    public void signupAcceptsLiteralDollarsAndBackslashesInNames() throws Exception {
+        String key = signup("Prénom$1", "Nom\\Test$");
+        assertNotNull(key);
+        assertEquals("Prénom$1", findUser().getPrenom());
+        assertEquals("Nom\\Test$", findUser().getNom());
+    }
+
+    @Test
+    public void errorPageDoesNotExposeExceptionDetailsOrRenderInjectedHtml() throws Exception {
+        var exception = new IllegalStateException("<script>alert('secret')</script> database-password");
+        var response = mockMvc.perform(get("/uncaughtException")
+                .requestAttr("jakarta.servlet.error.exception", exception))
+                .andExpect(status().isInternalServerError())
+                .andExpect(view().name("uncaughtException"))
+                .andExpect(model().attributeDoesNotExist("exception", "exception_message", "exception_stacktrace"))
+                .andReturn().getResponse().getContentAsString();
+        assertFalse(response.contains("alert('secret')"));
+        assertFalse(response.contains("database-password"));
+        assertFalse(response.contains("IllegalStateException"));
+        mockMvc.perform(get("/uncaughtException"))
+                .andExpect(status().isInternalServerError());
     }
 }

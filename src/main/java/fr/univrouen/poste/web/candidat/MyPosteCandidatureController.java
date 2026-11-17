@@ -516,7 +516,7 @@ public class MyPosteCandidatureController {
     	    		"\n" +
     	    		appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable(); 	    
     	    
-    	    mailMessage = mailMessage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());        
+        mailMessage = mailMessage.replace("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());
     		    		
     		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 		}
@@ -545,7 +545,7 @@ public class MyPosteCandidatureController {
     	    
     	    String mailMessage = mailCorps; 	    
     	    
-    	    mailMessage = mailMessage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());        
+        mailMessage = mailMessage.replace("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());
     		    		
     		emailService.sendMessage(mailFrom, mailTo, mailSubject, mailMessage);
 		}
@@ -622,8 +622,8 @@ public class MyPosteCandidatureController {
 		
 	    String mailAuditionnableEntete = appliConfigDao.getAppliConfig().getTexteEnteteMailCandidatAuditionnable();
 	    String mailAuditionnablePiedPage = appliConfigDao.getAppliConfig().getTextePiedpageMailCandidatAuditionnable();	    
-	    mailAuditionnableEntete = mailAuditionnableEntete.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());  
-	    mailAuditionnablePiedPage = mailAuditionnablePiedPage.replaceAll("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());  
+        mailAuditionnableEntete = mailAuditionnableEntete.replace("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());
+        mailAuditionnablePiedPage = mailAuditionnablePiedPage.replace("@@numEmploi@@", postecandidature.getPoste().getNumEmploi());
 	    uiModel.addAttribute("mailAuditionnableEntete", mailAuditionnableEntete);
 	    uiModel.addAttribute("mailAuditionnablePiedPage", mailAuditionnablePiedPage);
 	    
