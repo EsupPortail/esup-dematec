@@ -4,7 +4,7 @@
 -- base complète, Large Objects compris, et valider sur une restauration de recette.
 -- Simulation par défaut : psql -X -d BASE -f realign-2.0-to-1.9.5.sql
 -- Application explicite : psql -X -v apply=true -d BASE -f realign-2.0-to-1.9.5.sql
--- Tables de liaison obsolètes supprimées après contrôle de reprise des liens.
+-- Tables de liaison et colonnes obsolètes supprimées après contrôle de reprise des liens.
 -- Aucun document supprimé. Toute divergence entre deux représentations provoque
 -- une erreur et l'annulation de la transaction : ne pas contourner ce contrôle.
 -- Ne pas redémarrer l'ancien WAR sur la base convertie.
@@ -215,7 +215,7 @@ SELECT pg_temp.realign_links('poste_candidature_tags',
 -- Couvre aussi les archives créées par une précédente exécution du script.
 -- Aucun CASCADE : une dépendance inattendue provoque le rollback complet.
 DO $$
-DECLARE relation record; source_schema text; c record; obsolete record; missing boolean;
+DECLARE relation record; source_schema text; obsolete record; missing boolean;
 BEGIN
   FOR relation IN SELECT * FROM (VALUES
     ('posteapourvoir_user','posteapourvoir_membres','posteapourvoir,membres','postes,membres'),
@@ -248,27 +248,37 @@ BEGIN
       RAISE NOTICE 'Schéma dematec_before_realign conservé : autres objets présents';
     END;
   END IF;
-  -- Les colonnes inutilisées sont conservées, sans FK qui bloquerait les
-  -- modifications/suppressions réalisées par les nouveaux mappings.
+  -- Toute référence non NULL doit exister dans le mapping conservé avant DROP.
+  -- owner_column identifie la ligne source dans la table cible (id ou pièce liée).
   FOR obsolete IN SELECT * FROM (VALUES
-    ('commission_excel','bigfile'),('galaxie_excel','bigfile'),
-    ('member_review_file','bigfile'),('posteapourvoir_file','bigfile'),
-    ('poste_candidature_file','bigfile'),('template_file','bigfile'),
-    ('poste_candidature_file','filetype'),('commission_entry','membre_id'),
-    ('commission_entry','poste_id'),('poste_candidature_file','poste_candidature'),
-    ('poste_candidature_file','postecandidature_candidaturefiles'),
-    ('member_review_file','postecandidature_memberreviewfiles'),
-    ('posteapourvoir_file','posteapourvoir_postefiles'),
-    ('poste_candidature_tag_value','postcandidaturetag_values')
-  ) AS v(tab,col)
+    ('commission_excel','bigfile','commission_excel','big_file','id'),
+    ('galaxie_excel','bigfile','galaxie_excel','big_file','id'),
+    ('member_review_file','bigfile','member_review_file','big_file','id'),
+    ('posteapourvoir_file','bigfile','posteapourvoir_file','big_file','id'),
+    ('poste_candidature_file','bigfile','poste_candidature_file','big_file','id'),
+    ('template_file','bigfile','template_file','big_file','id'),
+    ('poste_candidature_file','filetype','poste_candidature_file','file_type','id'),
+    ('commission_entry','membre_id','commission_entry','membre','id'),
+    ('commission_entry','poste_id','commission_entry','poste','id'),
+    ('poste_candidature_file','poste_candidature','poste_candidature_candidature_files','poste_candidature','candidature_files'),
+    ('poste_candidature_file','postecandidature_candidaturefiles','poste_candidature_candidature_files','poste_candidature','candidature_files'),
+    ('member_review_file','postecandidature_memberreviewfiles','poste_candidature_member_review_files','poste_candidature','member_review_files'),
+    ('posteapourvoir_file','posteapourvoir_postefiles','posteapourvoir_poste_files','posteapourvoir','poste_files'),
+    ('poste_candidature_tag_value','postcandidaturetag_values','poste_candidature_tag_values','poste_candidature_tag','values')
+  ) AS v(tab,col,target_table,target_column,owner_column)
   LOOP
-    FOR c IN SELECT pc.conname FROM pg_constraint pc
-             JOIN pg_attribute a ON a.attrelid=pc.conrelid AND a.attnum=ANY(pc.conkey)
-             WHERE pc.conrelid=to_regclass(format('public.%I',obsolete.tab))
-               AND pc.contype='f' AND a.attname=obsolete.col
-    LOOP
-      EXECUTE format('ALTER TABLE public.%I DROP CONSTRAINT %I',obsolete.tab,c.conname);
-    END LOOP;
+    IF pg_temp.has_column(obsolete.tab,obsolete.col) THEN
+      EXECUTE format('SELECT EXISTS(SELECT 1 FROM public.%I s WHERE s.%I IS NOT NULL '
+                     'AND NOT EXISTS(SELECT 1 FROM public.%I d WHERE d.%I=s.id AND d.%I=s.%I))',
+                     obsolete.tab,obsolete.col,obsolete.target_table,obsolete.owner_column,
+                     obsolete.target_column,obsolete.col) INTO missing;
+      IF missing THEN
+        RAISE EXCEPTION 'Nettoyage refusé : %.% contient des références non reprises dans %. Audit manuel requis.',
+                        obsolete.tab,obsolete.col,obsolete.target_table;
+      END IF;
+      EXECUTE format('ALTER TABLE public.%I DROP COLUMN %I RESTRICT',obsolete.tab,obsolete.col);
+      RAISE NOTICE 'Colonne obsolète %.% supprimée (références vérifiées)',obsolete.tab,obsolete.col;
+    END IF;
   END LOOP;
 END $$;
 
@@ -335,8 +345,8 @@ UNION ALL SELECT 'rapporteurs',count(*) FROM public.poste_candidature_reporters
 UNION ALL SELECT 'valeurs de tags',count(*) FROM public.poste_candidature_tag_values
 UNION ALL SELECT 'tags candidature',count(*) FROM public.poste_candidature_tags;
 
--- Réexécution possible avant reprise des écritures uniquement. Après la reprise,
--- les colonnes obsolètes ne sont plus une source de conversion fiable.
+-- Réexécution possible : les structures obsolètes déjà supprimées sont ignorées.
+-- Toujours arrêter application et batchs avant toute exécution.
 -- Pour revenir en arrière, restaurer la sauvegarde avec son WAR/configuration.
 \if :apply
 COMMIT;
