@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
 
 import java.io.*;
+import static fr.univrouen.poste.utils.SafeFileNames.component;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -63,7 +64,7 @@ public class ArchiveService {
             for (PosteCandidature posteCandidature : posteCandidatures) {
                 String folderName = destFolder.concat("/");
                 String numEmploi = posteCandidature.getPoste().getNumEmploi();
-                numEmploi = safeComponent(numEmploi);
+                numEmploi = component(numEmploi);
                 folderName = folderName.concat(numEmploi).concat("/");
 
                 File folder = new File(folderName);
@@ -79,9 +80,9 @@ public class ArchiveService {
                     folder.mkdir();
                 }
 
-                String nom = safeComponent(posteCandidature.getCandidat().getNom());
-                String prenom = safeComponent(posteCandidature.getCandidat().getPrenom());
-                String numCandidat = safeComponent(posteCandidature.getCandidat().getNumCandidat());
+                String nom = component(posteCandidature.getCandidat().getNom());
+                String prenom = component(posteCandidature.getCandidat().getPrenom());
+                String numCandidat = component(posteCandidature.getCandidat().getNumCandidat());
                 folderName = folderName.concat(nom).concat("-");
                 folderName = folderName.concat(prenom).concat("-");
                 folderName = folderName.concat(numCandidat).concat("/");
@@ -106,7 +107,7 @@ public class ArchiveService {
 
                 String folderName = destFolder.concat("/");
                 String numEmploi = poste.getNumEmploi();
-                numEmploi = safeComponent(numEmploi);
+                numEmploi = component(numEmploi);
                 folderName = folderName.concat(numEmploi).concat("/");
 
                 File folder = new File(folderName);
@@ -136,7 +137,7 @@ public class ArchiveService {
              SequenceWriter seqWriter = objWriter.writeValues(metadataWriter)) {
 
             for (PosteCandidatureFile f : files) {
-                String fileName = f.getId().toString().concat("-").concat(safeComponent(f.getFilename()));
+                String fileName = f.getId().toString().concat("-").concat(component(f.getFilename()));
                 String folderFileName = folderName.concat(fileName);
                 File file = new File(folderFileName);
                 if (!file.toPath().toAbsolutePath().normalize().startsWith(
@@ -171,7 +172,7 @@ public class ArchiveService {
              SequenceWriter seqWriter = objWriter.writeValues(metadataWriter)) {
 
             for (MemberReviewFile f : files) {
-                String fileName = f.getId().toString().concat("-").concat(safeComponent(f.getFilename()));
+                String fileName = f.getId().toString().concat("-").concat(component(f.getFilename()));
                 String folderFileName = folderName.concat(fileName);
                 File file = new File(folderFileName);
                 if (!file.toPath().toAbsolutePath().normalize().startsWith(
@@ -206,7 +207,7 @@ public class ArchiveService {
              SequenceWriter seqWriter = objWriter.writeValues(metadataWriter)) {
 
             for (PosteAPourvoirFile f : files) {
-                String fileName = f.getId().toString().concat("-").concat(safeComponent(f.getFilename()));
+                String fileName = f.getId().toString().concat("-").concat(component(f.getFilename()));
                 String folderFileName = folderName.concat(fileName);
                 File file = new File(folderFileName);
                 if (!file.toPath().toAbsolutePath().normalize().startsWith(
@@ -228,12 +229,6 @@ public class ArchiveService {
                 seqWriter.write(row);
             }
         }
-    }
-
-    private static String safeComponent(String value) {
-        if (value == null || value.isBlank()) return "_";
-        String safe = value.replaceAll("[^a-zA-Z0-9.-]", "_");
-        return safe.equals(".") || safe.equals("..") ? "_" : safe;
     }
 
     private String memberFileOwnerEmailSafe(MemberReviewFile f) {

@@ -51,6 +51,7 @@ import org.junit.runners.Suite.SuiteClasses;
     GalaxieImportControllerTest.class,
     CommissionImportControllerTest.class,
     fr.univrouen.poste.test.security.CredentialRegressionTest.class,
+    fr.univrouen.poste.test.security.ExportAndImportSecurityTest.class,
     SecurityAccessTest.class,
     LoginControllerTest.class,
     UserControllerTest.class,

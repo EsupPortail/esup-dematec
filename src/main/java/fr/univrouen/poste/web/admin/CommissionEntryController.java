@@ -112,7 +112,7 @@ public class CommissionEntryController {
     }
     
     
-    @RequestMapping("/generatecommissions")
+    @RequestMapping(value = "/generatecommissions", method = RequestMethod.POST)
     public String generateCommissions() {
  
     	List<CommissionEntry> commissionEntrys = commissionEntryDao.findCommissionEntrysByMembreIsNull();

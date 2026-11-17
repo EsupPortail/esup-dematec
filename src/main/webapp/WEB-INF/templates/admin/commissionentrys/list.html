@@ -40,7 +40,7 @@
                   <input class="btn btn-success" value="Trouver" type="submit">
                   <a th:href="@{/admin/commissionentrys}" class="btn">Effacer</a>
                 </div>
-              </form>
+                     </form>
             </div>
           </div>
         </div>
@@ -56,9 +56,11 @@
               </span>
           </div>
            <div>
-               <a th:href="@{/admin/commissionentrys/generatecommissions}" class="btn btn-large btn-danger">
-                   <i class="icon-play-circle"></i>Générer
-               </a>
+               <form method="post" th:action="@{/admin/commissionentrys/generatecommissions}">
+                   <button type="submit" class="btn btn-large btn-danger">
+                       <i class="icon-play-circle"></i>Générer
+                   </button>
+               </form>
            </div>
       </div>
       

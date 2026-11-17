@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -150,7 +151,7 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
                            ", Postes=" + posteCountBefore);
 
         // 6. Générer les candidats, postes et candidatures via MockMvc
-        mockMvc.perform(get("/admin/galaxieentrys/generatecandidatspostes")
+        mockMvc.perform(post("/admin/galaxieentrys/generatecandidatspostes").with(csrf())
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection());
 
@@ -238,7 +239,7 @@ public class GalaxieImportControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails("candidat@example.org")
     public void test03_GenerationNotAllowedForCandidat() throws Exception {
-        mockMvc.perform(get("/admin/galaxieentrys/generatecandidatspostes")
+        mockMvc.perform(post("/admin/galaxieentrys/generatecandidatspostes").with(csrf())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
     }

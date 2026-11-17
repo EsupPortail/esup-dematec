@@ -56,9 +56,11 @@
         </span>
       </div>
       <div>
-        <a th:href="@{/admin/galaxieentrys/generatecandidatspostes}" class="btn btn-large btn-danger">
+        <form method="post" th:action="@{/admin/galaxieentrys/generatecandidatspostes}">
+          <button type="submit" class="btn btn-large btn-danger">
           <i class="icon-play-circle"></i>Générer
-        </a>
+        </button>
+        </form>
       </div>
     </div>
     

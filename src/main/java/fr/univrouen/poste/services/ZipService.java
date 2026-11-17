@@ -17,12 +17,12 @@
  */
 package fr.univrouen.poste.services;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
+import static fr.univrouen.poste.utils.SafeFileNames.component;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -44,47 +44,34 @@ public class ZipService {
 	final Logger logger = LoggerFactory.getLogger(getClass());
 
 
-	public void writeZip(List<PosteCandidature> posteCandidatures, OutputStream destStream) throws IOException, SQLException {
+    public void writeZip(List<PosteCandidature> candidatures, OutputStream destination) throws IOException, SQLException {
+        try (ZipOutputStream out = new ZipOutputStream(destination)) {
+            for (PosteCandidature candidature : candidatures) {
+                String folder = component(candidature.getPoste().getNumEmploi()) + "/"
+                        + component(candidature.getCandidat().getNom()) + "-"
+                        + component(candidature.getCandidat().getPrenom()) + "-"
+                        + component(candidature.getCandidat().getNumCandidat()) + "/";
+                for (PosteCandidatureFile file : candidature.getCandidatureFiles()) {
+                    out.putNextEntry(new ZipEntry(folder + file.getId() + "-" + component(file.getFilename())));
+                    try (InputStream input = file.getBigFile().getBinaryFile().getBinaryStream()) {
+                        input.transferTo(out);
+                    }
+                    out.closeEntry();
+                }
+            }
+        }
+    }
 
-		ZipOutputStream out = new ZipOutputStream(destStream);
-
-		for (PosteCandidature posteCandidature : posteCandidatures) {
-			String folderName = posteCandidature.getPoste().getNumEmploi().concat("/");	
-			folderName = folderName.concat(posteCandidature.getCandidat().getNom().concat("-"));	
-			folderName = folderName.concat(posteCandidature.getCandidat().getPrenom().concat("-"));	
-			folderName = folderName.concat(posteCandidature.getCandidat().getNumCandidat().concat("/"));
-			for (PosteCandidatureFile posteCandidatureFile : posteCandidature.getCandidatureFiles()) {
-				String fileName = posteCandidatureFile.getId().toString().concat("-").concat(posteCandidatureFile.getFilename());
-				String folderFileName = folderName.concat(fileName);
-				out.putNextEntry(new ZipEntry(folderFileName));
-				InputStream inputStream = posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream();
-				BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, BUFFER);
-				byte[] bytes = new byte[BUFFER];
-				int length;
-				while ((length = bufInputStream.read(bytes)) >= 0) {
-					out.write(bytes, 0, length);
-				}
-				out.closeEntry();
-			}
-		}
-		out.close();
-	}
-
-
-	public void writeZip(PosteAPourvoir poste, ServletOutputStream destStream) throws IOException, SQLException {
-		ZipOutputStream out = new ZipOutputStream(destStream);
-		for (PosteAPourvoirFile posteCandidatureFile : poste.getPosteFiles()) {
-			out.putNextEntry(new ZipEntry(posteCandidatureFile.getFilename()));
-			InputStream inputStream = posteCandidatureFile.getBigFile().getBinaryFile().getBinaryStream();
-			BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, BUFFER);
-			byte[] bytes = new byte[BUFFER];
-			int length;
-			while ((length = bufInputStream.read(bytes)) >= 0) {
-				out.write(bytes, 0, length);
-			}
-			out.closeEntry();
-		}
-		out.close();
-	}
-	
+    public void writeZip(PosteAPourvoir poste, ServletOutputStream destination) throws IOException, SQLException {
+        try (ZipOutputStream out = new ZipOutputStream(destination)) {
+            for (PosteAPourvoirFile file : poste.getPosteFiles()) {
+                // The id prevents collisions between names that sanitize to the same component.
+                out.putNextEntry(new ZipEntry(file.getId() + "-" + component(file.getFilename())));
+                try (InputStream input = file.getBigFile().getBinaryFile().getBinaryStream()) {
+                    input.transferTo(out);
+                }
+                out.closeEntry();
+            }
+        }
+    }
 }

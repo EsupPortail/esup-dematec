@@ -37,6 +37,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -142,7 +143,7 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
         System.out.println("Avant génération : Users=" + userCountBefore);
 
         // 6. Générer les membres de commission et postes via MockMvc
-        mockMvc.perform(get("/admin/commissionentrys/generatecommissions")
+        mockMvc.perform(post("/admin/commissionentrys/generatecommissions").with(csrf())
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection());
 
@@ -224,7 +225,7 @@ public class CommissionImportControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails("candidat@example.org")
     public void test03_GenerationNotAllowedForCandidat() throws Exception {
-        mockMvc.perform(get("/admin/commissionentrys/generatecommissions")
+        mockMvc.perform(post("/admin/commissionentrys/generatecommissions").with(csrf())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
     }

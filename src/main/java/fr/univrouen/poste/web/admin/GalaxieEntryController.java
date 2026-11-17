@@ -109,7 +109,7 @@ public class GalaxieEntryController {
         return "admin/galaxieentrys/list";
     }
     
-    @RequestMapping("/generatecandidatspostes")
+    @RequestMapping(value = "/generatecandidatspostes", method = RequestMethod.POST)
     public String generateCandidatsPostes () {
     	galaxieEntriesService.generateCandidatsPostes();
         return "redirect:/admin/logimportgalaxies";
