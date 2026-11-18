@@ -7,7 +7,6 @@
   <meta charset="UTF-8" />
   <title>Modifier un Poste à Pourvoir</title>
   <link th:href="@{/resources/css/bootstrap-wysihtml5.css}" rel="stylesheet" type="text/css"/>
-  <link th:href="@{/resources/css/jquery.datetimepicker-2.5.1.css}" rel="stylesheet" type="text/css"/>
 </head>
 <body>
   <div layout:fragment="body">
@@ -57,14 +56,14 @@
       <div th:if="${candidatCanSignup}">
         <label for="_dateEndSignupCandidat_id">Date End Signup Candidat</label>
         <div>
-          <input id="_dateEndSignupCandidat_id" type="text" th:field="*{dateEndSignupCandidat}" />
+          <input id="_dateEndSignupCandidat_id" type="datetime-local" th:field="*{dateEndSignupCandidat}" />
         </div>
       </div>
 
       <div>
         <label for="_dateEndCandidatAuditionnable_id">Date End Candidat Auditionnable</label>
         <div>
-          <input id="_dateEndCandidatAuditionnable_id" type="text" th:field="*{dateEndCandidatAuditionnable}" />
+          <input id="_dateEndCandidatAuditionnable_id" type="datetime-local" th:field="*{dateEndCandidatAuditionnable}" />
         </div>
       </div>
 
@@ -88,14 +87,6 @@
     <script th:src="@{/resources/js/wysihtml5-0.3.0.js}"></script>
     <script th:src="@{/resources/js/bootstrap-wysihtml5.js}"></script>
     <script th:src="@{/resources/js/bootstrap-wysihtml5.fr-FR.js}"></script>
-    <script th:src="@{/resources/js/jquery.datetimepicker-2.5.1.full.min.js}"></script>
-    <script>
-      $(document).ready(function(){
-          $.datetimepicker.setLocale('fr');
-          $("#_dateEndCandidatAuditionnable_id").datetimepicker({format:'d/m/Y H:i'});
-          $("#_dateEndSignupCandidat_id").datetimepicker({format:'d/m/Y H:i'});
-      });
-    </script>
   </div>
 </body>
 </html>

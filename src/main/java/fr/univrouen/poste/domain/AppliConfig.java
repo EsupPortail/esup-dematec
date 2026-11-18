@@ -44,13 +44,13 @@ public class AppliConfig {
     @Version
     Integer version;
 
-	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+	@DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
     LocalDateTime dateEndCandidat;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
     LocalDateTime dateEndCandidatActif;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
     LocalDateTime dateEndMembre;
 
     //General

@@ -5,8 +5,6 @@
 <head>
   <title>Configuration - Modification</title>
   <link rel="stylesheet" th:href="@{/resources/css/bootstrap-wysihtml5.css}" />
-  <link rel="stylesheet" th:href="@{/resources/css/jquery.minicolors.css}" />
-  <link rel="stylesheet" th:href="@{/resources/css/jquery.datetimepicker-2.5.1.css}" />
 </head>
 <body>
   <div layout:fragment="body" id="dematconfig">
@@ -63,21 +61,21 @@
         <div class="span4">
           <div>
             <label for="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_dateendcandidat}"></span> :</label>
-            <input type="text" th:field="*{dateEndCandidat}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat_id"/>
+            <input type="datetime-local" th:field="*{dateEndCandidat}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat_id"/>
             <br/>
           </div>
         </div>
         <div class="span4">
           <div>
             <label for="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_dateendcandidatactif}"></span> :</label>
-            <input type="text" th:field="*{dateEndCandidatActif}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif_id"/>
+            <input type="datetime-local" th:field="*{dateEndCandidatActif}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif_id"/>
             <br/>
           </div>
         </div>
         <div class="span4">
           <div>
             <label for="_c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_dateendmembre}"></span> :</label>
-            <input type="text" th:field="*{dateEndMembre}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre_id"/>
+            <input type="datetime-local" th:field="*{dateEndMembre}" id="_c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre_id"/>
             <br/>
           </div>
         </div>
@@ -236,31 +234,31 @@ Université ESUP - Direction des Ressources Humaines</pre>
       
       <div>
         <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturenonvue}"></span> :</label>
-        <input type="text" th:field="*{colorCandidatureNonVue}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue_id" class="input-xxlarge"/>
+        <input type="text" data-native-color th:field="*{colorCandidatureNonVue}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue_id" class="input-xxlarge"/>
         <br/>
       </div>
       
       <div>
         <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevue}"></span> :</label>
-        <input type="text" th:field="*{colorCandidatureVue}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue_id" class="input-xxlarge"/>
+        <input type="text" data-native-color th:field="*{colorCandidatureVue}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue_id" class="input-xxlarge"/>
         <br/>
       </div>
       
       <div>
         <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevueincomplet}"></span> :</label>
-        <input type="text" th:field="*{colorCandidatureVueIncomplet}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet_id" class="input-xxlarge"/>
+        <input type="text" data-native-color th:field="*{colorCandidatureVueIncomplet}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet_id" class="input-xxlarge"/>
         <br/>
       </div>
       
       <div>
         <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevuemodifiedepuis}"></span> :</label>
-        <input type="text" th:field="*{colorCandidatureVueModifieDepuis}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis_id" class="input-xxlarge"/>
+        <input type="text" data-native-color th:field="*{colorCandidatureVueModifieDepuis}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis_id" class="input-xxlarge"/>
         <br/>
       </div>
       
       <div>
         <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorcandidaturevueincompletmodifiedepuis}"></span> :</label>
-        <input type="text" th:field="*{colorCandidatureVueIncompletModifieDepuis}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis_id" class="input-xxlarge"/>
+        <input type="text" data-native-color th:field="*{colorCandidatureVueIncompletModifieDepuis}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis_id" class="input-xxlarge"/>
         <br/>
       </div>
       
@@ -325,7 +323,7 @@ Université ESUP - Direction des Ressources Humaines</pre>
       
       <div>
         <label for="_c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag_id"><span th:text="#{label_fr_univrouen_poste_domain_appliconfig_colorreportertag}"></span> :</label>
-        <input type="text" th:field="*{colorReporterTag}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag_id" class="input-xxlarge"/>
+        <input type="text" data-native-color th:field="*{colorReporterTag}" id="_c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag_id" class="input-xxlarge"/>
         <br/>
       </div>
       
@@ -354,13 +352,12 @@ Université ESUP - Direction des Ressources Humaines</pre>
       </div>
     </form>
   
-  <!-- Scripts pour WYSIWYG et color picker -->
+  <!-- Scripts pour WYSIWYG et les champs couleur -->
   <th:block layout:fragment="scripts">
+    <script defer th:src="@{/resources/js/color-picker.js}"></script>
     <script th:src="@{/resources/js/wysihtml5-0.3.0.js}"></script>
     <script th:src="@{/resources/js/bootstrap-wysihtml5.js}"></script>
     <script th:src="@{/resources/js/bootstrap-wysihtml5.fr-FR.js}"></script>
-    <script th:src="@{/resources/js/jquery.minicolors.min.js}"></script>
-    <script th:src="@{/resources/js/jquery.datetimepicker-2.5.1.full.min.js}"></script>
     <script th:inline="javascript">
       /*<![CDATA[*/
       $(document).ready(function(){
@@ -377,18 +374,6 @@ Université ESUP - Direction des Ressources Humaines</pre>
           color: true,
           html: true
         });
-        
-        $.datetimepicker.setLocale('fr');
-        $("#_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidat_id").datetimepicker({format:'d/m/Y H:i'});
-        $("#_c_fr_univrouen_poste_domain_AppliConfig_dateEndCandidatActif_id").datetimepicker({format:'d/m/Y H:i'});
-        $("#_c_fr_univrouen_poste_domain_AppliConfig_dateEndMembre_id").datetimepicker({format:'d/m/Y H:i'});
-        
-        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVue_id').minicolors();
-        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncomplet_id').minicolors();
-        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueModifieDepuis_id').minicolors();
-        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureVueIncompletModifieDepuis_id').minicolors();
-        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorCandidatureNonVue_id').minicolors();
-        $('#_c_fr_univrouen_poste_domain_AppliConfig_colorReporterTag_id').minicolors();
       });
       /*]]>*/
     </script>

@@ -85,10 +85,10 @@ public class PosteAPourvoir {
     	return sortedPresidents;
     }
     
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
     LocalDateTime dateEndCandidatAuditionnable;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
     LocalDateTime dateEndSignupCandidat;
 
     public void setNumEmploi(String numEmploi) {

@@ -179,15 +179,12 @@ public class DematBrowserIT {
             String editUrl = page.url();
 
             Locator date = page.getByLabel("Date End Candidat Auditionnable");
-            date.click();
-            assertThat(page.locator(".xdsoft_datetimepicker:visible")).hasCount(1);
-            date.fill("26/11/2035 15:00");
-            date.press("Tab");
-            assertThat(date).hasValue("26/11/2035 15:00");
+            assertThat(date).hasAttribute("type", "datetime-local");
+            date.fill("2035-11-26T15:00");
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier Poste")).click();
             assertThat(page).hasURL(editUrl);
-            assertThat(date).hasValue("26/11/2035 15:00");
+            assertThat(date).hasValue("2035-11-26T15:00");
         });
     }
 
@@ -274,18 +271,22 @@ public class DematBrowserIT {
             page.navigate(baseUrl + "/admin/appliconfig");
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
             Locator date = page.locator("input[name=dateEndCandidat]");
-            date.click();
-            assertThat(page.locator(".xdsoft_datetimepicker:visible")).hasCount(1);
-            date.fill("25/11/2035 14:30");
-            date.press("Tab");
-            assertThat(date).hasValue("25/11/2035 14:30");
+            assertThat(date).hasAttribute("type", "datetime-local");
+            date.fill("2035-11-25T14:30");
+            Locator optionalDate = page.locator("input[name=dateEndCandidatActif]");
+            optionalDate.fill("2035-11-26T11:15");
+            optionalDate.clear();
 
             Locator color = page.locator("input[name=colorCandidatureVue]");
-            color.click();
-            assertThat(page.locator(".minicolors-panel:visible")).hasCount(1);
-            color.fill("#126a9c");
-            color.press("Tab");
+            Locator picker = color.locator("xpath=preceding-sibling::input[@type='color'][1]");
+            color.fill("#abc");
+            assertThat(picker).hasValue("#aabbcc");
+            picker.fill("#126a9c");
             assertThat(color).hasValue("#126a9c");
+
+            Locator optionalColor = page.locator("input[name=colorReporterTag]");
+            optionalColor.clear();
+            assertThat(optionalColor.locator("xpath=preceding-sibling::input[@type='color'][1]")).hasValue("#000000");
 
             Locator richText = page.locator("textarea[name=textePremierePageAnonyme]");
             Locator toolbar = richText.locator("xpath=preceding-sibling::ul[contains(@class,'wysihtml5-toolbar')][1]");
@@ -315,8 +316,11 @@ public class DematBrowserIT {
                     () -> page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click());
             assertEquals(302, save.status());
             page.navigate(editUrl);
-            assertThat(date).hasValue("25/11/2035 14:30");
+            assertThat(date).hasValue("2035-11-25T14:30");
+            assertThat(optionalDate).hasValue("");
             assertThat(color).hasValue("#126a9c");
+            assertThat(picker).hasValue("#126a9c");
+            assertThat(optionalColor).hasValue("");
             toggleSource.click();
             assertThat(richText).hasValue("<p><strong>Campagne Playwright</strong></p>");
         });
