@@ -43,10 +43,10 @@
 
                     <div class="span5 demat-filter">
                       <label for="candidatSelect">Candidats</label>
-                      <select multiple="multiple" size="15" id="candidatSelect" th:field="*{emailCandidats}" class="input-block-level js-candidat-select">
+                      <select multiple="multiple" size="15" id="candidatSelect" th:field="*{emailCandidats}" class="input-block-level">
                         <option th:each="u : ${candidats}" th:value="${u}" th:text="${u}">Candidat</option>
                       </select>
-                      <input id="textbox" type="text" placeholder="Filtrer candidats"/>
+                      <input id="textbox" type="text" data-filter-select="candidatSelect" placeholder="Filtrer candidats"/>
                     </div>
 
                     <div class="span3 demat-filter">
@@ -300,7 +300,6 @@
 
               // Convertir colonnes texte en icônes simple (ex : true/false)
               $("td").filter(function(){ return $(this).text().trim() === "false"; }).text("");
-              $('.js-candidat-select').filterByText($('#textbox'), true);
             });
           </script>
 
@@ -414,9 +413,6 @@
               $("#_title_pl_fr_univrouen_poste_domain_PosteCandidature_id td").filter(function() {
                 return $(this).text() === "false";
               }).text("");
-
-
-              $('.js-candidat-select').filterByText($('#textbox'), true);
             });
           </script>
 

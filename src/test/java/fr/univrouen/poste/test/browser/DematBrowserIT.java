@@ -83,8 +83,9 @@ public class DematBrowserIT {
 
             search.pressSequentially("introuvable");
             assertThat(users.locator("option")).hasCount(0);
-            search.fill("");
-            search.pressSequentially("admin");
+            search.fill("[");
+            assertThat(users.locator("option")).hasCount(0);
+            search.fill("  ^AD.*N$  ");
             assertThat(users).hasValue("admin");
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Trouver")).click();
             assertThat(users).hasValue("admin");
@@ -126,7 +127,7 @@ public class DematBrowserIT {
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Filtrer").setExact(true)).click();
             Locator search = page.getByPlaceholder("Filtrer candidats");
-            Locator options = page.locator(".js-candidat-select option");
+            Locator options = page.locator("#candidatSelect option");
             Locator firstRow = candidates.first().locator("xpath=ancestor::tr");
             String email = firstRow.getByRole(AriaRole.CELL,
                     new Locator.GetByRoleOptions().setName(Pattern.compile("@"))).innerText();
@@ -227,7 +228,6 @@ public class DematBrowserIT {
         search.pressSequentially("introuvable");
         assertThat(options).hasCount(0);
         search.clear();
-        search.press("Backspace");
         assertThat(options).hasCount(initialCount);
     }
 

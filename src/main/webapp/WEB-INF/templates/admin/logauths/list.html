@@ -26,10 +26,10 @@
               <div class="row-fluid">
                 <div class="span6">
                   <label for="userId">Utilisateur</label>
-                  <select size="15" id="userId" th:field="*{userId}" class="input-block-level form-control js-candidat-select">
+                  <select size="15" id="userId" th:field="*{userId}" class="input-block-level form-control">
                     <option th:each="user : ${users}" th:value="${user}" th:text="${user}"></option>
                   </select>
-                  <input id="textbox" type="text" placeholder="Filtrer"/>
+                  <input id="textbox" type="text" data-filter-select="userId" placeholder="Filtrer"/>
                 </div>
                 <div class="span6">
                   <label for="action">Action</label>
@@ -43,11 +43,6 @@
                   </div>
                 </div>
               </div>
-              <script>
-                $(document).ready(function() {
-                  $('.js-candidat-select').filterByText($('#textbox'), true);
-                });
-              </script>
             </form>
           </div>
         </div>
