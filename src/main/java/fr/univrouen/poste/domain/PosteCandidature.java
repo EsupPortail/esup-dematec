@@ -141,7 +141,7 @@ public class PosteCandidature {
     }
 
     public String getManagerReviewState() {
-        return managerReview.getReviewStatus().toString();
+        return managerReview == null ? ReviewStatusTypes.Non_vue.toString() : managerReview.getReviewStatus().toString();
     }
 
     public String getTagsAsHtmlString() {

@@ -62,17 +62,20 @@
       <!-- remplacé: Candidat / Poste / Candidature -->
       <div class="span4 well">
         <h4>Candidat</h4>
-        <div th:text="${galaxieentry.candidat.emailAddress}"></div>
+        <div th:text="${galaxieentry.candidat?.emailAddress}"></div>
       </div>
       <div class="span4 well">
         <h4>Poste</h4>
-        <div th:text="${galaxieentry.poste.numEmploi}"></div>
+        <div th:text="${galaxieentry.poste?.numEmploi}"></div>
       </div>
       <div class="span4 well">
         <h4>Candidature</h4>
-        <div>
-          <span th:text="${galaxieentry.candidature.candidat.emailAddress}"/>
-          [<span th:text="${galaxieentry.candidature.poste.numEmploi}"/>]
+        <div th:if="${galaxieentry.candidature != null}">
+          <span th:text="${galaxieentry.candidature.candidat?.emailAddress}"></span>
+          <th:block th:if="${galaxieentry.candidature.poste != null}">
+            [<span th:text="${galaxieentry.candidature.poste.numEmploi}"></span>]
+          </th:block>
+        </div>
       </div>
     </div>
 

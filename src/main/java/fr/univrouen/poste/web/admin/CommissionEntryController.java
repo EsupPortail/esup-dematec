@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -177,7 +179,11 @@ public class CommissionEntryController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
     public String show(@PathVariable Long id, Model uiModel) {
-        uiModel.addAttribute("commissionentry", commissionEntryDao.findCommissionEntry(id));
+        CommissionEntry commissionEntry = commissionEntryDao.findCommissionEntry(id);
+        if (commissionEntry == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        uiModel.addAttribute("commissionentry", commissionEntry);
         uiModel.addAttribute("itemId", id);
         return "admin/commissionentrys/show";
     }
