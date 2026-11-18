@@ -19,11 +19,11 @@
     <a th:href="@{/admin/commissionexcels(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
     <br/><br/>
     
-    <div th:if="${commissionexcels == null or #lists.isEmpty(commissionexcels)}">
+    <div th:if="${commissionexcels == null or commissionexcels.isEmpty()}">
       <p>Aucun élément trouvé.</p>
     </div>
     
-    <table th:if="${commissionexcels != null and !#lists.isEmpty(commissionexcels)}" class="table table-striped table-bordered">
+    <table th:if="${commissionexcels != null and !commissionexcels.isEmpty()}" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Fichier</th>
@@ -37,9 +37,14 @@
         <tr th:each="excel : ${commissionexcels}">
           <td th:text="${excel.filename}"></td>
           <td th:text="${#temporals.format(excel.creation, 'dd/MM/yyyy HH:mm:ss')}"></td>
-            <td class="btn-group">
-                <a th:href="@{/admin/commissionexcels/{id}(id=${excel.id})}" class="btn btn-sm btn-info">Voir</a>
-            </td>
+          <td>
+            <a th:href="@{/admin/commissionexcels/{id}(id=${excel.id})}" class="btn btn-sm btn-info">Voir</a>
+            <form th:action="@{/admin/commissionexcels/{id}(id=${excel.id})}" th:method="delete"
+                  class="form-inline" sec:authorize="hasRole('ROLE_ADMIN')"
+                  onsubmit="return confirm('Supprimer ce fichier Excel ? Les données déjà importées seront conservées.');">
+              <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+            </form>
+          </td>
         </tr>
       </tbody>
     </table>

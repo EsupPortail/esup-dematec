@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -194,10 +195,10 @@ public class CommissionExcelController {
         return "admin/commissionexcels/update";
     }
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
     public String delete(@PathVariable Long id) {
-        CommissionExcel commissionExcel = commissionExcelDao.findCommissionExcel(id);
-        commissionExcelDao.deleteCommissionExcel(commissionExcel);
+        commissionExcelDao.deleteCommissionExcel(id);
         return "redirect:/admin/commissionexcels";
     }
 

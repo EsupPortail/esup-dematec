@@ -19,17 +19,17 @@
     <a th:href="@{/admin/galaxieexcels(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
     <br/><br/>
     
-    <div th:if="${galaxieexcels == null or #lists.isEmpty(galaxieexcels)}">
+    <div th:if="${galaxieexcels == null or galaxieexcels.isEmpty()}">
       <p>Aucun élément trouvé.</p>
     </div>
     
-    <table th:if="${galaxieexcels != null and !#lists.isEmpty(galaxieexcels)}" class="table table-striped table-bordered">
+    <table th:if="${galaxieexcels != null and !galaxieexcels.isEmpty()}" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Fichier</th>
           <th>
               <a sd:pagination-sort="creation">
-                Céation
+                Création
               </a>
           </th>
             <th>
@@ -45,8 +45,13 @@
           <td th:text="${excel.filename}"></td>
           <td th:text="${#temporals.format(excel.creation, 'dd/MM/yyyy HH:mm:ss')}"></td>
           <td th:text="${excel.fileSizeFormatted}"></td>
-          <td class="btn-group">
-             <a th:href="@{/admin/galaxieexcels/{id}(id=${excel.id})}" class="btn btn-sm btn-info">Voir</a>
+          <td>
+            <a th:href="@{/admin/galaxieexcels/{id}(id=${excel.id})}" class="btn btn-sm btn-info">Voir</a>
+            <form th:action="@{/admin/galaxieexcels/{id}(id=${excel.id})}" th:method="delete"
+                  class="form-inline" sec:authorize="hasRole('ROLE_ADMIN')"
+                  onsubmit="return confirm('Supprimer ce fichier Excel ? Les données déjà importées seront conservées.');">
+              <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+            </form>
           </td>
         </tr>
       </tbody>
