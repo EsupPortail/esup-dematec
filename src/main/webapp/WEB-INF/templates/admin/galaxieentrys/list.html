@@ -64,11 +64,11 @@
       </div>
     </div>
     
-    <div th:if="${galaxieentrys == null or #lists.isEmpty(galaxieentrys)}">
+    <div th:if="${galaxieentrys == null or galaxieentrys.isEmpty()}">
       <p>Aucun élément trouvé.</p>
     </div>
     
-    <table th:if="${galaxieentrys != null and !#lists.isEmpty(galaxieentrys)}" class="table table-striped table-bordered">
+    <table th:if="${galaxieentrys != null and !galaxieentrys.isEmpty()}" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>
@@ -100,6 +100,12 @@
           <td th:text="${entry.email}"></td>
           <td>
             <a th:href="@{/admin/galaxieentrys/{id}(id=${entry.id})}" class="btn btn-sm btn-info">Voir</a>
+            <form th:if="${entry.deletable}" class="form-inline" th:method="delete"
+                  th:action="@{/admin/galaxieentrys/{id}(id=${entry.id})}"
+                  sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')"
+                  onsubmit="return confirm('Supprimer cette entrée ?');">
+              <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+            </form>
           </td>
         </tr>
       </tbody>

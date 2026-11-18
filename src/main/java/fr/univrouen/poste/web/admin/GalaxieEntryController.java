@@ -30,6 +30,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -163,10 +164,17 @@ public class GalaxieEntryController {
         return "admin/galaxieentrys/update";
     }
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
-    public String delete(@PathVariable Long id, @PageableDefault(size = 10) Pageable pageable, Model uiModel) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_MANAGER')")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    public String delete(@PathVariable Long id) {
+        GalaxieEntry galaxieEntry = galaxieEntryDao.findGalaxieEntry(id);
+        if (galaxieEntry == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (!galaxieEntry.getDeletable()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cette entrée est déjà associée à des données de recrutement.");
+        }
         galaxieEntryDao.deleteGalaxieEntry(id);
-        uiModel.asMap().clear();
         return "redirect:/admin/galaxieentrys";
     }
 

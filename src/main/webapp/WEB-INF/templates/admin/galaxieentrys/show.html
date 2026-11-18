@@ -85,11 +85,12 @@
       <a th:href="@{/admin/galaxieentrys/{id}(id=${galaxieentry.id},form)}"
          class="btn btn-warning"
          sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
-      <a th:if="${galaxieentry.deletable}"
-         th:href="@{/admin/galaxieentrys/{id}(id=${galaxieentry.id})}"
-         class="btn btn-danger"
-         sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')"
-         onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">Supprimer</a>
+      <form th:if="${galaxieentry.deletable}" class="form-inline" th:method="delete"
+            th:action="@{/admin/galaxieentrys/{id}(id=${galaxieentry.id})}"
+            sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')"
+            onsubmit="return confirm('Supprimer cette entrée ?');">
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+      </form>
     </div>
   </div>
 </body>

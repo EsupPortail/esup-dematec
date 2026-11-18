@@ -204,8 +204,15 @@ public class CommissionEntryController {
         return "admin/commissionentrys/update";
     }
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
     public String delete(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, RedirectAttributes redirectAttributes) {
+        CommissionEntry commissionEntry = commissionEntryDao.findCommissionEntry(id);
+        if (commissionEntry == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (!commissionEntry.getDeletable()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cette entrée est déjà associée à des données de recrutement.");
+        }
         commissionEntryDao.deleteCommissionEntry(id);
         redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
         redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());

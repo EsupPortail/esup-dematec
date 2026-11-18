@@ -32,10 +32,10 @@
     </dl>
 
     <a th:href="@{/admin/commissionentrys}" class="btn btn-default">Retour à la liste</a>
-    <form th:if="${commissionentry.deletable}"
-       th:action="@{/admin/commissionentrys/{id}(id=${commissionentry.id})}"
-       th:method="delete">
-      <input onclick="return confirm('Êtes-vous sûr de vouloir supprimer celà ?');" value="Supprimer Commission Entry" type="submit" title="Supprimer Commission Entry" class="btn btn-danger" alt="Supprimer Commission Entry">
+    <form th:if="${commissionentry.deletable}" class="form-inline" th:method="delete"
+          th:action="@{/admin/commissionentrys/{id}(id=${commissionentry.id})}"
+          onsubmit="return confirm('Supprimer cette entrée ?');">
+      <button type="submit" class="btn btn-danger">Supprimer</button>
     </form>
   </div>
 </body>
