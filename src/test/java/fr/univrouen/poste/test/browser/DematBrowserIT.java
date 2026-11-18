@@ -2,6 +2,7 @@ package fr.univrouen.poste.test.browser;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
@@ -9,19 +10,24 @@ import com.microsoft.playwright.Response;
 import com.microsoft.playwright.Tracing;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.SelectOption;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.zip.ZipFile;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -211,6 +217,78 @@ public class DematBrowserIT {
             commentDialog.locator(".modal-footer")
                     .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Fermer")).click();
             assertThat(commentDialog).isHidden();
+        });
+    }
+
+    @Test
+    public void exportZipDesFichiersDuPosteSelectionne() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            Path pdf = Path.of("src/test/resources/doc-dummy.pdf");
+            for (String candidate : List.of("candidat2@example.org", "candidat@example.org")) {
+                ouvrirCandidature(page, candidate);
+                Locator upload = page.locator("form[action$='/addFile']").first();
+                upload.locator("input[type=file]").setInputFiles(pdf);
+                upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider")).click();
+                assertThat(page.getByRole(AriaRole.LINK,
+                        new Page.GetByRoleOptions().setName(pdf.getFileName().toString()))).isVisible();
+            }
+
+            Locator filter = filtrerParPoste(page, "4087");
+            filter.getByLabel("Zip").check();
+            Download download = telechargerExport(page, filter, "demat.zip");
+            try (ZipFile archive = new ZipFile(download.path().toFile())) {
+                assertEquals(1, archive.size());
+                var entry = archive.entries().nextElement();
+                assertTrue(entry.getName(), entry.getName().matches("4087/ALIX-MICHELE-305/\\d+-doc-dummy\\.pdf"));
+                try (var data = archive.getInputStream(entry)) {
+                    assertArrayEquals(Files.readAllBytes(pdf), data.readAllBytes());
+                }
+            }
+        });
+    }
+
+    @Test
+    public void exportDesCourrielsDuPosteSelectionne() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+
+            Locator filter = filtrerParPoste(page, "4087");
+            filter.getByLabel("Liste mails").check();
+            Download download = telechargerExport(page, filter, "emails.txt");
+            assertEquals(List.of("candidat2@example.org", "candidat4@example.org"), Files.readAllLines(download.path()));
+        });
+    }
+
+    @Test
+    public void exportWordDesCandidaturesDuPosteSelectionne() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+
+            Path template = Path.of("src/main/webapp/doc/template-multi-candidatures.docx");
+            String filename = template.getFileName().toString();
+            page.navigate(baseUrl + "/admin/templatefiles?form");
+            page.getByLabel("Fichier", new Page.GetByLabelOptions().setExact(true)).setInputFiles(template);
+            page.getByLabel("Type de fichier template").selectOption("MULTI_CANDIDATURES");
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            assertThat(page).hasURL(baseUrl + "/admin/templatefiles");
+
+            Locator filter = filtrerParPoste(page, "4087");
+            filter.getByLabel("Export Word via un modèle").selectOption(new SelectOption().setLabel(filename));
+            Download download = telechargerExport(page, filter, filename);
+            try (var input = Files.newInputStream(download.path()); var document = new XWPFDocument(input)) {
+                assertTrue(document.getParagraphs().stream().anyMatch(paragraph -> paragraph.getText().contains("4087")));
+                var rows = document.getTables().get(0).getRows();
+                assertEquals(3, rows.size());
+                List<String> names = rows.subList(1, rows.size()).stream()
+                        .map(row -> row.getCell(1).getText().trim() + " " + row.getCell(2).getText().trim())
+                        .sorted()
+                        .toList();
+                assertEquals(List.of("ALIX MICHELE", "MERLIN TITI"), names);
+            }
         });
     }
 
@@ -606,6 +684,21 @@ public class DematBrowserIT {
                 new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
     }
 
+    private Locator filtrerParPoste(Page page, String poste) {
+        page.navigate(baseUrl + "/postecandidatures");
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Filtrer").setExact(true)).click();
+        Locator filter = page.locator("#filterForm");
+        filter.getByLabel("Postes", new Locator.GetByLabelOptions().setExact(true)).selectOption(poste);
+        return filter;
+    }
+
+    private Download telechargerExport(Page page, Locator filter, String filename) {
+        Locator submit = filter.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Trouver"));
+        Download download = page.waitForDownload(submit::click);
+        assertEquals(filename, download.suggestedFilename());
+        return download;
+    }
+
     private void confirmerDecision(Page page, String modalId, String action) {
         page.locator("a[href='#" + modalId + "']").click();
         Locator dialog = page.locator("#" + modalId);
@@ -634,7 +727,12 @@ public class DematBrowserIT {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Valider")).click();
     }
 
-    private void runInBrowser(Consumer<Page> scenario) {
+    @FunctionalInterface
+    private interface BrowserScenario {
+        void run(Page page) throws IOException;
+    }
+
+    private void runInBrowser(BrowserScenario scenario) {
         try (BrowserContext context = browser.newContext(new Browser.NewContextOptions().setLocale("fr-FR"))) {
             context.tracing().start(new Tracing.StartOptions().setScreenshots(true).setSnapshots(true));
             Page page = context.newPage();
@@ -642,9 +740,11 @@ public class DematBrowserIT {
             page.onPageError(pageErrors::add);
             boolean passed = false;
             try {
-                scenario.accept(page);
+                scenario.run(page);
                 assertTrue("Erreurs JavaScript : " + pageErrors, pageErrors.isEmpty());
                 passed = true;
+            } catch (IOException exception) {
+                throw new UncheckedIOException(exception);
             } finally {
                 if (passed) {
                     context.tracing().stop();
