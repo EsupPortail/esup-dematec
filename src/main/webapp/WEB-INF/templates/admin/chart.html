@@ -14,6 +14,21 @@
       <div class="span4">
         <canvas id="uploadChart" width="400" height="400"><!--  --></canvas>
         <script th:inline="javascript">
+          function humanFileSize(bytes) {
+              const threshold = 1024;
+              if (Math.abs(bytes) < threshold) {
+                  return bytes + ' B';
+              }
+
+              const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+              let unit = -1;
+              do {
+                  bytes /= threshold;
+                  unit++;
+              } while (Math.abs(bytes) >= threshold && unit < units.length - 1);
+              return bytes.toFixed(1) + ' ' + units[unit];
+          }
+
           var dataUpload = {
             labels: [[${uploadStatsLabels}]],
             datasets: [{

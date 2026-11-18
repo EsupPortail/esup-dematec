@@ -52,7 +52,10 @@ public class DematBrowserIT {
     @Test
     public void connexionPubliqueEtMenuLateral() {
         runInBrowser(page -> {
+            page.navigate(baseUrl + "/login");
+            assertEquals("undefined", page.evaluate("typeof window.jQuery"));
             login(page);
+            assertEquals("undefined", page.evaluate("typeof window.jQuery"));
             Locator sidebar = page.locator("#demat-left");
             Locator toggle = page.locator("#toggleSidebar");
 
@@ -91,6 +94,19 @@ public class DematBrowserIT {
             assertThat(users).hasValue("admin");
             assertThat(page.locator("tbody").getByText("admin", new Locator.GetByTextOptions().setExact(true)).first())
                     .isVisible();
+
+            Locator pageSize = page.getByLabel("Résultats par page");
+            pageSize.selectOption("50");
+            assertThat(page).hasURL(Pattern.compile("[?&]size=50(?:&|$)"));
+            assertThat(pageSize).hasValue("50");
+            assertThat(users).hasValue("admin");
+
+            search.fill("introuvable");
+            assertThat(users.locator("option")).hasCount(0);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Effacer")).click();
+            assertThat(search).hasValue("");
+            assertThat(users.locator("option[value=admin]")).hasCount(1);
+            assertThat(users).hasValue("");
         });
     }
 
@@ -108,6 +124,7 @@ public class DematBrowserIT {
             assertThat(actions).isHidden();
             candidates.first().check();
             assertThat(actions).isVisible();
+            assertThat(page.locator("#selectAll")).hasJSProperty("indeterminate", true);
             candidates.first().uncheck();
             assertThat(actions).isHidden();
 
@@ -131,9 +148,21 @@ public class DematBrowserIT {
             assertThat(actions).isHidden();
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Filtrer").setExact(true)).click();
+            Locator finder = page.locator("#filterForm");
+            Locator zip = finder.getByLabel("Zip");
+            Locator csv = finder.getByLabel("csv");
+            zip.check();
+            csv.check();
+            assertThat(zip).not().isChecked();
+            Locator submitFilter = finder.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Trouver"));
+            assertEquals("candidatures.csv", page.waitForDownload(submitFilter::click).suggestedFilename());
+            assertEquals("candidatures.csv", page.waitForDownload(submitFilter::click).suggestedFilename());
+            csv.uncheck();
+
             Locator search = page.getByPlaceholder("Filtrer candidats");
             Locator options = page.locator("#candidatSelect option");
             Locator firstRow = candidates.first().locator("xpath=ancestor::tr");
+            assertThat(firstRow.getByAltText("Recevable")).isVisible();
             String email = firstRow.getByRole(AriaRole.CELL,
                     new Locator.GetByRoleOptions().setName(Pattern.compile("@"))).innerText();
             search.pressSequentially("introuvable");
@@ -155,6 +184,22 @@ public class DematBrowserIT {
             comment.getByRole(AriaRole.BUTTON).click();
             assertThat(comment.locator("textarea")).hasValue("Commentaire de commission Playwright");
 
+            Locator upload = page.locator("form[action$='/addFile']").first();
+            Path pdf = Path.of("src/test/resources/doc-dummy.pdf");
+            upload.locator("input[type=file]").setInputFiles(pdf);
+            upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider")).click();
+            assertThat(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("doc-dummy.pdf"))).isVisible();
+
+            List<String> alerts = new ArrayList<>();
+            page.onceDialog(alert -> {
+                alerts.add(alert.message());
+                alert.accept();
+            });
+            upload.locator("input[type=file]").setInputFiles(pdf);
+            upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider")).click();
+            page.waitForLoadState();
+            assertEquals(List.of("Un fichier de même nom existe déjà !"), alerts);
+
             page.navigate(baseUrl + "/postecandidatures");
             page.getByTitle("Voir le commentaire").click();
             Locator commentDialog = page.locator("[id^=comment-modal-]");
@@ -165,6 +210,45 @@ public class DematBrowserIT {
             commentDialog.locator(".modal-footer")
                     .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Fermer")).click();
             assertThat(commentDialog).isHidden();
+        });
+    }
+
+    @Test
+    public void protectionContreLesDoublesSoumissions() {
+        runInBrowser(page -> {
+            login(page);
+            page.navigate(baseUrl + "/changepassword/index");
+            List<String> alerts = new ArrayList<>();
+            page.onceDialog(alert -> {
+                alerts.add(alert.message());
+                alert.accept();
+            });
+
+            Locator form = page.locator("form[action$='/changepassword/update']");
+            Object submissions = form.evaluate("""
+                    form => {
+                        const submit = () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                        form.addEventListener('submit', event => event.preventDefault(), { once: true });
+                        return [submit(), submit(), submit()];
+                    }
+                    """);
+            assertEquals(List.of(false, true, false), submissions);
+            assertEquals(1, alerts.size());
+            assertTrue(alerts.get(0).startsWith("Envoi en cours"));
+        });
+    }
+
+    @Test
+    public void affichageDesGraphiques() {
+        runInBrowser(page -> {
+            login(page);
+            assertEquals(200, page.navigate(baseUrl + "/admin/chart").status());
+            assertEquals(List.of("uploadChart", "authChart", "sizeChart", "sizeMemberChart", "sizePosteChart"),
+                    page.evaluate("""
+                    () => [window.chartUpload, window.chartAuth, window.chartSize,
+                           window.chartSizeMember, window.chartSizePoste].map(chart => chart?.chart?.canvas.id)
+                    """));
+            assertEquals("2.0 kB", page.evaluate("humanFileSize(2048)"));
         });
     }
 

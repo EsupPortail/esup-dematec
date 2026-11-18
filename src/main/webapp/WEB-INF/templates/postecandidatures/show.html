@@ -42,24 +42,12 @@
     </div>
   </th:block>
 
-  <!-- Gestion des alertes de restriction -->
-  <script th:if="${upload_restricion_size_contentype != null}">
-    var alertRestriction ="[[${
-            upload_restricion_size_contentype == 'SizeRestriction' ? 'Fichier trop volumineux !' :
-            upload_restricion_size_contentype == 'ContentTypeRestriction' ? 'Type de fichier non accepté !' :
-            'Type de fichier non accepté et trop volumineux !'
-        }]]";
-    $(document).ready(function(){
-      alert(alertRestriction);
-    });
-  </script>
-
-  <script th:if="${filename_already_used != null}">
-    var alertRestriction = 'Un fichier de même nom existe déjà !';
-    $(document).ready(function(){
-      alert(alertRestriction);
-    });
-  </script>
+  <div th:if="${upload_restricion_size_contentype != null}" hidden
+       th:attr="data-alert-message=${upload_restricion_size_contentype == 'SizeRestriction' ? 'Fichier trop volumineux !' :
+                                 upload_restricion_size_contentype == 'ContentTypeRestriction' ? 'Type de fichier non accepté !' :
+                                 'Type de fichier non accepté et trop volumineux !'}"></div>
+  <div th:if="${filename_already_used != null}" hidden
+       data-alert-message="Un fichier de même nom existe déjà !"></div>
 
   <!-- Table des fichiers de candidature -->
   <table class="table table-bordered table-striped" th:if="${not #lists.isEmpty(postecandidature.candidatureFiles)}">

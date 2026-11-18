@@ -18,7 +18,7 @@
   <title th:text="#{welcome_h3(${application_name})}">Application</title>
 </head>
 
-<body data-target=".bs-docs-sidebar" data-spy="scroll" data-twttr-rendered="true">
+<body>
   <div th:replace="~{fragments/header :: header}"></div>
 
   <div id="main" class="container-fluid">
@@ -30,11 +30,9 @@
   <div th:replace="~{fragments/footer :: footer}"></div>
 
   <!-- JavaScript -->
-  <script th:src="@{/resources/js/jquery-1.9.0.min.js}"></script>
-  <script th:src="@{/resources/js/bootstrap.min.js}"></script>
   <script defer th:src="@{/resources/js/password-strength.js}"></script>
   <script defer th:src="@{/resources/js/select-filter.js}"></script>
   <script defer th:src="@{/resources/js/dialogs-and-accordions.js}"></script>
-  <script th:src="@{/resources/js/demat.js}"></script>
+  <script defer th:src="@{/resources/js/demat.js}"></script>
 </body>
 </html>

@@ -45,6 +45,10 @@ display: inline;
 width: auto;
 }
 
+#demat-left[hidden] {
+display: none;
+}
+
 #main .row-fluid #demat-right {
 margin-left: 240px;
 width: auto;
@@ -452,8 +456,13 @@ margin-left: 170px;
 	display: inline;
 }
 
-.pagination-selector button {
+.pagination-selector select {
+	width: auto;
 	margin-top: -20px;
+}
+
+.table td.candidature-status {
+	text-align: center;
 }
 
 .pagination .visually-hidden {
