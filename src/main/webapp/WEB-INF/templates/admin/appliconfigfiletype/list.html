@@ -12,8 +12,8 @@
 
       <div class="well help">
 <p>Vous pouvez si vous le souhaitez typer les fichiers demandés aux candidats.</p>
-      <p>Par défaut, on propose un simple type générique, sans restriction. Vous pouvez cependant modifier celà pour demander explicitement un fichier pdf pour le CV, une image JPEG pour le scan d'une pièce d'identité, etc.</p>
-      <p>Pour chaque type défini on peut ainsi contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain mime-type, d'un certain nom et avec une taille ne dépassant pas un certain seuil.</p>
+      <p>Par défaut, on propose un simple type générique, sans restriction. Vous pouvez cependant modifier cela pour demander explicitement un fichier pdf pour le CV, une image JPEG pour le scan d'une pièce d'identité, etc.</p>
+      <p>Pour chaque type défini, on peut ainsi contraindre techniquement le candidat à envoyer uniquement des fichiers d'un certain mime-type, d'un certain nom et avec une taille ne dépassant pas un certain seuil.</p>
       <ul>
         <li>La taille correspond à des Mo, <b>-1</b> correspond à ne fixer aucune limite.</li>
         <li>Le mime-type peut être une expression régulière. <b>.*</b> revient à accepter tous les types de fichiers, <b>application/pdf</b> uniquement les pdf, <b>application/pdf|application/zip</b> les pdf ou zip, <b>application/pdf|image/.*</b> les pdf et tous types d'images, etc. <b>Attention</b> cependant, le mime-type est une information communiquée par le navigateur du client, et ce dernier ne le détectera pas forcément correctement. Aussi un pdf peut avoir un mime-type générique renseigné par le navigateur, comme <i>application/download</i> ou encore <i>application/binary</i> ...</li>

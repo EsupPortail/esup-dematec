@@ -60,7 +60,7 @@ public class GalaxieEntryService {
 			User candidat = userDao.findUserByNumCandidat(galaxieEntry.getNumCandidat());
 			if(candidat == null) {
 				if(galaxieEntry.getEmail() == null || galaxieEntry.getEmail().isEmpty()) {
-					String message = "Le candidat " + galaxieEntry.getNumCandidat() + " n'a pas de mail de renseigné";
+					String message = "Le candidat " + galaxieEntry.getNumCandidat() + " n'a pas de mail renseigné";
 					throw new EsupDematEcWarnException(message);
 				} else {
 					User userSameEmail = userDao.findUserByEmailAddress(galaxieEntry.getEmail());

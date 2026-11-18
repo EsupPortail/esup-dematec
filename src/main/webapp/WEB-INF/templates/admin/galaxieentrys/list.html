@@ -13,13 +13,13 @@
     <div class="demat6">
     <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
       <div class="help-content">
-<p>L'ensemble des données importées depuis l'ensemble des fichiers galaxie déposés dans l'application est listé ici.</p>
+<p>L'ensemble des données importées depuis l'ensemble des fichiers Galaxie déposés dans l'application est listé ici.</p>
       <p>Si de nouvelles données issues des fichiers Excel Galaxie sont présentes, l'application vous propose alors de générer différents éléments liés à cette application.</p>
       <p>Ces éléments sont :
       <ul>
         <li>Des comptes utilisateurs permettant aux candidats de s'authentifier dans l'application. Dans le même temps que la création du compte, un email est également envoyé au candidat afin de lui présenter ses paramètres de connexion.</li>
         <li>Des références aux postes encore non connus de l'application.</li>
-        <li>Et enfin les candidatures à proprement parlées, qui pourront être alimentées par les candidats et visualisées par les membres.</li>
+        <li>Et enfin les candidatures à proprement parler, qui pourront être alimentées par les candidats et visualisées par les membres.</li>
       </ul>
       </p>
       </div>
@@ -50,7 +50,7 @@
 
     <div class="well" th:unless="${#lists.isEmpty(unknowCandidatures) and  #lists.isEmpty(unknowPostes) and  #lists.isEmpty(unknowCandidats)}">
       <div th:unless="${#lists.isEmpty(unknowCandidatures)}">
-        <strong>Les éléments correspondants à ces candidatures sont manquants : </strong>
+        <strong>Les éléments correspondant à ces candidatures sont manquants : </strong>
         <span th:each="candidature : ${unknowCandidatures}">
           <a th:href="@{/admin/galaxieentrys/{id}(id=${candidature[2]})}" th:text="${'[' + candidature[0] + ', ' + candidature[1] + ']'}"></a><span th:unless="${candidatureStat.last}">, </span>
         </span>

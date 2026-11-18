@@ -50,7 +50,7 @@
 
       <div class="well" th:unless="${#lists.isEmpty(unknowMembres) and  #lists.isEmpty(unknowPostes) and  #lists.isEmpty(unknowCommission)}">
           <div th:unless="${#lists.isEmpty(unknowCommission)}">
-              <strong>Les éléments correspondants à ces affectations de membres (commission) sont manquants : </strong>
+              <strong>Les éléments correspondant à ces affectations de membres (commission) sont manquants : </strong>
               <span th:each="commission : ${unknowCommission}">
                   <a th:href="@{/admin/commissionentrys/{id}(id=${commission[2]})}" th:text="${'[' + commission[0] + ', ' + commission[1] + ']'}"></a><span th:unless="${commissionStat.last}">, </span>
               </span>

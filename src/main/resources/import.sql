@@ -96,25 +96,25 @@ E'Bonjour.\n
 Vous avez demandé à récupérer un nouveau mot de passe.\n
 Pour ce faire, merci de suivre ce lien (ou de le copier-coller dans la barre d''adresse de votre navigateur pour y accéder) :\n
 http://localhost:8080/EsupDematEC/forgotpassword/formChange?activationKey=@@activationKey@@\n--\nUniversité ESUP - Direction des Ressources Humaines',
-'<div class="well help">  <p>En tant que membre (d''une commission) sur un ou plusieurs postes donnés, vous pouvez consulter ici les différentes candidatures liées à ce ou    ces poste(s).</p>
+'<div class="well help">  <p>En tant que membre (d''une commission) sur un ou plusieurs postes donnés, vous pouvez consulter ici les différentes candidatures liées à ce poste ou à ces postes.</p>
 <p>Pour cela, cliquez sur le bouton "voir" du poste souhaité.</p></div>',
 '<div>  
 <p>    <span class="badge badge-success">1</span>    Enregistrement des candidatures sur Galaxie ( <a href="https://www.galaxie.enseignementsup-recherche.gouv.fr/ensup/candidats.html">https://www.galaxie.enseignementsup-recherche.gouv.fr/ensup/candidats.html</a>    ).  </p>
 <p class="important">    <span class="badge badge-important">2</span>    Aucun dossier ou dépôt de pièce complémentaire ne sera accepté après le ****.  </p>
 <p>    <span class="badge badge-success">3</span>    Le fichier numérique devra être <b>exclusivement au format PDF</b> et contenir toutes les pièces exigées par la réglementation en vigueur.  </p>
-<div class="encart">    <span class="badge badge-warning">4</span>    Si vous venez de vous inscrire sur le portail Galaxie, vos identifiant et mot de passe vont être automatiquement générés et envoyés <b>au      plus tard 48h</b> après votre inscription, à l''adresse e-mail indiquée sur Galaxie.  </div></div>',
+<div class="encart">    <span class="badge badge-warning">4</span>    Si vous venez de vous inscrire sur le portail Galaxie, vos identifiant et mot de passe vont être automatiquement générés et envoyés <b>au      plus tard 48 h</b> après votre inscription, à l''adresse e-mail indiquée sur Galaxie.  </div></div>',
 '<div class="hero-unit">
 <h3>Bienvenue</h3>
-<p>Cette application permet de gérer le dépôt des dossiers de candidatures dans le cadre du recrutement des enseignants-chercheurs et ATER.</p>
+<p>Cette application permet de gérer le dépôt des dossiers de candidatures dans le cadre du recrutement des enseignants-chercheurs et des ATER.</p>
 </div>',
-'<div class="hero-unit"><h3>Bienvenue</h3><p>Cette application permet de gérer le dépôt des dossiers de candidatures dans le cadre du recrutement des enseignants-chercheurs et ATER.</p></div>',
+'<div class="hero-unit"><h3>Bienvenue</h3><p>Cette application permet de gérer le dépôt des dossiers de candidatures dans le cadre du recrutement des enseignants-chercheurs et des ATER.</p></div>',
 'Recrutement des enseignants-chercheurs',
 '<footer  id="footer" class="footer" >    
 <span><a href="http://www.esup-portail.org/">Université ESUP</a></span> - 
 <span>Direction des Ressources Humaines</span></footer><small id="mention-legale">   
 <p>Les informations recueillies font l’objet d’un traitement informatique destiné à la gestion dématérialisée des campagnes de recrutement      d''Enseignants-Chercheurs &amp; d''Attachés Temporaires d''Enseignement et de Recherche (ATER).         </p>        
 <p>     Nous vous informons que les données vous concernant sont        informatisées. Elles ne sont pas transmises à des tiers et seront traitées de façon confidentielle. Ces données sont conservées 5 ans.        </p>        
-<p>Conformément à la loi « informatique et libertés » du 6 janvier 1978 modifiée en 2004, vous bénéficiez d’un droit d’accès        et de rectification aux informations qui vous concernent, que vous pouvez exercer en vous adressant à :     </p>        
+<p>Conformément à la loi « informatique et libertés » du 6 janvier 1978 modifiée en 2004, vous bénéficiez d’un droit d’accès aux informations qui vous concernent et de rectification de ces informations, que vous pouvez exercer en vous adressant à :     </p>
 <p>*** Adresse de l''université *** </p></small>',
 '/resources/images/logo-esup-dematec.png',
 'Université ESUP - Recrutement EC 2013',
@@ -138,7 +138,7 @@ false,
 true,
 false,
 '<div class="well help"> 
-<p>En tant que membre de commission, vous avez accès ici à des documents partagés à l''ensemble de la commission pour un poste donné.</p>
+<p>En tant que membre de commission, vous avez accès ici à des documents partagés avec l''ensemble de la commission pour un poste donné.</p>
 <p>Les présidents de commission ont la possibilité d''ajouter des documents dans ces espaces.</p>
 </div>',
 false,

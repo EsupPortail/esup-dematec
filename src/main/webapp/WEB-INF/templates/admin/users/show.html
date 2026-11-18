@@ -18,7 +18,7 @@
       </div>
       <div class="span3 well">
         <strong>Status</strong><br/>
-        <span th:text="${user.status}">Status</span>
+        <span th:text="${user.status}">Statut</span>
       </div>
       <div class="span3 well">
         <strong>Postes</strong><br/>
@@ -67,7 +67,7 @@
         <span th:text="${user.loginFailedNb}">0</span>
       </div>
       <div class="span3 well">
-        <strong>Heure dernier échec</strong><br/>
+        <strong>Heure du dernier échec</strong><br/>
         <span th:text="${#temporals.format(user.loginFailedTimeAsDate, 'dd/MM/yyyy HH:mm')}">0</span>
       </div>
     </div>

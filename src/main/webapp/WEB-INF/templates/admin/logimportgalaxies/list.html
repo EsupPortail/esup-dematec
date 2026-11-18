@@ -13,10 +13,10 @@
         <div class="demat6">
             <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
                 <div class="help-content">
-                    <p>Pour chaque poste, candidat et candidature importé depuis un fichier Excel Galaxie, une ligne de log est ajoutée.</p>
-                    <p>Si la création a échoué, une ligne de log est également ajoutée mais avec un status particulier (IMPORT FAILED).</p>
+                    <p>Pour chaque poste, candidat et candidature importés depuis un fichier Excel Galaxie, une ligne de log est ajoutée.</p>
+                    <p>Si la création a échoué, une ligne de log est également ajoutée mais avec un statut particulier (IMPORT FAILED).</p>
                     <p>Après chaque importation, nous vous suggérons de vérifier via l'outil "Filtrer" si des imports ont échoué.</p>
-                    <p>Un import peut par exemple échouer si le mail n'avait pas été renseigné dans le fichier Excel issu de Galaxie ; si c'est le cas il faudra alors réimporter un nouveau fichier Galaxie présentant pour le candidat affecté un mail de renseigné.</p>
+                    <p>Un import peut par exemple échouer si le mail n'avait pas été renseigné dans le fichier Excel issu de Galaxie ; si c'est le cas, il faudra alors réimporter un nouveau fichier Galaxie présentant pour le candidat affecté un mail renseigné.</p>
                     <p>En plus de cette vérification, on peut également vérifier les <a th:href="@{/admin/logmails}">logs d'envoi de mails.</a></p>
                 </div>
             </div>

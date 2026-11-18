@@ -14,11 +14,11 @@
     <div th:replace="~{fragments/help :: accordion(content=~{::.help-content})}">
       <div class="help-content">
 <p th:if="!${candidatCanSignup}">Les différents postes donnés ici ont été générés depuis le menu Importation. Vous pouvez ici vérifier que l'ensemble des postes a bien été créé.</p>
-      <p>Pour chacun des postes, vous pouvez éditer leurs membres, pour ce faire, cliquez sur le bouton "Modifier" du poste voulu.</p>
+      <p>Pour chacun des postes, vous pouvez éditer ses membres. Pour ce faire, cliquez sur le bouton "Modifier" du poste voulu.</p>
       <p>Vous pouvez saisir une "Date Fin Candidat Auditionnable" correspondant à la date à partir de laquelle les candidats retenus pour audition n'ont plus accès à l'application.</p>
       <div th:if="${candidatCanSignup}" class="alert">
         <p>Votre instance d'EsupDematEC a été configurée pour laisser la possibilité aux candidats de s'inscrire directement dans l'application (sans passer par l'import d'un fichier Excel), aussi vous pouvez ici créer un poste depuis un formulaire web.</p>
-        <p>Attention, "Date Fin Candidature" doit être renseigné pour que le poste puisse effectivement être affiché disponible à la candidature.</p>
+        <p>Attention, "Date Fin Candidature" doit être renseignée pour que le poste puisse effectivement être affiché disponible à la candidature.</p>
         <p>"Date Fin Candidature" correspond à la date à partir de laquelle les candidats (non retenus pour audition) n'ont plus accès au poste (candidature et dépôt).</p>
       </div>
     </div>

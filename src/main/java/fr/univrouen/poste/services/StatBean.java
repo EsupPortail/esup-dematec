@@ -135,7 +135,7 @@ public class StatBean {
 	public String toText() {
 		return "Nombre de postes : " + posteNumber + "\n\n"
 				+ "Comptes créés : " + userNumber + "\n\n"
-				+ "Compts activés : " + userActifNumber + "\n\n"
+				+ "Comptes activés : " + userActifNumber + "\n\n"
 				+ "Admins : " + adminNumber + "\n\n"
 				+ "Super Managers : " + supermanagerNumber + "\n\n"
 				+ "Managers : " + managerNumber + "\n\n"

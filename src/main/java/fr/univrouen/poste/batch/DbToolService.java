@@ -266,7 +266,7 @@ public class DbToolService {
 			appliVersion.setEsupDematEcVersion(currentEsupDematEcVersion);
 			appliVersionDao.saveAppliVersion(appliVersion);
 		} catch(Exception e) {
-			throw new RuntimeException("Erreur durant le mise à jour de la base de données", e);
+			throw new RuntimeException("Erreur durant la mise à jour de la base de données", e);
 		}
 	}
 	
@@ -313,7 +313,7 @@ public class DbToolService {
 				"La base de données ne contient plus que la config et comptes admin/super-manager/manager !" +
 				"\n#####\n");
 		} catch(Exception e) {
-			throw new RuntimeException("Erreur durant la suppressions des données de la base de données", e);
+			throw new RuntimeException("Erreur durant la suppression des données de la base de données", e);
 		}
 	}
 

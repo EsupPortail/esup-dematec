@@ -81,7 +81,7 @@ public class RetrieveUserService {
         String password = (String) authentication.getCredentials();
         if (!fr.univrouen.poste.utils.CredentialValidation.validPassword(password) || !StringUtils.hasText(username)) {
             logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
-            throw new BadCredentialsException("Merci de saisir votre email et mot de passe");
+            throw new BadCredentialsException("Merci de saisir votre email et votre mot de passe");
         }
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         Boolean enabled;
@@ -108,7 +108,7 @@ public class RetrieveUserService {
             if (!passwordEncoder.matches(password, expectedPassword)) {
                 logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
                 if(!expectedPassword.startsWith("$")) {
-                    // Hack : En 1.9 les mots de passes sont maintenant chiffrés avec bcrypt et non plus en sha256
+                    // Hack : En 1.9 les mots de passe sont maintenant chiffrés avec bcrypt et non plus en sha256
                     // -> pour supporter une migration simple, on envoie un lien de changement de mot de passe si le format n'est pas du bcrypt
                     // le password en bcrypt est préfixé par $ - sha256 est en hexa
                     passwordService.sendPasswordActivationKeyMail(targetUser, null);
@@ -117,14 +117,14 @@ public class RetrieveUserService {
                 throw new BadCredentialsException("Email utilisateur ou mot de passe invalide.");
             }
 
-            // restriction accés réseau
+            // restriction d'accès réseau
             if (!ipCanBeUsed4AuthAdminManager && (targetUser.getIsAdmin() || targetUser.getIsSuperManager() || targetUser.getIsManager())) {
                 logService.logActionAuth(LogService.AUTH_FAILED, username, userIPAddress);
                 logger.warn("User " + username + " tried to access to his admin/manager/supermanager account from this IP " + userIPAddress);
                 throw new BadCredentialsException("Vous ne pouvez pas vous authentifier sur ce compte depuis cet accès réseau. Contactez un administrateur si problème.");
             }
 
-            // restriction dates accés pour candidats et membres
+            // restriction des dates d'accès pour candidats et membres
             boolean isCurrentTimeOk4ThisCandidat = dateClotureChecker.isCurrentTimeOk4ThisCandidat(targetUser);
             boolean isCurrentTimeOk4ThisMembre = dateClotureChecker.isCurrentTimeOk4ThisMembre(targetUser);
             if((targetUser.getIsCandidat() || targetUser.getIsMembre()) && !isCurrentTimeOk4ThisCandidat && !isCurrentTimeOk4ThisMembre) {
