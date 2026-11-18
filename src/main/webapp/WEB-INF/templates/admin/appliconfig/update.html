@@ -4,7 +4,7 @@
       layout:decorate="~{layouts/default}">
 <head>
   <title>Configuration - Modification</title>
-  <link rel="stylesheet" th:href="@{/resources/css/bootstrap-wysihtml5.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/rich-text-editor.css}" />
 </head>
 <body>
   <div layout:fragment="body" id="dematconfig">
@@ -14,7 +14,7 @@
         <p>Concernant les éléments en HTML, on vous propose un éditeur WYSIWYG assez sommaire.</p>
         <p>Cependant vous pouvez également :
           <ul>
-            <li>éditer en HTML le source HTML via le bouton <a class="btn"><i class="icon-pencil"><!--  --></i></a></li>
+            <li>modifier le code source avec le bouton <strong>Source HTML</strong></li>
             <li>utiliser des éléments issus de bootstrap (technologie utilisée par l'application) notamment en faisant des copier/coller des composants et autres directement dans l'éditeur wysiwyg et ce depuis la documentation boostrap : <a href="http://twitter.github.com/bootstrap/base-css.html">http://twitter.github.com/bootstrap/base-css.html</a></li>
           </ul>
       </div>
@@ -352,31 +352,62 @@ Université ESUP - Direction des Ressources Humaines</pre>
       </div>
     </form>
   
-  <!-- Scripts pour WYSIWYG et les champs couleur -->
+  <template id="rich-text-toolbar">
+    <div class="rich-text-toolbar" role="group">
+      <button type="button" class="btn" data-editor-command="bold" aria-pressed="false"><strong>Gras</strong></button>
+      <button type="button" class="btn" data-editor-command="italic" aria-pressed="false"><em>Italique</em></button>
+      <button type="button" class="btn" data-editor-command="underline" aria-pressed="false"><u>Souligné</u></button>
+      <select aria-label="Style du texte" data-editor-command="formatBlock">
+        <option value="">Style du texte</option>
+        <option value="div">Texte normal</option>
+        <option value="h1">Titre 1</option>
+        <option value="h2">Titre 2</option>
+        <option value="h3">Titre 3</option>
+      </select>
+      <button type="button" class="btn" data-editor-command="insertUnorderedList" aria-label="Liste à puces"><i class="icon-list" aria-hidden="true"></i></button>
+      <button type="button" class="btn" data-editor-command="insertOrderedList" aria-label="Liste numérotée"><i class="icon-list-alt" aria-hidden="true"></i></button>
+      <button type="button" class="btn" data-editor-command="Outdent" aria-label="Diminuer le retrait"><i class="icon-indent-left" aria-hidden="true"></i></button>
+      <button type="button" class="btn" data-editor-command="Indent" aria-label="Augmenter le retrait"><i class="icon-indent-right" aria-hidden="true"></i></button>
+      <button type="button" class="btn" data-editor-link>Insérer un lien</button>
+      <select aria-label="Couleur du texte" data-editor-command="foreColor">
+        <option value="">Couleur du texte</option>
+        <option value="black">Noir</option>
+        <option value="silver">Argent</option>
+        <option value="gray">Gris</option>
+        <option value="maroon">Bordeaux</option>
+        <option value="red">Rouge</option>
+        <option value="purple">Violet</option>
+        <option value="green">Vert</option>
+        <option value="olive">Olive</option>
+        <option value="navy">Bleu marine</option>
+        <option value="blue">Bleu</option>
+        <option value="orange">Orange</option>
+      </select>
+      <button type="button" class="btn" data-editor-source aria-pressed="false">Source HTML</button>
+    </div>
+  </template>
+
+  <dialog id="rich-text-link" class="modal" aria-labelledby="rich-text-link-title">
+    <form method="dialog">
+      <div class="modal-header">
+        <h3 id="rich-text-link-title">Insérer un lien</h3>
+      </div>
+      <div class="modal-body">
+        <label for="rich-text-link-url">Adresse du lien</label>
+        <input id="rich-text-link-url" class="input-xlarge" required autofocus />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-demat-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary">Insérer</button>
+      </div>
+    </form>
+  </dialog>
+
   <th:block layout:fragment="scripts">
     <script defer th:src="@{/resources/js/color-picker.js}"></script>
-    <script th:src="@{/resources/js/wysihtml5-0.3.0.js}"></script>
-    <script th:src="@{/resources/js/bootstrap-wysihtml5.js}"></script>
-    <script th:src="@{/resources/js/bootstrap-wysihtml5.fr-FR.js}"></script>
-    <script th:inline="javascript">
-      /*<![CDATA[*/
-      $(document).ready(function(){
-        var bootstrapCssUrl = [[@{/resources/css/bootstrap.min.css}]]
-        var docsCssUrl = [[@{/resources/css/docs.css}]]
-        var dematCssUrl = [[@{/resources/css/demat.css}]]
-        
-        $('textarea.wysiwyg').wysihtml5({
-          locale: "fr-FR",
-          stylesheets: [bootstrapCssUrl, docsCssUrl, dematCssUrl],
-          parser: function(x) {return x;},
-          image: false,
-          lists: true,
-          color: true,
-          html: true
-        });
-      });
-      /*]]>*/
-    </script>
+    <script defer th:src="@{/resources/js/wysihtml5-0.3.0.js}"></script>
+    <script defer th:src="@{/resources/js/rich-text-editor.js}"
+        th:attr="data-bootstrap=@{/resources/css/bootstrap.min.css},data-docs=@{/resources/css/docs.css},data-demat=@{/resources/css/demat.css}"></script>
   </th:block>
   </div>
 </body>

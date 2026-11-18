@@ -289,13 +289,20 @@ public class DematBrowserIT {
             assertThat(optionalColor.locator("xpath=preceding-sibling::input[@type='color'][1]")).hasValue("#000000");
 
             Locator richText = page.locator("textarea[name=textePremierePageAnonyme]");
-            Locator toolbar = richText.locator("xpath=preceding-sibling::ul[contains(@class,'wysihtml5-toolbar')][1]");
-            Locator toggleSource = toolbar.locator("[data-wysihtml5-action=change_view]");
-            assertThat(richText).isHidden();
+            Locator toolbar = richText.locator("xpath=preceding-sibling::div[@role='group'][1]");
+            Locator toggleSource = toolbar.getByRole(AriaRole.BUTTON,
+                    new Locator.GetByRoleOptions().setName("Source HTML"));
             Locator editor = richText.locator("xpath=following-sibling::iframe[1]").contentFrame().locator("body");
-            editor.fill("Lien Playwright");
+            assertThat(richText).isHidden();
+            toggleSource.click();
+            richText.fill("<p>Lien Playwright</p>");
+            toggleSource.click();
             editor.press("ControlOrMeta+a");
-            toolbar.locator("[data-wysihtml5-command=createLink]").click();
+            toolbar.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Gras")).click();
+            assertThat(editor.locator("b, strong")).hasText("Lien Playwright");
+            toolbar.getByLabel("Couleur du texte").selectOption("red");
+            assertThat(editor.locator(".wysiwyg-color-red")).hasCSS("color", "rgb(255, 0, 0)");
+            toolbar.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Insérer un lien")).click();
             Locator linkDialog = page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("Insérer un lien"));
             Locator url = linkDialog.getByRole(AriaRole.TEXTBOX);
             assertThat(url).isFocused();
@@ -303,12 +310,28 @@ public class DematBrowserIT {
             url.press("Enter");
             assertThat(linkDialog).isHidden();
             assertThat(editor.getByRole(AriaRole.LINK)).hasAttribute("href", "https://example.org/");
-            toggleSource.click();
-            richText.fill("<p><strong>Campagne Playwright</strong></p>");
-            toggleSource.click();
-            assertThat(richText).isHidden();
-            toggleSource.click();
-            assertThat(richText).hasValue("<p><strong>Campagne Playwright</strong></p>");
+
+            Locator footer = page.locator("textarea[name=piedPage]");
+            Locator footerSource = footer.locator("xpath=preceding-sibling::div[@role='group'][1]")
+                    .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Source HTML"));
+            footerSource.click();
+            String existingFooter = footer.inputValue();
+            assertTrue(existingFooter.contains("id="));
+            footerSource.click();
+
+            Locator candidateHelp = page.locator("textarea[name=texteCandidatAideCandidatures]");
+            Locator helpSource = candidateHelp.locator("xpath=preceding-sibling::div[@role='group'][1]")
+                    .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Source HTML"));
+            String customHtml = "<SECTION class='well' data-note='A&amp;B'><p><strong>Campagne Playwright</strong></p></SECTION>";
+            helpSource.click();
+            candidateHelp.fill(customHtml);
+            helpSource.click();
+            Locator helpPreview = candidateHelp.locator("xpath=following-sibling::iframe[1]").contentFrame()
+                    .locator("section.well[data-note='A&B'] strong");
+            assertThat(helpPreview).hasText("Campagne Playwright");
+            helpSource.click();
+            assertThat(candidateHelp).hasValue(customHtml);
+            helpSource.click();
 
             String editUrl = page.url();
             Response save = page.waitForResponse(response -> response.url().equals(baseUrl + "/admin/appliconfig")
@@ -321,8 +344,15 @@ public class DematBrowserIT {
             assertThat(color).hasValue("#126a9c");
             assertThat(picker).hasValue("#126a9c");
             assertThat(optionalColor).hasValue("");
+            assertThat(editor.getByRole(AriaRole.LINK)).hasAttribute("href", "https://example.org/");
+            assertThat(editor.locator("b, strong")).hasText("Lien Playwright");
+            assertThat(editor.locator(".wysiwyg-color-red")).hasCSS("color", "rgb(255, 0, 0)");
             toggleSource.click();
-            assertThat(richText).hasValue("<p><strong>Campagne Playwright</strong></p>");
+            assertThat(richText).hasValue(Pattern.compile("https://example.org/"));
+            footerSource.click();
+            assertThat(footer).hasValue(existingFooter);
+            helpSource.click();
+            assertThat(candidateHelp).hasValue(customHtml);
         });
     }
 

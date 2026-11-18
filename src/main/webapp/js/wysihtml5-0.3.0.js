@@ -9379,6 +9379,8 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
     style:                true,
     // Id of the toolbar element, pass falsey value if you don't want any toolbar logic
     toolbar:              undef,
+    // Disable when the integration preserves and submits the original source itself.
+    sync:                  true,
     // Whether urls, entered by the user should automatically become clickable-links
     autoLink:             true,
     // Object which includes parser rules to apply when html gets inserted via copy & paste
@@ -9427,7 +9429,9 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
       }
       
       this.observe("beforeload", function() {
-        this.synchronizer = new wysihtml5.views.Synchronizer(this, this.textarea, this.composer);
+        if (this.config.sync) {
+          this.synchronizer = new wysihtml5.views.Synchronizer(this, this.textarea, this.composer);
+        }
         if (this.config.toolbar) {
           this.toolbar = new wysihtml5.toolbar.Toolbar(this, this.config.toolbar);
         }
