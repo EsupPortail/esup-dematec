@@ -8,6 +8,7 @@ import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Response;
 import com.microsoft.playwright.Tracing;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.SelectOption;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -210,6 +211,81 @@ public class DematBrowserIT {
             commentDialog.locator(".modal-footer")
                     .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Fermer")).click();
             assertThat(commentDialog).isHidden();
+        });
+    }
+
+    @Test
+    public void confirmationEtRelectureDUneAudition() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            ouvrirCandidature(page, "candidat2@example.org");
+            String candidatureUrl = page.url();
+            confirmerAudition(page);
+
+            page.reload();
+            assertThat(page).hasURL(candidatureUrl);
+            assertThat(page.getByRole(AriaRole.BUTTON,
+                    new Page.GetByRoleOptions().setName("Non retenu pour audition").setExact(true))).isVisible();
+            assertThat(page.locator("#auditionnableDialog")).hasCount(0);
+        });
+    }
+
+    @Test
+    public void filtresDesCandidaturesPourUnMembreDeCommission() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            ouvrirCandidature(page, "candidat@example.org");
+            confirmerAudition(page);
+
+            String member = "commission-playwright@example.org";
+            String password = "Playwright123!";
+            page.navigate(baseUrl + "/admin/users?form");
+            page.locator("#emailAddress").fill(member);
+            page.locator("input[name=password]").fill(password);
+            page.locator("#civilite").fill("Mme");
+            page.locator("#nom").fill("Commission");
+            page.locator("#prenom").fill("Playwright");
+            page.getByLabel("Compte activé").check();
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            assertThat(page).hasURL(Pattern.compile("/admin/users/\\d+$"));
+
+            for (String post : List.of("4086", "4087")) {
+                page.navigate(baseUrl + "/posteapourvoirs");
+                ligneAvecCellule(page, post).getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName("Modifier").setExact(true)).click();
+                page.getByLabel("Membres").selectOption(new SelectOption().setLabel(member));
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
+                assertThat(page).hasURL(Pattern.compile("/posteapourvoirs/\\d+$"));
+            }
+
+            page.locator("#logout input[type=submit]").click();
+            renseignerConnexion(page, member, password);
+            page.navigate(baseUrl + "/postecandidatures");
+            Locator filter = page.locator("a[href='#collapseFilterMembre']");
+            assertThat(filter).hasAttribute("aria-expanded", "false");
+            assertThat(ligneAvecCellule(page, "4086").first()).isVisible();
+            assertThat(ligneAvecCellule(page, "4087").first()).isVisible();
+            assertThat(page.locator("#selectAll")).hasCount(0);
+
+            filter.click();
+            assertThat(filter).hasAttribute("aria-expanded", "true");
+            Locator panel = page.locator("#collapseFilterMembre");
+            panel.getByLabel("Postes").selectOption("4086");
+            Locator audition = panel.getByLabel("Auditionnable");
+            Locator submit = panel.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Trouver"));
+            audition.selectOption("true");
+            submit.click();
+            assertThat(audition).hasValue("true");
+            assertThat(page.locator("#manageForm tbody tr")).hasCount(1);
+            assertThat(ligneAvecCellule(page, "candidat@example.org")).isVisible();
+
+            audition.selectOption("false");
+            submit.click();
+            assertThat(audition).hasValue("false");
+            assertThat(page.locator("#manageForm tbody tr")).hasCount(1);
+            assertThat(ligneAvecCellule(page, "candidat3@example.org")).isVisible();
         });
     }
 
@@ -441,6 +517,11 @@ public class DematBrowserIT {
     }
 
     private void importerCandidatures(Page page) {
+        page.navigate(baseUrl + "/postecandidatures");
+        if (page.locator("#manageForm .candidature-checkbox").count() > 0) {
+            return;
+        }
+
         page.navigate(baseUrl + "/admin/galaxieexcels?form");
         page.getByLabel("Sélectionner fichier Excel").setInputFiles(Path.of("src/main/webapp/doc/EXTETBF.xls"));
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Importer").setExact(true)).click();
@@ -451,12 +532,43 @@ public class DematBrowserIT {
         assertThat(page).hasURL(baseUrl + "/admin/logimportgalaxies");
     }
 
+    private Locator ligneAvecCellule(Page page, String texte) {
+        return page.locator("tbody tr").filter(new Locator.FilterOptions().setHas(
+                page.getByRole(AriaRole.CELL, new Page.GetByRoleOptions().setName(texte).setExact(true))));
+    }
+
+    private void ouvrirCandidature(Page page, String email) {
+        page.navigate(baseUrl + "/postecandidatures");
+        ligneAvecCellule(page, email).getByRole(AriaRole.LINK,
+                new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+    }
+
+    private void confirmerAudition(Page page) {
+        page.locator("a[href='#auditionnableDialog']").click();
+        Locator dialog = page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("Audition"));
+        List<String> confirmations = new ArrayList<>();
+        page.onceDialog(confirmation -> {
+            confirmations.add(confirmation.message());
+            confirmation.accept();
+        });
+        Response response = page.waitForResponse(r -> r.url().endsWith("/auditionnable")
+                        && r.request().method().equals("POST"),
+                () -> dialog.getByRole(AriaRole.BUTTON,
+                        new Locator.GetByRoleOptions().setName("Confirmer").setExact(true)).click());
+        assertEquals(List.of("Êtes-vous sûr ?"), confirmations);
+        assertEquals(302, response.status());
+    }
+
     private void login(Page page) {
-        page.navigate(baseUrl + "/login");
-        page.locator("#j_username").fill("admin");
-        page.locator("#j_password").fill("admin");
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Valider")).click();
+        renseignerConnexion(page, "admin", "admin");
         assertThat(page.locator("#toggleSidebar")).isVisible();
+    }
+
+    private void renseignerConnexion(Page page, String username, String password) {
+        page.navigate(baseUrl + "/login");
+        page.locator("#j_username").fill(username);
+        page.locator("#j_password").fill(password);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Valider")).click();
     }
 
     private void runInBrowser(Consumer<Page> scenario) {
