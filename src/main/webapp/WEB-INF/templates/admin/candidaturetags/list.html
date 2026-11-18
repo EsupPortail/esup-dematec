@@ -50,7 +50,7 @@
       </thead>
       <tbody>
         <tr th:each="tag : ${candidaturetags}">
-          <td class="btn-group">
+          <td>
             <a th:href="@{/admin/candidaturetags/{id}(id=${tag.id})}" class="btn btn-sm btn-info">Voir</a>
             <a th:href="@{/admin/candidaturetags/{id}(id=${tag.id},form)}" class="btn btn-sm btn-warning">Modifier</a>
             <form th:action="@{/admin/candidaturetags/{id}(id=${tag.id})}" method="post" style="display:inline;">

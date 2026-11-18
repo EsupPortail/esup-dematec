@@ -100,7 +100,7 @@
                 <td th:text="${user.nom}">Nom</td>
                 <td th:text="${user.prenom}">Prénom</td>
                 <td><span th:text="${#temporals.format(user.activationDate, 'dd/MM/yyyy HH:mm')}" th:if="${user.activationDate != null}"/></td>
-                <td class="btn-group">
+                <td>
                     <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-sm btn-info">Voir</a>
                     <a th:href="@{/admin/users/{id}(id=${user.id},form)}" class="btn btn-sm btn-warning" th:if="${canManagePrivileges}">Modifier</a>
                     <form th:action="@{/admin/users/{id}(id=${user.id})}" th:method="delete" th:if="${canManagePrivileges}" style="display:inline">

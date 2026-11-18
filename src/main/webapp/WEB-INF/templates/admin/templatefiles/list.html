@@ -60,7 +60,7 @@
       </thead>
       <tbody>
         <tr th:each="template : ${templatefiles}">
-          <td class="btn-group">
+          <td>
             <a th:href="@{/admin/templatefiles/{id}(id=${template.id},form)}" class="btn btn-sm btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
           </td>
           <td th:text="${template.filename}"></td>

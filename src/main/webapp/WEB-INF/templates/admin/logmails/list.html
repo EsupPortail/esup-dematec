@@ -76,7 +76,7 @@
       </thead>
       <tbody>
         <tr th:each="log : ${logmails}">
-          <td class="btn-group">
+          <td>
             <a th:href="@{/admin/logmails/{id}(id=${log.id})}" class="btn btn-sm btn-info">Voir</a>
           </td>
           <td th:text="${#temporals.format(log.actionDate, 'dd/MM/yyyy HH:mm')}"></td>

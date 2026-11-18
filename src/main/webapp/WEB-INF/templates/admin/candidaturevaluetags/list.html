@@ -28,7 +28,7 @@
       </thead>
       <tbody>
         <tr th:each="valuetag : ${candidaturevaluetags}">
-          <td class="btn-group">
+          <td>
             <a th:href="@{/admin/candidaturevaluetags/{id}(id=${valuetag.id})}" class="btn btn-sm btn-info">Voir</a>
             <a th:href="@{/admin/candidaturevaluetags/{id}(id=${valuetag.id},form)}" class="btn btn-sm btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
           </td>
