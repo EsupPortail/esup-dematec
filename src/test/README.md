@@ -110,7 +110,5 @@ L'indicateur de robustesse affiche actuellement le niveau calculé, puis
 `pschecker` lève une exception sur le champ de confirmation qu'il attend.
 Le scénario vérifie l'affichage et tolère uniquement cette exception connue.
 
-Le scénario des paramètres de campagne couvre la saisie dans les widgets.
-Lors du premier test de sauvegarde, le formulaire a renvoyé une erreur HTTP 500.
-Hibernate reçoit un `AppliConfig` dont la version est absente du formulaire.
-Un scénario de sauvegarde et de relecture doit être ajouté après correction.
+Le scénario des paramètres de campagne couvre la saisie, l'enregistrement
+et la relecture de la date, de la couleur et du texte enrichi.

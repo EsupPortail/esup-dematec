@@ -22,6 +22,7 @@
     <form th:method="PUT" th:action="@{/posteapourvoirs}" th:object="${posteapourvoir}">
 
       <input type="hidden" th:field="*{id}" />
+      <input type="hidden" th:field="*{version}" />
 
       <div>
         <label for="_numEmploi_id">Num Emploi</label>

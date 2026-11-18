@@ -5,6 +5,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.Response;
 import com.microsoft.playwright.Tracing;
 import com.microsoft.playwright.options.AriaRole;
 import org.junit.AfterClass;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DematBrowserIT {
@@ -106,7 +108,7 @@ public class DematBrowserIT {
     }
 
     @Test
-    public void widgetsDesParametresDeCampagne() {
+    public void enregistrementDesParametresDeCampagne() {
         runInBrowser(page -> {
             login(page);
             page.navigate(baseUrl + "/admin/appliconfig");
@@ -133,6 +135,17 @@ public class DematBrowserIT {
             richText.fill("<p><strong>Campagne Playwright</strong></p>");
             toggleSource.click();
             assertThat(richText).isHidden();
+            toggleSource.click();
+            assertThat(richText).hasValue("<p><strong>Campagne Playwright</strong></p>");
+
+            String editUrl = page.url();
+            Response save = page.waitForResponse(response -> response.url().equals(baseUrl + "/admin/appliconfig")
+                    && response.request().method().equals("POST"),
+                    () -> page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click());
+            assertEquals(302, save.status());
+            page.navigate(editUrl);
+            assertThat(date).hasValue("25/11/2035 14:30");
+            assertThat(color).hasValue("#126a9c");
             toggleSource.click();
             assertThat(richText).hasValue("<p><strong>Campagne Playwright</strong></p>");
         });

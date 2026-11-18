@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,7 @@ public class TemplateFileController {
 		return Arrays.asList(TemplateFileType.values());
 	}
 
+	@Transactional
 	@RequestMapping(value = "/addFile", method = RequestMethod.POST, produces = "text/html")
 	public String addFile(@Valid TemplateFile templateFile, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) throws IOException, SQLException {
 		if (bindingResult.hasErrors()) {
