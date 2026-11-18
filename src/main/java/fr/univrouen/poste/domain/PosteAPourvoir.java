@@ -22,7 +22,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -85,10 +84,10 @@ public class PosteAPourvoir {
     	return sortedPresidents;
     }
     
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
+    @FormDateTime
     LocalDateTime dateEndCandidatAuditionnable;
 
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
+    @FormDateTime
     LocalDateTime dateEndSignupCandidat;
 
     public void setNumEmploi(String numEmploi) {

@@ -21,7 +21,6 @@ import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -44,13 +43,13 @@ public class AppliConfig {
     @Version
     Integer version;
 
-	@DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
+	@FormDateTime
     LocalDateTime dateEndCandidat;
 
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
+    @FormDateTime
     LocalDateTime dateEndCandidatActif;
 
-    @DateTimeFormat(pattern = "uuuu-MM-dd'T'HH:mm", fallbackPatterns = "dd/MM/yyyy HH:mm")
+    @FormDateTime
     LocalDateTime dateEndMembre;
 
     //General
