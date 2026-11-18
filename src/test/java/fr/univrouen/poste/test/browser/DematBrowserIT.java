@@ -221,7 +221,7 @@ public class DematBrowserIT {
             importerCandidatures(page);
             ouvrirCandidature(page, "candidat2@example.org");
             String candidatureUrl = page.url();
-            confirmerAudition(page);
+            confirmerDecision(page, "auditionnableDialog", "auditionnable");
 
             page.reload();
             assertThat(page).hasURL(candidatureUrl);
@@ -237,7 +237,7 @@ public class DematBrowserIT {
             login(page);
             importerCandidatures(page);
             ouvrirCandidature(page, "candidat@example.org");
-            confirmerAudition(page);
+            confirmerDecision(page, "auditionnableDialog", "auditionnable");
 
             String member = "commission-playwright@example.org";
             String password = "Playwright123!";
@@ -286,6 +286,69 @@ public class DematBrowserIT {
             assertThat(audition).hasValue("false");
             assertThat(page.locator("#manageForm tbody tr")).hasCount(1);
             assertThat(ligneAvecCellule(page, "candidat3@example.org")).isVisible();
+        });
+    }
+
+    @Test
+    public void consultationDesTagsApresRechargement() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+
+            String tag = "Priorité";
+            String value = "À examiner";
+            String candidate = "candidat2@example.org";
+            page.navigate(baseUrl + "/admin/candidaturetags?form");
+            page.locator("input[name=name]").fill(tag);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            assertThat(page).hasURL(Pattern.compile("/admin/candidaturetags/\\d+\\?form$"));
+            page.getByPlaceholder("Nouvelle valeur").fill(value);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ajouter Valeur")).click();
+            assertThat(page.getByText(value, new Page.GetByTextOptions().setExact(true))).isVisible();
+
+            ouvrirCandidature(page, candidate);
+            Locator tags = page.locator("form[action$='/updateTags']");
+            tags.locator("select").selectOption(new SelectOption().setLabel(value));
+            tags.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Mettre à jour / Sauver les tags")).click();
+
+            page.navigate(baseUrl + "/postecandidatures");
+            page.reload();
+            Locator trigger = ligneAvecCellule(page, candidate).getByTitle("Voir les tags");
+            trigger.click();
+            Locator dialog = page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("Tags").setExact(true));
+            assertThat(dialog.getByText(tag + " :", new Locator.GetByTextOptions().setExact(true))).isVisible();
+            assertThat(dialog.locator(".modal-body")).containsText(value);
+            dialog.locator(".modal-footer")
+                    .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Fermer")).click();
+            assertThat(dialog).isHidden();
+            assertThat(trigger).isFocused();
+        });
+    }
+
+    @Test
+    public void confirmationEtRelectureDUneCandidatureLaureate() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+
+            page.navigate(baseUrl + "/admin/appliconfig");
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
+            page.locator("input[name=laureatEnable]").check();
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click();
+
+            String candidate = "candidat4@example.org";
+            ouvrirCandidature(page, candidate);
+            String candidatureUrl = page.url();
+            confirmerDecision(page, "laureatDialog", "laureat");
+            page.reload();
+            assertThat(page).hasURL(candidatureUrl);
+            assertThat(page.getByText("Cette candidature est lauréate.", new Page.GetByTextOptions().setExact(true)))
+                    .isVisible();
+            assertThat(page.locator("#laureatDialog")).hasCount(0);
+
+            page.navigate(baseUrl + "/postecandidatures");
+            assertThat(ligneAvecCellule(page, candidate)
+                    .getByAltText("Lauréat", new Locator.GetByAltTextOptions().setExact(true))).isVisible();
         });
     }
 
@@ -543,15 +606,15 @@ public class DematBrowserIT {
                 new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
     }
 
-    private void confirmerAudition(Page page) {
-        page.locator("a[href='#auditionnableDialog']").click();
-        Locator dialog = page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("Audition"));
+    private void confirmerDecision(Page page, String modalId, String action) {
+        page.locator("a[href='#" + modalId + "']").click();
+        Locator dialog = page.locator("#" + modalId);
         List<String> confirmations = new ArrayList<>();
         page.onceDialog(confirmation -> {
             confirmations.add(confirmation.message());
             confirmation.accept();
         });
-        Response response = page.waitForResponse(r -> r.url().endsWith("/auditionnable")
+        Response response = page.waitForResponse(r -> r.url().endsWith("/" + action)
                         && r.request().method().equals("POST"),
                 () -> dialog.getByRole(AriaRole.BUTTON,
                         new Locator.GetByRoleOptions().setName("Confirmer").setExact(true)).click());
