@@ -189,12 +189,12 @@
           </form>
 
           <th:block th:unless="${postecandidature.auditionnable}">
-            <div aria-hidden="true" class="modal hide fade" id="auditionnableDialog" role="dialog" tabindex="-1">
+            <dialog class="modal" id="auditionnableDialog" aria-label="Audition">
               <form th:action="@{/postecandidatures/{id}/auditionnable(id=${postecandidature.id})}" method="POST">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input name="auditionnable" type="hidden" value="true"/>
                 <div class="modal-header">
-                  <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                  <button class="close" data-demat-dismiss="modal" type="button" aria-label="Fermer">×</button>
                   <h3 id="myModalLabel">Candidat retenu pour audition sur cette candidature ?</h3>
                 </div>
                 <div class="modal-body">
@@ -208,14 +208,14 @@
                   </p>
                 </div>
                 <div class="modal-footer">
-                  <button aria-hidden="true" class="btn" data-dismiss="modal">Annuler</button>
+                  <button class="btn" data-demat-dismiss="modal" type="button">Annuler</button>
                   <button class="btn btn-danger"
                           onclick="return confirm('Êtes-vous sûr ?');"
                           type="submit">Confirmer</button>
                 </div>
               </form>
-            </div>
-            <a class="btn btn-danger" data-toggle="modal" href="#auditionnableDialog" role="button">Retenu pour audition ?</a>
+            </dialog>
+            <a class="btn btn-danger" data-demat-toggle="modal" href="#auditionnableDialog" role="button">Retenu pour audition ?</a>
           </th:block>
 
           <!-- Lauréat -->
@@ -224,12 +224,12 @@
             <p th:if="${postecandidature.laureat}" class="label label-important">Cette candidature est lauréate.</p>
 
             <div th:unless="${postecandidature.laureat}">
-              <div aria-hidden="true" class="modal hide fade" id="laureatDialog" role="dialog" tabindex="-1">
+              <dialog class="modal" id="laureatDialog" aria-label="Lauréat">
                 <form th:action="@{/postecandidatures/{id}/laureat(id=${postecandidature.id})}" method="POST">
                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                   <input name="laureat" type="hidden" value="true"/>
                   <div class="modal-header">
-                    <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                    <button class="close" data-demat-dismiss="modal" type="button" aria-label="Fermer">×</button>
                     <h3 id="myModalLabel">Candidature laureate ?</h3>
                   </div>
                   <div class="modal-body">
@@ -241,14 +241,14 @@
                     </p>
                   </div>
                   <div class="modal-footer">
-                    <button aria-hidden="true" class="btn" data-dismiss="modal">Annuler</button>
+                    <button class="btn" data-demat-dismiss="modal" type="button">Annuler</button>
                     <button class="btn btn-danger"
                             onclick="return confirm('Êtes-vous sûr ?');"
                             type="submit">Confirmer</button>
                   </div>
                 </form>
-              </div>
-              <a class="btn btn-danger" data-toggle="modal" href="#laureatDialog" role="button">Canidature lauréate ?</a>
+              </dialog>
+              <a class="btn btn-danger" data-demat-toggle="modal" href="#laureatDialog" role="button">Canidature lauréate ?</a>
             </div>
           </div>
         </div>

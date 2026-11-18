@@ -27,7 +27,7 @@
         <div class="accordion help" id="accordionfilter">
           <div class="accordion-group">
             <div class="accordion-heading">
-              <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilter"> Filtrer </a>
+              <a class="accordion-toggle" data-parent="#accordionfilter" data-demat-toggle="collapse" href="#collapseFilter"> Filtrer </a>
             </div>
             <div th:classappend="${filter.isEmpty()} ? '' : 'in'" class="accordion-body collapse" id="collapseFilter">
               <div class="accordion-inner">
@@ -127,7 +127,7 @@
       <div th:if="${#lists.size(membresPostes) > 0}" class="accordion help" id="accordionfilter">
         <div class="accordion-group">
           <div class="accordion-heading">
-            <a class="accordion-toggle" data-parent="#accordionfilter" data-toggle="collapse" href="#collapseFilterMembre"> Filtrer </a>
+            <a class="accordion-toggle" data-parent="#accordionfilter" data-demat-toggle="collapse" href="#collapseFilterMembre"> Filtrer </a>
           </div>
           <div th:classappend="${filter.isEmpty()} ? '' : 'in'" class="accordion-body collapse" id="collapseFilterMembre">
             <div class="accordion-inner">
@@ -238,40 +238,40 @@
               <td th:if="${not candidatCanSignup and #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" th:text="${candidature.galaxieEntryEtatDossier}">Etat Dossier Galaxie</td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')')}" class="demat-icon-cell">
                 <th:block th:if="${candidature.managerComment4Members != null and not #strings.isEmpty(candidature.managerComment4Members)}">
-                  <a href="#" data-toggle="modal" th:href="${'#comment-modal-' + candidature.id}" class="demat-popover-trigger" title="Voir le commentaire">
+                  <a href="#" data-demat-toggle="modal" th:href="${'#comment-modal-' + candidature.id}" class="demat-popover-trigger" title="Voir le commentaire">
                     <img th:src="@{/css/images/dialog-information.png}" alt="Commentaire" class="demat-popover-icon"/>
                   </a>
-                  <div class="modal hide fade" th:id="${'comment-modal-' + candidature.id}" tabindex="-1" role="dialog" aria-hidden="true">
+                  <dialog class="modal" th:id="${'comment-modal-' + candidature.id}" aria-label="Commentaire">
                     <div class="modal-header">
-                      <button class="close" data-dismiss="modal" type="button">×</button>
+                      <button class="close" data-demat-dismiss="modal" type="button" aria-label="Fermer">×</button>
                       <h3>Commentaire</h3>
                     </div>
                     <div class="modal-body">
                       <p th:text="${candidature.managerComment4Members}">Commentaire</p>
                     </div>
                     <div class="modal-footer">
-                      <button class="btn" data-dismiss="modal" type="button">Fermer</button>
+                      <button class="btn" data-demat-dismiss="modal" type="button">Fermer</button>
                     </div>
-                  </div>
+                  </dialog>
                 </th:block>
               </td>
               <td th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_SUPER_MANAGER'') or hasRole(''ROLE_MANAGER'')') and not #lists.isEmpty(allPosteCandidatureTag)}" class="demat-icon-cell">
                 <th:block th:if="${candidature.tagsAsHtmlString != null and not #strings.isEmpty(candidature.tagsAsHtmlString)}">
-                  <a href="#" data-toggle="modal" th:href="${'#tags-modal-' + candidature.id}" class="demat-star-trigger" title="Voir les tags">
+                  <a href="#" data-demat-toggle="modal" th:href="${'#tags-modal-' + candidature.id}" class="demat-star-trigger" title="Voir les tags">
                     <img th:src="@{/css/images/star.png}" alt="Tags" class="demat-star-icon"/>
                   </a>
-                  <div class="modal hide fade" th:id="${'tags-modal-' + candidature.id}" tabindex="-1" role="dialog" aria-hidden="true">
+                  <dialog class="modal" th:id="${'tags-modal-' + candidature.id}" aria-label="Tags">
                     <div class="modal-header">
-                      <button class="close" data-dismiss="modal" type="button">×</button>
+                      <button class="close" data-demat-dismiss="modal" type="button" aria-label="Fermer">×</button>
                       <h3>Tags</h3>
                     </div>
                     <div class="modal-body">
                       <div th:utext="${candidature.tagsAsHtmlString}"></div>
                     </div>
                     <div class="modal-footer">
-                      <button class="btn" data-dismiss="modal" type="button">Fermer</button>
+                      <button class="btn" data-demat-dismiss="modal" type="button">Fermer</button>
                     </div>
-                  </div>
+                  </dialog>
                 </th:block>
               </td>
               <td>
@@ -315,10 +315,10 @@
                 &nbsp;
 
                 <!-- Modal auditionnable -->
-                <a class="btn btn-danger" data-toggle="modal" href="#auditionnableDialog" role="button">Retenus pour auditions ?</a>
-                <div class="modal hide fade" id="auditionnableDialog" tabindex="-1" role="dialog" aria-hidden="true">
+                <a class="btn btn-danger" data-demat-toggle="modal" href="#auditionnableDialog" role="button">Retenus pour auditions ?</a>
+                <dialog class="modal" id="auditionnableDialog" aria-label="Audition">
                   <div class="modal-header">
-                    <button class="close" data-dismiss="modal" type="button">×</button>
+                    <button class="close" data-demat-dismiss="modal" type="button" aria-label="Fermer">×</button>
                     <h3>Candidats retenus pour audition sur ces candidatures ?</h3>
                   </div>
                   <div class="modal-body">
@@ -330,16 +330,16 @@
                     <pre th:text="${mailAuditionnablePiedPage}"></pre>
                   </div>
                   <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal">Annuler</button>
+                    <button class="btn" data-demat-dismiss="modal" type="button">Annuler</button>
                     <input type="submit" class="btn btn-danger" name="auditionnable" value="Confirmer" onclick="return confirm('Êtes-vous sûr ?');"/>
                   </div>
-                </div>
+                </dialog>
 
                 <th:block th:if="${laureatEnable}">
-                  <a class="btn btn-danger" data-toggle="modal" href="#laureatDialog" role="button">Candidatures lauréates ?</a>
-                  <div class="modal hide fade" id="laureatDialog" tabindex="-1" role="dialog" aria-hidden="true">
+                  <a class="btn btn-danger" data-demat-toggle="modal" href="#laureatDialog" role="button">Candidatures lauréates ?</a>
+                  <dialog class="modal" id="laureatDialog" aria-label="Lauréat">
                     <div class="modal-header">
-                      <button class="close" data-dismiss="modal" type="button">×</button>
+                      <button class="close" data-demat-dismiss="modal" type="button" aria-label="Fermer">×</button>
                       <h3>Candidatures lauréates ?</h3>
                     </div>
                     <div class="modal-body">
@@ -349,10 +349,10 @@
                       <textarea cols="100" name="mailCorpsLaureat" rows="8" th:text="${texteMailCandidatLaureat}"></textarea>
                     </div>
                     <div class="modal-footer">
-                      <button class="btn" data-dismiss="modal">Annuler</button>
+                      <button class="btn" data-demat-dismiss="modal" type="button">Annuler</button>
                       <input type="submit" class="btn btn-danger" name="laureat" value="Confirmer" onclick="return confirm('Êtes-vous sûr ?');"/>
                     </div>
-                  </div>
+                  </dialog>
                 </th:block>
               </div>
             </div>

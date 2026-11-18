@@ -115,9 +115,14 @@ public class DematBrowserIT {
             selectAll.check();
             assertThat(page.locator("#manageForm .candidature-checkbox:checked")).hasCount(candidates.count());
             assertThat(actions).isVisible();
-            page.locator("a[href='#auditionnableDialog']").click();
+            Locator openAudition = page.locator("a[href='#auditionnableDialog']");
+            openAudition.click();
             Locator dialog = page.locator("#auditionnableDialog");
             assertThat(dialog).isVisible();
+            page.keyboard().press("Escape");
+            assertThat(dialog).isHidden();
+            assertThat(openAudition).isFocused();
+            openAudition.click();
             dialog.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Annuler")).click();
             assertThat(dialog).isHidden();
             assertThat(selectAll).isChecked();
@@ -154,7 +159,11 @@ public class DematBrowserIT {
             page.getByTitle("Voir le commentaire").click();
             Locator commentDialog = page.locator("[id^=comment-modal-]");
             assertThat(commentDialog.getByText("Commentaire de commission Playwright")).isVisible();
-            commentDialog.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Fermer")).click();
+            page.mouse().click(5, 5);
+            assertThat(commentDialog).isHidden();
+            page.getByTitle("Voir le commentaire").click();
+            commentDialog.locator(".modal-footer")
+                    .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Fermer")).click();
             assertThat(commentDialog).isHidden();
         });
     }
@@ -194,9 +203,12 @@ public class DematBrowserIT {
                         new Page.GetByRoleOptions().setName("Filtrer").setExact(true));
                 Locator panel = page.locator("#collapseFilter");
                 assertThat(panel).hasCSS("height", "0px");
+                assertThat(filter).hasAttribute("aria-expanded", "false");
                 filter.click();
-                assertThat(panel).hasAttribute("style", Pattern.compile("height: auto;"));
+                assertThat(filter).hasAttribute("aria-expanded", "true");
+                assertThat(panel).not().hasCSS("height", "0px");
                 filter.click();
+                assertThat(filter).hasAttribute("aria-expanded", "false");
                 assertThat(panel).hasCSS("height", "0px");
             }
         });
@@ -279,6 +291,17 @@ public class DematBrowserIT {
             Locator toolbar = richText.locator("xpath=preceding-sibling::ul[contains(@class,'wysihtml5-toolbar')][1]");
             Locator toggleSource = toolbar.locator("[data-wysihtml5-action=change_view]");
             assertThat(richText).isHidden();
+            Locator editor = richText.locator("xpath=following-sibling::iframe[1]").contentFrame().locator("body");
+            editor.fill("Lien Playwright");
+            editor.press("ControlOrMeta+a");
+            toolbar.locator("[data-wysihtml5-command=createLink]").click();
+            Locator linkDialog = page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("Insérer un lien"));
+            Locator url = linkDialog.getByRole(AriaRole.TEXTBOX);
+            assertThat(url).isFocused();
+            url.fill("https://example.org/");
+            url.press("Enter");
+            assertThat(linkDialog).isHidden();
+            assertThat(editor.getByRole(AriaRole.LINK)).hasAttribute("href", "https://example.org/");
             toggleSource.click();
             richText.fill("<p><strong>Campagne Playwright</strong></p>");
             toggleSource.click();

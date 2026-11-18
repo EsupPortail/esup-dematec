@@ -43,19 +43,19 @@
         "link": function(locale, options) {
             var size = (options && options.size) ? ' btn-'+options.size : '';
             return "<li>" +
-              "<div class='bootstrap-wysihtml5-insert-link-modal modal hide fade'>" +
+              "<dialog class='bootstrap-wysihtml5-insert-link-modal modal'>" +
                 "<div class='modal-header'>" +
-                  "<a class='close' data-dismiss='modal'>&times;</a>" +
+                  "<button type='button' class='close' data-demat-dismiss='modal'>&times;</button>" +
                   "<h3>" + locale.link.insert + "</h3>" +
                 "</div>" +
                 "<div class='modal-body'>" +
-                  "<input value='http://' class='bootstrap-wysihtml5-insert-link-url input-xlarge'>" +
+                  "<input autofocus value='http://' class='bootstrap-wysihtml5-insert-link-url input-xlarge'>" +
                 "</div>" +
                 "<div class='modal-footer'>" +
-                  "<a href='#' class='btn' data-dismiss='modal'>" + locale.link.cancel + "</a>" +
-                  "<a href='#' class='btn btn-primary' data-dismiss='modal'>" + locale.link.insert + "</a>" +
+                  "<button type='button' class='btn' data-demat-dismiss='modal'>" + locale.link.cancel + "</button>" +
+                  "<button type='button' class='btn btn-primary'>" + locale.link.insert + "</button>" +
                 "</div>" +
-              "</div>" +
+              "</dialog>" +
               "<a class='btn" + size + "' data-wysihtml5-command='createLink' title='" + locale.link.insert + "' tabindex='-1'><i class='icon-share'></i></a>" +
             "</li>";
         },
@@ -63,19 +63,19 @@
         "image": function(locale, options) {
             var size = (options && options.size) ? ' btn-'+options.size : '';
             return "<li>" +
-              "<div class='bootstrap-wysihtml5-insert-image-modal modal hide fade'>" +
+              "<dialog class='bootstrap-wysihtml5-insert-image-modal modal'>" +
                 "<div class='modal-header'>" +
-                  "<a class='close' data-dismiss='modal'>&times;</a>" +
+                  "<button type='button' class='close' data-demat-dismiss='modal'>&times;</button>" +
                   "<h3>" + locale.image.insert + "</h3>" +
                 "</div>" +
                 "<div class='modal-body'>" +
-                  "<input value='http://' class='bootstrap-wysihtml5-insert-image-url input-xlarge'>" +
+                  "<input autofocus value='http://' class='bootstrap-wysihtml5-insert-image-url input-xlarge'>" +
                 "</div>" +
                 "<div class='modal-footer'>" +
-                  "<a href='#' class='btn' data-dismiss='modal'>" + locale.image.cancel + "</a>" +
-                  "<a href='#' class='btn btn-primary' data-dismiss='modal'>" + locale.image.insert + "</a>" +
+                  "<button type='button' class='btn' data-demat-dismiss='modal'>" + locale.image.cancel + "</button>" +
+                  "<button type='button' class='btn btn-primary'>" + locale.image.insert + "</button>" +
                 "</div>" +
-              "</div>" +
+              "</dialog>" +
               "<a class='btn" + size + "' data-wysihtml5-command='insertImage' title='" + locale.image.insert + "' tabindex='-1'><i class='icon-picture'></i></a>" +
             "</li>";
         },
@@ -185,11 +185,13 @@
                     }
 
                     if(key === "link") {
-                        this.initInsertLink(toolbar);
+                        this.initInsertDialog(toolbar[0], 'link', 'createLink', function(url) {
+                            return { href: url, target: "_blank", rel: "nofollow" };
+                        });
                     }
 
                     if(key === "image") {
-                        this.initInsertImage(toolbar);
+                        this.initInsertDialog(toolbar[0], 'image', 'insertImage', function(url) { return url; });
                     }
                 }
             }
@@ -224,116 +226,48 @@
             });
         },
 
-        initInsertImage: function(toolbar) {
+        initInsertDialog: function(toolbar, type, command, commandValue) {
             var self = this;
-            var insertImageModal = toolbar.find('.bootstrap-wysihtml5-insert-image-modal');
-            var urlInput = insertImageModal.find('.bootstrap-wysihtml5-insert-image-url');
-            var insertButton = insertImageModal.find('a.btn-primary');
-            var initialValue = urlInput.val();
+            var dialog = toolbar.querySelector('.bootstrap-wysihtml5-insert-' + type + '-modal');
+            var urlInput = dialog.querySelector('input');
+            var initialValue = urlInput.value;
             var caretBookmark;
 
-            var insertImage = function() {
-                var url = urlInput.val();
-                urlInput.val(initialValue);
+            function insert() {
+                dialog.close();
+                var url = urlInput.value;
+                urlInput.value = initialValue;
                 self.editor.currentView.element.focus();
                 if (caretBookmark) {
-                  self.editor.composer.selection.setBookmark(caretBookmark);
-                  caretBookmark = null;
+                    self.editor.composer.selection.setBookmark(caretBookmark);
+                    caretBookmark = null;
                 }
-                self.editor.composer.commands.exec("insertImage", url);
-            };
+                self.editor.composer.commands.exec(command, commandValue(url));
+            }
 
-            urlInput.keypress(function(e) {
-                if(e.which == 13) {
-                    insertImage();
-                    insertImageModal.modal('hide');
-                }
-            });
-
-            insertButton.click(insertImage);
-
-            insertImageModal.on('shown', function() {
-                urlInput.focus();
-            });
-
-            insertImageModal.on('hide', function() {
+            dialog.setAttribute('aria-label', dialog.querySelector('h3').textContent);
+            dialog.addEventListener('close', function() {
                 self.editor.currentView.element.focus();
             });
-
-            toolbar.find('a[data-wysihtml5-command=insertImage]').click(function() {
-                var activeButton = $(this).hasClass("wysihtml5-command-active");
-
-                if (!activeButton) {
-                    self.editor.currentView.element.focus(false);
-                    caretBookmark = self.editor.composer.selection.getBookmark();
-                    insertImageModal.appendTo('body').modal('show');
-                    insertImageModal.on('click.dismiss.modal', '[data-dismiss="modal"]', function(e) {
-                        e.stopPropagation();
-                    });
-                    return false;
-                }
-                else {
-                    return true;
+            urlInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    insert();
                 }
             });
-        },
+            dialog.querySelector('.btn-primary').addEventListener('click', insert);
 
-        initInsertLink: function(toolbar) {
-            var self = this;
-            var insertLinkModal = toolbar.find('.bootstrap-wysihtml5-insert-link-modal');
-            var urlInput = insertLinkModal.find('.bootstrap-wysihtml5-insert-link-url');
-            var insertButton = insertLinkModal.find('a.btn-primary');
-            var initialValue = urlInput.val();
-            var caretBookmark;
-
-            var insertLink = function() {
-                var url = urlInput.val();
-                urlInput.val(initialValue);
-                self.editor.currentView.element.focus();
-                if (caretBookmark) {
-                  self.editor.composer.selection.setBookmark(caretBookmark);
-                  caretBookmark = null;
+            toolbar.querySelector('[data-wysihtml5-command=' + command + ']').addEventListener('click', function(event) {
+                if (this.classList.contains('wysihtml5-command-active')) {
+                    return;
                 }
-                self.editor.composer.commands.exec("createLink", {
-                    href: url,
-                    target: "_blank",
-                    rel: "nofollow"
-                });
-            };
-            var pressedEnter = false;
 
-            urlInput.keypress(function(e) {
-                if(e.which == 13) {
-                    insertLink();
-                    insertLinkModal.modal('hide');
-                }
-            });
-
-            insertButton.click(insertLink);
-
-            insertLinkModal.on('shown', function() {
-                urlInput.focus();
-            });
-
-            insertLinkModal.on('hide', function() {
-                self.editor.currentView.element.focus();
-            });
-
-            toolbar.find('a[data-wysihtml5-command=createLink]').click(function() {
-                var activeButton = $(this).hasClass("wysihtml5-command-active");
-
-                if (!activeButton) {
-                    self.editor.currentView.element.focus(false);
-                    caretBookmark = self.editor.composer.selection.getBookmark();
-                    insertLinkModal.appendTo('body').modal('show');
-                    insertLinkModal.on('click.dismiss.modal', '[data-dismiss="modal"]', function(e) {
-                        e.stopPropagation();
-                    });
-                    return false;
-                }
-                else {
-                    return true;
-                }
+                event.preventDefault();
+                event.stopPropagation();
+                self.editor.focus();
+                caretBookmark = self.editor.composer.selection.getBookmark();
+                document.body.append(dialog);
+                dialog.showModal();
             });
         }
     };

@@ -28,7 +28,7 @@
     <div class="demat6">
       <div id="accordionfilter" class="accordion help">
         <div class="accordion-group"><div class="accordion-heading">
-          <a href="#collapseFilter" data-toggle="collapse" data-parent="#accordionfilter" class="accordion-toggle">Filtrer</a></div>
+          <a href="#collapseFilter" data-demat-toggle="collapse" data-parent="#accordionfilter" class="accordion-toggle">Filtrer</a></div>
           <div id="collapseFilter" class="accordion-body" th:classappend="${(search != null and search != '')} ? ' in' : ' collapse'">
             <div class="accordion-inner">
               <form th:action="@{/admin/galaxieentrys}" method="GET">
