@@ -1,0 +1,66 @@
+name: Tests navigateur
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  playwright:
+    name: Playwright (Chromium)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: dematec_browser_test
+          POSTGRES_USER: dematec_browser
+          POSTGRES_PASSWORD: dematec_browser
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U dematec_browser -d dematec_browser_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Installer Java 17 et activer le cache Maven
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Installer Chromium et ses dépendances
+        run: >-
+          mvn -B -ntp -Pbrowser-tests exec:java@playwright
+          '-Dexec.args=install --with-deps chromium'
+
+      - name: Exécuter les tests Playwright
+        run: bash src/test/browser/run.sh
+
+      - name: Conserver les traces et les journaux en cas d’échec
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-diagnostics
+          path: |
+            target/playwright/
+            target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 14

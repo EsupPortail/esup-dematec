@@ -73,3 +73,44 @@ La suite `IntegrationTestSuite` exécute les tests dans un ordre spécifique pou
 7. **AdminControllerTest** - Tests des fonctionnalités admin (stats, export)
 
 Chaque test peut utiliser les données créées par les tests précédents.
+
+## Tests navigateur avec Playwright
+
+Le workflow [Tests navigateur](../../.github/workflows/browser-tests.yml) lance Chromium
+sur l'application démarrée dans Jetty, avec PostgreSQL 17 et les données
+d'initialisation de l'application. Il s'exécute sur les pull requests et les push
+vers `master`. En cas d'échec, l'artefact `playwright-diagnostics` contient les
+traces Playwright, le journal Jetty et les rapports Maven.
+
+Pour rejouer la suite sous Linux avec Java 17, Maven et Docker, lancer ces
+commandes depuis la racine du dépôt.
+
+```bash
+mvn -B -ntp -Pbrowser-tests exec:java@playwright \
+  '-Dexec.args=install --with-deps chromium'
+
+(
+  db_container=$(docker run --rm -d -p 127.0.0.1:55432:5432 \
+    -e POSTGRES_DB=dematec_browser_test -e POSTGRES_USER=dematec_browser \
+    -e POSTGRES_PASSWORD=dematec_browser postgres:17) || exit
+  trap 'docker stop "$db_container" >/dev/null' EXIT
+  for attempt in {1..30}; do
+    docker exec "$db_container" pg_isready -h 127.0.0.1 -U dematec_browser -d dematec_browser_test && break
+    sleep 1
+  done
+  bash src/test/browser/run.sh
+)
+```
+
+Hibernate recrée le schéma au démarrage. Réserver la base locale
+`dematec_browser_test` à cette suite. Les traces sont disponibles dans
+`target/playwright/`.
+
+L'indicateur de robustesse affiche actuellement le niveau calculé, puis
+`pschecker` lève une exception sur le champ de confirmation qu'il attend.
+Le scénario vérifie l'affichage et tolère uniquement cette exception connue.
+
+Le scénario des paramètres de campagne couvre la saisie dans les widgets.
+Lors du premier test de sauvegarde, le formulaire a renvoyé une erreur HTTP 500.
+Hibernate reçoit un `AppliConfig` dont la version est absente du formulaire.
+Un scénario de sauvegarde et de relecture doit être ajouté après correction.
