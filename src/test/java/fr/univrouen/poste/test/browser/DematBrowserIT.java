@@ -94,16 +94,25 @@ public class DematBrowserIT {
 
     @Test
     public void indicateurDeRobustesseDuMotDePasse() {
-        runInBrowser(true, page -> {
+        runInBrowser(page -> {
             login(page);
             page.navigate(baseUrl + "/changepassword/index");
             Locator password = page.locator("input[name=newPassword]");
             Locator meter = page.locator(".strength-indicator .meter");
 
-            password.pressSequentially("abc");
-            assertThat(meter).hasText("Faible");
-            password.pressSequentially("DEF123!");
+            assertThat(meter).hasText("");
+            password.fill("Abc1");
+            assertThat(meter).hasText("Moyen");
+            password.fill("abcDEF123!abc");
             assertThat(meter).hasText("Fort");
+            assertThat(meter).containsClass("strong");
+            password.fill("abcdefghijkl");
+            assertThat(meter).hasText("Faible");
+            assertThat(meter).containsClass("weak");
+            assertThat(meter).not().containsClass("strong");
+            password.clear();
+            assertThat(meter).hasText("");
+            assertThat(meter).not().containsClass("weak");
         });
     }
 
@@ -160,23 +169,11 @@ public class DematBrowserIT {
     }
 
     private void runInBrowser(Consumer<Page> scenario) {
-        runInBrowser(false, scenario);
-    }
-
-    private void runInBrowser(boolean allowKnownPasswordMeterError, Consumer<Page> scenario) {
         try (BrowserContext context = browser.newContext(new Browser.NewContextOptions().setLocale("fr-FR"))) {
             context.tracing().start(new Tracing.StartOptions().setScreenshots(true).setSnapshots(true));
             Page page = context.newPage();
             List<String> pageErrors = new ArrayList<>();
-            page.onPageError(error -> {
-                // Le formulaire actuel ne fournit qu'une des deux entrées attendues par pschecker.
-                if (allowKnownPasswordMeterError
-                        && error.startsWith("TypeError: Cannot read properties of undefined (reading 'toString')")
-                        && error.matches("(?s).*at HTMLInputElement\\.validatePassword \\(.*?/pschecker(?:-[a-f0-9]+)?\\.js:47:44\\).*")) {
-                    return;
-                }
-                pageErrors.add(error);
-            });
+            page.onPageError(pageErrors::add);
             boolean passed = false;
             try {
                 scenario.accept(page);

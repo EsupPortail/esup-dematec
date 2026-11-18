@@ -106,9 +106,8 @@ Hibernate recrée le schéma au démarrage. Réserver la base locale
 `dematec_browser_test` à cette suite. Les traces sont disponibles dans
 `target/playwright/`.
 
-L'indicateur de robustesse affiche actuellement le niveau calculé, puis
-`pschecker` lève une exception sur le champ de confirmation qu'il attend.
-Le scénario vérifie l'affichage et tolère uniquement cette exception connue.
+Le scénario du mot de passe vérifie les niveaux de robustesse et la remise à zéro
+de l’indicateur. Les scénarios échouent en cas d’erreur JavaScript non interceptée.
 
 Le scénario des paramètres de campagne couvre la saisie, l'enregistrement
 et la relecture de la date, de la couleur et du texte enrichi.

@@ -19,8 +19,6 @@
 			} 
     	});
     	
-    	$('.password-container').pschecker({ 
-    	});
     	
     	
     	
