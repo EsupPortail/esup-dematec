@@ -111,3 +111,10 @@ de l’indicateur. Les scénarios échouent en cas d’erreur JavaScript non int
 
 Le scénario des paramètres de campagne couvre la saisie, l'enregistrement
 et la relecture de la date, de la couleur et du texte enrichi.
+
+Les scénarios couvrent aussi l'ouverture et la fermeture des filtres de huit
+écrans d'administration, les filtres texte des journaux fichiers et courriels,
+l'enregistrement de la date d'audition d'un poste et les interactions sur la
+liste et la fiche de candidature. Ce dernier scénario
+réutilise l'exemple Galaxie `src/main/webapp/doc/EXTETBF.xls` pour créer ses
+candidatures via l'interface.

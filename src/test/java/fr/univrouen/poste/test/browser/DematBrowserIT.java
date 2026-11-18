@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -93,6 +94,144 @@ public class DematBrowserIT {
     }
 
     @Test
+    public void selectionEtAuditionDesCandidatures() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            page.navigate(baseUrl + "/postecandidatures");
+
+            Locator candidates = page.locator("#manageForm .candidature-checkbox");
+            Locator actions = page.getByRole(AriaRole.HEADING,
+                    new Page.GetByRoleOptions().setName("Gestion des candidatures").setExact(true));
+            assertThat(candidates.nth(1)).isVisible();
+            assertThat(actions).isHidden();
+            candidates.first().check();
+            assertThat(actions).isVisible();
+            candidates.first().uncheck();
+            assertThat(actions).isHidden();
+
+            Locator selectAll = page.locator("#selectAll");
+            selectAll.check();
+            assertThat(page.locator("#manageForm .candidature-checkbox:checked")).hasCount(candidates.count());
+            assertThat(actions).isVisible();
+            page.locator("a[href='#auditionnableDialog']").click();
+            Locator dialog = page.locator("#auditionnableDialog");
+            assertThat(dialog).isVisible();
+            dialog.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Annuler")).click();
+            assertThat(dialog).isHidden();
+            assertThat(selectAll).isChecked();
+            selectAll.uncheck();
+            assertThat(page.locator("#manageForm .candidature-checkbox:checked")).hasCount(0);
+            assertThat(actions).isHidden();
+
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Filtrer").setExact(true)).click();
+            Locator search = page.getByPlaceholder("Filtrer candidats");
+            Locator options = page.locator(".js-candidat-select option");
+            Locator firstRow = candidates.first().locator("xpath=ancestor::tr");
+            String email = firstRow.getByRole(AriaRole.CELL,
+                    new Locator.GetByRoleOptions().setName(Pattern.compile("@"))).innerText();
+            search.pressSequentially("introuvable");
+            assertThat(options).hasCount(0);
+            search.clear();
+            search.pressSequentially(email);
+            assertThat(options).hasCount(1);
+            assertThat(options.first()).hasText(email);
+            assertThat(options.first()).hasJSProperty("selected", true);
+
+            firstRow.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            page.locator("a[href='#auditionnableDialog']").click();
+            assertThat(dialog).isVisible();
+            dialog.getByText("Annuler", new Locator.GetByTextOptions().setExact(true)).click();
+            assertThat(dialog).isHidden();
+
+            Locator comment = page.locator("form[action$='/updateManagerComment']");
+            comment.locator("textarea").fill("Commentaire de commission Playwright");
+            comment.getByRole(AriaRole.BUTTON).click();
+            assertThat(comment.locator("textarea")).hasValue("Commentaire de commission Playwright");
+
+            page.navigate(baseUrl + "/postecandidatures");
+            page.getByTitle("Voir le commentaire").click();
+            Locator commentDialog = page.locator("[id^=comment-modal-]");
+            assertThat(commentDialog.getByText("Commentaire de commission Playwright")).isVisible();
+            commentDialog.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Fermer")).click();
+            assertThat(commentDialog).isHidden();
+        });
+    }
+
+    @Test
+    public void dateDAuditionDUnPoste() {
+        runInBrowser(page -> {
+            login(page);
+            page.navigate(baseUrl + "/posteapourvoirs?form");
+            page.getByLabel("Num Emploi").fill("999999");
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier Poste")).click();
+            String editUrl = page.url();
+
+            Locator date = page.getByLabel("Date End Candidat Auditionnable");
+            date.click();
+            assertThat(page.locator(".xdsoft_datetimepicker:visible")).hasCount(1);
+            date.fill("26/11/2035 15:00");
+            date.press("Tab");
+            assertThat(date).hasValue("26/11/2035 15:00");
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier Poste")).click();
+            assertThat(page).hasURL(editUrl);
+            assertThat(date).hasValue("26/11/2035 15:00");
+        });
+    }
+
+    @Test
+    public void filtresRepliablesDeLAdministration() {
+        runInBrowser(page -> {
+            login(page);
+            for (String screen : List.of("users", "commissionentrys", "galaxieentrys", "logimportcommissions",
+                    "logimportgalaxies", "logpostefiles", "logfiles", "logmails")) {
+                Response response = page.navigate(baseUrl + "/admin/" + screen);
+                assertEquals(screen, 200, response.status());
+                Locator filter = page.getByRole(AriaRole.LINK,
+                        new Page.GetByRoleOptions().setName("Filtrer").setExact(true));
+                Locator panel = page.locator("#collapseFilter");
+                assertThat(panel).hasCSS("height", "0px");
+                filter.click();
+                assertThat(panel).hasAttribute("style", Pattern.compile("height: auto;"));
+                filter.click();
+                assertThat(panel).hasCSS("height", "0px");
+            }
+        });
+    }
+
+    @Test
+    public void filtresTexteDesJournauxFichiersEtCourriels() {
+        runInBrowser(page -> {
+            login(page);
+            Locator filter = page.getByRole(AriaRole.LINK,
+                    new Page.GetByRoleOptions().setName("Filtrer").setExact(true));
+            page.navigate(baseUrl + "/admin/logfiles");
+            filter.click();
+            verifierFiltrageDesOptions(page.locator("#textboxMail"));
+            verifierFiltrageDesOptions(page.locator("#textboxNom"));
+            verifierFiltrageDesOptions(page.locator("#textbox"));
+
+            page.navigate(baseUrl + "/admin/logmails");
+            filter.click();
+            verifierFiltrageDesOptions(page.locator("#textbox"));
+        });
+    }
+
+    private void verifierFiltrageDesOptions(Locator search) {
+        Locator options = search.locator("xpath=preceding-sibling::select[1]").locator("option");
+        int initialCount = options.count();
+        assertTrue("Le filtre doit démarrer avec des options", initialCount > 0);
+
+        search.pressSequentially("introuvable");
+        assertThat(options).hasCount(0);
+        search.clear();
+        search.press("Backspace");
+        assertThat(options).hasCount(initialCount);
+    }
+
+    @Test
     public void indicateurDeRobustesseDuMotDePasse() {
         runInBrowser(page -> {
             login(page);
@@ -158,6 +297,17 @@ public class DematBrowserIT {
             toggleSource.click();
             assertThat(richText).hasValue("<p><strong>Campagne Playwright</strong></p>");
         });
+    }
+
+    private void importerCandidatures(Page page) {
+        page.navigate(baseUrl + "/admin/galaxieexcels?form");
+        page.getByLabel("Sélectionner fichier Excel").setInputFiles(Path.of("src/main/webapp/doc/EXTETBF.xls"));
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Importer").setExact(true)).click();
+        assertThat(page).hasURL(baseUrl + "/admin/galaxieexcels");
+
+        page.navigate(baseUrl + "/admin/galaxieentrys");
+        page.locator("form[action$='/generatecandidatspostes']").getByRole(AriaRole.BUTTON).click();
+        assertThat(page).hasURL(baseUrl + "/admin/logimportgalaxies");
     }
 
     private void login(Page page) {
