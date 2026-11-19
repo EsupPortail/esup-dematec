@@ -118,18 +118,18 @@ http://localhost:8080/EsupDematEC/forgotpassword/formChange?activationKey=@@acti
 <p>*** Adresse de l''université *** </p></small>',
 '/resources/images/logo-esup-dematec.png',
 'Université ESUP - Recrutement EC 2013',
-'Bonjour.\n\nEn votre qualité de membre du comité de sélection, nous venons de vous créer un compte sur l''application de l''Université ESUP afin de vous permettre d''avoir accès aux dossiers des candidats.\n
-Merci d''activer ce lien en le copiant dans la barre d''adresse de votre navigateur Internet :\n\
-http://localhost:8080/EsupDematEC/signup/activate/@@mailAddress@@/@@activationKey@@\n
-Il vous sera demandé de saisir le mot de passe de votre choix.\n
-Cordialement.\n\n--\nUniversité ESUP\nDirection des Ressources Humaines\nBureau des Personnels Enseignants\n',
-'Bonjour.\n\n
-Vous êtes maintenant enregistré en tant que membre de commission sur les postes suivants : @@postes@@.\n\n
-http://localhost:8080/EsupDematEC/\n\n--\nUniversité ESUP - Direction des Ressources Humaines',
+E'Bonjour.\n\nEn votre qualité de membre du comité de sélection, nous venons de vous créer un compte sur l''application de l''Université ESUP afin de vous permettre d''avoir accès aux dossiers des candidats.\n' ||
+E'Merci d''activer ce lien en le copiant dans la barre d''adresse de votre navigateur Internet :\n' ||
+E'http://localhost:8080/EsupDematEC/signup/activate/@@mailAddress@@/@@activationKey@@\n' ||
+E'Il vous sera demandé de saisir le mot de passe de votre choix.\n' ||
+E'Cordialement.\n\n--\nUniversité ESUP\nDirection des Ressources Humaines\nBureau des Personnels Enseignants\n',
+E'Bonjour.\n\n' ||
+E'Vous êtes maintenant enregistré en tant que membre de commission sur les postes suivants : @@postes@@.\n\n' ||
+E'http://localhost:8080/EsupDematEC/\n\n--\nUniversité ESUP - Direction des Ressources Humaines',
 'NEVER',
-'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''application de l''Université ESUP pour le poste @@numEmploi@@.\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
-'Bonjour.\n\nVous avez été retenu pour audition sur le poste @@numEmploi@@.',
-'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/EsupDematEC/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
+E'Bonjour.\n\nVotre fichier @@fileName@@ a bien été chargé dans l''application de l''Université ESUP pour le poste @@numEmploi@@.\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
+E'Bonjour.\n\nVous avez été retenu pour audition sur le poste @@numEmploi@@.',
+E'Merci de compléter le dossier de cette candidature via l''application de l''Université ESUP :\nhttp://localhost:8080/EsupDematEC/\n\n--\nUniversité ESUP - Direction des Ressources Humaines\n',
 '#b2beff', '#7bfa94', '#fa9696', '#faa3ee', '#d9faa0',
 false,
 'RECEVABLE',
@@ -142,9 +142,9 @@ false,
 <p>Les présidents de commission ont la possibilité d''ajouter des documents dans ces espaces.</p>
 </div>',
 false,
-'Bonjour,\n\n
-Le comité de sélection a décidé de retenir votre candidature au poste @@numEmploi@@.\n\n
-Cordialement.\n--\nUniversité ESUP - Direction des Ressources Humaines'
+E'Bonjour,\n\n' ||
+E'Le comité de sélection a décidé de retenir votre candidature au poste @@numEmploi@@.\n\n' ||
+E'Cordialement.\n--\nUniversité ESUP - Direction des Ressources Humaines'
 );
 
 insert into appli_config_file_type (id, type_title, type_description, candidature_file_mo_size_max, candidature_nb_file_max, candidature_content_type_restriction_regexp, candidature_filename_restriction_regexp, list_index, version)
