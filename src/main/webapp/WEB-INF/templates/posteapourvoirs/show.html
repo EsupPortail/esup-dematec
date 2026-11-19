@@ -67,9 +67,7 @@
   <hr/>
 
   <!-- Détermination des droits de gestion du poste -->
-  <th:block th:with="manageposte=${isPresident}">
-    <sec:authorize access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-      <th:block th:with="manageposte=${true}">
+      <th:block th:with="manageposte=${isPresident or #authorization.expression('hasRole(''ROLE_ADMIN'') or hasRole(''ROLE_MANAGER'')')}">
 
         <div class="well">
           <h4>Fichiers internes au poste / comité de sélection :</h4>
@@ -134,8 +132,6 @@
         </div>
 
       </th:block>
-    </sec:authorize>
-  </th:block>
 
   <hr/>
 

@@ -339,6 +339,44 @@ public class LocalCampaignTest extends AbstractControllerTest {
         mockMvc.perform(get(downloadUrl).session(authorSession)).andExpect(status().isForbidden());
     }
 
+    @Test
+    public void presidentPartageUnDocumentQueLeMembrePeutLireMaisPasSupprimer() throws Exception {
+        String president = "president-documents@example.org";
+        String member = "membre-documents@example.org";
+        String presidentId = lastPathSegment(createUser(president, false));
+        String memberId = lastPathSegment(createUser(member, false));
+        String posteUrl = createPost("DOCUMENT-PARTAGE", future);
+        assignCommission(posteUrl, new String[]{presidentId}, presidentId, memberId);
+
+        MockHttpSession presidentSession = loginCandidate(president);
+        MockHttpSession memberSession = loginCandidate(member);
+        MockMultipartFile pdf = TestUtils.getPdfFile();
+        mockMvc.perform(get(posteUrl).session(presidentSession)).andExpect(status().isOk())
+                .andExpect(content().string(containsString(posteUrl + "/addFile")));
+        mockMvc.perform(multipart(posteUrl + "/addFile").file(pdf).session(presidentSession).with(csrf()))
+                .andExpect(redirectedUrl(posteUrl));
+        rereadDatabase();
+
+        ResultActions memberPage = mockMvc.perform(get(posteUrl).session(memberSession)).andExpect(status().isOk());
+        PosteAPourvoir poste = (PosteAPourvoir) model(memberPage, "posteapourvoir");
+        assertEquals(1, poste.getPosteFiles().size());
+        var document = poste.getPosteFiles().iterator().next();
+        assertEquals(president, document.getSender().getEmailAddress());
+        String downloadUrl = posteUrl + "/" + document.getId();
+        String deleteUrl = posteUrl + "/delFile/" + document.getId();
+        memberPage.andExpect(content().string(containsString(downloadUrl)))
+                .andExpect(content().string(not(containsString(posteUrl + "/addFile"))))
+                .andExpect(content().string(not(containsString(deleteUrl))));
+
+        mockMvc.perform(get(downloadUrl).session(memberSession)).andExpect(status().isOk())
+                .andExpect(content().bytes(pdf.getBytes()));
+        mockMvc.perform(post(deleteUrl).session(memberSession).with(csrf()))
+                .andExpect(status().isForbidden());
+        rereadDatabase();
+        mockMvc.perform(get(downloadUrl).session(memberSession)).andExpect(status().isOk())
+                .andExpect(content().bytes(pdf.getBytes()));
+    }
+
     private void allowReportDeletion(boolean allowed) throws Exception {
         var params = campaignParameters();
         params.set("membreSupprReviewFile", Boolean.toString(allowed));
