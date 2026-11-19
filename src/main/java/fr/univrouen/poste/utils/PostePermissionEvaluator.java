@@ -27,11 +27,18 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class PostePermissionEvaluator implements PermissionEvaluator {
+
+    @Resource
+    Clock clock;
+
+    @Resource
+    DateClotureChecker dateClotureChecker;
 
 	@Resource
 	AppliConfigService appliConfigService;
@@ -135,28 +142,14 @@ public class PostePermissionEvaluator implements PermissionEvaluator {
         		return user.getIsAdmin() || user.getIsManager() || user.getIsMembre() && poste.getMembres().contains(user) && pc.isRecevable();
 	        }
 	        
-	        if(isCandidat && pc.getCandidat().equals(user)) {
-	        	
-	        	if(appliConfigService.getCacheCandidatCanSignup()) {
-	        		LocalDateTime currentTime = LocalDateTime.now();
-                    return (!pc.getAuditionnable() && (pc.getPoste().getDateEndSignupCandidat() != null && currentTime.compareTo(pc.getPoste().getDateEndSignupCandidat()) <= 0)) ||
-                            (pc.getAuditionnable() && (pc.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) <= 0));
-	        	} else {
-	        	
-		        	if(pc.getCandidat().equals(user)) {
-		        		// restrictions si phase auditionnable
-		        		LocalDateTime currentTime = LocalDateTime.now();     
-		    			if(currentTime.compareTo(appliConfigService.getCacheDateEndCandidat()) > 0 &&
-		    				currentTime.compareTo(appliConfigService.getCacheDateEndCandidatActif()) > 0) {
-					return pc.getAuditionnable() && pc.getPoste().getDateEndCandidatAuditionnable() != null
-							&& currentTime.compareTo(pc.getPoste().getDateEndCandidatAuditionnable()) < 0;
-		    			} else {
-		    				return true;
-		    			}
-		        	}
-	        	}
-	        }  
-	        
+            if (isCandidat && pc.getCandidat().equals(user)) {
+                AppliConfig config = appliConfigService.getConfig();
+                boolean localMode = config != null && Boolean.TRUE.equals(config.getCandidatCanSignup());
+                LocalDateTime deadline = localMode || pc.getAuditionnable()
+                        ? null : dateClotureChecker.getCandidateDeadline(user, config);
+                return dateClotureChecker.isApplicationOpen(pc, localMode, deadline, LocalDateTime.now(clock));
+            }
+
 	        if("view".equals(permissionKey) && isMembre) {
 	        		PosteAPourvoir poste = pc.getPoste();
 	        		return poste.getMembres().contains(user) && pc.isRecevable();

@@ -12,11 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Service
 @Transactional
 public class PosteAPourvoirService {
+
+    @Resource
+    Clock clock;
 
 	@Resource
 	AppliConfigService appliConfigService;
@@ -29,7 +33,7 @@ public class PosteAPourvoirService {
 
 	public List<PosteAPourvoirAvailableBean>  getPosteAPourvoirAvailables(User candidat) {
 		
-		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(LocalDateTime.now()).getResultList();
+		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(LocalDateTime.now(clock)).getResultList();
 
 		Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(candidat);
 		Set<PosteAPourvoir> postesAlreadyCandidated = new HashSet<PosteAPourvoir>();
@@ -61,7 +65,9 @@ public class PosteAPourvoirService {
 			postesAlreadyCandidated.add(candidature.getPoste());
 		}
 
-		List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao.findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(LocalDateTime.now()).getResultList();
+        LocalDateTime now = LocalDateTime.now(clock);
+        List<PosteAPourvoir> postesAPourvoir = posteAPourvoirDao
+                .findPosteAPourvoirsByDateEndSignupCandidatGreaterThan(now).getResultList();
 		
 		for(Long posteId: posteIds) {
 			PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(posteId);
@@ -72,8 +78,7 @@ public class PosteAPourvoirService {
 			candidature.setCandidat(candidat);
 			candidature.setPoste(poste);
 
-			LocalDateTime currentTime = LocalDateTime.now();
-			candidature.setCreation(currentTime);
+			candidature.setCreation(now);
 
 				RecevableEnum recevableEnum = appliConfigService.getCacheCandidatureRecevableEnumDefault();
 				candidature.setRecevableEnum(recevableEnum);

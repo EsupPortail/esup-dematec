@@ -55,7 +55,7 @@ public class PosteAPourvoir {
         joinColumns = @JoinColumn(name = "postes"),
         inverseJoinColumns = @JoinColumn(name = "membres")
     )
-    Set<User> membres;
+    Set<User> membres = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -63,7 +63,7 @@ public class PosteAPourvoir {
         joinColumns = @JoinColumn(name = "posteapourvoir"),
         inverseJoinColumns = @JoinColumn(name = "presidents")
     )
-    Set<User> presidents;
+    Set<User> presidents = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "posteapourvoir_poste_files",

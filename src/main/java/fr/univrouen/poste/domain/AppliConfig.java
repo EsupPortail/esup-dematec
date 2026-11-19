@@ -168,5 +168,8 @@ public class AppliConfig {
     @Column(columnDefinition="TEXT")
 	String texteMailCandidatLaureat;
 
+    public boolean isCandidatRegistrationOpen(LocalDateTime now) {
+        return Boolean.TRUE.equals(candidatCanSignup) && dateEndCandidat != null && now.isBefore(dateEndCandidat);
+    }
 }
 

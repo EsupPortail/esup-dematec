@@ -17,8 +17,15 @@
  */
 package fr.univrouen.poste.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * JavaConfig de test remplaçant applicationContext-test.xml.
@@ -39,7 +46,37 @@ import org.springframework.context.annotation.PropertySource;
         ignoreResourceNotFound = true
 )
 public class AppContextTestConfig {
-    // Pas de beans supplémentaires : les surcharges de propriétés
-    // sont gérées par @PropertySource et TestcontainersInitializer.
-}
+    @Bean
+    @Primary
+    public TestClock testClock() {
+        return new TestClock();
+    }
 
+    public static final class TestClock extends Clock {
+        private final Clock systemClock = Clock.systemDefaultZone();
+        private volatile Clock delegate = systemClock;
+
+        public void fixAt(LocalDateTime time) {
+            delegate = Clock.fixed(time.atZone(getZone()).toInstant(), getZone());
+        }
+
+        public void reset() {
+            delegate = systemClock;
+        }
+
+        @Override
+        public ZoneId getZone() {
+            return delegate.getZone();
+        }
+
+        @Override
+        public Clock withZone(ZoneId zone) {
+            return delegate.withZone(zone);
+        }
+
+        @Override
+        public Instant instant() {
+            return delegate.instant();
+        }
+    }
+}

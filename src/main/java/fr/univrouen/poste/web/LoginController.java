@@ -33,8 +33,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
-
 @RequestMapping("/login")
 @Controller
 public class LoginController {
@@ -56,12 +54,6 @@ public class LoginController {
     	AppliConfig config = appliConfigDao.getAppliConfig();
     	String textePremierePageAnonyme = config != null ? config.getTextePremierePageAnonyme() : "";
     	model.addAttribute("textePremierePageAnonyme", textePremierePageAnonyme);
-    	Boolean candidatCanSignup = config != null && config.getDateEndCandidat() != null ? config.getCandidatCanSignup() : false;
-    	LocalDateTime currentTime = LocalDateTime.now();
-    	if (candidatCanSignup && config != null) {
-    		candidatCanSignup = currentTime.isBefore(config.getDateEndCandidat());
-    	}
-    	model.addAttribute("candidatCanSignup", candidatCanSignup);
 
     	// Récupération de l'exception d'authentification si présente
     	if (error != null) {

@@ -28,11 +28,15 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.*;
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.*;
 
 @Component
 public class ConfigInterceptor implements HandlerInterceptor {
+
+    @Resource
+    Clock clock;
 
     @Resource
     AppliConfigDao appliConfigDao;
@@ -112,12 +116,9 @@ public class ConfigInterceptor implements HandlerInterceptor {
         modelAndView.addObject("subTitle", subTitle);
         modelAndView.addObject("activeMenu", activeMenu);
 
-        Boolean candidatCanSignup = config != null && config.getDateEndCandidat() != null ? config.getCandidatCanSignup() : false;
-        LocalDateTime currentTime = LocalDateTime.now();
-        if (candidatCanSignup && config != null) {
-            candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
-        }
-        modelAndView.addObject("candidatCanSignup", candidatCanSignup);
+        modelAndView.addObject("candidatCanSignup", config != null && Boolean.TRUE.equals(config.getCandidatCanSignup()));
+        modelAndView.addObject("candidatRegistrationOpen",
+                config != null && config.isCandidatRegistrationOpen(LocalDateTime.now(clock)));
 
         Boolean postesMenu4Members = config != null ? config.getPostesMenu4Members() : false;
         modelAndView.addObject("postesMenu4Members", postesMenu4Members);

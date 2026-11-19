@@ -23,6 +23,7 @@ import fr.univrouen.poste.domain.ManagerReview.ReviewStatusTypes;
 import fr.univrouen.poste.domain.PosteCandidature.RecevableEnum;
 import fr.univrouen.poste.domain.TemplateFile.TemplateFileType;
 import fr.univrouen.poste.services.*;
+import fr.univrouen.poste.utils.DateClotureChecker;
 import fr.univrouen.poste.utils.PdfService;
 import fr.univrouen.poste.web.searchcriteria.PosteCandidatureSearchCriteria;
 import jakarta.annotation.Resource;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -62,6 +65,12 @@ import java.util.stream.Collectors;
 @Controller
 @Transactional
 public class MyPosteCandidatureController {
+
+    @Resource
+    Clock clock;
+
+    @Resource
+    DateClotureChecker dateClotureChecker;
 
 	final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -401,7 +410,7 @@ public class MyPosteCandidatureController {
 						logService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, newFile, request, currentTime);
 						returnReceiptService.logActionFile(LogService.UPLOAD_ACTION, posteCandidature, newFile, request, currentTime);
 						
-						pdfService.updateNbPages(newFile.getId());
+						pdfService.schedulePageCount(newFile.getId());
 					}
 				}
 			}
@@ -791,26 +800,18 @@ public class MyPosteCandidatureController {
 
 			uiModel.addAttribute("filter", searchCriteria);
 		} else if (isCandidat) {
-			
-			if(!appliConfigDao.getAppliConfig().getCandidatCanSignup()) {
-				
-				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidat(user);
-			
-				// restrictions si phase auditionnable
-		        LocalDateTime currentTime = LocalDateTime.now();
-				if(appliConfigDao.getAppliConfig().getDateEndCandidat() != null && currentTime.isAfter(appliConfigDao.getAppliConfig().getDateEndCandidat()) &&
-					appliConfigDao.getAppliConfig().getDateEndCandidatActif() != null && currentTime.isAfter(appliConfigDao.getAppliConfig().getDateEndCandidatActif())) {
-					for(PosteCandidature postecandidature: posteCandidatureDao.findPosteCandidaturesByCandidat(user)) {
-						if(!postecandidature.getAuditionnable() || postecandidature.getPoste().getDateEndCandidatAuditionnable() != null && currentTime.isAfter(postecandidature.getPoste().getDateEndCandidatAuditionnable())) {
-							postecandidatures.getContent().remove(postecandidature);
-						}
-					}
-				}
-			
-			} else {				
-				postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, LocalDateTime.now(), pageable);
-			}
-			
+            AppliConfig config = appliConfigDao.getAppliConfig();
+            LocalDateTime now = LocalDateTime.now(clock);
+            if (config != null && Boolean.TRUE.equals(config.getCandidatCanSignup())) {
+                postecandidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndByDateEndCandidatGreaterThanAndNoAuditionnableOrByDateEndCandidatAuditionnableGreaterThanAndAuditionnable(user, now, pageable);
+            } else {
+                LocalDateTime deadline = dateClotureChecker.getCandidateDeadline(user, config);
+                var candidaturesOuvertes = posteCandidatureDao.findPosteCandidaturesByCandidat(user).stream()
+                        .filter(candidature -> dateClotureChecker.isApplicationOpen(candidature, false, deadline, now))
+                        .toList();
+                postecandidatures = new PageImpl<>(candidaturesOuvertes);
+            }
+
 		} else if (isMembre) {
 			Set<PosteAPourvoir> membresPostes = new HashSet<PosteAPourvoir>(user.getPostes());
 			List<String> numPostes = searchCriteria.getNumEmploiPostes();

@@ -34,7 +34,7 @@
             <input id="proceed" type="submit" value="Valider" class="btn btn-large btn-success" />
             <input id="reset" type="reset" th:value="#{button_reset}" class="btn btn-info" />
             <a th:href="@{/forgotpassword/index}" class="btn btn-warning">Mot de passe oublié</a>
-            <a th:if="${candidatCanSignup}" th:href="@{/signup}" class="btn">Créer un compte</a>
+            <a th:if="${candidatRegistrationOpen}" th:href="@{/signup}" class="btn">Créer un compte</a>
           </div>
           <div></div>
         </form>

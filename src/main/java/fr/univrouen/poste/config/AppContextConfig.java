@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import javax.sql.DataSource;
+import java.time.Clock;
 import java.util.List;
 import java.util.Properties;
 
@@ -68,6 +69,11 @@ import java.util.Properties;
         @PropertySource("classpath:META-INF/spring/security.properties")
 })
 public class AppContextConfig {
+
+    @Bean
+    public Clock applicationClock() {
+        return Clock.systemDefaultZone();
+    }
 
     /* ------------------------------------------------------------------ */
     /* PropertySourcesPlaceholderConfigurer – doit être static             */

@@ -41,12 +41,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequestMapping("addpostecandidatures")
 @Controller
 @Transactional
 public class CandidatAddPosteCandidatureController {
+
+    @Resource
+    Clock clock;
 
 	final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -128,10 +133,11 @@ public class CandidatAddPosteCandidatureController {
 			User candidat = userDao.findUserByEmailAddress(emailAddress);
 			
 			if(candidat != null) {
+                LocalDateTime now = LocalDateTime.now(clock);
 				for(Long posteId : posteIds) {   			
 					PosteAPourvoir poste = posteAPourvoirDao.findPosteAPourvoir(posteId);
                     if (poste == null || poste.getDateEndSignupCandidat() == null
-                            || !poste.getDateEndSignupCandidat().isAfter(java.time.LocalDateTime.now())) {
+                            || !poste.getDateEndSignupCandidat().isAfter(now)) {
                         continue;
                     }
 					Page<PosteCandidature> candidatures = posteCandidatureDao.findPosteCandidaturesByCandidatAndPoste(candidat, poste);

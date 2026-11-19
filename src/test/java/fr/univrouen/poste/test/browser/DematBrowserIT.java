@@ -9,6 +9,7 @@ import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Response;
 import com.microsoft.playwright.Tracing;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.SelectOption;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.AfterClass;
@@ -470,6 +471,96 @@ public class DematBrowserIT {
     }
 
     @Test
+    public void candidatureLocaleSansImportGalaxie() {
+        runInBrowser(page -> {
+            String email = "campagne-locale-navigateur@example.org";
+            String password = "Campagne-locale-2026!";
+            String post = "LOCAL-NAVIGATEUR";
+            login(page);
+            page.navigate(baseUrl + "/admin/appliconfig");
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
+            String configUrl = page.url();
+            Locator signupEnabled = page.locator("input[name=candidatCanSignup]");
+            Locator registrationDeadline = page.locator("input[name=dateEndCandidat]");
+            boolean originalSignup = signupEnabled.isChecked();
+            String originalDeadline = registrationDeadline.inputValue();
+
+            signupEnabled.check();
+            registrationDeadline.fill("2035-11-25T14:30");
+            saveCampaignSettings(page);
+            String applicationUrl = null;
+            try {
+                page.navigate(baseUrl + "/posteapourvoirs?form");
+                page.getByLabel("Num Emploi").fill(post);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier Poste")).click();
+                page.getByLabel("Date End Signup Candidat").fill("2035-11-26T15:00");
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
+
+                page.context().clearCookies();
+                page.navigate(baseUrl + "/login");
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Créer un compte")).click();
+                page.locator("#_civilite_id").selectOption("Mme");
+                page.locator("#_firstName_id").fill("Camille");
+                page.locator("#_lastName_id").fill("Locale");
+                page.locator("#_emailAddress_id").fill(email);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer mon compte")).click();
+                assertThat(page.getByText("Création de compte réussie.")).isVisible();
+
+                // Le serveur de test désactive le SMTP. La fiche admin fournit la clé.
+                login(page);
+                page.navigate(baseUrl + "/admin/users?nomOrPrenomOrEmailAddress=" + email);
+                ligneAvecCellule(page, email).getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+                Locator activationKey = page.locator(".well").filter(new Locator.FilterOptions()
+                        .setHas(page.getByText("Clé d'activation", new Page.GetByTextOptions().setExact(true))))
+                        .locator("span");
+                assertThat(activationKey).hasText(Pattern.compile("[A-Za-z0-9_-]{43}"));
+                String key = activationKey.innerText();
+
+                page.context().clearCookies();
+                page.navigate(baseUrl + "/signup/activate/" + email + "/" + key);
+                page.locator("#_password_id").fill(password);
+                page.locator("#_repeatPassword_id").fill(password);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirmer")).click();
+                renseignerConnexion(page, email, password);
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Ajout de candidatures")).click();
+                assertThat(page).hasURL(baseUrl + "/addpostecandidatures");
+                Locator available = page.locator("li").filter(new Locator.FilterOptions().setHasText(post));
+                available.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Candidater")).click();
+                assertThat(available.getByText("Candidature enregistrée")).isVisible();
+                page.navigate(baseUrl + "/postecandidatures");
+                ligneAvecCellule(page, post).getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+                applicationUrl = page.url();
+                Locator upload = page.locator("form[action$='/addFile']");
+                upload.locator("input[type=file]").setInputFiles(Path.of("src/test/resources/doc-dummy.pdf"));
+                upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider")).click();
+                assertThat(page.getByText("doc-dummy.pdf", new Page.GetByTextOptions().setExact(true))).isVisible();
+            } finally {
+                page.context().clearCookies();
+                login(page);
+                page.navigate(configUrl);
+                if (applicationUrl != null) {
+                    String csrfToken = page.locator("form[action$='/admin/appliconfig'] input[name=_csrf]").inputValue();
+                    assertEquals(302, page.request().delete(applicationUrl, RequestOptions.create()
+                            .setHeader("X-CSRF-TOKEN", csrfToken).setMaxRedirects(0)).status());
+                }
+                signupEnabled.setChecked(originalSignup);
+                registrationDeadline.fill(originalDeadline);
+                saveCampaignSettings(page);
+            }
+        });
+    }
+
+    private void saveCampaignSettings(Page page) {
+        Response save = page.waitForResponse(response -> response.url().equals(baseUrl + "/admin/appliconfig")
+                && response.request().method().equals("POST"),
+                () -> page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click());
+        assertEquals(302, save.status());
+    }
+
+    @Test
     public void dateDAuditionDUnPoste() {
         runInBrowser(page -> {
             login(page);
@@ -635,10 +726,7 @@ public class DematBrowserIT {
             helpSource.click();
 
             String editUrl = page.url();
-            Response save = page.waitForResponse(response -> response.url().equals(baseUrl + "/admin/appliconfig")
-                    && response.request().method().equals("POST"),
-                    () -> page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click());
-            assertEquals(302, save.status());
+            saveCampaignSettings(page);
             page.navigate(editUrl);
             assertThat(date).hasValue("2035-11-25T14:30");
             assertThat(optionalDate).hasValue("");
@@ -659,7 +747,7 @@ public class DematBrowserIT {
 
     private void importerCandidatures(Page page) {
         page.navigate(baseUrl + "/postecandidatures");
-        if (page.locator("#manageForm .candidature-checkbox").count() > 0) {
+        if (ligneAvecCellule(page, "candidat2@example.org").count() > 0) {
             return;
         }
 

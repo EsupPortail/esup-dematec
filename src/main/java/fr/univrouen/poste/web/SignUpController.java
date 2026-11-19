@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fr.univrouen.poste.utils.CredentialValidation;
 import java.util.Arrays;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -43,6 +44,9 @@ import java.util.List;
 @Controller
 @org.springframework.transaction.annotation.Transactional
 public class SignUpController {
+
+    @Resource
+    Clock clock;
 
 	final Logger log = LoggerFactory.getLogger(getClass());
 	
@@ -71,8 +75,7 @@ public class SignUpController {
     @RequestMapping(method = RequestMethod.GET)
     public String createForm(Model model) {
     	AppliConfig config = appliConfigDao.getAppliConfig();
-    	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
-    	if(candidatCanSignup) {
+        if (config != null && config.isCandidatRegistrationOpen(LocalDateTime.now(clock))) {
 	    	UserRegistrationForm form = new UserRegistrationForm();
 	        model.addAttribute("User", form);
 	        return "signup/index";
@@ -151,12 +154,7 @@ public class SignUpController {
     @RequestMapping(method = RequestMethod.POST)
     public String create(@ModelAttribute("User") @Valid UserRegistrationForm userRegistration, BindingResult result, Model model, HttpServletRequest request) {
     	AppliConfig config = appliConfigDao.getAppliConfig();
-    	Boolean candidatCanSignup = config != null ? config.getCandidatCanSignup() : false;
-    	LocalDateTime currentTime = LocalDateTime.now();
-    	if (candidatCanSignup && config != null) {
-    		candidatCanSignup = currentTime.compareTo(config.getDateEndCandidat()) < 0;
-    	}
-    	if(candidatCanSignup) {
+        if (config != null && config.isCandidatRegistrationOpen(LocalDateTime.now(clock))) {
 	    	// be sure that there is no password sent by the web form
 	    	userRegistration.setPassword(null);
 	        if (result.hasErrors()) {

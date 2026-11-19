@@ -47,6 +47,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+    LocalCampaignTest.class,
     InitialSetupControllerTest.class,
     GalaxieImportControllerTest.class,
     CommissionImportControllerTest.class,
