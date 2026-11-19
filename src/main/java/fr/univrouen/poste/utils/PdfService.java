@@ -7,8 +7,10 @@ import java.util.List;
 import jakarta.annotation.Resource;
 
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
 public class PdfService {
@@ -18,14 +20,24 @@ public class PdfService {
 	@Resource
 	TxPdfService txPdfService;
 	
-	@Async
-	public void updateNbPages(Long pcFileId) {		
-		try {
-			txPdfService.updateNbPages(pcFileId);
-		} catch (Exception e) {
-			log.warn("updateNbPages failed on PosteCandidatureFile " + pcFileId);
-		}
-	}
+    @Resource
+    ApplicationEventPublisher events;
+
+    public void schedulePageCount(Long fileId) {
+        events.publishEvent(new CandidatureFileUploaded(fileId));
+    }
+
+    @Async
+    @TransactionalEventListener
+    public void countPagesAfterUpload(CandidatureFileUploaded upload) {
+        try {
+            txPdfService.updateNbPages(upload.fileId());
+        } catch (Exception e) {
+            log.warn("updateNbPages failed on PosteCandidatureFile " + upload.fileId(), e);
+        }
+    }
+
+    record CandidatureFileUploaded(Long fileId) {}
 
 	public void mergePdfs(List<InputStream> pdfFiles, String filename, OutputStream destStream) {
 		txPdfService.mergePdfs(pdfFiles, filename, destStream);
