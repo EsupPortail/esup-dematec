@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -245,16 +246,7 @@ public class LocalCampaignTest extends AbstractControllerTest {
         String memberId = lastPathSegment(createUser(member, false));
         String outsiderId = lastPathSegment(createUser("hors-commission@example.org", false));
         String posteUrl = createPost("AFFECTATION-RAPPORTEUR", future);
-        var poste = (PosteAPourvoir) model(mockMvc.perform(asAdmin(get(posteUrl)))
-                .andExpect(status().isOk()), "posteapourvoir");
-        mockMvc.perform(asAdmin(put("/posteapourvoirs")
-                        .param("id", poste.getId().toString()).param("version", poste.getVersion().toString())
-                        .param("numEmploi", poste.getNumEmploi()).param("profil", poste.getProfil())
-                        .param("localisation", poste.getLocalisation())
-                        .param("dateEndSignupCandidat", poste.getDateEndSignupCandidat().toString())
-                        .param("membres", presidentId, memberId).param("presidents", presidentId)))
-                .andExpect(redirectedUrl(posteUrl));
-        rereadDatabase();
+        assignCommission(posteUrl, new String[]{presidentId}, presidentId, memberId);
 
         MockHttpSession candidateSession = registerAndLogin();
         apply(candidateSession, posteUrl);
@@ -290,6 +282,83 @@ public class LocalCampaignTest extends AbstractControllerTest {
                 .andExpect(redirectedUrl(dossierUrl));
         rereadDatabase();
         assertTrue(readApplication(dossier).getReporters().isEmpty());
+    }
+
+    @Test
+    public void auteurSupprimeSonRapportSiLOptionEstActive() throws Exception {
+        configure(true, future);
+        allowReportDeletion(true);
+        String author = "auteur-rapport@example.org";
+        String colleague = "autre-membre-rapport@example.org";
+        String authorId = lastPathSegment(createUser(author, false));
+        String colleagueId = lastPathSegment(createUser(colleague, false));
+        String posteUrl = createPost("SUPPRESSION-RAPPORT", future);
+        assignCommission(posteUrl, new String[0], authorId, colleagueId);
+
+        MockHttpSession candidateSession = registerAndLogin();
+        apply(candidateSession, posteUrl);
+        PosteCandidature dossier = applications(candidateSession).get("SUPPRESSION-RAPPORT");
+        String dossierUrl = APPLICATIONS + "/" + dossier.getId();
+        MockHttpSession authorSession = loginCandidate(author);
+        MockHttpSession colleagueSession = loginCandidate(colleague);
+        MockMultipartFile pdf = TestUtils.getPdfFile();
+        mockMvc.perform(multipart(dossierUrl + "/addMemberReviewFile")
+                        .file(pdf).session(authorSession).with(csrf()))
+                .andExpect(redirectedUrl(dossierUrl));
+        rereadDatabase();
+
+        var reports = readApplication(dossier).getMemberReviewFiles();
+        assertEquals(1, reports.size());
+        var report = reports.iterator().next();
+        assertEquals(author, report.getMember().getEmailAddress());
+        String deleteUrl = dossierUrl + "/delMemberReviewFile/" + report.getId();
+        String downloadUrl = dossierUrl + "/reviewFile/" + report.getId();
+
+        mockMvc.perform(get(dossierUrl).session(authorSession)).andExpect(status().isOk())
+                .andExpect(content().string(containsString(deleteUrl)));
+        mockMvc.perform(get(dossierUrl).session(colleagueSession)).andExpect(status().isOk())
+                .andExpect(content().string(not(containsString(deleteUrl))));
+        mockMvc.perform(post(deleteUrl).session(colleagueSession).with(csrf()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get(downloadUrl).session(colleagueSession)).andExpect(status().isOk())
+                .andExpect(content().bytes(pdf.getBytes()));
+
+        allowReportDeletion(false);
+        mockMvc.perform(get(dossierUrl).session(authorSession)).andExpect(status().isOk())
+                .andExpect(content().string(not(containsString(deleteUrl))));
+        mockMvc.perform(post(deleteUrl).session(authorSession).with(csrf()))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get(downloadUrl).session(authorSession)).andExpect(status().isOk())
+                .andExpect(content().bytes(pdf.getBytes()));
+
+        allowReportDeletion(true);
+        mockMvc.perform(post(deleteUrl).session(authorSession).with(csrf()))
+                .andExpect(redirectedUrl(dossierUrl));
+        rereadDatabase();
+        assertTrue(readApplication(dossier).getMemberReviewFiles().isEmpty());
+        mockMvc.perform(get(downloadUrl).session(authorSession)).andExpect(status().isForbidden());
+    }
+
+    private void allowReportDeletion(boolean allowed) throws Exception {
+        var params = campaignParameters();
+        params.set("membreSupprReviewFile", Boolean.toString(allowed));
+        mockMvc.perform(asAdmin(put(CONFIG).params(params))).andExpect(status().is3xxRedirection());
+    }
+
+    private void assignCommission(String posteUrl, String[] presidents, String... members) throws Exception {
+        var poste = (PosteAPourvoir) model(mockMvc.perform(asAdmin(get(posteUrl)))
+                .andExpect(status().isOk()), "posteapourvoir");
+        var request = put("/posteapourvoirs")
+                .param("id", poste.getId().toString()).param("version", poste.getVersion().toString())
+                .param("numEmploi", poste.getNumEmploi()).param("profil", poste.getProfil())
+                .param("localisation", poste.getLocalisation())
+                .param("dateEndSignupCandidat", poste.getDateEndSignupCandidat().toString())
+                .param("membres", members);
+        if (presidents.length > 0) {
+            request.param("presidents", presidents);
+        }
+        mockMvc.perform(asAdmin(request)).andExpect(redirectedUrl(posteUrl));
+        rereadDatabase();
     }
 
     private void rereadDatabase() {
@@ -391,16 +460,20 @@ public class LocalCampaignTest extends AbstractControllerTest {
 
     private void configure(boolean localMode, LocalDateTime date, LocalDateTime activeDate,
                            LocalDateTime memberDate, boolean showReporters) throws Exception {
-        Page<?> configs = (Page<?>) model(mockMvc.perform(asAdmin(get(CONFIG)))
-                .andExpect(status().isOk()), "appliconfigs");
-        AppliConfig config = (AppliConfig) configs.getContent().get(0);
-        var params = TestUtils.getParamsAsStringMap(config);
+        var params = campaignParameters();
         params.set("candidatCanSignup", Boolean.toString(localMode));
         params.set("dateEndCandidat", Objects.toString(date, ""));
         params.set("dateEndCandidatActif", Objects.toString(activeDate, ""));
         params.set("dateEndMembre", Objects.toString(memberDate, ""));
         params.set("presidentReportersView", Boolean.toString(showReporters));
         mockMvc.perform(asAdmin(put(CONFIG).params(params))).andExpect(status().is3xxRedirection());
+    }
+
+    private MultiValueMap<String, String> campaignParameters() throws Exception {
+        Page<?> configs = (Page<?>) model(mockMvc.perform(asAdmin(get(CONFIG)))
+                .andExpect(status().isOk()), "appliconfigs");
+        AppliConfig config = (AppliConfig) configs.getContent().get(0);
+        return TestUtils.getParamsAsStringMap(config);
     }
 
     private String createPost(String code, LocalDateTime deadline) throws Exception {
