@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toMap;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -166,11 +168,10 @@ public class LocalCampaignTest extends AbstractControllerTest {
                         .param("numEmploi", poste.getNumEmploi()).param("profil", poste.getProfil())
                         .param("localisation", poste.getLocalisation())
                         .param("dateEndSignupCandidat", poste.getDateEndSignupCandidat().toString())
-                        .param("membres", memberUrl.substring(memberUrl.lastIndexOf('/') + 1))))
+                        .param("membres", lastPathSegment(memberUrl))))
                 .andExpect(redirectedUrl(postUrl));
         // Les requêtes MockMvc du test partagent la transaction. Relire la relation inverse après la mise à jour.
-        entityManager.flush();
-        entityManager.clear();
+        rereadDatabase();
         MockHttpSession memberSession = loginCandidate(member);
         mockMvc.perform(get(postUrl).session(memberSession)).andExpect(status().isOk());
 
@@ -197,6 +198,107 @@ public class LocalCampaignTest extends AbstractControllerTest {
         assertTrue(applications(inactiveSession).containsKey("LIMITE-GLOBALE"));
         checkGlobalDeadline(member, memberDeadline, null, null);
         mockMvc.perform(login(inactive)).andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    public void candidatRemplaceUnePieceParUneNouvelleVersion() throws Exception {
+        configure(true, future);
+        String postUrl = createPost("REMPLACEMENT-PIECE", future);
+        MockHttpSession session = registerAndLogin();
+        apply(session, postUrl);
+        PosteCandidature dossier = applications(session).get("REMPLACEMENT-PIECE");
+        String dossierUrl = APPLICATIONS + "/" + dossier.getId();
+        String filename = "dossier.txt";
+        byte[] original = "Version initiale".getBytes(StandardCharsets.UTF_8);
+        byte[] replacement = "Version corrigée".getBytes(StandardCharsets.UTF_8);
+
+        upload(session, dossier, filename, original).andExpect(redirectedUrl(dossierUrl));
+        var originalFiles = readApplication(dossier).getCandidatureFiles();
+        assertEquals(1, originalFiles.size());
+        Long originalId = originalFiles.iterator().next().getId();
+        mockMvc.perform(get(dossierUrl + "/" + originalId).session(session))
+                .andExpect(status().isOk()).andExpect(content().bytes(original));
+
+        mockMvc.perform(post(dossierUrl + "/delFile/" + originalId).session(session).with(csrf()))
+                .andExpect(redirectedUrl(dossierUrl));
+        rereadDatabase();
+        assertTrue(readApplication(dossier).getCandidatureFiles().isEmpty());
+        mockMvc.perform(get(dossierUrl + "/" + originalId).session(session)).andExpect(status().isForbidden());
+
+        upload(session, dossier, filename, replacement).andExpect(redirectedUrl(dossierUrl));
+        rereadDatabase();
+        var replacementFiles = readApplication(dossier).getCandidatureFiles();
+        assertEquals(1, replacementFiles.size());
+        var currentFile = replacementFiles.iterator().next();
+        assertEquals(filename, currentFile.getFilename());
+        assertNotEquals(originalId, currentFile.getId());
+        mockMvc.perform(get(dossierUrl + "/" + currentFile.getId()).session(session))
+                .andExpect(status().isOk()).andExpect(content().bytes(replacement));
+    }
+
+    @Test
+    public void presidentAttribuePuisRetireUnRapporteurDeSaCommission() throws Exception {
+        configure(true, future, future, null, true);
+        String president = "president-rapporteurs@example.org";
+        String member = "membre-rapporteur@example.org";
+        String presidentId = lastPathSegment(createUser(president, false));
+        String memberId = lastPathSegment(createUser(member, false));
+        String outsiderId = lastPathSegment(createUser("hors-commission@example.org", false));
+        String posteUrl = createPost("AFFECTATION-RAPPORTEUR", future);
+        var poste = (PosteAPourvoir) model(mockMvc.perform(asAdmin(get(posteUrl)))
+                .andExpect(status().isOk()), "posteapourvoir");
+        mockMvc.perform(asAdmin(put("/posteapourvoirs")
+                        .param("id", poste.getId().toString()).param("version", poste.getVersion().toString())
+                        .param("numEmploi", poste.getNumEmploi()).param("profil", poste.getProfil())
+                        .param("localisation", poste.getLocalisation())
+                        .param("dateEndSignupCandidat", poste.getDateEndSignupCandidat().toString())
+                        .param("membres", presidentId, memberId).param("presidents", presidentId)))
+                .andExpect(redirectedUrl(posteUrl));
+        rereadDatabase();
+
+        MockHttpSession candidateSession = registerAndLogin();
+        apply(candidateSession, posteUrl);
+        PosteCandidature dossier = applications(candidateSession).get("AFFECTATION-RAPPORTEUR");
+        String dossierUrl = APPLICATIONS + "/" + dossier.getId();
+        MockHttpSession presidentSession = loginCandidate(president);
+        MockHttpSession memberSession = loginCandidate(member);
+        String addReporter = dossierUrl + "/addReporter";
+        String removeReporter = dossierUrl + "/delReporter";
+
+        mockMvc.perform(get(dossierUrl).session(presidentSession)).andExpect(status().isOk())
+                .andExpect(content().string(containsString(addReporter)));
+        mockMvc.perform(get(dossierUrl).session(memberSession)).andExpect(status().isOk())
+                .andExpect(content().string(not(containsString(addReporter))));
+        mockMvc.perform(post(addReporter).session(memberSession).with(csrf()).param("userId", memberId))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(post(addReporter).session(presidentSession).with(csrf()).param("userId", outsiderId))
+                .andExpect(redirectedUrl(dossierUrl));
+        rereadDatabase();
+        assertTrue(readApplication(dossier).getReporters().isEmpty());
+
+        mockMvc.perform(post(addReporter).session(presidentSession).with(csrf()).param("userId", memberId))
+                .andExpect(redirectedUrl(dossierUrl));
+        rereadDatabase();
+        assertEquals(List.of(member), readApplication(dossier).getReporters().stream().map(User::getEmailAddress).toList());
+        mockMvc.perform(get(dossierUrl).session(presidentSession)).andExpect(status().isOk())
+                .andExpect(content().string(containsString(removeReporter)));
+        mockMvc.perform(post(removeReporter).session(memberSession).with(csrf()).param("userId", memberId))
+                .andExpect(status().isForbidden());
+        assertEquals(1, readApplication(dossier).getReporters().size());
+
+        mockMvc.perform(post(removeReporter).session(presidentSession).with(csrf()).param("userId", memberId))
+                .andExpect(redirectedUrl(dossierUrl));
+        rereadDatabase();
+        assertTrue(readApplication(dossier).getReporters().isEmpty());
+    }
+
+    private void rereadDatabase() {
+        entityManager.flush();
+        entityManager.clear();
+    }
+
+    private String lastPathSegment(String url) {
+        return url.substring(url.lastIndexOf('/') + 1);
     }
 
     private void checkGlobalDeadline(String email, LocalDateTime deadline, MockHttpSession session,
@@ -284,6 +386,11 @@ public class LocalCampaignTest extends AbstractControllerTest {
 
     private void configure(boolean localMode, LocalDateTime date, LocalDateTime activeDate,
                            LocalDateTime memberDate) throws Exception {
+        configure(localMode, date, activeDate, memberDate, false);
+    }
+
+    private void configure(boolean localMode, LocalDateTime date, LocalDateTime activeDate,
+                           LocalDateTime memberDate, boolean showReporters) throws Exception {
         Page<?> configs = (Page<?>) model(mockMvc.perform(asAdmin(get(CONFIG)))
                 .andExpect(status().isOk()), "appliconfigs");
         AppliConfig config = (AppliConfig) configs.getContent().get(0);
@@ -292,6 +399,7 @@ public class LocalCampaignTest extends AbstractControllerTest {
         params.set("dateEndCandidat", Objects.toString(date, ""));
         params.set("dateEndCandidatActif", Objects.toString(activeDate, ""));
         params.set("dateEndMembre", Objects.toString(memberDate, ""));
+        params.set("presidentReportersView", Boolean.toString(showReporters));
         mockMvc.perform(asAdmin(put(CONFIG).params(params))).andExpect(status().is3xxRedirection());
     }
 
@@ -364,7 +472,7 @@ public class LocalCampaignTest extends AbstractControllerTest {
     private void apply(MockHttpSession session, String... urls) throws Exception {
         var request = post(SIGNUP_FOR_POSTS).session(session).with(csrf());
         for (String url : urls) {
-            request.param("posteIds", url.substring(url.lastIndexOf('/') + 1));
+            request.param("posteIds", lastPathSegment(url));
         }
         mockMvc.perform(request).andExpect(redirectedUrl(SIGNUP_FOR_POSTS));
     }
@@ -406,11 +514,16 @@ public class LocalCampaignTest extends AbstractControllerTest {
     }
 
     private ResultActions upload(MockHttpSession session, PosteCandidature application, String name) throws Exception {
+        return upload(session, application, name, name.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private ResultActions upload(MockHttpSession session, PosteCandidature application, String name, byte[] bytes)
+            throws Exception {
         List<?> types = (List<?>) model(mockMvc.perform(asAdmin(get(APPLICATIONS + "/" + application.getId())))
                 .andExpect(status().isOk()), "fileTypes");
         AppliConfigFileType type = (AppliConfigFileType) types.get(0);
         return mockMvc.perform(multipart(APPLICATIONS + "/" + application.getId() + "/addFile")
-                .file(new MockMultipartFile("file", name, "text/plain", name.getBytes(StandardCharsets.UTF_8)))
+                .file(new MockMultipartFile("file", name, "text/plain", bytes))
                 .param("fileType", type.getId().toString()).session(session).with(csrf()));
     }
 

@@ -108,7 +108,7 @@ public class PosteCandidature {
         joinColumns = @JoinColumn(name = "poste_candidature"),
         inverseJoinColumns = @JoinColumn(name = "reporters")
     )
-    Set<User> reporters;
+    Set<User> reporters = new HashSet<>();
     
     @Transient
     Boolean reporterTag = false;
