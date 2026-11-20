@@ -414,6 +414,90 @@ public class DematBrowserIT {
     }
 
     @Test
+    public void depotTelechargementEtSuppressionDUnRapportDeCommission() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            String author = "rapport-auteur-navigateur@example.org";
+            String colleague = "rapport-collegue-navigateur@example.org";
+            String password = "Commission-rapport-2026!";
+            for (String member : List.of(author, colleague)) {
+                importerCommission(page, member, "4087");
+                activerCompte(page, member, password);
+                login(page);
+            }
+
+            assertEquals(200, page.navigate(baseUrl + "/admin/appliconfig").status());
+            ouvrirFormulaireDeModification(page, page.locator("body"));
+            String configUrl = page.url();
+            Locator allowDeletion = page.locator("input[name=membreSupprReviewFile]");
+            boolean originalSetting = allowDeletion.isChecked();
+            String candidate = "candidat2@example.org";
+            String filename = "rapport-commission.pdf";
+            byte[] content = Files.readAllBytes(Path.of("src/test/resources/doc-dummy.pdf"));
+            Locator reportRow = ligneAvecCellule(page, filename);
+            Locator remove = reportRow.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Supprimer"));
+            try {
+                allowDeletion.uncheck();
+                saveCampaignSettings(page);
+                page.context().clearCookies();
+                renseignerConnexion(page, author, password);
+                ouvrirCandidature(page, candidate);
+                Locator upload = page.locator("form[action$='/addMemberReviewFile']");
+                Locator input = upload.locator("input[type=file]");
+                Locator send = upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider"));
+                FilePayload report = new FilePayload(filename, "application/pdf", content);
+                input.setInputFiles(report);
+                send.click();
+                assertEquals(200, page.reload().status());
+                assertThat(reportRow.getByRole(AriaRole.CELL,
+                        new Locator.GetByRoleOptions().setName(author).setExact(true))).isVisible();
+                assertThat(remove).hasCount(0);
+
+                List<String> alerts = new ArrayList<>();
+                page.onceDialog(dialog -> {
+                    alerts.add(dialog.message());
+                    dialog.accept();
+                });
+                input.setInputFiles(report);
+                send.click();
+                page.waitForLoadState();
+                assertEquals(List.of("Un fichier de même nom existe déjà !"), alerts);
+                assertThat(reportRow).hasCount(1);
+
+                page.context().clearCookies();
+                login(page);
+                assertEquals(200, page.navigate(configUrl).status());
+                allowDeletion.check();
+                saveCampaignSettings(page);
+                page.context().clearCookies();
+                renseignerConnexion(page, colleague, password);
+                ouvrirCandidature(page, candidate);
+                Locator downloadLink = reportRow.getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName(filename).setExact(true));
+                Download download = page.waitForDownload(downloadLink::click);
+                assertEquals(filename, download.suggestedFilename());
+                assertArrayEquals(content, Files.readAllBytes(download.path()));
+                assertThat(remove).hasCount(0);
+
+                page.context().clearCookies();
+                renseignerConnexion(page, author, password);
+                ouvrirCandidature(page, candidate);
+                page.onceDialog(dialog -> dialog.accept());
+                remove.click();
+                assertEquals(200, page.reload().status());
+                assertThat(reportRow).hasCount(0);
+            } finally {
+                page.context().clearCookies();
+                login(page);
+                assertEquals(200, page.navigate(configUrl).status());
+                allowDeletion.setChecked(originalSetting);
+                saveCampaignSettings(page);
+            }
+        });
+    }
+
+    @Test
     public void switchUserVersUnMembrePuisRetourAdministrateur() {
         runInBrowser(page -> {
             String member = "commission-su-navigateur@example.org";
