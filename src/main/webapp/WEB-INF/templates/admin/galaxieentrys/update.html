@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Entrées Galaxie - Modification</title>
+</head>
+<body>
+  <div layout:fragment="body">
+    <h2>Modifier une entrée Galaxie</h2>
+
+    <form th:action="@{/admin/galaxieentrys}" th:object="${galaxieEntry}" th:method="put">
+      <input type="hidden" th:field="*{id}"/>
+      <input type="hidden" th:field="*{version}"/>
+
+      <ul class="alert alert-error" th:if="${#fields.hasAnyErrors()}">
+        <li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li>
+      </ul>
+
+      <div>
+        <label for="numEmploi">Numéro emploi</label>
+        <input type="text" th:field="*{numEmploi}" required/>
+      </div>
+
+      <div>
+        <label for="numCandidat">Numéro candidat</label>
+        <input type="text" th:field="*{numCandidat}" required/>
+      </div>
+
+      <div>
+        <label for="civilite">Civilité</label>
+        <input type="text" th:field="*{civilite}"/>
+      </div>
+
+      <div>
+        <label for="nom">Nom</label>
+        <input type="text" th:field="*{nom}"/>
+      </div>
+
+      <div>
+        <label for="prenom">Prénom</label>
+        <input type="text" th:field="*{prenom}"/>
+      </div>
+
+      <div>
+        <label for="email">Email</label>
+        <input type="text" th:field="*{email}"/>
+      </div>
+
+      <div>
+        <label for="localisation">Localisation</label>
+        <input type="text" th:field="*{localisation}" maxlength="300"/>
+      </div>
+
+      <div>
+        <label for="profil">Profil</label>
+        <input type="text" th:field="*{profil}" maxlength="300"/>
+      </div>
+
+      <div>
+        <label for="etatDossier">État dossier</label>
+        <input type="text" th:field="*{etatDossier}"/>
+      </div>
+
+      <div>
+        <label for="candidat">Candidat</label>
+        <select th:field="*{candidat}">
+          <option value="">Aucun</option>
+          <option th:each="option : ${users}" th:value="${option.id}" th:text="${option.emailAddress}"></option>
+        </select>
+      </div>
+
+      <div>
+        <label for="poste">Poste</label>
+        <select th:field="*{poste}">
+          <option value="">Aucun</option>
+          <option th:each="option : ${posteapourvoirs}" th:value="${option.id}" th:text="${option.numEmploi}"></option>
+        </select>
+      </div>
+
+      <div>
+        <label for="candidature">Candidature</label>
+        <select th:field="*{candidature}">
+          <option value="">Aucun</option>
+          <option th:each="option : ${postecandidatures}" th:value="${option.id}" th:text="|${option.candidat?.emailAddress} [${option.poste?.numEmploi}]|"></option>
+        </select>
+      </div>
+
+      <div>
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        <a th:href="@{/admin/galaxieentrys/{id}(id=*{id})}" class="btn">Annuler</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

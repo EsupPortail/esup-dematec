@@ -34,6 +34,7 @@
     <h2>Tags candidatures</h2>
     
     <a th:href="@{/admin/candidaturetags(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <a th:href="@{/admin/candidaturevaluetags}" class="btn">Valeurs des tags</a>
     <br/><br/>
     
     <div th:if="${candidaturetags == null or #lists.isEmpty(candidaturetags)}">

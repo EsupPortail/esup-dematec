@@ -11,7 +11,7 @@
   <div layout:fragment="body">
     <h2>Valeurs tags</h2>
     
-    <a th:href="@{/admin/candidaturevaluetags(form)}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Créer</a>
+    <a th:href="@{/admin/candidaturetags}" class="btn">Retour aux tags</a>
     <br/><br/>
     
     <div th:if="${candidaturevaluetags == null or #lists.isEmpty(candidaturevaluetags)}">
@@ -27,13 +27,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr th:each="valuetag : ${candidaturevaluetags}">
+        <tr th:each="valuetag : ${candidaturevaluetags}" th:with="tag=${tagsByValueId[valuetag.id]}">
           <td>
-            <a th:href="@{/admin/candidaturevaluetags/{id}(id=${valuetag.id})}" class="btn btn-sm btn-info">Voir</a>
             <a th:href="@{/admin/candidaturevaluetags/{id}(id=${valuetag.id},form)}" class="btn btn-sm btn-warning" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_MANAGER')">Modifier</a>
           </td>
           <td th:text="${valuetag.value}"></td>
-          <td th:text="${valuetag.candidatureTag}"></td>
+          <td><a th:if="${tag != null}" th:href="@{/admin/candidaturetags/{id}(id=${tag.id})}" th:text="${tag.name}"></a></td>
         </tr>
       </tbody>
     </table>

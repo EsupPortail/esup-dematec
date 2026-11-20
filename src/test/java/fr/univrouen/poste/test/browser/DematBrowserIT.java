@@ -280,11 +280,37 @@ public class DematBrowserIT {
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
             assertThat(page).hasURL(baseUrl + "/admin/templatefiles");
 
+            ouvrirFormulaireDeModification(page, ligneAvecCellule(page, filename));
+            Locator type = page.getByLabel("Type de fichier template");
+            assertThat(type).hasValue("MULTI_CANDIDATURES");
+            String templateId = page.locator("input[name=id]").inputValue();
+            String replacementFilename = "modele-candidatures-modifie.docx";
+            String replacementText = "Modèle Word remplacé par Playwright";
+            try (var input = Files.newInputStream(template);
+                 var document = new XWPFDocument(input);
+                 var output = new ByteArrayOutputStream()) {
+                document.createParagraph().createRun().setText(replacementText);
+                document.write(output);
+                page.getByLabel("Fichier", new Page.GetByLabelOptions().setExact(true)).setInputFiles(
+                        new FilePayload(replacementFilename,
+                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                output.toByteArray()));
+            }
+            String templatesUrl = baseUrl + "/admin/templatefiles";
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            assertThat(page).hasURL(templatesUrl);
+            assertEquals(200, page.reload().status());
+            assertThat(ligneAvecCellule(page, filename)).hasCount(0);
+            ouvrirFormulaireDeModification(page, ligneAvecCellule(page, replacementFilename));
+            assertThat(page.locator("input[name=id]")).hasValue(templateId);
+            assertThat(type).hasValue("MULTI_CANDIDATURES");
+
             Locator filter = filtrerParPoste(page, "4087");
-            filter.getByLabel("Export Word via un modèle").selectOption(new SelectOption().setLabel(filename));
-            Download download = telechargerExport(page, filter, filename);
+            filter.getByLabel("Export Word via un modèle").selectOption(new SelectOption().setLabel(replacementFilename));
+            Download download = telechargerExport(page, filter, replacementFilename);
             try (var input = Files.newInputStream(download.path()); var document = new XWPFDocument(input)) {
                 assertTrue(document.getParagraphs().stream().anyMatch(paragraph -> paragraph.getText().contains("4087")));
+                assertTrue(document.getParagraphs().stream().anyMatch(paragraph -> paragraph.getText().equals(replacementText)));
                 var rows = document.getTables().get(0).getRows();
                 assertEquals(3, rows.size());
                 List<String> names = rows.subList(1, rows.size()).stream()
@@ -576,7 +602,169 @@ public class DematBrowserIT {
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier Poste")).click();
             assertThat(page).hasURL(editUrl);
             assertThat(date).hasValue("2035-11-26T15:00");
+
+            assertEquals(200, page.navigate(baseUrl + "/posteapourvoirs?size=100").status());
+            ouvrirFormulaireDeModification(page, ligneAvecCellule(page, "999999"));
+            assertThat(date).hasValue("2035-11-26T15:00");
         });
+    }
+
+    @Test
+    public void modificationDUneEntreeGalaxieImportee() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            String email = "candidat2@example.org";
+            String entriesUrl = baseUrl + "/admin/galaxieentrys";
+            assertEquals(200, page.navigate(entriesUrl + "?search=" + email).status());
+            ligneAvecCellule(page, email).first().getByRole(AriaRole.LINK,
+                    new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            String detailUrl = page.url();
+            Locator edit = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier").setExact(true));
+            Response form = page.waitForResponse(response -> response.url().startsWith(detailUrl + "?form"),
+                    edit::click);
+            assertEquals("Ouverture du formulaire de modification Galaxie", 200, form.status());
+            assertThat(page.getByLabel("Email", new Page.GetByLabelOptions().setExact(true))).hasValue(email);
+            Locator candidat = page.getByLabel("Candidat", new Page.GetByLabelOptions().setExact(true));
+            Locator poste = page.getByLabel("Poste", new Page.GetByLabelOptions().setExact(true));
+            Locator candidature = page.getByLabel("Candidature", new Page.GetByLabelOptions().setExact(true));
+            String candidatId = candidat.inputValue();
+            String posteId = poste.inputValue();
+            String candidatureId = candidature.inputValue();
+            assertTrue("Les associations de l'entrée importée sont présélectionnées",
+                    !candidatId.isEmpty() && !posteId.isEmpty() && !candidatureId.isEmpty());
+
+            String localisation = "Localisation modifiée avec Playwright";
+            page.getByLabel("Localisation").fill(localisation);
+            Response save = page.waitForResponse(response -> response.url().equals(entriesUrl)
+                            && response.request().method().equals("POST"),
+                    () -> page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click());
+            assertEquals("Enregistrement de l'entrée Galaxie", 302, save.status());
+            assertThat(page).hasURL(detailUrl);
+            assertEquals(200, page.reload().status());
+            assertThat(page.getByText(localisation, new Page.GetByTextOptions().setExact(true))).isVisible();
+            edit.click();
+            assertThat(candidat).hasValue(candidatId);
+            assertThat(poste).hasValue(posteId);
+            assertThat(candidature).hasValue(candidatureId);
+        });
+    }
+
+    @Test
+    public void modificationDUnUtilisateurDepuisLaListeEtLaFiche() {
+        runInBrowser(page -> {
+            login(page);
+            String usersUrl = baseUrl + "/admin/users";
+            String email = "edition-utilisateur@example.org";
+            page.navigate(usersUrl + "?form");
+            page.locator("input[name=emailAddress]").fill(email);
+            page.locator("input[name=password]").fill("Edition-navigateur-2026!");
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            assertThat(page).hasURL(Pattern.compile("/admin/users/\\d+$"));
+            ouvrirFormulaireDeModification(page, page.locator("body"));
+            assertThat(page.locator("input[name=emailAddress]")).hasValue(email);
+
+            assertEquals(200, page.navigate(usersUrl + "?nomOrPrenomOrEmailAddress=" + email).status());
+            ouvrirFormulaireDeModification(page, ligneAvecCellule(page, email));
+            page.getByLabel("Prénom").fill("Prénom modifié");
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click();
+            assertThat(page).hasURL(Pattern.compile("/admin/users/\\d+$"));
+            ouvrirFormulaireDeModification(page, page.locator("body"));
+            assertThat(page.getByLabel("Prénom")).hasValue("Prénom modifié");
+        });
+    }
+
+    @Test
+    public void enregistrementEtRelectureDuMappingGalaxie() {
+        runInBrowser(page -> {
+            login(page);
+            String listUrl = baseUrl + "/admin/galaxiemapping";
+            assertEquals(200, page.navigate(listUrl).status());
+            Locator row = page.locator("tbody tr");
+            ouvrirFormulaireDeModification(page, row);
+            verifierEnregistrementEtRestaurer(page, listUrl, row, page.getByLabel("ID email"), "Adresse électronique");
+        });
+    }
+
+    @Test
+    public void enregistrementEtRelectureDUnTypeDeFichier() {
+        runInBrowser(page -> {
+            login(page);
+            String listUrl = baseUrl + "/admin/appliconfigfiletype";
+            assertEquals(200, page.navigate(listUrl).status());
+            Locator row = ligneAvecCellule(page, "Fichier de candidature");
+            ouvrirFormulaireDeModification(page, row);
+            verifierEnregistrementEtRestaurer(page, listUrl, row,
+                    page.locator("input[name=candidatureNbFileMax]"), "4");
+        });
+    }
+
+    private void verifierEnregistrementEtRestaurer(Page page, String listUrl, Locator row, Locator field, String newValue) {
+        String editUrl = page.url();
+        String originalValue = field.inputValue();
+        Locator save = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour"));
+        try {
+            field.fill(newValue);
+            save.click();
+            assertThat(page).hasURL(listUrl);
+            ouvrirFormulaireDeModification(page, row);
+            assertThat(field).hasValue(newValue);
+        } finally {
+            assertEquals(200, page.navigate(editUrl).status());
+            field.fill(originalValue);
+            save.click();
+            assertThat(page).hasURL(listUrl);
+        }
+    }
+
+    @Test
+    public void modificationDUnTagEtDeSaValeur() {
+        runInBrowser(page -> {
+            login(page);
+            String tagsUrl = baseUrl + "/admin/candidaturetags";
+            String valuesUrl = baseUrl + "/admin/candidaturevaluetags";
+            String tag = "Évaluation navigateur";
+            String value = "À relire";
+            page.navigate(tagsUrl + "?form");
+            page.locator("input[name=name]").fill(tag);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            assertThat(page).hasURL(Pattern.compile("/admin/candidaturetags/\\d+\\?form$"));
+
+            assertEquals(200, page.navigate(tagsUrl).status());
+            ouvrirFormulaireDeModification(page, ligneAvecCellule(page, tag));
+            Locator tagName = page.locator("input[name=name]");
+            assertThat(tagName).hasValue(tag);
+            String updatedTag = "Évaluation modifiée";
+            tagName.fill(updatedTag);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click();
+            assertThat(tagName).hasValue(updatedTag);
+            page.getByPlaceholder("Nouvelle valeur").fill(value);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ajouter Valeur")).click();
+            assertThat(page.getByText(value, new Page.GetByTextOptions().setExact(true))).isVisible();
+
+            assertEquals(200, page.navigate(tagsUrl).status());
+            assertThat(ligneAvecCellule(page, updatedTag)).isVisible();
+            Response values = page.waitForResponse(response -> response.url().equals(valuesUrl),
+                    () -> page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Valeurs des tags")).click());
+            assertEquals("Liste des valeurs de tags", 200, values.status());
+            ouvrirFormulaireDeModification(page, ligneAvecCellule(page, value));
+            Locator valueInput = page.locator("input[name=value]");
+            assertThat(valueInput).hasValue(value);
+            String updatedValue = "Relu par Playwright";
+            valueInput.fill(updatedValue);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Mettre à jour")).click();
+            assertEquals(200, page.reload().status());
+            assertThat(ligneAvecCellule(page, updatedValue)
+                    .getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(updatedTag).setExact(true))).isVisible();
+        });
+    }
+
+    private void ouvrirFormulaireDeModification(Page page, Locator container) {
+        Locator link = container.getByRole(AriaRole.LINK,
+                new Locator.GetByRoleOptions().setName("Modifier").setExact(true));
+        String editUrl = (String) link.evaluate("link => link.href");
+        Response response = page.waitForResponse(result -> result.url().equals(editUrl), link::click);
+        assertEquals("Ouverture du formulaire " + editUrl, 200, response.status());
     }
 
     @Test
