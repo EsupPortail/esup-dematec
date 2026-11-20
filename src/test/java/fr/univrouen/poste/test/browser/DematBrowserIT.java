@@ -9,8 +9,10 @@ import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Response;
 import com.microsoft.playwright.Tracing;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.FilePayload;
 import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.SelectOption;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -18,6 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -311,7 +314,7 @@ public class DematBrowserIT {
     }
 
     @Test
-    public void filtresDesCandidaturesPourUnMembreDeCommission() {
+    public void importEtFiltresDesCandidaturesPourUnMembreDeCommission() {
         runInBrowser(page -> {
             login(page);
             importerCandidatures(page);
@@ -320,26 +323,8 @@ public class DematBrowserIT {
 
             String member = "commission-playwright@example.org";
             String password = "Playwright123!";
-            page.navigate(baseUrl + "/admin/users?form");
-            page.locator("#emailAddress").fill(member);
-            page.locator("input[name=password]").fill(password);
-            page.locator("#civilite").fill("Mme");
-            page.locator("#nom").fill("Commission");
-            page.locator("#prenom").fill("Playwright");
-            page.getByLabel("Compte activé").check();
-            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
-            assertThat(page).hasURL(Pattern.compile("/admin/users/\\d+$"));
-
-            for (String post : List.of("4086", "4087")) {
-                page.navigate(baseUrl + "/posteapourvoirs");
-                ligneAvecCellule(page, post).getByRole(AriaRole.LINK,
-                        new Locator.GetByRoleOptions().setName("Modifier").setExact(true)).click();
-                page.getByLabel("Membres").selectOption(new SelectOption().setLabel(member));
-                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Modifier").setExact(true)).click();
-                assertThat(page).hasURL(Pattern.compile("/posteapourvoirs/\\d+$"));
-            }
-
-            page.locator("#logout input[type=submit]").click();
+            importerCommission(page, member, "4086", "4087");
+            activerCompte(page, member, password);
             renseignerConnexion(page, member, password);
             page.navigate(baseUrl + "/postecandidatures");
             Locator filter = page.locator("a[href='#collapseFilterMembre']");
@@ -365,6 +350,34 @@ public class DematBrowserIT {
             assertThat(audition).hasValue("false");
             assertThat(page.locator("#manageForm tbody tr")).hasCount(1);
             assertThat(ligneAvecCellule(page, "candidat3@example.org")).isVisible();
+        });
+    }
+
+    @Test
+    public void switchUserVersUnMembrePuisRetourAdministrateur() {
+        runInBrowser(page -> {
+            String member = "commission-su-navigateur@example.org";
+            login(page);
+            importerCandidatures(page);
+            importerCommission(page, member, "4086");
+            activerCompte(page, member, "Commission-su-2026!");
+            login(page);
+
+            page.locator("#su a").click();
+            Locator switchForm = page.locator("form[action$='/login/impersonate']");
+            switchForm.locator("input[name=username]").fill(member);
+            switchForm.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("SU").setExact(true)).click();
+
+            Locator identity = page.locator("#logout input[type=submit]");
+            assertThat(identity).hasValue("Déconnexion [" + member + "]");
+            page.navigate(baseUrl + "/postecandidatures");
+            assertThat(ligneAvecCellule(page, "4086").first()).isVisible();
+            assertThat(ligneAvecCellule(page, "4087")).hasCount(0);
+            assertThat(page.locator("#selectAll")).hasCount(0);
+
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("SORTIR DU SU !")).click();
+            assertThat(identity).hasValue("Déconnexion [admin]");
+            assertThat(page.locator("#su a")).isVisible();
         });
     }
 
@@ -507,22 +520,8 @@ public class DematBrowserIT {
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer mon compte")).click();
                 assertThat(page.getByText("Création de compte réussie.")).isVisible();
 
-                // Le serveur de test désactive le SMTP. La fiche admin fournit la clé.
                 login(page);
-                page.navigate(baseUrl + "/admin/users?nomOrPrenomOrEmailAddress=" + email);
-                ligneAvecCellule(page, email).getByRole(AriaRole.LINK,
-                        new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
-                Locator activationKey = page.locator(".well").filter(new Locator.FilterOptions()
-                        .setHas(page.getByText("Clé d'activation", new Page.GetByTextOptions().setExact(true))))
-                        .locator("span");
-                assertThat(activationKey).hasText(Pattern.compile("[A-Za-z0-9_-]{43}"));
-                String key = activationKey.innerText();
-
-                page.context().clearCookies();
-                page.navigate(baseUrl + "/signup/activate/" + email + "/" + key);
-                page.locator("#_password_id").fill(password);
-                page.locator("#_repeatPassword_id").fill(password);
-                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirmer")).click();
+                activerCompte(page, email, password);
                 renseignerConnexion(page, email, password);
                 page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Ajout de candidatures")).click();
                 assertThat(page).hasURL(baseUrl + "/addpostecandidatures");
@@ -743,6 +742,56 @@ public class DematBrowserIT {
             helpSource.click();
             assertThat(candidateHelp).hasValue(customHtml);
         });
+    }
+
+    private void importerCommission(Page page, String email, String... postes) throws IOException {
+        byte[] content;
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            var sheet = workbook.createSheet("Commission");
+            var headers = sheet.createRow(0);
+            headers.createCell(0).setCellValue("Poste");
+            headers.createCell(1).setCellValue("Email");
+            headers.createCell(2).setCellValue("Nom");
+            headers.createCell(3).setCellValue("Prénom");
+            for (int i = 0; i < postes.length; i++) {
+                var row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(postes[i]);
+                row.createCell(1).setCellValue(email);
+                row.createCell(2).setCellValue("Commission");
+                row.createCell(3).setCellValue("Playwright");
+            }
+            workbook.write(output);
+            content = output.toByteArray();
+        }
+
+        page.navigate(baseUrl + "/admin/commissionexcels?form");
+        page.locator("input[type=file]").setInputFiles(new FilePayload("commission.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", content));
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Importer").setExact(true)).click();
+        assertThat(page).hasURL(baseUrl + "/admin/commissionexcels");
+
+        page.navigate(baseUrl + "/admin/commissionentrys");
+        page.locator("form[action$='/generatecommissions']").getByRole(AriaRole.BUTTON).click();
+        assertThat(page).hasURL(baseUrl + "/admin/logimportcommissions");
+    }
+
+    private void activerCompte(Page page, String email, String password) {
+        // Le SMTP est désactivé pour cette suite. La fiche admin fournit la clé.
+        page.navigate(baseUrl + "/admin/users?nomOrPrenomOrEmailAddress=" + email);
+        ligneAvecCellule(page, email).getByRole(AriaRole.LINK,
+                new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+        Locator activationKey = page.locator(".well").filter(new Locator.FilterOptions()
+                .setHas(page.getByText("Clé d'activation", new Page.GetByTextOptions().setExact(true))))
+                .locator("span");
+        assertThat(activationKey).hasText(Pattern.compile("[A-Za-z0-9_-]{43}"));
+        String key = activationKey.innerText();
+
+        page.context().clearCookies();
+        page.navigate(baseUrl + "/signup/activate/" + email + "/" + key);
+        page.locator("#_password_id").fill(password);
+        page.locator("#_repeatPassword_id").fill(password);
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirmer")).click();
     }
 
     private void importerCandidatures(Page page) {
