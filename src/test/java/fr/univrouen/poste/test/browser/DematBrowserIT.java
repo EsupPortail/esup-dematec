@@ -668,6 +668,87 @@ public class DematBrowserIT {
     }
 
     @Test
+    public void piecesJointesInternesDUnPoste() {
+        runInBrowser(page -> {
+            login(page);
+            String postesUrl = baseUrl + "/posteapourvoirs";
+            String numero = "999998";
+            assertEquals(200, page.navigate(postesUrl + "?form").status());
+            page.getByLabel("Num Emploi").fill(numero);
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            assertThat(page).hasURL(Pattern.compile("/posteapourvoirs/\\d+$"));
+            String posteUrl = page.url();
+
+            Path pdf = Path.of("src/test/resources/doc-dummy.pdf");
+            List<Path> documents = List.of(pdf, Path.of("src/test/resources/doc-dummy.odt"));
+            Locator upload = page.locator("form[action$='/addFile']");
+            Locator fileInput = upload.locator("input[type=file]");
+            Locator send = upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Envoyer"));
+            for (Path document : documents) {
+                fileInput.setInputFiles(document);
+                send.click();
+                assertThat(ligneAvecCellule(page, document.getFileName().toString())).isVisible();
+            }
+
+            String filename = pdf.getFileName().toString();
+            List<String> alerts = new ArrayList<>();
+            page.onceDialog(dialog -> {
+                alerts.add(dialog.message());
+                dialog.accept();
+            });
+            fileInput.setInputFiles(pdf);
+            send.click();
+            page.waitForLoadState();
+            assertEquals(List.of("Un fichier de même nom existe déjà !"), alerts);
+            assertThat(ligneAvecCellule(page, filename)).hasCount(1);
+
+            String member = "pieces-poste-navigateur@example.org";
+            String password = "Pieces-poste-2026!";
+            importerCommission(page, member, numero);
+            activerCompte(page, member, password);
+            renseignerConnexion(page, member, password);
+            assertEquals(200, page.navigate(postesUrl).status());
+            ligneAvecCellule(page, numero).getByRole(AriaRole.LINK,
+                    new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            assertThat(page).hasURL(posteUrl);
+            assertThat(upload).hasCount(0);
+            assertThat(page.locator("form[action*='/delFile/']")).hasCount(0);
+
+            Download download = page.waitForDownload(() -> page.getByRole(AriaRole.LINK,
+                    new Page.GetByRoleOptions().setName(filename).setExact(true)).click());
+            assertEquals(filename, download.suggestedFilename());
+            assertArrayEquals(Files.readAllBytes(pdf), Files.readAllBytes(download.path()));
+
+            Locator export = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Export zip"));
+            Download zip = page.waitForDownload(export::click);
+            assertTrue(zip.suggestedFilename(), zip.suggestedFilename().matches(numero + "-poste-[0-9-]+\\.zip"));
+            try (ZipFile archive = new ZipFile(zip.path().toFile())) {
+                assertEquals(documents.size(), archive.size());
+                for (Path document : documents) {
+                    var entry = archive.stream()
+                            .filter(file -> file.getName().matches("\\d+-" + Pattern.quote(document.getFileName().toString())))
+                            .findFirst().orElseThrow();
+                    try (var data = archive.getInputStream(entry)) {
+                        assertArrayEquals(Files.readAllBytes(document), data.readAllBytes());
+                    }
+                }
+            }
+
+            page.context().clearCookies();
+            login(page);
+            assertEquals(200, page.navigate(posteUrl).status());
+            for (Path document : documents) {
+                Locator row = ligneAvecCellule(page, document.getFileName().toString());
+                page.onceDialog(dialog -> dialog.accept());
+                row.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Supprimer")).click();
+                assertEquals(200, page.reload().status());
+                assertThat(row).hasCount(0);
+            }
+            assertThat(export).hasCount(0);
+        });
+    }
+
+    @Test
     public void modificationDUneEntreeGalaxieImportee() {
         runInBrowser(page -> {
             login(page);

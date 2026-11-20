@@ -72,6 +72,9 @@
         <div class="well">
           <h4>Fichiers internes au poste / comité de sélection :</h4>
 
+          <div th:if="${filename_already_used != null}" hidden
+               data-alert-message="Un fichier de même nom existe déjà !"></div>
+
           <table class="table table-bordered table-striped" th:if="${not #lists.isEmpty(posteapourvoir.posteFiles)}">
             <thead>
             <tr>
