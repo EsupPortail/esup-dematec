@@ -225,6 +225,40 @@ public class DematBrowserIT {
     }
 
     @Test
+    public void recevabiliteGroupeeDesCandidaturesSelectionnees() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            assertEquals(200, page.navigate(baseUrl + "/postecandidatures").status());
+
+            List<Locator> selected = List.of(ligneAvecCellule(page, "candidat2@example.org"),
+                    ligneAvecCellule(page, "candidat4@example.org"));
+            Locator unselected = ligneAvecCellule(page, "candidat@example.org");
+            for (Locator row : selected) {
+                assertThat(row.getByAltText("Recevable", new Locator.GetByAltTextOptions().setExact(true))).isVisible();
+                row.locator(".candidature-checkbox").check();
+            }
+            assertThat(unselected.locator(".candidature-checkbox")).not().isChecked();
+
+            page.onceDialog(dialog -> dialog.accept());
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Non Recevables").setExact(true)).click();
+            assertEquals(200, page.reload().status());
+            assertThat(unselected.getByAltText("Recevable", new Locator.GetByAltTextOptions().setExact(true))).isVisible();
+            for (Locator row : selected) {
+                assertThat(row.getByAltText("Non recevable", new Locator.GetByAltTextOptions().setExact(true))).isVisible();
+                row.locator(".candidature-checkbox").check();
+            }
+
+            page.onceDialog(dialog -> dialog.accept());
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Recevables").setExact(true)).click();
+            assertEquals(200, page.reload().status());
+            for (Locator row : selected) {
+                assertThat(row.getByAltText("Recevable", new Locator.GetByAltTextOptions().setExact(true))).isVisible();
+            }
+        });
+    }
+
+    @Test
     public void exportZipDesFichiersDuPosteSelectionne() {
         runInBrowser(page -> {
             login(page);
@@ -559,9 +593,33 @@ public class DematBrowserIT {
                         new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
                 applicationUrl = page.url();
                 Locator upload = page.locator("form[action$='/addFile']");
-                upload.locator("input[type=file]").setInputFiles(Path.of("src/test/resources/doc-dummy.pdf"));
+                Path pdf = Path.of("src/test/resources/doc-dummy.pdf");
+                upload.locator("input[type=file]").setInputFiles(pdf);
                 upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider")).click();
-                assertThat(page.getByText("doc-dummy.pdf", new Page.GetByTextOptions().setExact(true))).isVisible();
+                Locator file = page.getByRole(AriaRole.LINK,
+                        new Page.GetByRoleOptions().setName(pdf.getFileName().toString()).setExact(true));
+                Download download = page.waitForDownload(file::click);
+                assertEquals(pdf.getFileName().toString(), download.suggestedFilename());
+                assertArrayEquals(Files.readAllBytes(pdf), Files.readAllBytes(download.path()));
+
+                page.onceDialog(dialog -> dialog.accept());
+                ligneAvecCellule(page, pdf.getFileName().toString())
+                        .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Supprimer")).click();
+                assertEquals(200, page.reload().status());
+                assertThat(file).hasCount(0);
+
+                String newPassword = "Campagne-locale-2804!";
+                assertEquals(200, page.navigate(baseUrl + "/changepassword/index").status());
+                Locator changePassword = page.locator("form[action$='/changepassword/update']");
+                changePassword.locator("input[name=oldPassword]").fill(password);
+                changePassword.locator("input[name=newPassword]").fill(newPassword);
+                changePassword.locator("input[name=newPasswordAgain]").fill(newPassword);
+                changePassword.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Enregistrer")).click();
+                assertThat(page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions()
+                        .setName("Votre mot de passe a été modifié avec succès."))).isVisible();
+                page.context().clearCookies();
+                renseignerConnexion(page, email, newPassword);
+                assertThat(page.locator("#logout input[type=submit]")).hasValue("Déconnexion [" + email + "]");
             } finally {
                 page.context().clearCookies();
                 login(page);
@@ -671,6 +729,58 @@ public class DematBrowserIT {
             assertThat(page).hasURL(Pattern.compile("/admin/users/\\d+$"));
             ouvrirFormulaireDeModification(page, page.locator("body"));
             assertThat(page.getByLabel("Prénom")).hasValue("Prénom modifié");
+        });
+    }
+
+    @Test
+    public void consultationEtTelechargementDuFichierGalaxieImporte() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            Path workbook = Path.of("src/main/webapp/doc/EXTETBF.xls");
+            String filename = workbook.getFileName().toString();
+            assertEquals(200, page.navigate(baseUrl + "/admin/galaxieexcels").status());
+            ligneAvecCellule(page, filename).getByRole(AriaRole.LINK,
+                    new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            assertThat(ligneAvecCellule(page, "candidat2@example.org")).isVisible();
+            Download download = page.waitForDownload(() ->
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Fichier original")).click());
+            assertEquals(filename, download.suggestedFilename());
+            assertArrayEquals(Files.readAllBytes(workbook), Files.readAllBytes(download.path()));
+        });
+    }
+
+    @Test
+    public void validationDuMappingGalaxieAvecUnFichierExcel() {
+        runInBrowser(page -> {
+            login(page);
+            String mappingUrl = baseUrl + "/admin/galaxiemapping";
+            assertEquals(200, page.navigate(mappingUrl).status());
+            Locator file = page.locator("form[action$='/testFile'] input[type=file]");
+            Locator test = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Tester le mapping"));
+            List<String> messages = new ArrayList<>();
+            page.onDialog(dialog -> {
+                messages.add(dialog.message());
+                dialog.accept();
+            });
+
+            file.setInputFiles(Path.of("src/main/webapp/doc/EXTETBF.xls"));
+            test.click();
+            assertThat(page).hasURL(mappingUrl);
+            assertEquals(List.of("Test OK"), messages);
+
+            try (var workbook = new XSSFWorkbook(); var output = new ByteArrayOutputStream()) {
+                var headers = workbook.createSheet().createRow(0);
+                headers.createCell(0).setCellValue("N° emploi");
+                headers.createCell(1).setCellValue("N° candidat");
+                workbook.write(output);
+                file.setInputFiles(new FilePayload("sans-email.xlsx",
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", output.toByteArray()));
+            }
+            test.click();
+            assertThat(page).hasURL(mappingUrl);
+            assertEquals(2, messages.size());
+            assertTrue(messages.get(1), messages.get(1).contains("colonne(s) Email est (sont) manquante(s)"));
         });
     }
 
