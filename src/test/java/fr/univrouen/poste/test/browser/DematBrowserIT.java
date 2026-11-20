@@ -23,6 +23,7 @@ import org.junit.rules.TestName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -148,7 +149,11 @@ public class DematBrowserIT {
 
     private Set<String> destinationsDuMenu(Page page) {
         return Set.copyOf(page.locator("#_menu a[href]:visible").all().stream()
-                .map(link -> link.getAttribute("href")).toList());
+                .map(link -> {
+                    String url = (String) link.evaluate("link => link.href");
+                    assertTrue("Lien hors du contexte de l'application " + url, url.startsWith(baseUrl + "/"));
+                    return url.substring(baseUrl.length());
+                }).toList());
     }
 
     private void verifierNavigationDuMenu(Page page, Set<String> destinations) {
@@ -160,7 +165,7 @@ public class DematBrowserIT {
 
     private void suivreLienDuMenu(Page page, String path) {
         String url = baseUrl + path;
-        Locator link = page.locator("#_menu a[href='" + path + "']");
+        Locator link = page.locator("#_menu a[href='" + URI.create(url).getRawPath() + "']");
         Response response = page.waitForResponse(result -> result.url().equals(url), link::click);
         assertEquals("Lien du menu " + path, 200, response.status());
         assertThat(page).hasURL(url);
@@ -1012,7 +1017,7 @@ public class DematBrowserIT {
                 Locator file = candidate.getByRole(AriaRole.LINK,
                         new Page.GetByRoleOptions().setName(filename).setExact(true));
                 assertThat(file).isVisible();
-                String fileUrl = baseUrl + file.getAttribute("href");
+                String fileUrl = (String) file.evaluate("link => link.href");
 
                 assertEquals(200, page.navigate(configUrl).status());
                 deadline.fill("2000-01-01T00:00");

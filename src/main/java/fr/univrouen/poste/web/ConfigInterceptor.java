@@ -83,7 +83,7 @@ public class ConfigInterceptor implements HandlerInterceptor {
         // not for redirect view because we don't need it and we don't want that
         // they appears in the url
         if (modelAndView != null && !(modelAndView.getView() instanceof RedirectView) && !modelAndView.getViewName().startsWith("redirect:")) {
-            completeModel(request.getRequestURI(), modelAndView);
+            completeModel(request.getServletPath(), modelAndView);
         }
     }
 
