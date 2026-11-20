@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 
@@ -84,19 +85,98 @@ public class DematBrowserIT {
     public void navigationDuMenuAdministration() {
         runInBrowser(page -> {
             login(page);
-            List<String> destinations = page.locator("#_menu a[href]").all().stream()
-                    .map(link -> link.getAttribute("href")).distinct().toList();
+            Set<String> destinations = destinationsDuMenu(page);
             assertTrue(destinations.containsAll(List.of("/admin", "/admin/currentsessions",
                     "/postecandidatures", "/posteapourvoirs")));
-            for (String path : destinations) {
-                String url = baseUrl + path;
-                Locator link = page.locator("#_menu a[href='" + path + "']");
-                Response response = page.waitForResponse(result -> result.url().equals(url), link::click);
-                assertEquals("Lien du menu " + path, 200, response.status());
-                assertThat(page).hasURL(url);
-                assertThat(page.locator("#demat-right")).isVisible();
+            verifierNavigationDuMenu(page, destinations);
+        });
+    }
+
+    @Test
+    public void navigationEtCommandesDesGestionnaires() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            Set<String> administration = destinationsDuMenu(page);
+            Set<String> gestionnaire = Set.of("/admin/users", "/admin", "/admin/chart",
+                    "/admin/logimportgalaxies", "/admin/logimportcommissions", "/admin/logfiles",
+                    "/admin/logauths", "/admin/logmails", "/admin/logpostefiles", "/admin/currentsessions",
+                    "/postecandidatures", "/posteapourvoirs");
+            String password = "Gestion-navigation-2026!";
+
+            for (String role : List.of("isManager", "isSuperManager")) {
+                boolean superGestionnaire = role.equals("isSuperManager");
+                String email = "navigation-" + role.toLowerCase(java.util.Locale.ROOT) + "@example.org";
+                assertEquals(200, page.navigate(baseUrl + "/admin/users?form").status());
+                page.locator("input[name=emailAddress]").fill(email);
+                page.locator("input[name=password]").fill(password);
+                page.locator("input[name=enabled]").check();
+                page.locator("input[name=" + role + "]").check();
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+                assertThat(page).hasURL(Pattern.compile("/admin/users/\\d+$"));
+
+                page.context().clearCookies();
+                renseignerConnexion(page, email, password);
+                assertThat(page.locator("#logout input[type=submit]")).hasValue("Déconnexion [" + email + "]");
+                verifierNavigationDuMenu(page, superGestionnaire ? administration : gestionnaire);
+                assertThat(page.locator("#su a")).hasCount(superGestionnaire ? 1 : 0);
+                if (superGestionnaire) {
+                    page.locator("#su a").click();
+                    assertThat(page.locator("form[action$='/login/impersonate']")).isVisible();
+                }
+
+                suivreLienDuMenu(page, "/admin/users");
+                assertThat(page.getByRole(AriaRole.LINK,
+                        new Page.GetByRoleOptions().setName("Créer un utilisateur"))).hasCount(superGestionnaire ? 1 : 0);
+                page.locator("#demat-right tbody").getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName("Voir").setExact(true)).first().click();
+                assertThat(page.locator("#demat-right").getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName("Modifier").setExact(true))).hasCount(superGestionnaire ? 1 : 0);
+
+                suivreLienDuMenu(page, "/postecandidatures");
+                Locator candidature = ligneAvecCellule(page, "candidat2@example.org");
+                assertThat(candidature.locator(".candidature-checkbox")).isVisible();
+                candidature.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+                assertThat(page.locator("form[action$='/modify'] input[type=submit]")).isVisible();
+                assertThat(page.locator("form[action$='/updateManagerComment'] textarea")).isVisible();
+
+                verifierMotDePasseEtDeconnexion(page);
+                login(page);
             }
         });
+    }
+
+    private Set<String> destinationsDuMenu(Page page) {
+        return Set.copyOf(page.locator("#_menu a[href]:visible").all().stream()
+                .map(link -> link.getAttribute("href")).toList());
+    }
+
+    private void verifierNavigationDuMenu(Page page, Set<String> destinations) {
+        assertEquals(destinations, destinationsDuMenu(page));
+        for (String path : destinations.stream().sorted().toList()) {
+            suivreLienDuMenu(page, path);
+        }
+    }
+
+    private void suivreLienDuMenu(Page page, String path) {
+        String url = baseUrl + path;
+        Locator link = page.locator("#_menu a[href='" + path + "']");
+        Response response = page.waitForResponse(result -> result.url().equals(url), link::click);
+        assertEquals("Lien du menu " + path, 200, response.status());
+        assertThat(page).hasURL(url);
+        assertThat(page.locator("#demat-right")).isVisible();
+    }
+
+    private void verifierMotDePasseEtDeconnexion(Page page) {
+        page.locator("#password a").click();
+        assertThat(page).hasURL(baseUrl + "/changepassword/index");
+        assertThat(page.locator("form[action$='/changepassword/update']")).isVisible();
+        deconnecterDepuisLeMenu(page);
+    }
+
+    private void deconnecterDepuisLeMenu(Page page) {
+        page.locator("#logout input[type=submit]").click();
+        assertThat(page.locator("#j_username")).isVisible();
     }
 
     @Test
@@ -475,7 +555,9 @@ public class DematBrowserIT {
             importerCommission(page, member, "4086", "4087");
             activerCompte(page, member, password);
             renseignerConnexion(page, member, password);
-            page.navigate(baseUrl + "/postecandidatures");
+            verifierNavigationDuMenu(page, Set.of("/postecandidatures", "/posteapourvoirs"));
+            assertThat(page.locator("#su a")).hasCount(0);
+            suivreLienDuMenu(page, "/postecandidatures");
             Locator filter = page.locator("a[href='#collapseFilterMembre']");
             assertThat(filter).hasAttribute("aria-expanded", "false");
             assertThat(ligneAvecCellule(page, "4086").first()).isVisible();
@@ -499,6 +581,19 @@ public class DematBrowserIT {
             assertThat(audition).hasValue("false");
             assertThat(page.locator("#manageForm tbody tr")).hasCount(1);
             assertThat(ligneAvecCellule(page, "candidat3@example.org")).isVisible();
+            ligneAvecCellule(page, "candidat3@example.org").getByRole(AriaRole.LINK,
+                    new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            assertThat(page.locator("form[action$='/addMemberReviewFile']")).isVisible();
+            assertThat(page.locator("form[action$='/modify']")).hasCount(0);
+
+            suivreLienDuMenu(page, "/posteapourvoirs");
+            ligneAvecCellule(page, "4086").getByRole(AriaRole.LINK,
+                    new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            assertThat(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Modifier Poste"))).hasCount(0);
+            page.locator("#demat-right").getByRole(AriaRole.LINK,
+                    new Locator.GetByRoleOptions().setName("Candidatures").setExact(true)).click();
+            assertThat(page).hasURL(Pattern.compile("/postecandidatures\\?.*numEmploiPostes=4086"));
+            verifierMotDePasseEtDeconnexion(page);
         });
     }
 
@@ -758,16 +853,19 @@ public class DematBrowserIT {
                 login(page);
                 activerCompte(page, email, password);
                 renseignerConnexion(page, email, password);
-                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Ajout de candidatures")).click();
-                assertThat(page).hasURL(baseUrl + "/addpostecandidatures");
+                verifierNavigationDuMenu(page, Set.of("/addpostecandidatures", "/postecandidatures"));
+                assertThat(page.locator("#su a")).hasCount(0);
+                suivreLienDuMenu(page, "/addpostecandidatures");
                 Locator available = page.locator("li").filter(new Locator.FilterOptions().setHasText(post));
                 available.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Candidater")).click();
                 assertThat(available.getByText("Candidature enregistrée")).isVisible();
-                page.navigate(baseUrl + "/postecandidatures");
+                suivreLienDuMenu(page, "/postecandidatures");
+                assertThat(page.locator("#selectAll")).hasCount(0);
                 ligneAvecCellule(page, post).getByRole(AriaRole.LINK,
                         new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
                 applicationUrl = page.url();
                 Locator upload = page.locator("form[action$='/addFile']");
+                assertThat(page.locator("form[action$='/addMemberReviewFile'], form[action$='/modify']")).hasCount(0);
                 Path pdf = Path.of("src/test/resources/doc-dummy.pdf");
                 upload.locator("input[type=file]").setInputFiles(pdf);
                 upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider")).click();
@@ -784,7 +882,8 @@ public class DematBrowserIT {
                 assertThat(file).hasCount(0);
 
                 String newPassword = "Campagne-locale-2804!";
-                assertEquals(200, page.navigate(baseUrl + "/changepassword/index").status());
+                page.locator("#password a").click();
+                assertThat(page).hasURL(baseUrl + "/changepassword/index");
                 Locator changePassword = page.locator("form[action$='/changepassword/update']");
                 changePassword.locator("input[name=oldPassword]").fill(password);
                 changePassword.locator("input[name=newPassword]").fill(newPassword);
@@ -795,6 +894,7 @@ public class DematBrowserIT {
                 page.context().clearCookies();
                 renseignerConnexion(page, email, newPassword);
                 assertThat(page.locator("#logout input[type=submit]")).hasValue("Déconnexion [" + email + "]");
+                deconnecterDepuisLeMenu(page);
             } finally {
                 page.context().clearCookies();
                 login(page);
