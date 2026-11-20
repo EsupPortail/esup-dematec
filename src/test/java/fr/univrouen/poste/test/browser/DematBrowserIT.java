@@ -598,6 +598,72 @@ public class DematBrowserIT {
     }
 
     @Test
+    public void attributionEtRetraitDUnRapporteurParLaPresidente() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            String presidente = "presidente-navigation@example.org";
+            String membre = "rapporteur-navigation@example.org";
+            String password = "Rapporteur-commission-2026!";
+            importerCommission(page, presidente, "Présidente", true, "4087");
+            activerCompte(page, presidente, password);
+            login(page);
+            importerCommission(page, membre, "Rapporteur", false, "4087");
+            activerCompte(page, membre, password);
+            login(page);
+
+            assertEquals(200, page.navigate(baseUrl + "/admin/appliconfig").status());
+            ouvrirFormulaireDeModification(page, page.locator("body"));
+            String configUrl = page.url();
+            Locator reporterView = page.locator("input[name=presidentReportersView]");
+            boolean originalSetting = reporterView.isChecked();
+            try {
+                reporterView.check();
+                saveCampaignSettings(page);
+
+                page.context().clearCookies();
+                renseignerConnexion(page, presidente, password);
+                ouvrirCandidature(page, "candidat2@example.org");
+                String dossierUrl = page.url();
+                Locator reporters = page.locator(".well").filter(new Locator.FilterOptions().setHas(
+                        page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Rapporteurs").setExact(true))));
+                Locator reporter = reporters.getByText("Rapporteur Commission",
+                        new Locator.GetByTextOptions().setExact(true));
+                Locator add = page.locator("form[action$='/addReporter']");
+                Locator remove = page.locator("form[action$='/delReporter']");
+                assertThat(reporter).hasCount(0);
+                add.getByLabel("Ajouter un rapporteur").selectOption(new SelectOption().setLabel("Rapporteur Commission"));
+                add.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Ajouter").setExact(true)).click();
+                assertEquals(200, page.reload().status());
+                assertThat(reporter).isVisible();
+                assertThat(remove).isVisible();
+
+                page.context().clearCookies();
+                renseignerConnexion(page, membre, password);
+                assertEquals(200, page.navigate(dossierUrl).status());
+                assertThat(reporter).isVisible();
+                assertThat(add).hasCount(0);
+                assertThat(remove).hasCount(0);
+
+                page.context().clearCookies();
+                renseignerConnexion(page, presidente, password);
+                assertEquals(200, page.navigate(dossierUrl).status());
+                reporters.locator("li").filter(new Locator.FilterOptions().setHasText("Rapporteur Commission"))
+                        .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Supprimer").setExact(true)).click();
+                assertEquals(200, page.reload().status());
+                assertThat(reporters).isVisible();
+                assertThat(reporter).hasCount(0);
+            } finally {
+                page.context().clearCookies();
+                login(page);
+                assertEquals(200, page.navigate(configUrl).status());
+                reporterView.setChecked(originalSetting);
+                saveCampaignSettings(page);
+            }
+        });
+    }
+
+    @Test
     public void depotTelechargementEtSuppressionDUnRapportDeCommission() {
         runInBrowser(page -> {
             login(page);
@@ -1453,6 +1519,10 @@ public class DematBrowserIT {
     }
 
     private void importerCommission(Page page, String email, String... postes) throws IOException {
+        importerCommission(page, email, "Playwright", false, postes);
+    }
+
+    private void importerCommission(Page page, String email, String prenom, boolean president, String... postes) throws IOException {
         byte[] content;
         try (XSSFWorkbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream output = new ByteArrayOutputStream()) {
@@ -1462,12 +1532,14 @@ public class DematBrowserIT {
             headers.createCell(1).setCellValue("Email");
             headers.createCell(2).setCellValue("Nom");
             headers.createCell(3).setCellValue("Prénom");
+            headers.createCell(4).setCellValue("Président");
             for (int i = 0; i < postes.length; i++) {
                 var row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(postes[i]);
                 row.createCell(1).setCellValue(email);
                 row.createCell(2).setCellValue("Commission");
-                row.createCell(3).setCellValue("Playwright");
+                row.createCell(3).setCellValue(prenom);
+                row.createCell(4).setCellValue(president ? "oui" : "non");
             }
             workbook.write(output);
             content = output.toByteArray();
