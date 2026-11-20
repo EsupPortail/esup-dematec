@@ -911,6 +911,60 @@ public class DematBrowserIT {
         });
     }
 
+    @Test
+    public void dossierEtPieceJointeBloquesApresClotureGalaxie() {
+        runInBrowser(page -> {
+            login(page);
+            importerCandidatures(page);
+            assertEquals(200, page.navigate(baseUrl + "/admin/appliconfig").status());
+            ouvrirFormulaireDeModification(page, page.locator("body"));
+            String configUrl = page.url();
+            Locator deadline = page.locator("input[name=dateEndCandidat]");
+            Locator activeDeadline = page.locator("input[name=dateEndCandidatActif]");
+            String originalDeadline = deadline.inputValue();
+            String originalActiveDeadline = activeDeadline.inputValue();
+
+            try (BrowserContext candidateContext = browser.newContext()) {
+                deadline.fill("2035-11-25T14:30");
+                activeDeadline.fill("2035-11-25T14:30");
+                saveCampaignSettings(page);
+
+                Page candidate = candidateContext.newPage();
+                String email = "candidat3@example.org";
+                String password = "Cloture-Galaxie-2026!";
+                login(candidate);
+                activerCompte(candidate, email, password);
+                renseignerConnexion(candidate, email, password);
+                suivreLienDuMenu(candidate, "/postecandidatures");
+                ligneAvecCellule(candidate, "4086").getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+                Locator upload = candidate.locator("form[action$='/addFile']");
+                String filename = "piece-avant-cloture.pdf";
+                byte[] content = Files.readAllBytes(Path.of("src/test/resources/doc-dummy.pdf"));
+                upload.locator("input[type=file]").setInputFiles(new FilePayload(filename, "application/pdf", content));
+                upload.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Valider")).click();
+                Locator file = candidate.getByRole(AriaRole.LINK,
+                        new Page.GetByRoleOptions().setName(filename).setExact(true));
+                assertThat(file).isVisible();
+                String fileUrl = baseUrl + file.getAttribute("href");
+
+                assertEquals(200, page.navigate(configUrl).status());
+                deadline.fill("2000-01-01T00:00");
+                activeDeadline.fill("2000-01-01T00:00");
+                saveCampaignSettings(page);
+
+                assertEquals("Consultation du dossier après la clôture", 403, candidate.reload().status());
+                assertThat(upload).hasCount(0);
+                assertEquals("Téléchargement de la pièce après la clôture", 403, candidate.request().get(fileUrl).status());
+            } finally {
+                assertEquals(200, page.navigate(configUrl).status());
+                deadline.fill(originalDeadline);
+                activeDeadline.fill(originalActiveDeadline);
+                saveCampaignSettings(page);
+            }
+        });
+    }
+
     private void saveCampaignSettings(Page page) {
         Response save = page.waitForResponse(response -> response.url().equals(baseUrl + "/admin/appliconfig")
                 && response.request().method().equals("POST"),
