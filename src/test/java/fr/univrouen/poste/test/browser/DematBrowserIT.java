@@ -1,5 +1,7 @@
 package fr.univrouen.poste.test.browser;
 
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Download;
@@ -12,6 +14,8 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.FilePayload;
 import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.SelectOption;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.AfterClass;
@@ -41,6 +45,7 @@ public class DematBrowserIT {
     private static String baseUrl;
     private static Playwright playwright;
     private static Browser browser;
+    private static GreenMail smtp;
 
     @Rule
     public final TestName testName = new TestName();
@@ -51,14 +56,23 @@ public class DematBrowserIT {
         if (baseUrl == null || baseUrl.isBlank()) {
             throw new IllegalArgumentException("La propriété playwright.baseUrl doit désigner l'application de test");
         }
+        int smtpPort = Integer.getInteger("playwright.smtpPort", 53025);
+        smtp = new GreenMail(new ServerSetup(smtpPort, "127.0.0.1", ServerSetup.PROTOCOL_SMTP));
+        smtp.start();
         playwright = Playwright.create();
         browser = playwright.chromium().launch();
     }
 
     @AfterClass
     public static void closeBrowser() {
-        if (playwright != null) {
-            playwright.close();
+        try {
+            if (playwright != null) {
+                playwright.close();
+            }
+        } finally {
+            if (smtp != null) {
+                smtp.stop();
+            }
         }
     }
 
@@ -195,6 +209,103 @@ public class DematBrowserIT {
             assertThat(page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions()
                     .setName(Pattern.compile("Si votre adresse est bien correcte")))).isVisible();
         });
+    }
+
+    @Test
+    public void activationEtReinitialisationDepuisLesCourrielsRecus() {
+        runInBrowser(page -> {
+            login(page);
+            assertEquals(200, page.navigate(baseUrl + "/admin/appliconfig").status());
+            ouvrirFormulaireDeModification(page, page.locator("body"));
+            String configUrl = page.url();
+            Locator signupEnabled = page.locator("input[name=candidatCanSignup]");
+            Locator deadline = page.locator("input[name=dateEndCandidat]");
+            Locator activationTemplate = page.locator("textarea[name=texteMailActivation]");
+            Locator resetTemplate = page.locator("textarea[name=texteMailPasswordOublie]");
+            boolean originalSignup = signupEnabled.isChecked();
+            String originalDeadline = deadline.inputValue();
+            String originalActivation = activationTemplate.inputValue();
+            String originalReset = resetTemplate.inputValue();
+            String defaultBase = "http://localhost:8080/EsupDematEC";
+            String subject = page.locator("input[name=mailSubject]").inputValue();
+            String domain = "smtp-playwright.example.org";
+            String email = "candidat@" + domain;
+            String initialPassword = "Activation-smtp-2026!";
+            String newPassword = "Reinitialisation-smtp-2026!";
+
+            try {
+                signupEnabled.check();
+                deadline.fill("2035-11-25T14:30");
+                activationTemplate.fill(originalActivation.replace(defaultBase, baseUrl));
+                resetTemplate.fill(originalReset.replace(defaultBase, baseUrl));
+                saveCampaignSettings(page);
+                page.context().clearCookies();
+
+                assertEquals(200, page.navigate(baseUrl + "/login").status());
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Créer un compte")).click();
+                page.locator("#_civilite_id").selectOption("Mme");
+                page.locator("#_firstName_id").fill("Camille");
+                page.locator("#_lastName_id").fill("Courriel");
+                page.locator("#_emailAddress_id").fill(email);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer mon compte")).click();
+                assertThat(page.getByText("Création de compte réussie.")).isVisible();
+
+                String activation = lienDuCourriel(domain, 1, email, subject, "Bonjour Camille Courriel",
+                        baseUrl + "/signup/activate/" + email + "/");
+                assertEquals(200, page.navigate(activation).status());
+                page.locator("#_password_id").fill(initialPassword);
+                page.locator("#_repeatPassword_id").fill(initialPassword);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirmer")).click();
+                renseignerConnexion(page, email, initialPassword);
+                assertThat(page.locator("#logout input[type=submit]")).hasValue("Déconnexion [" + email + "]");
+                deconnecterDepuisLeMenu(page);
+
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Mot de passe oublié")).click();
+                page.getByLabel("Entrez votre adresse email").fill(email);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Envoyer")).click();
+                assertThat(page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions()
+                        .setName(Pattern.compile("Si votre adresse est bien correcte")))).isVisible();
+                String reset = lienDuCourriel(domain, 2, email, subject, "récupérer un nouveau mot de passe",
+                        baseUrl + "/forgotpassword/formChange?activationKey=");
+                assertEquals(200, page.navigate(reset).status());
+                page.locator("input[name=newPassword]").fill(newPassword);
+                page.locator("input[name=newPasswordAgain]").fill(newPassword);
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Enregistrer")).click();
+
+                renseignerConnexion(page, email, initialPassword);
+                assertThat(page).hasURL(baseUrl + "/login?error");
+                renseignerConnexion(page, email, newPassword);
+                assertThat(page.locator("#logout input[type=submit]")).hasValue("Déconnexion [" + email + "]");
+            } finally {
+                page.context().clearCookies();
+                login(page);
+                assertEquals(200, page.navigate(configUrl).status());
+                signupEnabled.setChecked(originalSignup);
+                deadline.fill(originalDeadline);
+                activationTemplate.fill(originalActivation);
+                resetTemplate.fill(originalReset);
+                saveCampaignSettings(page);
+            }
+        });
+    }
+
+    private String lienDuCourriel(String domain, int number, String recipient, String subject, String expectedText,
+                                  String linkPrefix) throws IOException {
+        MimeMessage[] messages = smtp.getReceivedMessagesForDomain(domain);
+        assertEquals("Nombre de courriels capturés pour le scénario", number, messages.length);
+        MimeMessage message = messages[number - 1];
+        try {
+            assertArrayEquals(new String[]{recipient},
+                    java.util.Arrays.stream(message.getAllRecipients()).map(Object::toString).toArray(String[]::new));
+            assertEquals(subject, message.getSubject());
+            String body = (String) message.getContent();
+            assertTrue("Le courriel contient le texte attendu", body.contains(expectedText));
+            var link = Pattern.compile("(?m)^\\h*(" + Pattern.quote(linkPrefix) + "[A-Za-z0-9_-]{43})\\h*$").matcher(body);
+            assertTrue("Le courriel contient un lien vers l'application de test", link.find());
+            return link.group(1);
+        } catch (MessagingException exception) {
+            throw new IOException("Lecture du courriel capturé", exception);
+        }
     }
 
     @Test
@@ -1562,7 +1673,7 @@ public class DematBrowserIT {
     }
 
     private void activerCompte(Page page, String email, String password) {
-        // Le SMTP est désactivé pour cette suite. La fiche admin fournit la clé.
+        // Ce raccourci prépare les comptes des scénarios sans objet SMTP.
         page.navigate(baseUrl + "/admin/users?nomOrPrenomOrEmailAddress=" + email);
         ligneAvecCellule(page, email).getByRole(AriaRole.LINK,
                 new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();

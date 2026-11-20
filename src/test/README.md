@@ -116,6 +116,12 @@ Hibernate recrée le schéma au démarrage. Réserver la base locale
 `dematec_browser_test` à cette suite. Les traces sont disponibles dans
 `target/playwright/`.
 
+La suite démarre un serveur SMTP de capture GreenMail sur `127.0.0.1`.
+Le script configure Jetty pour lui envoyer les courriels de test. Le port
+`53025` peut être remplacé avec `PLAYWRIGHT_SMTP_PORT`. Le scénario
+d'activation et de réinitialisation lit les courriels capturés, vérifie leur
+contenu et ouvre les liens reçus dans Chromium.
+
 Le scénario du mot de passe vérifie les niveaux de robustesse et la remise à zéro
 de l’indicateur. Les scénarios échouent en cas d’erreur JavaScript non interceptée.
 

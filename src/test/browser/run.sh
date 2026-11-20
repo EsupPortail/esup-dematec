@@ -5,6 +5,7 @@ cd "$(dirname "$0")/../../.."
 # La création du schéma par Hibernate est réservée à cette base locale dédiée.
 db_port=${PLAYWRIGHT_DB_PORT:-55432}
 http_port=${PLAYWRIGHT_HTTP_PORT:-58080}
+smtp_port=${PLAYWRIGHT_SMTP_PORT:-53025}
 base_url="http://127.0.0.1:${http_port}"
 mkdir -p target/playwright
 
@@ -19,7 +20,9 @@ MAVEN_OPTS="$jetty_maven_opts" mvn -B -ntp compile jetty:run -Pbrowser-tests \
   -Djetty.http.port="$http_port" \
   -Ddatabase.url="jdbc:postgresql://127.0.0.1:${db_port}/dematec_browser_test" \
   -Ddatabase.username=dematec_browser -Ddatabase.password=dematec_browser \
-  -Demail.isEnabled=false >target/playwright/jetty.log 2>&1 &
+  -Demail.isEnabled=true -Demail.host=127.0.0.1 -Demail.port="$smtp_port" \
+  -Demail.protocol=smtp -Demail.username= -Demail.password= \
+  -Demail.starttls=false -Demail.ssl=false >target/playwright/jetty.log 2>&1 &
 server_pid=$!
 trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true' EXIT
 
@@ -41,4 +44,5 @@ if [[ "$ready" != true ]]; then
 fi
 
 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
-  mvn -B -ntp test -DskipTests=false -Dtest=DematBrowserIT -Dplaywright.baseUrl="$base_url"
+  mvn -B -ntp test -DskipTests=false -Dtest=DematBrowserIT \
+  -Dplaywright.baseUrl="$base_url" -Dplaywright.smtpPort="$smtp_port"
