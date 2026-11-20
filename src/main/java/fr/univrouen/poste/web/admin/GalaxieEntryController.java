@@ -122,18 +122,11 @@ public class GalaxieEntryController {
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid GalaxieEntry galaxieEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, galaxieEntry);
-            return "admin/galaxieentrys/create";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         uiModel.asMap().clear();
         galaxieEntryDao.saveGalaxieEntry(galaxieEntry);
         return "redirect:/admin/galaxieentrys/" + encodeUrlPathSegment(galaxieEntry.getId().toString(), httpServletRequest);
-    }
-
-	@RequestMapping(params = "form", produces = "text/html")
-    public String createForm(Model uiModel) {
-        populateEditForm(uiModel, new GalaxieEntry());
-        return "admin/galaxieentrys/create";
     }
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")

@@ -18,8 +18,6 @@
 package fr.univrouen.poste.web.admin;
 
 import fr.univrouen.poste.dao.CommissionEntryDao;
-import fr.univrouen.poste.dao.PosteAPourvoirDao;
-import fr.univrouen.poste.dao.UserDao;
 import fr.univrouen.poste.domain.CommissionEntry;
 import fr.univrouen.poste.domain.User;
 import fr.univrouen.poste.services.CommissionEntryService;
@@ -61,12 +59,6 @@ public class CommissionEntryController {
 
 	@Resource
 	CommissionEntryDao commissionEntryDao;
-
-	@Resource
-	UserDao userDao;
-
-	@Resource
-	PosteAPourvoirDao posteAPourvoirDao;
 	
     @RequestMapping(produces = "text/html")
     public String list(@PageableDefault(size = 10) Pageable pageable, @RequestParam(value = "sortFieldName", required = false) String sortFieldName, @RequestParam(value = "sortOrder", required = false) String sortOrder, @RequestParam(value = "search", required = false) String search, Model uiModel) {
@@ -164,17 +156,10 @@ public class CommissionEntryController {
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, commissionEntry);
-            return "admin/commissionentrys/create";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         commissionEntryDao.saveCommissionEntry(commissionEntry);
         return "redirect:/admin/commissionentrys/" + encodeUrlPathSegment(commissionEntry.getId().toString(), httpServletRequest);
-    }
-
-	@RequestMapping(params = "form", produces = "text/html")
-    public String createForm(Model uiModel) {
-        populateEditForm(uiModel, new CommissionEntry());
-        return "admin/commissionentrys/create";
     }
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "text/html")
@@ -191,17 +176,10 @@ public class CommissionEntryController {
 	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String update(@Valid CommissionEntry commissionEntry, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, commissionEntry);
-            return "admin/commissionentrys/update";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         commissionEntryDao.saveCommissionEntry(commissionEntry);
         return "redirect:/admin/commissionentrys/" + encodeUrlPathSegment(commissionEntry.getId().toString(), httpServletRequest);
-    }
-
-	@RequestMapping(value = "/{id}", params = "form", produces = "text/html")
-    public String updateForm(@PathVariable Long id, Model uiModel) {
-        populateEditForm(uiModel, commissionEntryDao.findCommissionEntry(id));
-        return "admin/commissionentrys/update";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -217,12 +195,6 @@ public class CommissionEntryController {
         redirectAttributes.addFlashAttribute("page", (page == null) ? "1" : page.toString());
         redirectAttributes.addFlashAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/admin/commissionentrys";
-    }
-
-	void populateEditForm(Model uiModel, CommissionEntry commissionEntry) {
-        uiModel.addAttribute("commissionEntry", commissionEntry);
-        uiModel.addAttribute("posteapourvoirs", posteAPourvoirDao.findAllPosteAPourvoirs());
-        uiModel.addAttribute("users", userDao.findAllUsers());
     }
 
 	String encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

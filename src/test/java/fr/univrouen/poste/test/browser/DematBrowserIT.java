@@ -81,6 +81,95 @@ public class DematBrowserIT {
     }
 
     @Test
+    public void navigationDuMenuAdministration() {
+        runInBrowser(page -> {
+            login(page);
+            List<String> destinations = page.locator("#_menu a[href]").all().stream()
+                    .map(link -> link.getAttribute("href")).distinct().toList();
+            assertTrue(destinations.containsAll(List.of("/admin", "/admin/currentsessions",
+                    "/postecandidatures", "/posteapourvoirs")));
+            for (String path : destinations) {
+                String url = baseUrl + path;
+                Locator link = page.locator("#_menu a[href='" + path + "']");
+                Response response = page.waitForResponse(result -> result.url().equals(url), link::click);
+                assertEquals("Lien du menu " + path, 200, response.status());
+                assertThat(page).hasURL(url);
+                assertThat(page.locator("#demat-right")).isVisible();
+            }
+        });
+    }
+
+    @Test
+    public void demandePubliqueDeReinitialisationDuMotDePasse() {
+        runInBrowser(page -> {
+            assertEquals(200, page.navigate(baseUrl + "/login").status());
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Mot de passe oublié")).click();
+            assertThat(page).hasURL(baseUrl + "/forgotpassword/index");
+            page.getByLabel("Entrez votre adresse email").fill("inconnu-audit@example.org");
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Envoyer")).click();
+            assertThat(page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions()
+                    .setName(Pattern.compile("Si votre adresse est bien correcte")))).isVisible();
+        });
+    }
+
+    @Test
+    public void telechargementDesExemplesDeModelesWord() {
+        runInBrowser(page -> {
+            login(page);
+            assertEquals(200, page.navigate(baseUrl + "/admin/templatefiles").status());
+            page.locator("#demat-right").getByRole(AriaRole.LINK,
+                    new Locator.GetByRoleOptions().setName("Aide").setExact(true)).click();
+            List<String> labels = List.of("ici (ATER)", "ici");
+            List<String> filenames = List.of("template-ater.docx", "template-multi-candidatures.docx");
+            for (int i = 0; i < labels.size(); i++) {
+                Locator link = page.locator("#demat-right").getByRole(AriaRole.LINK,
+                        new Locator.GetByRoleOptions().setName(labels.get(i)).setExact(true));
+                Download download = page.waitForDownload(link::click);
+                assertArrayEquals(Files.readAllBytes(Path.of("src/main/webapp/doc", filenames.get(i))),
+                        Files.readAllBytes(download.path()));
+            }
+        });
+    }
+
+    @Test
+    public void consultationTelechargementEtSuppressionDUnFichierCommission() {
+        runInBrowser(page -> {
+            login(page);
+            String listUrl = baseUrl + "/admin/commissionexcels";
+            Path source = Path.of("src/main/webapp/doc/COMMISSION.xls");
+            String filename = source.getFileName().toString();
+            assertEquals(200, page.navigate(listUrl).status());
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Créer").setExact(true)).click();
+            Locator form = page.locator("form[action$='/addFile']");
+            form.locator("input[type=file]").setInputFiles(source);
+            form.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Importer").setExact(true)).click();
+            assertThat(page).hasURL(listUrl);
+
+            Locator row = ligneAvecCellule(page, filename);
+            row.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            assertThat(page.locator("#demat-right table tbody tr").first()).isVisible();
+            assertEquals(200, page.navigate(page.url() + "?form").status());
+            Download original = page.waitForDownload(() -> page.getByRole(AriaRole.LINK,
+                    new Page.GetByRoleOptions().setName("Fichier original")).click());
+            assertEquals(filename, original.suggestedFilename());
+            assertArrayEquals(Files.readAllBytes(source), Files.readAllBytes(original.path()));
+
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Retour").setExact(true)).click();
+            page.onceDialog(dialog -> dialog.accept());
+            row.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Supprimer")).click();
+            assertThat(row).hasCount(0);
+
+            assertEquals(200, page.navigate(baseUrl + "/admin/commissionentrys?form").status());
+            Locator entry = ligneAvecCellule(page, "membre@example.org").first();
+            entry.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Voir").setExact(true)).click();
+            assertEquals(200, page.navigate(page.url() + "?form").status());
+            assertThat(page.locator("#demat-right").getByText("membre@example.org",
+                    new Locator.GetByTextOptions().setExact(true))).isVisible();
+            assertEquals(200, page.navigate(baseUrl + "/admin/galaxieentrys?form").status());
+        });
+    }
+
+    @Test
     public void filtreDuJournalDesAuthentifications() {
         runInBrowser(page -> {
             login(page);
@@ -663,6 +752,8 @@ public class DematBrowserIT {
                 page.locator("#_emailAddress_id").fill(email);
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Créer mon compte")).click();
                 assertThat(page.getByText("Création de compte réussie.")).isVisible();
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Retour").setExact(true)).click();
+                assertThat(page.locator("#j_username")).isVisible();
 
                 login(page);
                 activerCompte(page, email, password);
@@ -1337,11 +1428,18 @@ public class DematBrowserIT {
             context.tracing().start(new Tracing.StartOptions().setScreenshots(true).setSnapshots(true));
             Page page = context.newPage();
             List<String> pageErrors = new ArrayList<>();
+            List<String> httpErrors = new ArrayList<>();
             page.onPageError(pageErrors::add);
+            page.onResponse(response -> {
+                if (response.url().startsWith(baseUrl + "/") && (response.status() == 404 || response.status() >= 500)) {
+                    httpErrors.add(response.status() + " " + response.url());
+                }
+            });
             boolean passed = false;
             try {
                 scenario.run(page);
                 assertTrue("Erreurs JavaScript : " + pageErrors, pageErrors.isEmpty());
+                assertTrue("Erreurs HTTP : " + httpErrors, httpErrors.isEmpty());
                 passed = true;
             } catch (IOException exception) {
                 throw new UncheckedIOException(exception);

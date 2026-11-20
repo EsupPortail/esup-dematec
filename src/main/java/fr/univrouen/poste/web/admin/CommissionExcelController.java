@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -182,17 +184,10 @@ public class CommissionExcelController {
 	@RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String update(@Valid CommissionExcel commissionExcel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, commissionExcel);
-            return "admin/commissionexcels/update";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         commissionExcelDao.saveCommissionExcel(commissionExcel);
         return "redirect:/admin/commissionexcels/" + encodeUrlPathSegment(commissionExcel.getId().toString(), httpServletRequest);
-    }
-
-	@RequestMapping(value = "/{id}", params = "form", produces = "text/html")
-    public String updateForm(@PathVariable Long id, Model uiModel) {
-        populateEditForm(uiModel, commissionExcelDao.findCommissionExcel(id));
-        return "admin/commissionexcels/update";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
