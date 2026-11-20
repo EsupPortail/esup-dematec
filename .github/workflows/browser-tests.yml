@@ -1,7 +1,7 @@
 name: Tests navigateur
 
 on:
-  pull_request:
+  workflow_call:
   push:
     branches: [master]
   workflow_dispatch:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: browser-tests-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -52,7 +52,19 @@ jobs:
           '-Dexec.args=install --with-deps chromium'
 
       - name: Exécuter les tests Playwright
+        env:
+          PLAYWRIGHT_COVERAGE: ${{ github.event_name == 'pull_request' }}
         run: bash src/test/browser/run.sh
+
+      - name: Transmettre les données JaCoCo de Jetty
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: jacoco-playwright
+          path: target/coverage-data/playwright.exec
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 14
 
       - name: Conserver les traces et les journaux en cas d’échec
         if: failure()

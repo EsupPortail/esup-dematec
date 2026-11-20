@@ -78,9 +78,19 @@ Chaque test peut utiliser les données créées par les tests précédents.
 
 Le workflow [Tests navigateur](../../.github/workflows/browser-tests.yml) lance Chromium
 sur l'application démarrée dans Jetty, avec PostgreSQL 17 et les données
-d'initialisation de l'application. Il s'exécute sur les pull requests et les push
-vers `master`. En cas d'échec, l'artefact `playwright-diagnostics` contient les
+d'initialisation de l'application. Sur les pull requests, il est appelé par le
+workflow [Tests d'intégration](../../.github/workflows/integration-tests.yml).
+Il s'exécute aussi sur les push vers `master` et peut être lancé manuellement.
+En cas d'échec, l'artefact `playwright-diagnostics` contient les
 traces Playwright, le journal Jetty et les rapports Maven.
+
+### Couverture Java sur les pull requests
+
+Après la réussite des deux suites, le job **Couverture Java cumulée** fusionne
+les données JaCoCo des tests d'intégration et de Jetty pendant Playwright. Le
+résumé GitHub Actions affiche les pourcentages de lignes et de branches couvertes.
+L'artefact `jacoco-coverage` contient le rapport HTML (ouvrir `index.html`),
+ainsi que les versions XML et CSV. Il est disponible pendant 14 jours.
 
 Pour rejouer la suite sous Linux avec Java 17, Maven et Docker, lancer ces
 commandes depuis la racine du dépôt.

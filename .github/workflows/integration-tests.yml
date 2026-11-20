@@ -36,7 +36,24 @@ jobs:
         run: docker info
 
       - name: Exécuter la suite d'intégration
-        run: mvn -B -ntp clean test -DskipTests=false -Dtest=IntegrationTestSuite
+        env:
+          MEASURE_COVERAGE: ${{ github.event_name == 'pull_request' }}
+        run: |
+          coverage_args=()
+          if [[ "$MEASURE_COVERAGE" == true ]]; then
+            coverage_args=(-Pcoverage jacoco:prepare-agent -Djacoco.destFile=target/coverage-data/integration.exec)
+          fi
+          mvn -B -ntp clean "${coverage_args[@]}" test -DskipTests=false -Dtest=IntegrationTestSuite
+
+      - name: Transmettre les données JaCoCo d’intégration
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: jacoco-integration
+          path: target/coverage-data/integration.exec
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 14
 
       - name: Conserver les rapports de tests
         if: always()
@@ -46,3 +63,74 @@ jobs:
           path: target/surefire-reports/
           if-no-files-found: warn
           retention-days: 14
+
+  browser-tests:
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/browser-tests.yml
+
+  coverage:
+    name: Couverture Java cumulée
+    if: github.event_name == 'pull_request'
+    needs: [integration-tests, browser-tests]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Installer Java 17 et activer le cache Maven
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Télécharger les données d’intégration
+        uses: actions/download-artifact@v7
+        with:
+          name: jacoco-integration
+          path: target/coverage-data
+
+      - name: Télécharger les données Playwright
+        uses: actions/download-artifact@v7
+        with:
+          name: jacoco-playwright
+          path: target/coverage-data
+
+      - name: Générer le rapport JaCoCo cumulé
+        run: |
+          test -s target/coverage-data/integration.exec
+          test -s target/coverage-data/playwright.exec
+          mvn -B -ntp -Pcoverage compile jacoco:merge@merge-test-coverage jacoco:report
+
+      - name: Publier le rapport de couverture
+        id: report
+        uses: actions/upload-artifact@v7
+        with:
+          name: jacoco-coverage
+          path: target/site/jacoco/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 14
+
+      - name: Résumer la couverture
+        env:
+          REPORT_URL: ${{ steps.report.outputs.artifact-url }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import os
+          import xml.etree.ElementTree as ET
+
+          report = ET.parse("target/site/jacoco/jacoco.xml").getroot()
+          counters = {counter.attrib["type"]: counter.attrib for counter in report.findall("counter")}
+          print("## Couverture Java cumulée")
+          print()
+          for key, label in [("LINE", "Lignes"), ("BRANCH", "Branches")]:
+              covered = int(counters[key]["covered"])
+              total = covered + int(counters[key]["missed"])
+              print(f"- **{label}** — {covered / total:.1%} ({covered}/{total})")
+          print()
+          print(f"[Télécharger le rapport JaCoCo (HTML, XML et CSV)]({os.environ['REPORT_URL']})")
+          PY

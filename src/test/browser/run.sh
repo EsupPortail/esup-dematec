@@ -8,7 +8,14 @@ http_port=${PLAYWRIGHT_HTTP_PORT:-58080}
 base_url="http://127.0.0.1:${http_port}"
 mkdir -p target/playwright
 
-mvn -B -ntp compile jetty:run -Pbrowser-tests \
+jetty_maven_opts=${MAVEN_OPTS:-}
+if [[ ${PLAYWRIGHT_COVERAGE:-false} == true ]]; then
+  mvn -B -ntp -Pcoverage dependency:copy@copy-jacoco-agent
+  mkdir -p target/coverage-data
+  jetty_maven_opts+=" -javaagent:target/coverage-agent/jacoco-agent.jar=destfile=target/coverage-data/playwright.exec,append=false,includes=fr.univrouen.poste.*"
+fi
+
+MAVEN_OPTS="$jetty_maven_opts" mvn -B -ntp compile jetty:run -Pbrowser-tests \
   -Djetty.http.port="$http_port" \
   -Ddatabase.url="jdbc:postgresql://127.0.0.1:${db_port}/dematec_browser_test" \
   -Ddatabase.username=dematec_browser -Ddatabase.password=dematec_browser \
